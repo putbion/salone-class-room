@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Salone Class Room - AI Learning Platform</title>
+<style>
+:root{--p:#0047AB;--pd:#003082;--s:#EBF3FF;--bg:#F9FBFC;--w:#fff;--t:#333}
+*{box-sizing:border-box;margin:0;padding:0;font-family:Segoe UI,Tahoma,sans-serif}body{background:var(--bg);color:var(--t);line-height:1.6}
+header{background:#fff;position:sticky;top:0;box-shadow:0 2px 10px #0001}.nav{max-width:1200px;margin:auto;padding:1rem 2rem;display:flex;justify-content:space-between}.logo{font-weight:700;color:var(--p);text-decoration:none}
+nav a{margin-left:1rem;color:#333;text-decoration:none}.hero{background:linear-gradient(135deg,var(--p),var(--pd));color:#fff;text-align:center;padding:4rem 2rem}.hero h1{font-size:2.5rem}.hero p{max-width:850px;margin:1rem auto}
+.container{max-width:1200px;margin:2rem auto;padding:0 1rem}section{background:#fff;padding:2rem;margin-bottom:2rem;border-radius:8px;box-shadow:0 4px 20px #0000000a}
+h2{color:var(--p);border-bottom:2px solid var(--s);padding-bottom:.5rem;margin-bottom:1rem}h3{margin:1.5rem 0 .7rem}
+.tool{background:var(--s);padding:1.3rem;border-radius:8px;margin:1rem 0}input,textarea,select{width:100%;padding:.8rem;margin:.5rem 0 1rem;border:1px solid #ccc;border-radius:8px;font-size:1rem}
+button{background:var(--p);color:#fff;border:0;border-radius:8px;padding:.75rem 1.4rem;font-weight:600;cursor:pointer}.out{display:none;background:#fff;border-left:4px solid var(--p);padding:1rem;margin-top:1rem;white-space:pre-wrap}
+.note{background:#fff8e1;border-left:4px solid #ffc107;padding:1rem;margin:1rem 0}.opt{display:block;width:100%;text-align:left;background:#fff;color:#333;border:1px solid #bbb;margin:.4rem 0}
+footer{background:var(--pd);color:#fff;text-align:center;padding:2.5rem}footer a{color:#FFD700}@media(max-width:700px){nav{display:none}.hero h1{font-size:2rem}section{padding:1.3rem}}
+</style></head>
+<body>
+<header><div class="nav"><a class="logo" href="#">📚 Salone Class Room</a><nav><a href="#school">Secondary</a><a href="#tertiary">Tertiary</a><a href="#contact">Contact</a></nav></div></header>
+<div class="hero"><h1>Welcome to Salone Class Room</h1><p>AI-powered learning support for Sierra Leonean students: explanations, practice questions, assignments and research guidance.</p></div>
+<div class="container">
+<section id="school"><h2>Secondary School Section</h2>
+<h3>Junior Secondary School (JSS) & BECE</h3>
+<div class="tool"><h4>JSS AI Tutor</h4><input id="jss-tutor" placeholder="e.g. Explain photosynthesis"><button onclick="tutor('jss')">Ask AI Tutor</button><div id="jss-tutor-out" class="out"></div></div>
+<div class="tool"><h4>BECE Practice Questions</h4><input id="jss-quiz" placeholder="e.g. Integrated Science"><button onclick="quiz('jss')">Generate 5 Questions</button><div id="jss-quiz-out" class="out"></div></div>
+<div class="tool"><h4>JSS Assignment Solver</h4><textarea id="jss-solver" rows="4" placeholder="Type your assignment"></textarea><button onclick="solve('jss')">Solve with AI</button><div id="jss-solver-out" class="out"></div></div>
+<h3>Senior Secondary School (SSS) & WASSCE</h3>
+<div class="tool"><h4>SSS AI Tutor</h4><input id="sss-tutor" placeholder="e.g. Explain quadratic equations"><button onclick="tutor('sss')">Ask AI Tutor</button><div id="sss-tutor-out" class="out"></div></div>
+<div class="tool"><h4>WASSCE Practice Questions</h4><input id="sss-quiz" placeholder="e.g. Biology"><button onclick="quiz('sss')">Generate 5 Questions</button><div id="sss-quiz-out" class="out"></div></div>
+<div class="tool"><h4>SSS Assignment Solver</h4><textarea id="sss-solver" rows="4" placeholder="Type your assignment"></textarea><button onclick="solve('sss')">Solve with AI</button><div id="sss-solver-out" class="out"></div></div>
+<div class="note"><b>Note:</b> AI-generated practice questions are learning materials and are not represented as official WAEC past questions.</div>
+</section>
+<section id="tertiary"><h2>Tertiary Education</h2>
+<div class="tool"><h4>AI Module & Topic Tutor</h4><input id="tertiary-tutor" placeholder="e.g. BUS 301 Strategic Management"><button onclick="tutor('tertiary')">Run Module Tutor</button><div id="tertiary-tutor-out" class="out"></div></div>
+<div class="tool"><h4>Assignment & Research Problem Solver</h4><textarea id="tertiary-solver" rows="4" placeholder="Enter assignment or academic problem"></textarea><button onclick="solve('tertiary')">Generate Academic Assistance</button><div id="tertiary-solver-out" class="out"></div></div>
+<h3>Dissertation & Thesis Guidance</h3><div class="note">Use AI to support your learning and structure. Verify sources, follow your institution's rules and consult your supervisor.</div>
+<div class="tool"><h4>Research Topic Generator</h4><input id="research-area" placeholder="e.g. Public Health"><button onclick="research()">Generate Topics</button><div id="research-out" class="out"></div></div>
+<div class="tool"><h4>Proposal Framework</h4><input id="proposal-topic" placeholder="Research topic"><input id="proposal-location" placeholder="Study location"><button onclick="proposal()">Create Framework</button><div id="proposal-out" class="out"></div></div>
+<div class="tool"><h4>Chapter Guidance</h4><input id="chapter-topic" placeholder="Dissertation topic"><select id="chapter"><option value="">Select chapter</option><option>Chapter 1: Introduction</option><option>Chapter 2: Literature Review</option><option>Chapter 3: Methodology</option><option>Chapter 4: Analysis & Discussion</option><option>Chapter 5: Conclusion & Recommendations</option></select><button onclick="chapter()">Get Guidance</button><div id="chapter-out" class="out"></div></div>
+</section>
+<section id="contact"><h2>Comments & Recommendations</h2><div class="tool"><textarea id="feedback" rows="4" placeholder="Write your feedback"></textarea><button onclick="feedback()">Send Feedback</button></div></section>
+</div>
+<footer>© 2026 Salone Class Room & Pytbion Technologies · <a href="mailto:pytbion26@gmail.com">pytbion26@gmail.com</a></footer>
+<script>
+const endpoint="/.netlify/functions/ai";
+function display(id,t){let e=document.getElementById(id);e.style.display="block";e.textContent=t}
+async function ask(prompt,out){display(out,"⏳ Salone Class Room AI is thinking...");try{let r=await fetch(endpoint,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:prompt})});let d=await r.json();if(!r.ok)throw new Error(d.error||"Request failed");display(out,d.answer||"No answer returned.")}catch(e){display(out,"⚠️ AI connection problem: "+e.message)}}
+function tutor(x){let v=document.getElementById(x+"-tutor").value.trim();if(!v)return alert("Enter a topic.");let l=x==="jss"?"JSS/BECE":x==="sss"?"SSS/WASSCE":"tertiary";ask("Teach a "+l+" student in Sierra Leone. Explain clearly and accurately: "+v,x+"-tutor-out")}
+function solve(x){let v=document.getElementById(x+"-solver").value.trim();if(!v)return alert("Enter the question.");ask("Help a student understand and solve this step by step. Do not encourage blind copying: "+v,x+"-solver-out")}
+function quiz(x){let v=document.getElementById(x+"-quiz").value.trim();if(!v)return alert("Enter a subject/topic.");ask("Create exactly 5 original multiple-choice practice questions with A-D options, correct answers and short explanations for "+(x==="jss"?"JSS/BECE":"SSS/WASSCE")+" students in Sierra Leone on: "+v+". Do not claim they are official WAEC past questions.",x+"-quiz-out")}
+function research(){let v=document.getElementById("research-area").value.trim();if(!v)return alert("Enter an area.");ask("Generate 8 feasible academic research topics relevant to Sierra Leone in "+v+", with a short rationale for each. Do not invent statistics.","research-out")}
+function proposal(){let t=document.getElementById("proposal-topic").value.trim(),l=document.getElementById("proposal-location").value.trim();if(!t)return alert("Enter a topic.");ask("Develop a research proposal framework for "+t+". Study location: "+(l||"Sierra Leone")+". Include background, problem statement, objectives, questions, significance, scope and methodology. Do not fabricate findings or references.","proposal-out")}
+function chapter(){let t=document.getElementById("chapter-topic").value.trim(),c=document.getElementById("chapter").value;if(!t||!c)return alert("Enter topic and select chapter.");ask("Provide detailed academic guidance for "+c+" of a dissertation titled "+t+". Explain subsections, evidence needed and common mistakes. Do not claim institution-specific rules unless verified.","chapter-out")}
+function feedback(){let m=document.getElementById("feedback").value.trim();if(!m)return alert("Write your feedback.");location.href="mailto:pytbion26@gmail.com?subject="+encodeURIComponent("Salone Class Room Feedback")+"&body="+encodeURIComponent(m)}
+</script></body></html>
