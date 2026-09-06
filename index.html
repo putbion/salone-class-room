@@ -1,55 +1,2138 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Salone Class Room - AI Learning Platform</title>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="Salone Class Room provides AI-assisted text learning, exam practice, teacher lesson planning and research guidance for Sierra Leone." name="description"/>
+<meta content="#073b8c" name="theme-color"/>
+<title>Salone Class Room | Learn, Teach, Grow</title>
 <style>
-:root{--p:#0047AB;--pd:#003082;--s:#EBF3FF;--bg:#F9FBFC;--w:#fff;--t:#333}
-*{box-sizing:border-box;margin:0;padding:0;font-family:Segoe UI,Tahoma,sans-serif}body{background:var(--bg);color:var(--t);line-height:1.6}
-header{background:#fff;position:sticky;top:0;box-shadow:0 2px 10px #0001}.nav{max-width:1200px;margin:auto;padding:1rem 2rem;display:flex;justify-content:space-between}.logo{font-weight:700;color:var(--p);text-decoration:none}
-nav a{margin-left:1rem;color:#333;text-decoration:none}.hero{background:linear-gradient(135deg,var(--p),var(--pd));color:#fff;text-align:center;padding:4rem 2rem}.hero h1{font-size:2.5rem}.hero p{max-width:850px;margin:1rem auto}
-.container{max-width:1200px;margin:2rem auto;padding:0 1rem}section{background:#fff;padding:2rem;margin-bottom:2rem;border-radius:8px;box-shadow:0 4px 20px #0000000a}
-h2{color:var(--p);border-bottom:2px solid var(--s);padding-bottom:.5rem;margin-bottom:1rem}h3{margin:1.5rem 0 .7rem}
-.tool{background:var(--s);padding:1.3rem;border-radius:8px;margin:1rem 0}input,textarea,select{width:100%;padding:.8rem;margin:.5rem 0 1rem;border:1px solid #ccc;border-radius:8px;font-size:1rem}
-button{background:var(--p);color:#fff;border:0;border-radius:8px;padding:.75rem 1.4rem;font-weight:600;cursor:pointer}.out{display:none;background:#fff;border-left:4px solid var(--p);padding:1rem;margin-top:1rem;white-space:pre-wrap}
-.note{background:#fff8e1;border-left:4px solid #ffc107;padding:1rem;margin:1rem 0}.opt{display:block;width:100%;text-align:left;background:#fff;color:#333;border:1px solid #bbb;margin:.4rem 0}
-footer{background:var(--pd);color:#fff;text-align:center;padding:2.5rem}footer a{color:#FFD700}@media(max-width:700px){nav{display:none}.hero h1{font-size:2rem}section{padding:1.3rem}}
-</style></head>
+    :root{--blue:#073b8c;--blue2:#0b57c8;--sky:#eaf3ff;--gold:#f5b700;--ink:#172033;--muted:#5f6b7a;--white:#fff;--bg:#f5f8fc;--green:#16794b;--red:#b42318;--radius:18px;--shadow:0 14px 40px rgba(14,47,94,.09)}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}button,input,select,textarea{font:inherit}a{color:inherit}.wrap{width:min(1160px,calc(100% - 32px));margin:auto}
+    .topbar{background:#052c69;color:#fff;text-align:center;padding:8px 16px;font-size:.88rem}.nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.96);backdrop-filter:blur(12px);border-bottom:1px solid #dfe7f2}.nav-in{min-height:70px;display:flex;align-items:center;justify-content:space-between;gap:24px}.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-size:1.15rem;font-weight:800;color:var(--blue)}.mark{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:var(--blue);color:#fff}.links{display:flex;gap:22px;list-style:none;margin:0;padding:0}.links a{text-decoration:none;font-weight:650;font-size:.92rem}.links a:hover{color:var(--blue2)}
+    .hero{background:radial-gradient(circle at 80% 10%,rgba(255,255,255,.18),transparent 28%),linear-gradient(135deg,#073b8c,#0a5acb);color:#fff;padding:78px 0 70px}.hero-grid{display:grid;grid-template-columns:1.3fr .7fr;gap:50px;align-items:center}.eyebrow{display:inline-block;padding:7px 12px;border:1px solid rgba(255,255,255,.35);border-radius:999px;font-size:.82rem;font-weight:750;letter-spacing:.04em}.hero h1{font-size:clamp(2.35rem,6vw,4.5rem);line-height:1.02;letter-spacing:-.045em;margin:20px 0}.hero p{font-size:1.08rem;max-width:700px;color:#eaf3ff}.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}.btn{border:0;border-radius:11px;padding:12px 18px;font-weight:750;cursor:pointer;transition:.2s;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px}.btn:hover{transform:translateY(-2px)}.btn-gold{background:var(--gold);color:#18202f}.btn-light{background:#fff;color:var(--blue)}.btn-blue{background:var(--blue);color:#fff}.btn-green{background:var(--green);color:#fff}.hero-card{background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.28);border-radius:24px;padding:24px}.hero-card h3{margin-top:0}.hero-card ul{padding-left:20px;margin-bottom:0}.hero-card li+li{margin-top:10px}
+    .quick{margin-top:-30px;position:relative}.quick-grid{display:grid;grid-template-columns:repeat(4,1fr);background:#fff;border-radius:18px;box-shadow:var(--shadow);overflow:hidden}.quick a{text-decoration:none;padding:22px;border-right:1px solid #e5ebf3}.quick a:last-child{border:0}.quick strong{display:block;color:var(--blue)}.quick span{font-size:.87rem;color:var(--muted)}
+    main{padding:68px 0}.section{margin-bottom:68px;scroll-margin-top:92px}.section-head{max-width:760px;margin-bottom:26px}.kicker{color:var(--blue2);font-size:.78rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase}.section h2{font-size:clamp(1.75rem,4vw,2.6rem);line-height:1.12;margin:8px 0 12px;letter-spacing:-.025em}.section-head p,.muted{color:var(--muted)}.subsection-title{color:var(--blue);font-size:1.45rem;margin:0 0 18px;padding-bottom:8px;border-bottom:2px solid var(--sky)}
+    .tabs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:22px}.tab{background:#e5edf8;color:#234064;border:0;border-radius:999px;padding:10px 17px;font-weight:750;cursor:pointer}.tab.active{background:var(--blue);color:#fff}.panel{display:none}.panel.active{display:block}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:22px}.card{background:#fff;border:1px solid #e1e8f2;border-radius:var(--radius);padding:25px;box-shadow:0 8px 24px rgba(14,47,94,.055)}.card h3{margin:0 0 12px;font-size:1.22rem}.card .guide{display:none}.step{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:9px;background:var(--sky);color:var(--blue);font-weight:800;margin-bottom:12px}
+    label{display:block;font-weight:700;font-size:.91rem;margin:14px 0 5px}input,select,textarea{width:100%;border:1px solid #cbd6e4;border-radius:10px;background:#fff;padding:12px 13px;color:var(--ink);outline:none}textarea{resize:vertical;min-height:110px}input:focus,select:focus,textarea:focus{border-color:var(--blue2);box-shadow:0 0 0 3px rgba(11,87,200,.12)}.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.output{display:none;margin-top:16px;padding:17px;border-radius:12px;background:#f8fbff;border-left:4px solid var(--blue2);white-space:pre-line}.output.show{display:block}.notice{padding:18px 20px;background:#fff8df;border:1px solid #f2d67b;border-radius:14px;color:#5c4700;margin:20px 0}.notice strong{color:#3d2f00}.integrity{background:#eef9f3;border-color:#b9dec9;color:#185b3c}.feature-list{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.mini{background:#fff;padding:20px;border-radius:14px;border:1px solid #e1e8f2}.mini b{display:block;color:var(--blue);margin-bottom:5px}
+    .pricing{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}.price-card{background:#fff;border:1px solid #dde6f1;border-radius:20px;padding:26px;position:relative}.price-card.featured{border:2px solid var(--blue2);transform:translateY(-6px)}.badge{position:absolute;right:18px;top:18px;background:var(--gold);font-size:.74rem;font-weight:850;padding:5px 9px;border-radius:999px}.amount{font-size:2rem;font-weight:850;color:var(--blue);margin:10px 0}.price-card ul{padding-left:19px;color:var(--muted)}
+    .footer{background:#071d3f;color:#d9e4f5;padding:48px 0 26px}.footer-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:32px}.footer h3,.footer h4{color:#fff}.footer a{color:#d9e4f5;text-decoration:none}.footer small{display:block;border-top:1px solid #27405f;margin-top:34px;padding-top:20px}.mobile{display:none;border:0;background:var(--sky);padding:9px 11px;border-radius:9px;color:var(--blue);font-weight:800}
+    @media(max-width:850px){.hero-grid,.footer-grid{grid-template-columns:1fr}.hero-card{display:none}.quick-grid,.feature-list{grid-template-columns:repeat(2,1fr)}.grid,.pricing{grid-template-columns:1fr}.price-card.featured{transform:none}.mobile{display:block}.links{display:none;position:absolute;left:16px;right:16px;top:66px;background:#fff;box-shadow:var(--shadow);border-radius:14px;padding:14px;flex-direction:column}.links.open{display:flex}.hero{padding-top:58px}}
+    @media(max-width:520px){.quick-grid,.feature-list,.row{grid-template-columns:1fr}.quick a{border-right:0;border-bottom:1px solid #e5ebf3}.hero h1{font-size:2.55rem}.card{padding:19px}.wrap{width:min(100% - 22px,1160px)}}
+
+    /* Salone Class Room private admin dashboard */
+    .admin-shell{display:none;background:#eef3f9;border:1px solid #d8e2ef;border-radius:22px;overflow:hidden;box-shadow:var(--shadow)}
+    .admin-shell.open{display:block}.admin-top{background:#071d3f;color:#fff;padding:22px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}.admin-top h3{margin:0;font-size:1.35rem}.admin-top p{margin:4px 0 0;color:#c8d7ea;font-size:.9rem}.admin-body{padding:22px}.admin-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}.admin-tab{border:1px solid #cbd6e4;background:#fff;color:#27405f;border-radius:999px;padding:9px 13px;font-size:.85rem;font-weight:800;cursor:pointer}.admin-tab.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+    .admin-panel{display:none}.admin-panel.active{display:block}.admin-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.admin-kpi{background:#fff;border:1px solid #dce5ef;border-radius:15px;padding:18px}.admin-kpi span{display:block;color:var(--muted);font-size:.78rem;font-weight:750}.admin-kpi strong{display:block;color:var(--blue);font-size:1.65rem;line-height:1.2;margin-top:6px}.admin-kpi small{color:var(--muted)}
+    .admin-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:18px}.admin-box{background:#fff;border:1px solid #dce5ef;border-radius:15px;padding:18px}.admin-box h4{margin:0 0 12px;color:#173d72}.admin-table-wrap{overflow:auto;background:#fff;border:1px solid #dce5ef;border-radius:15px}.admin-table{width:100%;border-collapse:collapse;min-width:720px}.admin-table th,.admin-table td{text-align:left;padding:12px 13px;border-bottom:1px solid #e6edf5;font-size:.86rem}.admin-table th{background:#f5f8fc;color:#354b68}.status-pill{display:inline-block;padding:4px 8px;border-radius:999px;background:#e9f7ef;color:#16794b;font-weight:800;font-size:.74rem}.admin-empty{color:var(--muted);text-align:center;padding:26px}.admin-access{background:#fff;border:1px solid #dce5ef;border-radius:18px;padding:22px;max-width:560px;margin:auto}.admin-actions{display:flex;gap:10px;flex-wrap:wrap}.admin-note{font-size:.86rem;color:var(--muted);margin-top:12px}.admin-settings-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.admin-divider{border:0;border-top:1px solid #e1e8f2;margin:20px 0}
+    @media(max-width:900px){.admin-kpis{grid-template-columns:repeat(2,1fr)}.admin-grid{grid-template-columns:1fr}}
+    @media(max-width:520px){.admin-kpis,.admin-settings-grid{grid-template-columns:1fr}.admin-body{padding:14px}.admin-top{padding:18px}.admin-kpi strong{font-size:1.45rem}}
+  
+    .welcome-hero{padding:56px 0;background:linear-gradient(135deg,#073b8c 0%,#0a5acb 55%,#11834f 100%)}
+    .welcome-grid{display:grid;grid-template-columns:minmax(280px,.8fr) minmax(0,1.2fr);gap:42px;align-items:center}
+    .welcome-art{position:relative;min-height:430px;border-radius:26px;background:linear-gradient(#96d7ff 0 58%,#dff4e6 58% 100%);overflow:hidden;border:1px solid rgba(255,255,255,.3);box-shadow:0 18px 42px rgba(0,0,0,.16)}
+    .welcome-pole{position:absolute;left:48%;top:35px;width:8px;height:315px;background:linear-gradient(90deg,#777,#f7f7f7,#999);border-radius:6px}
+    .welcome-pole:before{content:"";position:absolute;width:18px;height:18px;border-radius:50%;background:#dcae32;left:-5px;top:-12px}
+    .welcome-flag{position:absolute;left:calc(48% + 8px);top:58px;width:150px;height:90px;box-shadow:0 8px 20px rgba(0,0,0,.2);border-radius:0 7px 7px 0;overflow:hidden}
+    .welcome-flag span{display:block;height:33.333%}.flag-green{background:#1eb53a}.flag-white{background:#fff}.flag-blue{background:#0072c6}
+    .welcome-students{position:absolute;left:22px;right:22px;bottom:20px;display:flex;justify-content:center;gap:22px;align-items:end}
+    .student-shape{position:relative;width:125px;height:235px;transform:rotate(-3deg)}
+    .student-head{position:absolute;top:0;left:38px;width:48px;height:48px;background:#5b341f;border-radius:50%}
+    .student-head:before{content:"";position:absolute;left:-3px;top:-7px;width:54px;height:24px;background:#1b1b1b;border-radius:50% 50% 35% 35%}
+    .female-student .student-head:before{height:34px;top:-10px;border-radius:50%}
+    .student-shirt{position:absolute;top:45px;left:18px;width:88px;height:120px;background:#f8fbff;border:2px solid #dce5ef;border-radius:18px 18px 10px 10px}
+    .student-shirt:after{content:"";position:absolute;top:0;left:39px;width:8px;height:118px;background:#0a5acb}
+    .student-book{position:absolute;bottom:54px;left:24px;width:76px;height:54px;border-radius:6px;background:#0a5acb;color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 5px 12px rgba(0,0,0,.2);transform:rotate(-7deg)}
+    .female-student .student-book{background:#159f72;transform:rotate(7deg)}
+    .welcome-copy h1{font-size:clamp(2.4rem,5.6vw,4.8rem);line-height:1.02;letter-spacing:-.045em;margin:16px 0 8px}
+    .welcome-copy h1 span{color:#f8d261}.welcome-tagline{font-size:1.32rem!important;font-weight:800;color:#fff!important;margin:0 0 12px}
+    .welcome-lead,.welcome-message{font-size:1.04rem!important;line-height:1.7;color:#eaf3ff!important;max-width:760px}
+    .welcome-benefits{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:20px 0}
+    .welcome-benefits div{background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.25);border-radius:13px;padding:12px}
+    .welcome-benefits strong{display:block;color:#fff;margin-bottom:4px}.welcome-benefits span{color:#eaf3ff;font-size:.92rem}
+    @media(max-width:850px){.welcome-grid{grid-template-columns:1fr}.welcome-art{min-height:350px}.welcome-benefits{grid-template-columns:1fr}}
+    @media(max-width:520px){.welcome-art{min-height:315px}.welcome-flag{width:118px;height:72px}.welcome-pole{height:250px}.student-shape{transform:scale(.86) rotate(-3deg);transform-origin:bottom center}}
+
+
+    .welcome-hero{position:relative}
+    .welcome-grid{display:block!important;position:relative;padding-top:38px}
+    .welcome-copy{max-width:900px;margin:0 auto;text-align:center}
+    .welcome-copy .actions{justify-content:center}
+    .welcome-benefits{text-align:left}
+    .corner-flag{position:absolute;top:4px;width:82px;height:51px;overflow:hidden;border-radius:4px;box-shadow:0 5px 14px rgba(0,0,0,.18);z-index:3}
+    .corner-flag-left{left:0}.corner-flag-right{right:0}
+    .corner-flag span{display:block;height:33.333%}
+    .corner-flag .flag-green{background:#1eb53a}.corner-flag .flag-white{background:#fff}.corner-flag .flag-blue{background:#0072c6}
+    @media(max-width:520px){.corner-flag{width:58px;height:36px}.welcome-grid{padding-top:34px}}
+
+
+    .stacked-welcome{display:flex!important;flex-direction:column;align-items:center;gap:2px;text-align:center;margin:14px 0 16px!important;line-height:1!important}
+    .stacked-welcome .welcome-line{display:block;color:#fff;font-size:.82em;font-weight:800;letter-spacing:-.025em}
+    .stacked-welcome .to-line{display:block;color:#e8f2ff;font-size:.42em;font-weight:700;text-transform:lowercase;letter-spacing:.08em;margin:5px 0}
+    .stacked-welcome .brand-line{display:block;color:#f8d261!important;font-size:1em;font-weight:900;letter-spacing:-.045em}
+    @media(max-width:520px){.stacked-welcome .welcome-line{font-size:.78em}.stacked-welcome .brand-line{font-size:.88em}}
+
+
+    .brought-by{margin:4px 0 18px!important;color:#eaf3ff!important;font-size:1rem!important;text-align:center}
+    .brought-by strong{color:#f8d261}
+    .contact-support-card{max-width:820px;margin:0 auto;background:#fff;border:1px solid #dbe5ee;border-radius:18px;padding:22px;box-shadow:0 12px 30px rgba(11,61,99,.08)}
+    .support-form label{display:block;font-weight:700;color:#20303d;margin:14px 0 7px}
+    .support-form input,.support-form select,.support-form textarea{width:100%;box-sizing:border-box}
+    .support-form textarea{resize:vertical;min-height:150px}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .form-help{margin:12px 0 0;color:#667786;font-size:.92rem;line-height:1.5}
+    @media(max-width:680px){.form-grid{grid-template-columns:1fr}}
+
+
+/* ===== Professional education visual system ===== */
+:root{
+  --edu-ink:#17324d;
+  --edu-muted:#5f7182;
+  --edu-line:#dce6ef;
+  --edu-surface:#ffffff;
+  --edu-soft:#f7fafc;
+  --edu-blue:#eaf4fb;
+  --edu-green:#edf8f1;
+  --edu-gold:#fff8e8;
+  --edu-lilac:#f4f1fb;
+  --edu-accent:#0d5f8f;
+}
+body{
+  color:var(--edu-ink);
+  background:#f5f8fb;
+  line-height:1.65;
+}
+main section{
+  scroll-margin-top:90px;
+}
+.section{
+  margin:34px auto;
+  border:1px solid var(--edu-line);
+  border-radius:22px;
+  background:var(--edu-surface);
+  box-shadow:0 8px 26px rgba(29,63,90,.06);
+  overflow:hidden;
+}
+.section-head{
+  padding:28px 28px 18px;
+  max-width:980px;
+}
+.section-head .kicker{
+  display:inline-block;
+  padding:6px 10px;
+  border-radius:999px;
+  font-size:.8rem;
+  font-weight:800;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  color:#31536f;
+  background:#edf3f7;
+}
+.section-head h2{
+  margin:10px 0 8px;
+  color:#163750;
+  font-size:clamp(1.55rem,2.8vw,2.25rem);
+  line-height:1.18;
+}
+.section-head p{
+  margin:0;
+  max-width:850px;
+  color:var(--edu-muted);
+  font-size:1.02rem;
+}
+.teacher-guide{
+  margin-top:16px;
+  padding:13px 15px;
+  border-left:4px solid #7ba9c8;
+  border-radius:10px;
+  background:#f7fbfe;
+  color:#39576d;
+  font-size:.95rem;
+}
+.card,.tool-card,.feature-card,article{
+  transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+.card:hover,.tool-card:hover,.feature-card:hover,article:hover{
+  transform:translateY(-2px);
+  box-shadow:0 10px 22px rgba(31,67,95,.08);
+}
+.edu-jss{
+  background:linear-gradient(180deg,var(--edu-blue) 0, #fff 180px);
+  border-top:5px solid #4f91bb;
+}
+.edu-sss{
+  background:linear-gradient(180deg,var(--edu-green) 0, #fff 180px);
+  border-top:5px solid #5a9a71;
+}
+.edu-teachers{
+  background:linear-gradient(180deg,var(--edu-gold) 0, #fff 180px);
+  border-top:5px solid #c19a45;
+}
+.edu-university{
+  background:linear-gradient(180deg,var(--edu-lilac) 0, #fff 180px);
+  border-top:5px solid #7c6ca8;
+}
+.edu-jss .section-head .kicker{background:#dceef8;color:#315f7a}
+.edu-sss .section-head .kicker{background:#e1f2e6;color:#376b49}
+.edu-teachers .section-head .kicker{background:#f8edc9;color:#755c22}
+.edu-university .section-head .kicker{background:#e9e3f5;color:#5c4d82}
+
+.education-promise{
+  margin:28px auto 34px;
+  padding:0 16px;
+}
+.education-promise-inner{
+  max-width:1050px;
+  margin:auto;
+  padding:26px 28px;
+  border-radius:22px;
+  background:#eef6fb;
+  border:1px solid #d9e8f1;
+  text-align:center;
+}
+.promise-eyebrow{
+  display:inline-block;
+  font-weight:800;
+  color:#396681;
+  margin-bottom:6px;
+}
+.education-promise h2{
+  margin:4px 0 10px;
+  color:#173d59;
+  font-size:clamp(1.5rem,2.8vw,2.15rem);
+}
+.education-promise p{
+  max-width:820px;
+  margin:0 auto;
+  color:#5b7080;
+  font-size:1rem;
+}
+button,.btn{
+  border-radius:12px!important;
+  font-weight:700;
+}
+input,select,textarea{
+  background:#fff!important;
+  color:#21384b!important;
+  border-color:#cfdbe4!important;
+}
+input:focus,select:focus,textarea:focus{
+  outline:3px solid rgba(74,137,177,.16)!important;
+  border-color:#6d9fbe!important;
+}
+.education-slogan{
+  margin-top:24px;
+  padding:26px 18px 30px;
+  text-align:center;
+  border-top:1px solid #dfe8ef;
+  background:#f7fafc;
+  color:#345269;
+}
+.education-slogan .slogan-mark{
+  font-size:1.35rem;
+  margin-bottom:5px;
+  color:#597f9b;
+}
+.education-slogan p{
+  margin:0 0 5px;
+  font-size:1.05rem;
+  font-weight:800;
+  color:#284a63;
+}
+.education-slogan small{
+  color:#6a7f8f;
+}
+@media(max-width:700px){
+  .section{margin:24px 10px;border-radius:18px}
+  .section-head{padding:22px 18px 14px}
+  .teacher-guide{font-size:.92rem}
+  .education-promise-inner{padding:22px 18px}
+}
+
+.bottom-admin-access{
+  padding:14px 16px 18px;
+  text-align:center;
+  background:#f7fafc;
+  border-top:1px solid #e2e9ef;
+}
+.bottom-admin-link{
+  display:inline-block;
+  color:#617587;
+  font-size:.82rem;
+  font-weight:700;
+  text-decoration:none;
+  padding:6px 10px;
+  border-radius:8px;
+}
+.bottom-admin-link:hover{
+  color:#244c68;
+  background:#eaf1f6;
+  text-decoration:underline;
+}
+
+.bottom-admin-access{
+  padding:12px 16px 18px;
+  text-align:center;
+  background:#f7fafc;
+  border-top:1px solid #e2e9ef;
+}
+.bottom-admin-link{
+  display:inline-block;
+  color:#6b7d8c;
+  font-size:.8rem;
+  font-weight:700;
+  text-decoration:none;
+  padding:6px 10px;
+  border-radius:8px;
+}
+.bottom-admin-link:hover{
+  color:#244c68;
+  background:#eaf1f6;
+}
+
+.edu-primary{
+  background:linear-gradient(180deg,#eef8fb 0,#ffffff 180px);
+  border-top:5px solid #4c9aaa;
+}
+.edu-primary .section-head .kicker{
+  background:#dff1f5;
+  color:#356b76;
+}
+.edu-primary .tool-badge{
+  display:inline-block;
+  padding:5px 9px;
+  margin-bottom:8px;
+  border-radius:999px;
+  background:#edf6f8;
+  color:#3e6f78;
+  font-size:.78rem;
+  font-weight:800;
+}
+.primary-grid{
+  align-items:stretch;
+}
+.primary-card{
+  border-color:#d9e8ec!important;
+}
+.npse-card{
+  background:#fbfeff;
+}
+
+/* Clean blue ribbon section system */
+.ribbon-section{
+  position:relative;
+  margin:32px auto;
+  padding-top:0;
+  background:#ffffff!important;
+  border:1px solid #dce6ef!important;
+  border-top:none!important;
+  border-radius:0 0 18px 18px!important;
+  box-shadow:0 7px 22px rgba(25,61,88,.055)!important;
+  overflow:hidden;
+}
+.ribbon-intro{margin:0;padding:0 0 18px;background:#ffffff;}
+.section-ribbon{
+  display:block;width:100%;box-sizing:border-box;padding:15px 22px;
+  background:#145d88;color:#ffffff;
+  font-size:clamp(1.15rem,2vw,1.45rem);line-height:1.2;
+  font-weight:800;letter-spacing:.01em;border-left:7px solid #0b3d63;
+}
+.section-ribbon-description{
+  margin:0;padding:14px 22px 0;color:#5c6f7e;
+  font-size:.98rem;line-height:1.65;max-width:900px;
+}
+.ribbon-section .grid,.ribbon-section .cards,
+.ribbon-section > .contact-support-card{margin-left:20px;margin-right:20px;}
+.ribbon-section article,.ribbon-section .card,.ribbon-section .tool-card{
+  background:#ffffff!important;border:1px solid #dfe7ee!important;
+  border-radius:14px!important;box-shadow:0 4px 12px rgba(25,61,88,.035)!important;
+}
+.ribbon-section article h3,.ribbon-section .card h3,.ribbon-section .tool-card h3{color:#193b53!important;}
+.ribbon-section p,.ribbon-section label{color:#4f6271;}
+.ribbon-section .btn,.ribbon-section button{background:#145d88!important;color:#ffffff!important;border:none!important;}
+.ribbon-section .btn:hover,.ribbon-section button:hover{background:#0f4b70!important;}
+@media(max-width:700px){
+  .ribbon-section{margin:24px 8px;border-radius:0 0 15px 15px!important;}
+  .section-ribbon{padding:13px 16px;border-left-width:5px;}
+  .section-ribbon-description{padding:12px 16px 0;font-size:.94rem;}
+  .ribbon-section .grid,.ribbon-section .cards,.ribbon-section > .contact-support-card{margin-left:12px;margin-right:12px;}
+}
+
+.subsection-ribbon-intro{
+  margin:34px -20px 20px;
+  background:#ffffff;
+}
+.subsection-ribbon{
+  background:#145d88!important;
+  border-left:7px solid #0b3d63!important;
+}
+#student-sss{
+  padding-top:0!important;
+}
+@media(max-width:700px){
+  .subsection-ribbon-intro{
+    margin:28px -12px 18px;
+  }
+  .subsection-ribbon{
+    border-left-width:5px!important;
+  }
+}
+
+.teacher-workspace{
+  padding:4px 20px 24px;
+}
+.teacher-step{
+  display:flex;
+  gap:14px;
+  padding:18px;
+  margin:0 0 16px;
+  background:#ffffff;
+  border:1px solid #dfe8ef;
+  border-radius:14px;
+}
+.teacher-step-main{
+  background:#f7fbfe;
+  border-color:#d5e6f1;
+}
+.teacher-step-number{
+  flex:0 0 34px;
+  width:34px;
+  height:34px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:50%;
+  background:#145d88;
+  color:#fff;
+  font-weight:800;
+}
+.teacher-step-content{
+  flex:1;
+  min-width:0;
+}
+.teacher-step-content h3{
+  margin:0 0 5px;
+  color:#193b53;
+}
+.teacher-step-content p{
+  margin:0 0 14px;
+  color:#5d7180;
+}
+.teacher-form-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:12px;
+}
+.teacher-tool-choice{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+}
+.teacher-choice-card{
+  display:flex!important;
+  align-items:flex-start;
+  gap:10px;
+  padding:13px;
+  border:1px solid #dbe5ec;
+  border-radius:12px;
+  background:#fbfdfe;
+  cursor:pointer;
+}
+.teacher-choice-card input{
+  width:auto!important;
+  margin-top:4px;
+}
+.teacher-choice-card strong{
+  display:block;
+  color:#264a63;
+}
+.teacher-choice-card small{
+  display:block;
+  margin-top:3px;
+  color:#6b7d8a;
+  line-height:1.45;
+}
+.teacher-result-note{
+  margin-top:12px;
+  color:#466173;
+}
+@media(max-width:720px){
+  .teacher-workspace{padding:4px 12px 20px}
+  .teacher-step{padding:15px 12px;gap:10px}
+  .teacher-form-grid,.teacher-tool-choice{grid-template-columns:1fr}
+}
+
+.teacher-level-section{
+  margin:28px 20px 24px;
+  padding:0 0 8px;
+  border:1px solid #d9e6ee;
+  border-radius:16px;
+  background:#fff;
+  overflow:hidden;
+}
+.teacher-level-heading{
+  padding:15px 18px;
+  background:#eef7fb;
+  border-left:6px solid #145d88;
+}
+.teacher-level-heading h3{
+  margin:0 0 5px;
+  color:#164969;
+}
+.teacher-level-heading p{
+  margin:0;
+  color:#5b6f7d;
+  line-height:1.6;
+}
+.teacher-level-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:16px;
+  padding:18px;
+}
+.teacher-tool-card{
+  padding:16px;
+  border:1px solid #dfe7ee;
+  border-radius:13px;
+  background:#fff;
+}
+.teacher-tool-card h4{
+  margin:5px 0 7px;
+  color:#193b53;
+  font-size:1.05rem;
+}
+.teacher-tool-card p{
+  margin:0 0 14px;
+  color:#627481;
+  line-height:1.55;
+}
+.teacher-tool-card select,
+.teacher-tool-card input{
+  width:100%;
+  box-sizing:border-box;
+}
+#primaryTeacherResult{
+  margin:0 18px 16px;
+}
+@media(max-width:720px){
+  .teacher-level-section{margin:22px 12px}
+  .teacher-level-grid{grid-template-columns:1fr;padding:12px}
+  .teacher-level-heading{padding:14px}
+}
+
+/* Clear audience labels */
+.audience-note{
+  display:inline-block;
+  margin:0 0 10px;
+  padding:6px 10px;
+  border-radius:999px;
+  background:#eef5fa;
+  color:#145d88;
+  font-weight:700;
+  font-size:.82rem;
+}
+
+.learning-journey{
+  max-width:1100px;
+  margin:18px auto 6px;
+  padding:11px 14px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  flex-wrap:wrap;
+  color:#526978;
+  background:#f7fafc;
+  border:1px solid #e0e8ee;
+  border-radius:12px;
+  font-size:.88rem;
+}
+.learning-journey span{font-weight:700;}
+.learning-journey b{color:#145d88;font-size:1.1rem;}
+@media(max-width:600px){
+  .learning-journey{margin:14px 8px 4px;justify-content:flex-start;}
+}
+
+/* Unified single Teachers section */
+.teacher-single-wrap{padding:4px 20px 24px;}
+.teacher-selector-card{
+  padding:18px;
+  margin-bottom:16px;
+  background:#f7fbfe;
+  border:1px solid #d6e6f0;
+  border-radius:14px;
+}
+.teacher-selector-card h3{margin:0 0 5px;color:#193b53;}
+.teacher-selector-card p{margin:0 0 14px;color:#617483;}
+.teacher-choice-panel{margin-top:16px;}
+.teacher-form-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:12px;
+  margin-bottom:16px;
+}
+.teacher-tools-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:16px;
+}
+.teacher-tool-card{
+  padding:16px;
+  border:1px solid #dfe7ee;
+  border-radius:14px;
+  background:#fff;
+}
+.teacher-tool-card h3{margin:0 0 6px;color:#193b53;}
+.teacher-tool-card p{margin:0 0 14px;color:#607482;line-height:1.55;}
+.teacher-result-note{margin-top:14px;color:#466173;}
+@media(max-width:720px){
+  .teacher-single-wrap{padding:4px 12px 20px}
+  .teacher-form-grid,.teacher-tools-grid{grid-template-columns:1fr}
+}
+
+.prepare-teach-box{
+  margin:18px 0;
+  padding:18px;
+  background:#f7fbfe;
+  border:1px solid #d7e6f0;
+  border-radius:14px;
+}
+.prepare-teach-box h3{margin:0 0 6px;color:#193b53;}
+.prepare-teach-box p{margin:0 0 14px;color:#607482;line-height:1.55;}
+.teacher-prep-form{
+  margin-top:16px;
+  padding:18px;
+  border:1px solid #dfe7ee;
+  border-radius:14px;
+  background:#fff;
+}
+.prep-heading{
+  margin:-18px -18px 18px;
+  padding:14px 18px;
+  background:#eef5fa;
+  border-left:5px solid #145d88;
+}
+.prep-heading h3{margin:0 0 5px;color:#193b53;}
+.prep-heading p{margin:0;color:#607482;line-height:1.55;}
+.teacher-prep-form label{display:block;margin-top:12px;margin-bottom:6px;font-weight:700;color:#2f4d61;}
+.teacher-prep-form input,.teacher-prep-form select,.teacher-prep-form textarea{
+  width:100%;box-sizing:border-box;
+}
+
+/* About Salone Class Room */
+.about-salone-content{
+  padding:6px 20px 24px;
+  display:grid;
+  gap:14px;
+}
+.about-salone-card{
+  background:#fff;
+  border:1px solid #dfe7ee;
+  border-radius:14px;
+  padding:18px;
+}
+.about-salone-card h3{
+  margin:0 0 9px;
+  color:#193b53;
+}
+.about-salone-card p{
+  margin:0 0 10px;
+  color:#506878;
+  line-height:1.72;
+}
+.about-salone-card p:last-child{margin-bottom:0;}
+.about-important-note{
+  background:#fffaf0;
+  border-left:5px solid #d4a12b;
+}
+.university-guidance-note{
+  background:#f8f7fc;
+  border-left:5px solid #7566a8;
+}
+.about-closing-message{
+  padding:18px;
+  text-align:center;
+  background:#eef5fa;
+  border:1px solid #d4e3ed;
+  border-radius:14px;
+  color:#294b61;
+}
+.about-closing-message strong{
+  display:block;
+  margin-bottom:5px;
+  color:#0b3d63;
+  font-size:1.05rem;
+}
+.about-closing-message p{
+  margin:0;
+  line-height:1.65;
+}
+@media(max-width:600px){
+  .about-salone-content{padding:4px 12px 20px;}
+  .about-salone-card{padding:15px;}
+}
+
+.no-download-note{
+  background:#f5faf7;
+  border-left:5px solid #4b8a68;
+}
+
+/* Clear tool instructions */
+.tool-use-guide{
+  margin:8px 0 12px;
+  padding:10px 12px;
+  background:#f5f9fc;
+  border-left:4px solid #4e91bd;
+  border-radius:8px;
+  color:#496273;
+  line-height:1.6;
+  font-size:.94rem;
+}
+
+/* Top learning-benefit area: deliberately different from the main dark-blue header */
+.top-learning-benefits{
+  background:linear-gradient(135deg,#dceefa 0%,#eef7fc 100%) !important;
+  border:1px solid #b9d8eb !important;
+  color:#18384d !important;
+  border-radius:14px;
+}
+.top-learning-benefits h1,
+.top-learning-benefits h2,
+.top-learning-benefits h3,
+.top-learning-benefits h4,
+.top-learning-benefits strong{
+  color:#123b57 !important;
+}
+.top-learning-benefits p,
+.top-learning-benefits span{
+  color:#34586f !important;
+}
+.top-learning-benefits article,
+.top-learning-benefits .card,
+.top-learning-benefits > div{
+  border-color:#c4ddeb;
+}
+
+.essay-review-fields{
+  margin-top:14px;
+}
+.essay-review-fields label{
+  display:block;
+  margin:12px 0 6px;
+  font-weight:700;
+  color:#2f4d61;
+}
+.essay-review-fields textarea{
+  width:100%;
+  box-sizing:border-box;
+  resize:vertical;
+}
+.essay-review-fields .btn{
+  margin-top:14px;
+}
+.essay-review-guide strong{
+  display:block;
+  margin-bottom:5px;
+  color:#18384d;
+}
+.essay-review-guide p{
+  margin:5px 0;
+}
+
+.waec-sl-note{
+  margin:7px 0 12px;
+  font-size:.86rem;
+  line-height:1.5;
+  color:#587083;
+}
+
+.university-focus-field{
+  margin:12px 0;
+}
+.university-focus-field label{
+  display:block;
+  margin-bottom:6px;
+  font-weight:700;
+  color:#2f4d61;
+}
+.university-focus-field textarea{
+  width:100%;
+  box-sizing:border-box;
+}
+.sl-topic-example{
+  margin:10px 0 12px;
+  padding:9px 11px;
+  background:#f5f8fc;
+  border-left:4px solid #6f83b7;
+  border-radius:7px;
+  color:#52657a;
+  font-size:.9rem;
+}
+
+.platform-announcement{background:#fff6d8;border-bottom:1px solid #ecd898;color:#5c4a16}.announcement-inner{max-width:1180px;margin:auto;padding:10px 16px;display:flex;gap:10px}.announcement-inner strong{color:#0b3d63}
+.platform-modal{display:none;position:fixed;inset:0;background:rgba(10,26,42,.58);z-index:9999;padding:18px;overflow:auto}.platform-modal.open{display:flex;justify-content:center;align-items:flex-start}
+.platform-modal-card{position:relative;width:min(620px,100%);margin:30px auto;background:#fff;border-radius:18px;padding:24px}.modal-close{position:absolute;right:14px;top:12px;border:0;background:#eef4f8;width:34px;height:34px;border-radius:50%;font-size:1.4rem}
+.platform-modal-card label{display:block;font-weight:700;margin:13px 0 6px}.platform-modal-card input,.platform-modal-card select{width:100%;padding:12px;border:1px solid #cbd8e2;border-radius:10px}.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.field-error{min-height:16px;color:#b42318;font-size:.78rem;margin-top:3px}.field-help{font-size:.8rem;color:#667786}.registration-price-box{margin:14px 0;padding:12px;background:#eef6fb;border-radius:11px}.platform-submit{width:100%;margin-top:12px}
+.modal-status{margin-top:10px;padding:10px;background:#f4f7fb;display:none}.modal-status.show{display:block}.payment-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.payment-summary div{background:#f4f7fb;padding:10px;border-radius:10px}.payment-summary span{display:block;font-size:.72rem;color:#667786}
+@media(max-width:620px){.contact-grid,.payment-summary{grid-template-columns:1fr}}
+</style>
+</head>
 <body>
-<header><div class="nav"><a class="logo" href="#">📚 Salone Class Room</a><nav><a href="#school">Secondary</a><a href="#tertiary">Tertiary</a><a href="#contact">Contact</a></nav></div></header>
-<div class="hero"><h1>Welcome to Salone Class Room</h1><p>AI-powered learning support for Sierra Leonean students: explanations, practice questions, assignments and research guidance.</p></div>
-<div class="container">
-<section id="school"><h2>Secondary School Section</h2>
-<h3>Junior Secondary School (JSS) & BECE</h3>
-<div class="tool"><h4>JSS AI Tutor</h4><input id="jss-tutor" placeholder="e.g. Explain photosynthesis"><button onclick="tutor('jss')">Ask AI Tutor</button><div id="jss-tutor-out" class="out"></div></div>
-<div class="tool"><h4>BECE Practice Questions</h4><input id="jss-quiz" placeholder="e.g. Integrated Science"><button onclick="quiz('jss')">Generate 5 Questions</button><div id="jss-quiz-out" class="out"></div></div>
-<div class="tool"><h4>JSS Assignment Solver</h4><textarea id="jss-solver" rows="4" placeholder="Type your assignment"></textarea><button onclick="solve('jss')">Solve with AI</button><div id="jss-solver-out" class="out"></div></div>
-<h3>Senior Secondary School (SSS) & WASSCE</h3>
-<div class="tool"><h4>SSS AI Tutor</h4><input id="sss-tutor" placeholder="e.g. Explain quadratic equations"><button onclick="tutor('sss')">Ask AI Tutor</button><div id="sss-tutor-out" class="out"></div></div>
-<div class="tool"><h4>WASSCE Practice Questions</h4><input id="sss-quiz" placeholder="e.g. Biology"><button onclick="quiz('sss')">Generate 5 Questions</button><div id="sss-quiz-out" class="out"></div></div>
-<div class="tool"><h4>SSS Assignment Solver</h4><textarea id="sss-solver" rows="4" placeholder="Type your assignment"></textarea><button onclick="solve('sss')">Solve with AI</button><div id="sss-solver-out" class="out"></div></div>
-<div class="note"><b>Note:</b> AI-generated practice questions are learning materials and are not represented as official WAEC past questions.</div>
-</section>
-<section id="tertiary"><h2>Tertiary Education</h2>
-<div class="tool"><h4>AI Module & Topic Tutor</h4><input id="tertiary-tutor" placeholder="e.g. BUS 301 Strategic Management"><button onclick="tutor('tertiary')">Run Module Tutor</button><div id="tertiary-tutor-out" class="out"></div></div>
-<div class="tool"><h4>Assignment & Research Problem Solver</h4><textarea id="tertiary-solver" rows="4" placeholder="Enter assignment or academic problem"></textarea><button onclick="solve('tertiary')">Generate Academic Assistance</button><div id="tertiary-solver-out" class="out"></div></div>
-<h3>Dissertation & Thesis Guidance</h3><div class="note">Use AI to support your learning and structure. Verify sources, follow your institution's rules and consult your supervisor.</div>
-<div class="tool"><h4>Research Topic Generator</h4><input id="research-area" placeholder="e.g. Public Health"><button onclick="research()">Generate Topics</button><div id="research-out" class="out"></div></div>
-<div class="tool"><h4>Proposal Framework</h4><input id="proposal-topic" placeholder="Research topic"><input id="proposal-location" placeholder="Study location"><button onclick="proposal()">Create Framework</button><div id="proposal-out" class="out"></div></div>
-<div class="tool"><h4>Chapter Guidance</h4><input id="chapter-topic" placeholder="Dissertation topic"><select id="chapter"><option value="">Select chapter</option><option>Chapter 1: Introduction</option><option>Chapter 2: Literature Review</option><option>Chapter 3: Methodology</option><option>Chapter 4: Analysis & Discussion</option><option>Chapter 5: Conclusion & Recommendations</option></select><button onclick="chapter()">Get Guidance</button><div id="chapter-out" class="out"></div></div>
-</section>
-<section id="contact"><h2>Comments & Recommendations</h2><div class="tool"><textarea id="feedback" rows="4" placeholder="Write your feedback"></textarea><button onclick="feedback()">Send Feedback</button></div></section>
+<div class="topbar">Built for Sierra Leonean learners and teachers • Text-first • Mobile-friendly</div>
+<nav class="nav"><div class="wrap nav-in"><a class="brand" href="#home"><span class="mark">SC</span>Salone Class Room</a><button aria-label="Open menu" class="mobile" onclick="toggleMenu()">Menu</button><ul class="links" id="navLinks"><li><a href="#students">Students</a></li><li></li><li><a href="#research">Research</a></li><li></li><li></li></ul></div></nav>
+<header class="hero welcome-hero" id="home">
+<div class="wrap welcome-grid">
+<div aria-label="Sierra Leone flag" class="corner-flag corner-flag-left">
+<span class="flag-green"></span><span class="flag-white"></span><span class="flag-blue"></span>
 </div>
-<footer>© 2026 Salone Class Room & Pytbion Technologies · <a href="mailto:pytbion26@gmail.com">pytbion26@gmail.com</a></footer>
+<div aria-label="Sierra Leone flag" class="corner-flag corner-flag-right">
+<span class="flag-green"></span><span class="flag-white"></span><span class="flag-blue"></span>
+</div>
+<div class="welcome-copy">
+<span class="eyebrow">LEARN • TEACH • GROW</span>
+<h1 class="stacked-welcome"><span class="welcome-line">Welcome</span><span class="to-line">to</span><span class="brand-line">Salone Class Room</span></h1>
+<p class="brought-by">Brought to you by <strong>Pytbion Technology</strong></p>
+<p class="welcome-tagline">Your classroom in your palm, laptop, or desktop.</p>
+<p class="welcome-lead">
+        Our goal is to make education easier to understand, more accessible and more useful for everyone.
+        Salone Class Room brings practical learning support closer to students, teachers and university students, wherever they are.
+      </p>
+<div class="welcome-benefits top-learning-benefits">
+<div><strong>Learn with confidence</strong><span>Get simple explanations for difficult topics.</span></div>
+<div><strong>Practise for exams</strong><span>Prepare for BECE and WASSCE and discover your weak areas.</span></div>
+<div><strong>Support for teachers</strong><span>Get curriculum guidance, lesson note support and classroom ideas.</span></div>
+<div><strong>University support</strong><span>Get help with research, dissertations, dissertation defense preparation and study guidance.</span></div>
+</div>
+<p class="welcome-message">
+        Whether you are learning a new topic, preparing for an examination, teaching a class or working on a dissertation,
+        Salone Class Room is here to guide you step by step. Learn today. Build tomorrow.
+      </p>
+<div class="actions">
+<a class="btn btn-gold" href="#students">Click here to start learning</a>
+</div>
+</div>
+</div>
+</header>
+<div class="wrap quick"><div class="quick-grid"><a href="#students"><strong>Student Tutor</strong><span>Understand difficult topics</span></a><a href="#research"><strong>Research Guide</strong><span>Structure original academic work</span></a></div></div>
+<div class="platform-announcement" hidden="" id="platformAnnouncement">
+<div class="announcement-inner"><strong>Announcement</strong><span id="platformAnnouncementText"></span></div>
+</div><main class="wrap">
+<div class="learning-journey" id="learningJourney">
+<span>Primary School Pupils</span>
+<b>›</b>
+<span>Junior &amp; Senior Secondary School Students</span>
+<b>›</b>
+<span>Teachers</span>
+<b>›</b>
+<span>University Students</span>
+</div><section class="section edu-primary ribbon-section" id="primary"><div class="ribbon-intro"><div class="section-ribbon">Primary School Pupils</div><p class="section-ribbon-description">This section is for Primary School Pupils in Classes 1–6. It provides simple learning support, assignment guidance and NPSE preparation for Class 6 pupils.</p></div><div class="audience-note">For Primary School Pupils</div>
+<div class="grid cards primary-grid">
+<article class="card tool-card primary-card">
+<span class="tool-badge">Classes 1–6</span>
+<h3>Primary Text Tutor</h3>
+<p>
+        Ask a question from your primary school subject and receive a clear, age-appropriate explanation.
+        Class 6 pupils can also use this tool to strengthen difficult topics before NPSE.
+      </p>
+<label for="primaryClass">Choose your class</label>
+<select id="primaryClass">
+<option value="">Select class</option>
+<option>Class 1</option>
+<option>Class 2</option>
+<option>Class 3</option>
+<option>Class 4</option>
+<option>Class 5</option>
+<option>Class 6</option>
+</select>
+<label for="primarySubject">Choose your subject</label>
+<select id="primarySubject">
+<option value="">Select subject</option>
+<option>English Language</option>
+<option>Mathematics (including Financial Literacy)</option>
+<option>Civic Education (Civics)</option>
+<option>Social Studies (including Environmental Studies)</option>
+<option>Physical &amp; Health Education</option>
+<option>Music &amp; Expressive Arts</option>
+<option>French Appreciation</option>
+<option>Science (including Basic Technology &amp; How Things Work)</option>
+<option>ICT Literacy</option>
+</select>
+<label for="primaryQuestion">What would you like to understand?</label>
+<textarea id="primaryQuestion" placeholder="Example: Explain fractions to me using simple examples." rows="4"></textarea>
+<button class="btn btn-blue" type="button">Click here for your explanation</button>
+</article>
+<article class="card tool-card primary-card npse-card">
+<span class="tool-badge">Class 6 • NPSE</span>
+<h3>NPSE Practice</h3>
+<p>
+        Let’s practise some NPSE questions. Choose a paper and enter the topic you want to practise.
+        Answer carefully and use your mistakes to identify the areas you need to revise.
+      </p>
+<label for="npseSubject">Choose your NPSE paper</label>
+<select id="npseSubject">
+<option value="">Select NPSE paper</option>
+<option>Mathematics</option>
+<option>English Language</option>
+<option>Quantitative Aptitude</option>
+<option>Verbal Aptitude</option>
+<option>General Paper</option>
+</select>
+<label for="npseTopic">Topic you would like to practise</label>
+<input id="npseTopic" placeholder="Example: Fractions, synonyms, number patterns, science or social studies" type="text"/>
+<button class="btn btn-blue" onclick="startNPSEQuiz()" type="button">Click here to start your NPSE practice</button>
+<div aria-live="polite" class="quiz-area" id="npseQuizArea"></div>
+</article>
+<article class="card tool-card primary-card">
+<span class="tool-badge">Homework Support</span>
+<h3>Primary Assignment Learning Guide</h3>
+<p>
+        If you are finding homework or classwork difficult, enter the question here.
+        The guide should help you understand the steps instead of simply copying an answer.
+      </p>
+<label for="primaryAssignmentSubject">Choose your subject</label>
+<select id="primaryAssignmentSubject">
+<option value="">Select subject</option>
+<option>English Language</option>
+<option>Mathematics</option>
+<option>Civic Education</option>
+<option>Social Studies</option>
+<option>Physical &amp; Health Education</option>
+<option>Music &amp; Expressive Arts</option>
+<option>French Appreciation</option>
+<option>Science</option>
+<option>ICT Literacy</option>
+</select>
+<label for="primaryAssignment">Type the assignment given to you</label>
+<textarea id="primaryAssignment" placeholder="Type the assignment given to you here" rows="4"></textarea>
+<button class="btn btn-blue" type="button">Click here for your step-by-step guide</button>
+</article>
+</div>
+</section>
+</main>
+<section class="section ribbon-section" id="students"><div class="ribbon-intro"><div class="section-ribbon">Junior Secondary School Students</div><p class="section-ribbon-description">This section is for Junior Secondary School Students in JSS 1–3. Use it for subject explanations, BECE practice and guided assignment support.</p></div><div class="audience-note">For Junior Secondary School Students</div>
+<div class="level-block" id="student-jss"><h3 class="subsection-title">Junior Secondary School (JSS) &amp; BECE</h3><div class="grid">
+<article class="card"><span class="step">1</span><h3>JSS Text Tutor</h3><p class="guide">Choose your class and subject, type the word or topic you do not understand, then click the blue button for a simple explanation.</p><div class="row"><div><label>Class</label><select id="jssClass"><option>JSS 1</option><option>JSS 2</option><option>JSS 3</option></select></div><div><label>Subject</label><select data-jss-subject="" id="jssSubject"><option value="">Select subject</option><option value="English Language">English Language</option><option value="Mathematics">Mathematics</option><option value="Integrated Science">Integrated Science</option><option value="Social Studies">Social Studies</option><option value="Civic Education">Civic Education</option><option value="Agricultural Science">Agricultural Science</option><option value="Business Studies">Business Studies</option><option value="Religious and Moral Education">Religious and Moral Education</option><option value="Physical and Health Education">Physical and Health Education</option><option value="Creative Practical Arts">Creative Practical Arts</option><option value="Information and Communication Technology (ICT)">Information and Communication Technology (ICT)</option><option value="French">French</option><option value="Krio">Krio</option></select></div></div><label>Word or topic</label><input id="jssTopic" placeholder="Example: force"/><button class="btn btn-blue" onclick="curriculumExplain('jss','jssClass','jssSubject','jssTopic','jssTutor')">Click here for your explanation</button><div class="output" id="jssTutor"></div></article>
+<article class="card"><span class="step">2</span><h3>BECE Practice</h3>
+<p class="guide"><strong>Let’s practise some objective questions.</strong> Choose your subject and type the topic you want to practise. You will receive 10 questions at a time. Select one answer for each question. You will immediately see whether your answer is correct or wrong. At the end, you will see your total correct answers, total wrong answers and the areas you need to revise.</p>
+<label>Subject</label><select data-jss-subject="" id="jssQuizSubject"><option value="">Select subject</option><option value="English Language">English Language</option><option value="Mathematics">Mathematics</option><option value="Integrated Science">Integrated Science</option><option value="Social Studies">Social Studies</option><option value="Civic Education">Civic Education</option><option value="Agricultural Science">Agricultural Science</option><option value="Business Studies">Business Studies</option><option value="Religious and Moral Education">Religious and Moral Education</option><option value="Physical and Health Education">Physical and Health Education</option><option value="Creative Practical Arts">Creative Practical Arts</option><option value="Information and Communication Technology (ICT)">Information and Communication Technology (ICT)</option><option value="French">French</option><option value="Krio">Krio</option></select>
+<label>Topic you would like to practise</label><input id="jssQuizTopic" placeholder="Example: photosynthesis"/>
+<button class="btn btn-blue" onclick="startQuiz('jss')">Click here to start your BECE practice</button>
+<div class="output" id="jssQuiz"></div>
+</article>
+<article class="card"><span class="step">3</span><h3>Assignment Learning Guide</h3><p class="guide">Paste the question. You will receive clues, steps and an explanation that helps you write your own answer.</p><label>Type the assignment given to you</label><textarea id="jssAssignment" placeholder="Type the assignment given to you here"></textarea><button class="btn btn-blue" onclick="demoResult('jssGuide','assignment guide')">Click here for your step-by-step guide</button><div class="output" id="jssGuide"></div></article>
+</div></div>
+<div class="level-block" id="student-sss" style="margin-top:42px"><div class="subsection-ribbon-intro"><div class="section-ribbon subsection-ribbon">Senior Secondary School Students</div><p class="section-ribbon-description">Support for SSS students to understand difficult topics, practise WASSCE questions and improve examination readiness.</p></div><div class="grid">
+<article class="card"><span class="step">1</span><h3>SSS Text Tutor</h3><p class="guide">Choose your class and subject, type the word or topic you do not understand, then click the blue button for an explanation based on that subject.</p><div class="row"><div><label>Class</label><select id="sssClass"><option>SSS 1</option><option>SSS 2</option><option>SSS 3</option></select></div><div><label>Stream (optional)</label><select data-sss-stream="" data-target="sssSubject" id="sssStream"><option value="">Select stream</option><option value="Sciences &amp; Technologies">Sciences &amp; Technologies</option><option value="Mathematics &amp; Numeracy">Mathematics &amp; Numeracy</option><option value="Economics, Business &amp; Entrepreneurial Studies">Economics, Business &amp; Entrepreneurial Studies</option><option value="Languages &amp; Literatures">Languages &amp; Literatures</option><option value="Social &amp; Cultural Studies">Social &amp; Cultural Studies</option></select></div></div><label>Subject</label><select id="sssSubject"><option value="">Select subject</option><option value="Integrated Science">Integrated Science</option><option value="Biology">Biology</option><option value="Chemistry">Chemistry</option><option value="Computer Science">Computer Science</option><option value="Agricultural Science">Agricultural Science</option><option value="ICT">ICT</option><option value="Robotics">Robotics</option><option value="Physics">Physics</option><option value="Environmental Science">Environmental Science</option><option value="Health Sciences">Health Sciences</option><option value="Food Security">Food Security</option><option value="Engineering Science">Engineering Science</option><option value="Physical Health Education">Physical Health Education</option><option value="Genetics and Bio-Engineering">Genetics and Bio-Engineering</option><option value="Adolescent Health and Life Skills">Adolescent Health and Life Skills</option><option value="Computer Literacy">Computer Literacy</option><option value="Popular Science">Popular Science</option><option value="Fundamentals of Mathematics">Fundamentals of Mathematics</option><option value="Further Mathematics">Further Mathematics</option><option value="Statistics and Probability">Statistics and Probability</option><option value="Calculus">Calculus</option><option value="Mathematics for Business and Enterprise">Mathematics for Business and Enterprise</option><option value="Applications of Mathematics for Coding">Applications of Mathematics for Coding</option><option value="Mathematics for STEAMM">Mathematics for STEAMM</option><option value="Computer Mathematics">Computer Mathematics</option><option value="Mathematics in Other Disciplines">Mathematics in Other Disciplines</option><option value="Introductory Statistics and Probability">Introductory Statistics and Probability</option><option value="Functional Mathematics">Functional Mathematics</option><option value="Principles of Economics">Principles of Economics</option><option value="Entrepreneurship">Entrepreneurship</option><option value="Principles of Accounting">Principles of Accounting</option><option value="Business Management Studies">Business Management Studies</option><option value="Principles of Commerce">Principles of Commerce</option><option value="Principles of Marketing">Principles of Marketing</option><option value="Business Accounting">Business Accounting</option><option value="Clerical Office Studies">Clerical Office Studies</option><option value="Insurance Management">Insurance Management</option><option value="Business Economics">Business Economics</option><option value="Business and Society">Business and Society</option><option value="Customer Relationship Management">Customer Relationship Management</option><option value="Micro Small and Medium Enterprise Management">Micro Small and Medium Enterprise Management</option><option value="Business Ethics">Business Ethics</option><option value="English Language">English Language</option><option value="African Literature">African Literature</option><option value="English Literature">English Literature</option><option value="French as a Foreign Language">French as a Foreign Language</option><option value="Sierra Leonean Literature">Sierra Leonean Literature</option><option value="Mende Language">Mende Language</option><option value="Kathemne Language">Kathemne Language</option><option value="Hulimba Language">Hulimba Language</option><option value="Krio Language">Krio Language</option><option value="Creative Writing">Creative Writing</option><option value="Business English">Business English</option><option value="French for Tourism">French for Tourism</option><option value="Technical Writing">Technical Writing</option><option value="English for STEAMM">English for STEAMM</option><option value="French for Business and Marketing">French for Business and Marketing</option><option value="Everyday Basic French">Everyday Basic French</option><option value="Popular Literature Appreciation">Popular Literature Appreciation</option><option value="Arabic Language">Arabic Language</option><option value="Fula">Fula</option><option value="Sierra Leone History">Sierra Leone History</option><option value="African History">African History</option><option value="Geography">Geography</option><option value="Music">Music</option><option value="Dance and Drama Studies">Dance and Drama Studies</option><option value="Politics and Governance">Politics and Governance</option><option value="Social Studies and Civics">Social Studies and Civics</option><option value="Religious and Moral Education">Religious and Moral Education</option><option value="Geography and the Environment">Geography and the Environment</option><option value="Music as an Applied Subject">Music as an Applied Subject</option><option value="Entertainment Industry">Entertainment Industry</option><option value="Derivatives of Religious and Moral Education">Derivatives of Religious and Moral Education</option><option value="Dance Performance and Appreciation">Dance Performance and Appreciation</option><option value="Mining Industry and the Environment">Mining Industry and the Environment</option><option value="Fishing Industry and the Environment">Fishing Industry and the Environment</option><option value="Tourism and Conservation">Tourism and Conservation</option><option value="Living with Religious and Moral Education">Living with Religious and Moral Education</option></select><label>Word or topic</label><input id="sssTopic" placeholder="Example: force"/><button class="btn btn-blue" onclick="curriculumExplain('sss','sssClass','sssSubject','sssTopic','sssTutor')">Click here for your explanation</button><div class="output" id="sssTutor"></div></article>
+<article class="card"><span class="step">2</span><h3>WASSCE Practice</h3>
+<p class="guide"><strong>Let’s practise some objective questions.</strong> Choose your stream if necessary, select your subject and type the topic you want to practise. You will receive 10 questions at a time. Select one answer for each question. You will immediately see whether your answer is correct or wrong. At the end, you will see your total correct answers, total wrong answers and the areas you need to revise.</p>
+<label>Stream (optional)</label><select data-sss-stream="" data-target="sssQuizSubject" id="sssQuizStream"><option value="">Select stream</option><option value="Sciences &amp; Technologies">Sciences &amp; Technologies</option><option value="Mathematics &amp; Numeracy">Mathematics &amp; Numeracy</option><option value="Economics, Business &amp; Entrepreneurial Studies">Economics, Business &amp; Entrepreneurial Studies</option><option value="Languages &amp; Literatures">Languages &amp; Literatures</option><option value="Social &amp; Cultural Studies">Social &amp; Cultural Studies</option></select>
+<label>Subject</label><select id="sssQuizSubject"><option value="">Select subject</option><option value="Integrated Science">Integrated Science</option><option value="Biology">Biology</option><option value="Chemistry">Chemistry</option><option value="Computer Science">Computer Science</option><option value="Agricultural Science">Agricultural Science</option><option value="ICT">ICT</option><option value="Robotics">Robotics</option><option value="Physics">Physics</option><option value="Environmental Science">Environmental Science</option><option value="Health Sciences">Health Sciences</option><option value="Food Security">Food Security</option><option value="Engineering Science">Engineering Science</option><option value="Physical Health Education">Physical Health Education</option><option value="Genetics and Bio-Engineering">Genetics and Bio-Engineering</option><option value="Adolescent Health and Life Skills">Adolescent Health and Life Skills</option><option value="Computer Literacy">Computer Literacy</option><option value="Popular Science">Popular Science</option><option value="Fundamentals of Mathematics">Fundamentals of Mathematics</option><option value="Further Mathematics">Further Mathematics</option><option value="Statistics and Probability">Statistics and Probability</option><option value="Calculus">Calculus</option><option value="Mathematics for Business and Enterprise">Mathematics for Business and Enterprise</option><option value="Applications of Mathematics for Coding">Applications of Mathematics for Coding</option><option value="Mathematics for STEAMM">Mathematics for STEAMM</option><option value="Computer Mathematics">Computer Mathematics</option><option value="Mathematics in Other Disciplines">Mathematics in Other Disciplines</option><option value="Introductory Statistics and Probability">Introductory Statistics and Probability</option><option value="Functional Mathematics">Functional Mathematics</option><option value="Principles of Economics">Principles of Economics</option><option value="Entrepreneurship">Entrepreneurship</option><option value="Principles of Accounting">Principles of Accounting</option><option value="Business Management Studies">Business Management Studies</option><option value="Principles of Commerce">Principles of Commerce</option><option value="Principles of Marketing">Principles of Marketing</option><option value="Business Accounting">Business Accounting</option><option value="Clerical Office Studies">Clerical Office Studies</option><option value="Insurance Management">Insurance Management</option><option value="Business Economics">Business Economics</option><option value="Business and Society">Business and Society</option><option value="Customer Relationship Management">Customer Relationship Management</option><option value="Micro Small and Medium Enterprise Management">Micro Small and Medium Enterprise Management</option><option value="Business Ethics">Business Ethics</option><option value="English Language">English Language</option><option value="African Literature">African Literature</option><option value="English Literature">English Literature</option><option value="French as a Foreign Language">French as a Foreign Language</option><option value="Sierra Leonean Literature">Sierra Leonean Literature</option><option value="Mende Language">Mende Language</option><option value="Kathemne Language">Kathemne Language</option><option value="Hulimba Language">Hulimba Language</option><option value="Krio Language">Krio Language</option><option value="Creative Writing">Creative Writing</option><option value="Business English">Business English</option><option value="French for Tourism">French for Tourism</option><option value="Technical Writing">Technical Writing</option><option value="English for STEAMM">English for STEAMM</option><option value="French for Business and Marketing">French for Business and Marketing</option><option value="Everyday Basic French">Everyday Basic French</option><option value="Popular Literature Appreciation">Popular Literature Appreciation</option><option value="Arabic Language">Arabic Language</option><option value="Fula">Fula</option><option value="Sierra Leone History">Sierra Leone History</option><option value="African History">African History</option><option value="Geography">Geography</option><option value="Music">Music</option><option value="Dance and Drama Studies">Dance and Drama Studies</option><option value="Politics and Governance">Politics and Governance</option><option value="Social Studies and Civics">Social Studies and Civics</option><option value="Religious and Moral Education">Religious and Moral Education</option><option value="Geography and the Environment">Geography and the Environment</option><option value="Music as an Applied Subject">Music as an Applied Subject</option><option value="Entertainment Industry">Entertainment Industry</option><option value="Derivatives of Religious and Moral Education">Derivatives of Religious and Moral Education</option><option value="Dance Performance and Appreciation">Dance Performance and Appreciation</option><option value="Mining Industry and the Environment">Mining Industry and the Environment</option><option value="Fishing Industry and the Environment">Fishing Industry and the Environment</option><option value="Tourism and Conservation">Tourism and Conservation</option><option value="Living with Religious and Moral Education">Living with Religious and Moral Education</option></select>
+<label>Topic you would like to practise</label><input id="sssQuizTopic" placeholder="Example: quadratic equations"/>
+<button class="btn btn-blue" onclick="startQuiz('sss')">Click here to start your WASSCE practice</button>
+<div class="output" id="sssQuiz"></div>
+</article>
+<article class="card"><span class="step">3</span><h3>Assignment Learning Guide</h3><p class="guide">Get an outline, key ideas and steps. Use them to prepare your own complete response.</p><label>Type the assignment given to you</label><textarea placeholder="Type the assignment given to you here"></textarea><button class="btn btn-blue" onclick="demoResult('sssGuide','assignment guide')">Click here for your step-by-step guide</button><div class="output" id="sssGuide"></div></article>
+<article class="card"><span class="step">4</span><h3>WASSCE Essay Question &amp; Answer Reviewer</h3><div class="essay-review-guide tool-use-guide">
+<strong>How to use this WASSCE reviewer</strong>
+<p>
+    Choose the WASSCE subject first. Then type or paste the essay, passage, source material or structured question content,
+    followed by the exact question and the answer written by the student.
+  </p>
+<p>
+    The reviewer will compare the source material, the question and the student's answer. It will identify what was answered
+    correctly, what is missing or inaccurate, and then provide a clearer suggested answer for learning and revision.
+  </p>
+</div><div class="essay-review-fields">
+<label for="wassceEssaySubject">WASSCE subject</label>
+<select id="wassceEssaySubject"><option value="">Select WAEC Sierra Leone subject</option><option>Agricultural Science</option><option>Biology</option><option>Business Management</option><option>Chemistry</option><option>Christian Religious Studies</option><option>Civic Education</option><option>Commerce</option><option>Economics</option><option>English Language</option><option>Geography</option><option>Government</option><option>Health Science</option><option>History</option><option>Home Management</option><option>Islamic Studies</option><option>Literature-in-English</option><option>Mathematics</option><option>Physical Education</option><option>Physics</option><option>Principles of Cost Accounting</option><option>Technical Drawing</option><option>Visual Arts</option></select><p class="waec-sl-note">The subjects in this list are restricted to subjects officially listed by WAEC Sierra Leone for WASSCE candidates. This reviewer is intended for essay, theory, structured or extended-response questions.</p>
+<label for="essayPassageInput">Essay, passage or source material</label>
+<textarea id="essayPassageInput" placeholder="Type or paste the essay, passage, source material, case study or other information connected to the question" rows="10"></textarea>
+<label for="essayQuestionInput">Question</label>
+<textarea id="essayQuestionInput" placeholder="Type the exact WASSCE-style essay or structured question here" rows="5"></textarea>
+<label for="essayAnswerInput">Student's answer</label>
+<textarea id="essayAnswerInput" placeholder="Type or paste the student's answer here" rows="8"></textarea>
+<button class="btn btn-blue" id="reviewEssayAnswerBtn" type="button">
+    Click here to compare and get the correct answer
+  </button>
+<div aria-live="polite" class="teacher-result-note" id="essayReviewMessage"></div>
+</div><p class="guide">Paste your own draft to receive feedback on clarity, structure, grammar and missing ideas.</p><button class="btn btn-blue" onclick="demoResult('sssReview','writing feedback')">Click here for feedback on your writing</button><div class="output" id="sssReview"></div></article>
+</div></div>
+<div class="notice"><strong>Note:</strong> Answers are displayed for students to read and copy into their exercise books. Downloads are not provided.</div>
+</section>
+<section class="section ribbon-section" id="teachers"><div class="ribbon-intro">
+<div class="section-ribbon">Teachers</div>
+<p class="section-ribbon-description">
+      This section is for teachers. Choose the school level you teach, and Salone Class Room will show only the classes,
+      subjects and teaching tools for that level.
+    </p>
+</div>
+<div class="teacher-single-wrap">
+<div class="teacher-selector-card">
+<h3>Choose your teacher category</h3>
+<p>
+      Select the school level you teach. Only the classes, streams and subjects for that level will appear.
+    </p>
+<label for="teacherCategoryOnly">Teacher category</label>
+<select id="teacherCategoryOnly">
+<option value="">Select teacher category</option>
+<option value="primary">Primary School Teacher</option>
+<option value="jss">Junior Secondary School (JSS) Teacher</option>
+<option value="sss">Senior Secondary School (SSS) Teacher</option>
+</select>
+</div>
+<div class="teacher-choice-panel" hidden="" id="teacherChoicePanel">
+<div class="teacher-form-grid">
+<div>
+<label for="teacherClassOnly">Class</label>
+<select id="teacherClassOnly"><option value="">Select class</option></select>
+</div>
+<div hidden="" id="teacherStreamOnlyWrap">
+<label for="teacherStreamOnly">SSS stream</label>
+<select id="teacherStreamOnly"><option value="">Select stream</option></select>
+</div>
+<div>
+<label for="teacherSubjectOnly">Subject</label>
+<select id="teacherSubjectOnly"><option value="">Select subject</option></select>
+</div>
+</div>
+<div class="prepare-teach-box">
+<h3>Prepare to Teach</h3>
+<p>
+        Choose what you want to prepare. Curriculum / Scheme of Work Planning comes first because lesson preparation should follow the prescribed syllabus and learning outcomes.
+      </p>
+<label for="teacherPrepareType">What do you want to prepare?</label>
+<select id="teacherPrepareType">
+<option value="">Select one</option>
+<option value="scheme">1. Curriculum / Scheme of Work Planning</option>
+<option value="lesson">2. Lesson Note / Lesson Plan Preparation</option>
+</select>
+</div>
+<div class="teacher-prep-form" hidden="" id="schemeForm">
+<div class="prep-heading">
+<h3>Curriculum / Scheme of Work Planning</h3>
+<p>
+          Use the official syllabus to plan the teaching sequence. The structure below follows MBSSE's curriculum elements: learning outcomes, content, pedagogy, assessment and learning/teaching resources.
+        </p>
+</div>
+<div class="teacher-form-grid">
+<div>
+<label for="schemeTerm">Term</label>
+<select id="schemeTerm">
+<option value="">Select term</option>
+<option>Term 1</option>
+<option>Term 2</option>
+<option>Term 3</option>
+</select>
+</div>
+<div>
+<label for="schemeWeek">Week</label>
+<input id="schemeWeek" placeholder="Example: Week 3" type="text"/>
+</div>
+<div>
+<label for="schemePeriods">Number of periods</label>
+<input id="schemePeriods" max="20" min="1" placeholder="Example: 3" type="number"/>
+</div>
+</div>
+<label for="schemeUnit">Theme / Unit / Topic</label>
+<input id="schemeUnit" placeholder="Enter the theme, unit or topic from the prescribed syllabus" type="text"/>
+<label for="schemeOutcome">Specific Learning Outcome(s)</label>
+<textarea id="schemeOutcome" placeholder="What should pupils/students be able to know, understand or do by the end of this topic?" rows="3"></textarea>
+<label for="schemeContent">Content / Key Ideas</label>
+<textarea id="schemeContent" placeholder="Enter the syllabus content or key ideas to be covered" rows="3"></textarea>
+<label for="schemePedagogy">Teaching Style / Pedagogy</label>
+<textarea id="schemePedagogy" placeholder="Example: demonstration, guided practice, discussion, pair work, group work" rows="3"></textarea>
+<label for="schemeAssessment">Assessment Method(s)</label>
+<textarea id="schemeAssessment" placeholder="How will you check whether learners achieved the learning outcome?" rows="3"></textarea>
+<label for="schemeResources">Learning and Teaching Resources</label>
+<textarea id="schemeResources" placeholder="Example: textbook, chalkboard, flash cards, locally available materials" rows="3"></textarea>
+<button class="btn btn-blue" id="prepareSchemeBtn" type="button">
+        Click here to prepare your scheme of work
+      </button>
+</div>
+<div class="teacher-prep-form" hidden="" id="lessonForm">
+<div class="prep-heading">
+<h3>Lesson Note / Lesson Plan Preparation</h3>
+<p>
+          This follows the structure used in current MBSSE teacher guides: lesson title, learning outcome, key concepts, what you need and what you do, with basic school details added for practical lesson preparation.
+        </p>
+</div>
+<div class="teacher-form-grid">
+<div>
+<label for="lessonDate">Date</label>
+<input id="lessonDate" type="date"/>
+</div>
+<div>
+<label for="lessonTerm">Term</label>
+<select id="lessonTerm">
+<option value="">Select term</option>
+<option>Term 1</option>
+<option>Term 2</option>
+<option>Term 3</option>
+</select>
+</div>
+<div>
+<label for="lessonDuration">Duration</label>
+<select id="lessonDuration">
+<option value="">Select duration</option>
+<option>30 minutes</option>
+<option>40 minutes</option>
+<option>45 minutes</option>
+<option>60 minutes</option>
+<option>80 minutes</option>
+</select>
+</div>
+</div>
+<label for="lessonTitle">Lesson Title / Topic</label>
+<input id="lessonTitle" placeholder="Enter the lesson title or topic" type="text"/>
+<label for="lessonOutcome">Learning Outcome(s)</label>
+<textarea id="lessonOutcome" placeholder="What should learners achieve by the end of the lesson?" rows="3"></textarea>
+<label for="lessonConcepts">Key Concepts</label>
+<textarea id="lessonConcepts" placeholder="Enter the important ideas, terms or concepts learners need to understand" rows="3"></textarea>
+<label for="lessonMaterials">What You Need — Teaching and Learning Materials</label>
+<textarea id="lessonMaterials" placeholder="Example: chalkboard, textbook, chart, flash cards, specimens or locally available materials" rows="3"></textarea>
+<label for="lessonSteps">What You Do — Teaching and Learning Steps</label>
+<textarea id="lessonSteps" placeholder="Describe the teaching sequence: introduction, teacher/learner activities, guided practice, questions, assessment and lesson close" rows="5"></textarea>
+<label for="lessonInclusion">Learner Support / Inclusion</label>
+<textarea id="lessonInclusion" placeholder="How will you support learners who need extra help or have different learning needs?" rows="3"></textarea>
+<button class="btn btn-blue" id="prepareLessonBtn" type="button">
+        Click here to prepare your lesson note
+      </button>
+</div>
+<div aria-live="polite" class="teacher-result-note" id="teacherOnlyMessage"></div>
+</div>
+</div>
+</section><section class="section edu-university ribbon-section" id="research"><div class="ribbon-intro"><div class="section-ribbon">University Students</div><p class="section-ribbon-description">This section is for university students. Use it for academic learning, research topics, proposals, dissertation guidance and defense preparation.</p></div><div class="audience-note">For University Students</div>
+<div class="notice integrity">
+<strong>Academic note:</strong> Dissertation requirements can vary by university, faculty, department and programme. Always follow your approved institutional handbook and your supervisor’s instructions.
+  </div>
+<div class="grid">
+<article class="card">
+<h3>Advanced Text Lecturer</h3>
+<p class="guide">Enter a course, module or difficult concept and state the level of explanation you need.</p><div class="university-focus-field">
+<label for="universityLecturerFocus">What should the Lecturer focus on or explain to you today?</label>
+<textarea id="universityLecturerFocus" placeholder="Type the topic, concept, question or area you want the Lecturer to explain" rows="4"></textarea>
+</div>
+<label>Course/module and topic</label>
+<input placeholder="Example: BUS 301 — strategic analysis"/>
+<label>What should the lecturer focus on?</label>
+<textarea placeholder="Explain the models with Sierra Leone examples..."></textarea>
+<button class="btn btn-blue" onclick="demoResult('tertiaryTutor','advanced lesson')">Click here for your lesson explanation</button>
+<div class="output" id="tertiaryTutor"></div>
+</article>
+<article class="card">
+<h3>Topics Finder</h3>
+<p class="guide">Are you looking for a research topic? Type your department or programme of study below. Salone Class Room will help you find suitable research topics related to your area of study, with attention to relevant issues and contexts in Sierra Leone where appropriate.</p>
+<label>Programme of study or department</label>
+<input id="topicProgramme" placeholder="Type your department or programme of study"/>
+<button class="btn btn-blue" onclick="demoResult('topics','research topic suggestions')">Click here to see suggested topics</button>
+<div class="output" id="topics"></div>
+</article>
+<article class="card">
+<h3>Proposal Framework</h3>
+<p class="guide">Use your proposed or approved topic to organise the main elements of your research proposal.</p>
+<label>Research topic</label>
+<input placeholder="Enter your proposed or approved topic"/>
+<label>Research problem</label>
+<textarea placeholder="Briefly describe the problem the study will address..."></textarea>
+<label>Objectives or research questions</label>
+<textarea placeholder="Enter the general/specific objectives or research questions..."></textarea>
+<label>Study area and target population</label>
+<input placeholder="Example: Kono District; smallholder farmers"/>
+<button class="btn btn-blue" onclick="demoResult('proposal','proposal framework')">Click here to prepare your proposal framework</button>
+<div class="output" id="proposal"></div>
+</article>
+<article class="card">
+<h3>Dissertation Problem Guide</h3>
+<p class="guide">Which area are you having difficulty with? Select the chapter and the specific part. The guide should explain what belongs there, what your supervisor may expect, common mistakes and how to improve your own work.</p>
+<label>Chapter</label>
+<select id="dissertationChapter" onchange="updateDissertationTopics()">
+<option value="">Select chapter</option>
+<option value="1">Chapter 1: Introduction</option>
+<option value="2">Chapter 2: Literature Review</option>
+<option value="3">Chapter 3: Methodology</option>
+<option value="4">Chapter 4: Results/Findings and Discussion</option>
+<option value="5">Chapter 5: Summary, Conclusion and Recommendations</option>
+</select>
+<label>Area in which you need help</label>
+<select id="dissertationSubtopic">
+<option value="">Select the chapter first</option>
+</select>
+<label>Your topic</label>
+<input placeholder="Enter your dissertation topic"/>
+<label>Explain your difficulty</label>
+<textarea placeholder="Example: I do not understand how to write the statement of the problem..."></textarea>
+<button class="btn btn-blue" onclick="demoResult('chapter','dissertation guidance')">Click here for guidance</button>
+<div class="output" id="chapter"></div>
+</article>
+<article class="card">
+<h3>Dissertation Defense Guide</h3>
+<p class="guide">Prepare for your oral defense by organising the key parts of your study. The guide should help you explain your research clearly and prepare for likely panel questions.</p>
+<label>Dissertation topic</label>
+<input id="defenseTopic" placeholder="Enter your approved dissertation topic"/>
+<label>Background / context</label>
+<textarea id="defenseBackground" placeholder="Briefly explain the context of the study..."></textarea>
+<label>Problem statement</label>
+<textarea id="defenseProblem" placeholder="What specific problem did the research address?"></textarea>
+<label>General and specific objectives</label>
+<textarea id="defenseObjectives" placeholder="Enter your research objectives..."></textarea>
+<label>Research questions / hypotheses</label>
+<textarea id="defenseQuestions" placeholder="Enter your research questions or hypotheses, where applicable..."></textarea>
+<label>Methodology</label>
+<textarea id="defenseMethodology" placeholder="Design, population, sample, sampling, data collection and analysis..."></textarea>
+<label>Major findings</label>
+<textarea id="defenseFindings" placeholder="Enter the most important findings from your study..."></textarea>
+<label>Conclusion</label>
+<textarea id="defenseConclusion" placeholder="What did the study conclude?"></textarea>
+<label>Recommendations</label>
+<textarea id="defenseRecommendations" placeholder="Enter your main recommendations..."></textarea>
+<label>Limitations of the study</label>
+<textarea id="defenseLimitations" placeholder="State important limitations honestly..."></textarea>
+<button class="btn btn-blue" onclick="demoResult('defenseGuide','dissertation dissertation defense preparation guide')">Click here to prepare your dissertation defense guide</button>
+<div class="output" id="defenseGuide"></div>
+</article>
+</div>
+</section>
 <script>
-const endpoint="/.netlify/functions/ai";
-function display(id,t){let e=document.getElementById(id);e.style.display="block";e.textContent=t}
-async function ask(prompt,out){display(out,"⏳ Salone Class Room AI is thinking...");try{let r=await fetch(endpoint,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:prompt})});let d=await r.json();if(!r.ok)throw new Error(d.error||"Request failed");display(out,d.answer||"No answer returned.")}catch(e){display(out,"⚠️ AI connection problem: "+e.message)}}
-function tutor(x){let v=document.getElementById(x+"-tutor").value.trim();if(!v)return alert("Enter a topic.");let l=x==="jss"?"JSS/BECE":x==="sss"?"SSS/WASSCE":"tertiary";ask("Teach a "+l+" student in Sierra Leone. Explain clearly and accurately: "+v,x+"-tutor-out")}
-function solve(x){let v=document.getElementById(x+"-solver").value.trim();if(!v)return alert("Enter the question.");ask("Help a student understand and solve this step by step. Do not encourage blind copying: "+v,x+"-solver-out")}
-function quiz(x){let v=document.getElementById(x+"-quiz").value.trim();if(!v)return alert("Enter a subject/topic.");ask("Create exactly 5 original multiple-choice practice questions with A-D options, correct answers and short explanations for "+(x==="jss"?"JSS/BECE":"SSS/WASSCE")+" students in Sierra Leone on: "+v+". Do not claim they are official WAEC past questions.",x+"-quiz-out")}
-function research(){let v=document.getElementById("research-area").value.trim();if(!v)return alert("Enter an area.");ask("Generate 8 feasible academic research topics relevant to Sierra Leone in "+v+", with a short rationale for each. Do not invent statistics.","research-out")}
-function proposal(){let t=document.getElementById("proposal-topic").value.trim(),l=document.getElementById("proposal-location").value.trim();if(!t)return alert("Enter a topic.");ask("Develop a research proposal framework for "+t+". Study location: "+(l||"Sierra Leone")+". Include background, problem statement, objectives, questions, significance, scope and methodology. Do not fabricate findings or references.","proposal-out")}
-function chapter(){let t=document.getElementById("chapter-topic").value.trim(),c=document.getElementById("chapter").value;if(!t||!c)return alert("Enter topic and select chapter.");ask("Provide detailed academic guidance for "+c+" of a dissertation titled "+t+". Explain subsections, evidence needed and common mistakes. Do not claim institution-specific rules unless verified.","chapter-out")}
-function feedback(){let m=document.getElementById("feedback").value.trim();if(!m)return alert("Write your feedback.");location.href="mailto:pytbion26@gmail.com?subject="+encodeURIComponent("Salone Class Room Feedback")+"&body="+encodeURIComponent(m)}
-</script></body></html>
+const dissertationTopics = {
+  "1": [
+    "Background to the Study",
+    "Statement of the Problem",
+    "Aim / General Objective",
+    "Specific Objectives",
+    "Research Questions",
+    "Research Hypotheses (where applicable)",
+    "Significance / Justification of the Study",
+    "Scope / Delimitation of the Study",
+    "Limitations of the Study",
+    "Definition of Key Terms",
+    "Organisation of the Study"
+  ],
+  "2": [
+    "Introduction to the Literature Review",
+    "Conceptual Review",
+    "Theoretical Review / Theoretical Framework",
+    "Empirical Literature Review",
+    "Conceptual Framework",
+    "Research Gap",
+    "Summary of the Literature Review",
+    "Referencing and Citation"
+  ],
+  "3": [
+    "Introduction to Methodology",
+    "Research Approach",
+    "Research Design",
+    "Study Area / Setting",
+    "Study Population",
+    "Sample Size",
+    "Sampling Technique / Procedure",
+    "Sources of Data",
+    "Data Collection Methods / Instruments",
+    "Validity and Reliability / Trustworthiness",
+    "Data Collection Procedure",
+    "Data Analysis Methods",
+    "Ethical Considerations",
+    "Limitations of the Methodology"
+  ],
+  "4": [
+    "Introduction to Results / Findings",
+    "Respondent / Participant Characteristics",
+    "Data Presentation",
+    "Tables, Figures and Charts",
+    "Analysis by Research Objective / Question",
+    "Quantitative Results",
+    "Qualitative Findings / Themes",
+    "Interpretation of Findings",
+    "Discussion of Findings",
+    "Relating Findings to Previous Studies",
+    "Relating Findings to Theory / Framework"
+  ],
+  "5": [
+    "Summary of the Study",
+    "Summary of Major Findings",
+    "Conclusion",
+    "Recommendations",
+    "Recommendations Linked to Findings",
+    "Contribution / Implications of the Study",
+    "Suggestions for Further Research"
+  ]
+};
+
+function updateDissertationTopics(){
+  const chapter = document.getElementById("dissertationChapter");
+  const subtopic = document.getElementById("dissertationSubtopic");
+  if(!chapter || !subtopic) return;
+  const items = dissertationTopics[chapter.value] || [];
+  subtopic.innerHTML = items.length
+    ? '<option value="">Select an area</option>' + items.map(x => '<option>'+x+'</option>').join('')
+    : '<option value="">Select the chapter first</option>';
+}
+</script>
+<section class="section ribbon-section about-salone-section" id="about-salone-classroom">
+<div class="ribbon-intro">
+<div class="section-ribbon">About Salone Class Room</div>
+<p class="section-ribbon-description">
+      Why Salone Class Room was created, how it can support learning and teaching, and the important limitations every user should understand.
+    </p>
+</div>
+<div class="about-salone-content">
+<article class="about-salone-card">
+<h3>Why We Created Salone Class Room</h3>
+<p>Technology has changed how people find information, communicate, and learn. Today, many pupils, students, and teachers spend more time using mobile phones, laptops, and other digital devices than visiting traditional libraries. Salone Class Room was created to bring useful educational support closer to people through the devices they already use.</p>
+<p>By making learning resources easier to access online, we hope to encourage pupils and students to use part of their time on digital devices for meaningful learning, revision, and academic development, rather than being distracted by online content that does not contribute positively to their education.</p>
+</article>
+<article class="about-salone-card">
+<h3>Supporting Accessible Education in Sierra Leone</h3>
+<p>
+        Salone Class Room is designed to complement the Government of Sierra Leone's efforts to make education more accessible and affordable. Our goal is to provide additional learning and teaching support to Sierra Leoneans regardless of where they live. As long as reliable internet access is available, a learner or teacher can use Salone Class Room to obtain educational guidance from a phone, laptop or desktop computer.
+      </p>
+<p>
+        This is particularly important for learners and teachers in communities where access to libraries, textbooks and other educational resources may be limited.
+      </p>
+</article>
+<article class="about-salone-card">
+<h3>Supporting Teachers</h3>
+<p>
+        Salone Class Room also provides practical support for teachers. It can help teachers work with curriculum topics, organise lesson preparation and develop clearer approaches to classroom instruction. It may also be useful to individuals supporting learning who can read and write effectively but have had limited access to formal teacher training, helping them prepare more carefully and make a more positive contribution in the classroom.
+      </p>
+<p>
+        The platform, however, does not provide a teaching qualification and should not be regarded as a substitute for professional teacher training, approved curricula, official textbooks, teacher guides or other materials prescribed by the relevant education authorities.
+      </p>
+</article>
+<article class="about-salone-card no-download-note">
+<h3>Why We Encourage Writing Instead of Direct Download</h3>
+<p>
+    Salone Class Room intentionally does not make direct downloading the main way of collecting learning materials. Our aim is to encourage active learning rather than simply allowing pupils, students and teachers to download information without carefully engaging with it.
+  </p>
+<p>
+    When learners read useful information and write or copy the important points into their notebooks, they spend more time thinking about what they are learning. Writing can also support concentration, note-taking habits, revision and better understanding. For teachers, carefully transferring and adapting useful material into their lesson notes can encourage proper preparation before teaching a lesson.
+  </p>
+<p>
+    This approach is not intended to make learning unnecessarily difficult. It is designed to promote participation, responsibility and good study habits. Users are encouraged to read, understand, select relevant information, and write down what is useful rather than depending only on ready-made downloaded materials.
+  </p>
+</article><article class="about-salone-card about-important-note">
+<h3>Important Educational Notice</h3>
+<p>
+        Salone Class Room is a supplementary educational support platform. It is <strong>not a replacement for formal schooling, qualified teachers, lecturers, supervisors, approved textbooks, official curricula, syllabuses or other recognised learning and teaching materials.</strong> Users should use the platform together with, and not instead of, the formal educational resources and professional guidance available to them.
+      </p>
+<p>
+        Because the platform relies on technology, artificial intelligence and internet connectivity, information may occasionally contain errors, incomplete explanations or technical limitations. Access can also be affected by internet availability, device problems, third-party services or other circumstances beyond the direct control of Salone Class Room. Users are therefore encouraged to verify important academic information against official materials and seek clarification from their teachers or other qualified education professionals where necessary.
+      </p>
+</article>
+<article class="about-salone-card university-guidance-note">
+<h3>Guidance for University Students</h3>
+<p>The university and research tools on Salone Class Room are intended to provide guidance, help students understand academic processes, and support the organisation of their own work. They should not be used to replace independent academic work or the official requirements of a university.</p>
+<p>University Students, particularly those working on proposals, research projects, dissertations, or theses, should continue to work closely with their lecturers, research supervisors, and departments. Where guidance from Salone Class Room differs from the requirements of a student's institution or supervisor, the institution's official requirements and the supervisor's guidance should take priority.</p>
+</article>
+<div class="about-closing-message">
+<strong>Our Purpose</strong>
+<p>
+        Salone Class Room aims to use technology responsibly to make learning support easier to access, encourage productive use of digital devices and contribute to a more informed and educated Sierra Leone.
+      </p>
+</div>
+</div>
+</section><section class="section ribbon-section" id="contact-support"><div class="ribbon-intro"><div class="section-ribbon">Support, Comments &amp; Enquiries</div><p class="section-ribbon-description">Send us your questions, comments, suggestions or support requests directly through this section.</p></div>
+<div class="contact-support-card">
+<form action="#" class="support-form" id="supportForm" method="post">
+<div class="form-grid">
+<div>
+<label for="supportName">Your name</label>
+<input id="supportName" name="name" placeholder="Enter your name" required="" type="text"/>
+</div>
+<div>
+<label for="supportRole">You are a</label>
+<select id="supportRole" name="user_type" required="">
+<option value="">Select one</option>
+<option>JSS Student</option>
+<option>SSS Student</option>
+<option>University Student</option>
+<option>Teacher</option>
+<option>Parent / Guardian</option>
+<option>Other</option>
+</select>
+</div>
+</div>
+<label for="supportType">What would you like to send?</label>
+<select id="supportType" name="message_type" required="">
+<option value="">Select one</option>
+<option>Support Request</option>
+<option>Comment</option>
+<option>Enquiry</option>
+<option>Suggestion</option>
+<option>Report a Problem</option>
+</select>
+<label for="supportContact">Phone number or email (optional)</label>
+<input id="supportContact" name="contact" placeholder="Enter a phone number or email only if you want us to reply" type="text"/>
+<label for="supportMessage">Your message</label>
+<textarea id="supportMessage" name="message" placeholder="Write your comment, question, enquiry or support request here..." required="" rows="6"></textarea>
+<button class="btn btn-blue" type="submit">Click here to send your message</button>
+<p class="form-help">
+        Your message will be sent to Salone Class Room support. You do not need to open an email app to send it.
+      </p>
+<div class="result" id="supportSubmitStatus"></div></form>
+</div>
+</section>
+<div class="bottom-admin-access admin-after-comments">
+<a class="bottom-admin-link" href="admin.html">Administrator Access</a>
+</div>
+<footer class="footer">
+<div class="education-slogan">
+<div class="slogan-mark">✦</div>
+<p>Learn with purpose. Teach with confidence. Build a brighter future.</p>
+<small>Salone Class Room — making education easier, one learner at a time.</small>
+</div>
+</footer>
+<script>
+    document.getElementById('year').textContent=new Date().getFullYear();
+    const jssSubjects=[
+      'English Language','French','Civic Education','Mathematics','Integrated Science','Agricultural Science','Social Studies',
+      'Sierra Leonean Languages','Introduction to Technology and ICT Literacy','Business Studies and Entrepreneurship','Religious and Moral Education','Arabic Language','Home Economics','Music and Expressive Arts','Physical and Health Education'
+    ];
+    // SSS subjects standardized against the official MBSSE Senior Secondary Curriculum Framework and SSS syllabus library.
+    const sssSubjects={
+      'Sciences & Technologies':['Integrated Science','Biology','Chemistry','Computer Science','Agricultural Science','ICT','Robotics','Physics','Environmental Science','Health Sciences','Food Security','Engineering Science','Physical Health Education','Genetics and Bio-Engineering','Adolescent Health and Life Skills','Computer Literacy','Popular Science'],
+      'Mathematics & Numeracy':['Fundamentals of Mathematics','Further Mathematics','Statistics and Probability','Calculus','Mathematics for Business and Enterprise','Applications of Mathematics for Coding','Mathematics for STEAMM','Computer Mathematics','Mathematics in Other Disciplines','Introductory Statistics and Probability','Functional Mathematics'],
+      'Economics, Business & Entrepreneurial Studies':['Principles of Economics','Entrepreneurship','Principles of Accounting','Business Management Studies','Principles of Commerce','Principles of Marketing','Business Accounting','Clerical Office Studies','Insurance Management','Business Economics','Business and Society','Customer Relationship Management','Micro Small and Medium Enterprise Management','Business Ethics'],
+      'Languages & Literatures':['English Language','African Literature','English Literature','French as a Foreign Language','Sierra Leonean Literature','Mende Language','Kathemne Language','Hulimba Language','Krio Language','Creative Writing','Business English','French for Tourism','Technical Writing','English for STEAMM','French for Business and Marketing','Everyday Basic French','Popular Literature Appreciation','Arabic Language','Fula'],
+      'Social & Cultural Studies':['Sierra Leone History','African History','Geography','Music','Dance and Drama Studies','Politics and Governance','Social Studies and Civics','Religious and Moral Education','Geography and the Environment','Music as an Applied Subject','Entertainment Industry','Derivatives of Religious and Moral Education','Dance Performance and Appreciation','Mining Industry and the Environment','Fishing Industry and the Environment','Tourism and Conservation','Living with Religious and Moral Education']
+    };
+    function fillSelect(select,items,label){select.innerHTML='';select.add(new Option(label,''));items.forEach(item=>select.add(new Option(item,item)))}
+    document.querySelectorAll('[data-jss-subject]').forEach(select=>fillSelect(select,jssSubjects,'Choose subject'));
+    const allSssSubjects=[...new Set(Object.values(sssSubjects).flat())].sort();
+    function updateSSSSubjects(streamSelect){const target=document.getElementById(streamSelect.dataset.target);fillSelect(target,streamSelect.value?sssSubjects[streamSelect.value]:allSssSubjects,'Choose subject')}
+    document.querySelectorAll('[data-sss-stream]').forEach(select=>{fillSelect(select,Object.keys(sssSubjects),'All streams');fillSelect(document.getElementById(select.dataset.target),allSssSubjects,'Choose subject');select.addEventListener('change',()=>updateSSSSubjects(select))});
+    async function curriculumExplain(level,classId,subjectId,topicId,outputId){
+      const schoolClass=document.getElementById(classId).value,subject=document.getElementById(subjectId).value,topic=document.getElementById(topicId).value.trim(),box=document.getElementById(outputId);
+      if(!subject||!topic){box.textContent='Please choose a subject and enter a word or topic.';box.classList.add('show');return}
+      box.textContent='Checking the Salone Class Room knowledge database…';box.classList.add('show');
+      try{
+        const r=await fetch('/.netlify/functions/learning-api',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'explain',level,class_level:schoolClass,subject,topic})});
+        const j=await r.json();
+        if(!r.ok){box.textContent=j.message||j.error||'No matching explanation was found yet.';return}
+        box.textContent=j.answer+(j.verified?'\n\n✓ Verified database content':'\n\nDatabase source: Salone Class Room starter knowledge base');
+      }catch(e){box.textContent='The learning database could not be reached. Please try again.'}
+    }
+    function toggleMenu(){document.getElementById('navLinks').classList.toggle('open')}
+    document.querySelectorAll('.links a').forEach(a=>a.addEventListener('click',()=>document.getElementById('navLinks').classList.remove('open')));
+    function switchTab(group,name,btn){document.querySelectorAll('[id^="'+group+'-"]').forEach(p=>p.classList.remove('active'));document.getElementById(group+'-'+name).classList.add('active');btn.parentElement.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active')}
+    function demoResult(id,type){const box=document.getElementById(id);box.textContent='Your '+type+' will appear here after the secure AI service is connected. The final version will use the information you entered and present it in short, clear sections.';box.classList.add('show');box.scrollIntoView({behavior:'smooth',block:'nearest'})}
+
+    // ----- Interactive BECE / WASSCE objective practice -----
+    // Ten questions are generated per round. A browser session can generate no more than 50.
+    const QUIZ_ROUND_SIZE = 10;
+    const QUIZ_SESSION_LIMIT = 50;
+    const quizState = {jss:null, sss:null};
+
+    function quizUsageKey(level){ return 'saloneQuizQuestions_'+level; }
+    function getQuizUsage(level){ return Number(sessionStorage.getItem(quizUsageKey(level)) || 0); }
+    function setQuizUsage(level,value){ sessionStorage.setItem(quizUsageKey(level), String(value)); }
+
+    function startQuiz(level){
+      const subject=document.getElementById(level+'QuizSubject').value;
+      const topic=document.getElementById(level+'QuizTopic').value.trim();
+      const box=document.getElementById(level+'Quiz');
+      const exam=level==='jss'?'BECE':'WASSCE';
+      if(!subject||!topic){
+        box.innerHTML='<strong>Please complete the two steps above.</strong><br>Choose a subject and type the topic you want to practise.';
+        box.classList.add('show'); return;
+      }
+      const used=getQuizUsage(level);
+      if(used>=QUIZ_SESSION_LIMIT){
+        box.innerHTML='<strong>You have reached the 50-question practice limit for this session.</strong><br>Review your previous answers and weak areas before starting another session.';
+        box.classList.add('show'); return;
+      }
+      const remaining=QUIZ_SESSION_LIMIT-used;
+      const count=Math.min(QUIZ_ROUND_SIZE,remaining);
+
+      const prompt=[
+        'Create exactly '+count+' Sierra Leone '+exam+'-level objective multiple-choice questions.',
+        'Subject: '+subject+'. Topic: '+topic+'.',
+        'Use the Sierra Leone curriculum and appropriate '+exam+' difficulty.',
+        'Each question must have exactly four options labelled A, B, C and D, one correct answer, a short explanation, and a short weakArea/topic label.',
+        'Do not generate more than '+count+' questions.',
+        'Return structured JSON only in this shape: [{"question":"...","options":["...","...","...","..."],"answer":0,"explanation":"...","weakArea":"..."}].'
+      ].join(' ');
+      box.dataset.curriculumPrompt=prompt;
+
+      // When the secure AI endpoint is connected, it should call renderQuiz(level, questions).
+      box.innerHTML='<strong>Your '+exam+' practice is ready to be generated.</strong><br>This round will contain '+count+' objective questions. The secure AI connection will place the questions here and enforce the 50-question session limit.';
+      box.classList.add('show');
+    }
+
+    function renderQuiz(level,questions){
+      const box=document.getElementById(level+'Quiz');
+      const exam=level==='jss'?'BECE':'WASSCE';
+      if(!Array.isArray(questions)){box.textContent='The question service returned an invalid response. Please try again.';box.classList.add('show');return}
+      const used=getQuizUsage(level);
+      const allowed=Math.max(0,QUIZ_SESSION_LIMIT-used);
+      questions=questions.slice(0,Math.min(QUIZ_ROUND_SIZE,allowed));
+      if(!questions.length){box.innerHTML='<strong>You have reached the 50-question practice limit for this session.</strong>';box.classList.add('show');return}
+
+      quizState[level]={questions,answered:0,correct:0,wrong:0,weakAreas:{},responses:[]};
+      setQuizUsage(level,used+questions.length);
+
+      box.innerHTML='<div class="quiz-head"><strong>'+exam+' Objective Practice</strong><br><span>Answer all '+questions.length+' questions. Your result and weak areas will appear at the end.</span></div>'+
+        questions.map((q,i)=>{
+          const opts=(q.options||[]).slice(0,4);
+          return '<div class="quiz-question" data-qindex="'+i+'" style="margin:18px 0;padding:16px;border:1px solid #d7e1ed;border-radius:12px;background:#fff">'+
+            '<p><strong>'+(i+1)+'. '+safe(q.question||'Question')+'</strong></p>'+
+            '<div class="quiz-options">'+opts.map((opt,j)=>
+              `<button type="button" class="btn" style="display:block;width:100%;text-align:left;justify-content:flex-start;margin:8px 0;background:#eef4fb;color:#17324d" onclick="checkQuizAnswer(this,'${level}',${i},${j})">${String.fromCharCode(65+j)}. ${safe(opt)}</button>`
+            ).join('')+'</div><div class="feedback" style="margin-top:10px"></div></div>';
+        }).join('')+
+        '<div id="'+level+'QuizSummary"></div>';
+      box.classList.add('show');
+      box.scrollIntoView({behavior:'smooth',block:'start'});
+    }
+
+    function checkQuizAnswer(btn,level,index,choice){
+      const state=quizState[level];
+      if(!state || !state.questions[index]) return;
+      const q=state.questions[index];
+      const holder=btn.closest('.quiz-question');
+      if(holder.dataset.answered==='yes') return;
+      holder.dataset.answered='yes';
+      holder.querySelectorAll('.quiz-options button').forEach(b=>b.disabled=true);
+      const answer=Number(q.answer);
+      const feedback=holder.querySelector('.feedback');
+      state.answered++;
+
+      if(choice===answer){
+        state.correct++;
+        btn.style.background='#dff5e8';
+        feedback.innerHTML='<strong style="color:#16794b">Correct.</strong> '+safe(q.explanation||'Well done.');
+      }else{
+        state.wrong++;
+        btn.style.background='#fde7e5';
+        const buttons=holder.querySelectorAll('.quiz-options button');
+        if(buttons[answer]) buttons[answer].style.background='#dff5e8';
+        const weak=(q.weakArea||'This topic').trim();
+        state.weakAreas[weak]=(state.weakAreas[weak]||0)+1;
+        feedback.innerHTML='<strong style="color:#b42318">Wrong.</strong> The correct answer is <strong>'+String.fromCharCode(65+answer)+'</strong>. '+safe(q.explanation||'Review this area before trying again.');
+      }
+      state.responses.push({index,choice,correct:choice===answer,weakArea:q.weakArea||''});
+      if(state.answered===state.questions.length) showQuizSummary(level);
+    }
+
+    function showQuizSummary(level){
+      const state=quizState[level];
+      const summary=document.getElementById(level+'QuizSummary');
+      if(!state||!summary) return;
+      const total=state.questions.length;
+      const percent=Math.round((state.correct/total)*100);
+      const weak=Object.entries(state.weakAreas).sort((a,b)=>b[1]-a[1]).map(([name,count])=>name+' ('+count+' wrong)').slice(0,5);
+      let message='';
+      if(percent>=80) message='Very good performance. Review the few areas you missed, then continue practising.';
+      else if(percent>=60) message='Good effort. Review the areas below before starting another round.';
+      else message='You need to revise this topic further. Study the weak areas below, then practise again.';
+      summary.innerHTML='<div style="margin-top:22px;padding:18px;border:2px solid #0a5acb;border-radius:14px;background:#f4f8ff">'+
+        '<h4 style="margin-top:0">Your Practice Results</h4>'+
+        '<p><strong>Correct:</strong> '+state.correct+' out of '+total+' &nbsp; | &nbsp; <strong>Wrong:</strong> '+state.wrong+' out of '+total+' &nbsp; | &nbsp; <strong>Score:</strong> '+percent+'%</p>'+
+        '<p>'+message+'</p>'+
+        (weak.length?'<p><strong>Areas to revise:</strong> '+weak.map(safe).join(', ')+'.</p>':'<p><strong>Areas to revise:</strong> No weak areas were identified in this round.</p>')+
+        '<p><small>You have used '+getQuizUsage(level)+' of the maximum '+QUIZ_SESSION_LIMIT+' questions allowed in this practice session.</small></p>'+
+        '</div>';
+      summary.scrollIntoView({behavior:'smooth',block:'nearest'});
+    }
+    function cvValue(id){return document.getElementById(id).value.trim()}
+    function safe(value){const node=document.createElement('div');node.textContent=value;return node.innerHTML}
+    function cvLines(value){return value.split(/\n+/).map(v=>v.trim()).filter(Boolean).map(v=>'<li>'+safe(v)+'</li>').join('')}
+    function cvSection(title,content){return content?'<section style="margin:22px 0"><h3 style="color:#073b8c;border-bottom:1px solid #cbd6e4;padding-bottom:5px">'+title+'</h3>'+content+'</section>':''}
+    function generateCV(event){
+      event.preventDefault();
+      const name=cvValue('cvName'),dob=cvValue('cvDob');
+      const personal=[cvValue('cvAddress'),cvValue('cvPhone'),cvValue('cvEmail')].filter(Boolean).map(safe).join(' • ');
+      const details=[dob?'Date of Birth: '+dob:'',cvValue('cvNationality')?'Nationality: '+cvValue('cvNationality'):''].filter(Boolean).map(safe).join(' • ');
+      const experience1='<h4 style="margin-bottom:3px">'+safe(cvValue('cvPosition1'))+' — '+safe(cvValue('cvOrg1'))+'</h4><p style="margin-top:0;color:#5f6b7a"><strong>'+safe(cvValue('cvPeriod1'))+'</strong></p><ul>'+cvLines(cvValue('cvRole1'))+'</ul>';
+      document.getElementById('cvPreview').innerHTML='<header style="text-align:center"><h2 style="font-size:2rem;color:#073b8c;margin-bottom:2px">'+safe(name)+'</h2><p>'+personal+'</p>'+(details?'<p>'+details+'</p>':'')+'</header>'+
+        cvSection('Key Skills',cvValue('cvSkills')?'<ul>'+cvLines(cvValue('cvSkills').replace(/,/g,'\n'))+'</ul>':'')+
+        cvSection('Work Experience',experience1)+
+        cvSection('Education','<ul>'+cvLines(cvValue('cvEducation'))+'</ul>')+
+        cvSection('Training & Certifications',cvValue('cvTraining')?'<ul>'+cvLines(cvValue('cvTraining'))+'</ul>':'')+
+        cvSection('Hobbies & Interests',safe(cvValue('cvHobbies')));
+      const result=document.getElementById('cvResult');result.style.display='block';result.scrollIntoView({behavior:'smooth',block:'start'});
+    }
+    function clearCV(){document.getElementById('cvResult').style.display='none';document.getElementById('cvPreview').innerHTML=''}
+    async function copyCV(){const text=document.getElementById('cvPreview').innerText;try{await navigator.clipboard.writeText(text);alert('Your CV text has been copied.')}catch(e){alert('Please press and hold the CV text, then select Copy.')}}
+</script>
+<script>
+function startNPSEQuiz(){
+  const subject = document.getElementById('npseSubject')?.value || '';
+  const topic = document.getElementById('npseTopic')?.value.trim() || '';
+  const area = document.getElementById('npseQuizArea');
+  if(!area) return;
+
+  if(!subject){
+    area.innerHTML = '<div class="quiz-notice">Please choose an NPSE paper first.</div>';
+    return;
+  }
+
+  const topicText = topic ? ' on <strong>' + topic.replace(/[<>]/g,'') + '</strong>' : '';
+  area.innerHTML =
+    '<div class="quiz-notice"><strong>' + subject + '</strong> NPSE practice' + topicText +
+    ' is ready to be connected to the secure AI question generator. ' +
+    'The practice area will use the same guided question-and-feedback approach as the BECE and WASSCE sections.</div>';
+}
+</script><script>
+document.addEventListener('DOMContentLoaded', function() {
+  const lists = {
+    jss: ["English Language", "Mathematics", "Integrated Science", "Social Studies", "Civic Education", "Agricultural Science", "Business Studies", "Religious and Moral Education", "Physical and Health Education", "Creative Practical Arts", "Information and Communication Technology (ICT)", "French", "Krio"],
+    sss: ["Integrated Science", "Biology", "Chemistry", "Computer Science", "Agricultural Science", "ICT", "Robotics", "Physics", "Environmental Science", "Health Sciences", "Food Security", "Engineering Science", "Physical Health Education", "Genetics and Bio-Engineering", "Adolescent Health and Life Skills", "Computer Literacy", "Popular Science", "Fundamentals of Mathematics", "Further Mathematics", "Statistics and Probability", "Calculus", "Mathematics for Business and Enterprise", "Applications of Mathematics for Coding", "Mathematics for STEAMM", "Computer Mathematics", "Mathematics in Other Disciplines", "Introductory Statistics and Probability", "Functional Mathematics", "Principles of Economics", "Entrepreneurship", "Principles of Accounting", "Business Management Studies", "Principles of Commerce", "Principles of Marketing", "Business Accounting", "Clerical Office Studies", "Insurance Management", "Business Economics", "Business and Society", "Customer Relationship Management", "Micro Small and Medium Enterprise Management", "Business Ethics", "English Language", "African Literature", "English Literature", "French as a Foreign Language", "Sierra Leonean Literature", "Mende Language", "Kathemne Language", "Hulimba Language", "Krio Language", "Creative Writing", "Business English", "French for Tourism", "Technical Writing", "English for STEAMM", "French for Business and Marketing", "Everyday Basic French", "Popular Literature Appreciation", "Arabic Language", "Fula", "Sierra Leone History", "African History", "Geography", "Music", "Dance and Drama Studies", "Politics and Governance", "Social Studies and Civics", "Religious and Moral Education", "Geography and the Environment", "Music as an Applied Subject", "Entertainment Industry", "Derivatives of Religious and Moral Education", "Dance Performance and Appreciation", "Mining Industry and the Environment", "Fishing Industry and the Environment", "Tourism and Conservation", "Living with Religious and Moral Education"]
+  };
+  function fillByHints(hints, subjects) {
+    document.querySelectorAll('select').forEach(function(sel) {
+      const id = (sel.id || '').toLowerCase();
+      const name = (sel.name || '').toLowerCase();
+      const context = ((sel.closest('article, .card, .tool-card, section') || sel.parentElement)?.innerText || '').toLowerCase();
+      const hay = id + ' ' + name + ' ' + context;
+      if (hints.some(h => hay.includes(h)) && !hay.includes('primary') && !hay.includes('npse')) {
+        if (sel.options.length <= 1) {
+          sel.innerHTML = '<option value="">Select subject</option>';
+          subjects.forEach(function(subject) {
+            const o = document.createElement('option');
+            o.value = subject;
+            o.textContent = subject;
+            sel.appendChild(o);
+          });
+        }
+      }
+    });
+  }
+  fillByHints(['jsssubject','jss subject','bece subject','bece'], lists.jss);
+  fillByHints(['ssssubject','sss subject','wassce subject','wassce'], lists.sss);
+
+  // Teacher subject dropdowns: infer level from the surrounding teacher card.
+  document.querySelectorAll('section').forEach(function(section) {
+    const st = (section.innerText || '').toLowerCase();
+    if (!st.includes('teacher')) return;
+    section.querySelectorAll('select').forEach(function(sel) {
+      const context = ((sel.closest('article, .card, .tool-card') || sel.parentElement)?.innerText || '').toLowerCase();
+      if (!context.includes('subject')) return;
+      let subjects = null;
+      if (context.includes('jss') || context.includes('bece')) subjects = lists.jss;
+      else if (context.includes('sss') || context.includes('wassce')) subjects = lists.sss;
+      if (subjects && sel.options.length <= 1) {
+        sel.innerHTML = '<option value="">Select subject</option>';
+        subjects.forEach(function(subject) {
+          const o = document.createElement('option');
+          o.value = subject;
+          o.textContent = subject;
+          sel.appendChild(o);
+        });
+      }
+    });
+  });
+});
+</script><script>
+(function(){
+  const category = document.getElementById('teacherCategory');
+  const dynamicArea = document.getElementById('teacherDynamicArea');
+  const classSel = document.getElementById('teacherClassDynamic');
+  const streamWrap = document.getElementById('teacherStreamWrap');
+  const streamSel = document.getElementById('teacherStreamDynamic');
+  const subjectSel = document.getElementById('teacherSubjectDynamic');
+  const guide = document.getElementById('teacherLevelGuide');
+  const topic = document.getElementById('teacherTopicDynamic');
+  const button = document.getElementById('teacherGenerateDynamic');
+  const message = document.getElementById('teacherDynamicMessage');
+
+  if(!category || !dynamicArea || !classSel || !subjectSel) return;
+
+  const primarySubjects = ["English Language", "Mathematics (including Financial Literacy)", "Civic Education (Civics)", "Social Studies (including Environmental Studies)", "Physical & Health Education", "Music & Expressive Arts", "French Appreciation", "Science (including Basic Technology & How Things Work)", "ICT Literacy"];
+  const jssSubjects = ["English Language", "Mathematics", "Integrated Science", "Social Studies", "Civic Education", "Agricultural Science", "Business Studies", "Religious and Moral Education", "Physical and Health Education", "Creative Practical Arts", "Information and Communication Technology (ICT)", "French", "Krio"];
+  const sssStreams = {"Sciences & Technologies": ["Integrated Science", "Biology", "Chemistry", "Computer Science", "Agricultural Science", "ICT", "Robotics", "Physics", "Environmental Science", "Health Sciences", "Food Security", "Engineering Science", "Physical Health Education", "Genetics and Bio-Engineering", "Adolescent Health and Life Skills", "Computer Literacy", "Popular Science"], "Mathematics & Numeracy": ["Fundamentals of Mathematics", "Further Mathematics", "Statistics and Probability", "Calculus", "Mathematics for Business and Enterprise", "Applications of Mathematics for Coding", "Mathematics for STEAMM", "Computer Mathematics", "Mathematics in Other Disciplines", "Introductory Statistics and Probability", "Functional Mathematics"], "Economics, Business & Entrepreneurial Studies": ["Principles of Economics", "Entrepreneurship", "Principles of Accounting", "Business Management Studies", "Principles of Commerce", "Principles of Marketing", "Business Accounting", "Clerical Office Studies", "Insurance Management", "Business Economics", "Business and Society", "Customer Relationship Management", "Micro Small and Medium Enterprise Management", "Business Ethics"], "Languages & Literatures": ["English Language", "African Literature", "English Literature", "French as a Foreign Language", "Sierra Leonean Literature", "Mende Language", "Kathemne Language", "Hulimba Language", "Krio Language", "Creative Writing", "Business English", "French for Tourism", "Technical Writing", "English for STEAMM", "French for Business and Marketing", "Everyday Basic French", "Popular Literature Appreciation", "Arabic Language", "Fula"], "Social & Cultural Studies": ["Sierra Leone History", "African History", "Geography", "Music", "Dance and Drama Studies", "Politics and Governance", "Social Studies and Civics", "Religious and Moral Education", "Geography and the Environment", "Music as an Applied Subject", "Entertainment Industry", "Derivatives of Religious and Moral Education", "Dance Performance and Appreciation", "Mining Industry and the Environment", "Fishing Industry and the Environment", "Tourism and Conservation", "Living with Religious and Moral Education"]};
+
+  function fillSelect(select, items, placeholder){
+    select.innerHTML = '';
+    const first = document.createElement('option');
+    first.value = '';
+    first.textContent = placeholder;
+    select.appendChild(first);
+    items.forEach(item => {
+      const opt = document.createElement('option');
+      opt.value = item;
+      opt.textContent = item;
+      select.appendChild(opt);
+    });
+  }
+
+  function setLevel(level){
+    dynamicArea.hidden = !level;
+    message.textContent = '';
+    if(!level) return;
+
+    if(level === 'primary'){
+      fillSelect(classSel, ['Class 1','Class 2','Class 3','Class 4','Class 5','Class 6'], 'Select class');
+      fillSelect(subjectSel, primarySubjects, 'Select subject');
+      streamWrap.hidden = true;
+      streamSel.innerHTML = '<option value="">Select stream</option>';
+      guide.textContent = 'Choose the primary class and subject you teach.';
+    } else if(level === 'jss'){
+      fillSelect(classSel, ['JSS 1','JSS 2','JSS 3'], 'Select class');
+      fillSelect(subjectSel, jssSubjects, 'Select subject');
+      streamWrap.hidden = true;
+      streamSel.innerHTML = '<option value="">Select stream</option>';
+      guide.textContent = 'Choose your JSS class and subject.';
+    } else if(level === 'sss'){
+      fillSelect(classSel, ['SSS 1','SSS 2','SSS 3'], 'Select class');
+      fillSelect(streamSel, Object.keys(sssStreams), 'Select stream');
+      fillSelect(subjectSel, [], 'Select a stream first');
+      streamWrap.hidden = false;
+      guide.textContent = 'Choose your SSS class and stream. The subjects for that stream will then appear.';
+    }
+  }
+
+  category.addEventListener('change', () => setLevel(category.value));
+
+  streamSel.addEventListener('change', () => {
+    if(category.value !== 'sss') return;
+    const subjects = sssStreams[streamSel.value] || [];
+    fillSelect(subjectSel, subjects, subjects.length ? 'Select subject' : 'Select a stream first');
+  });
+
+  button.addEventListener('click', () => {
+    const level = category.value;
+    const cls = classSel.value;
+    const subject = subjectSel.value;
+    const tool = document.querySelector('input[name="teacherToolChoice"]:checked')?.value || '';
+    const enteredTopic = (topic.value || '').trim();
+
+    if(!level || !cls || !subject || !tool || !enteredTopic){
+      message.textContent = 'Please choose your teacher category, class, subject, teaching support and enter a topic.';
+      return;
+    }
+
+    const toolNames = {
+      'curriculum':'Curriculum Guidance',
+      'lesson-note':'Lesson Note Preparation',
+      'lesson-explanation':'Lesson Explanation',
+      'assessment':'Assessment Creator'
+    };
+
+    message.innerHTML = '<strong>' + toolNames[tool] + '</strong> is ready for <strong>' +
+      cls + ' – ' + subject + '</strong>, topic: <strong>' +
+      enteredTopic.replace(/[<>]/g,'') + '</strong>. This selection can now be sent to the secure AI teaching endpoint.';
+  });
+})();
+</script><script>
+function preparePrimaryTeacherSupport(type){
+  const result = document.getElementById('primaryTeacherResult');
+  if(!result) return;
+
+  const config = {
+    'curriculum': {
+      cls:'primaryTeacherClass',
+      subject:'primaryTeacherSubject',
+      topic:'primaryTeacherCurriculumTopic',
+      title:'Primary Curriculum Guidance'
+    },
+    'lesson-note': {
+      cls:'primaryLessonClass',
+      subject:'primaryLessonSubject',
+      topic:'primaryLessonTopic',
+      extra:'primaryLessonDuration',
+      title:'Primary Lesson Note'
+    },
+    'explanation': {
+      cls:'primaryExplainClass',
+      subject:'primaryExplainSubject',
+      topic:'primaryExplainTopic',
+      title:'Primary Lesson Explanation'
+    },
+    'assessment': {
+      cls:'primaryAssessClass',
+      subject:'primaryAssessSubject',
+      topic:'primaryAssessTopic',
+      extra:'primaryAssessType',
+      title:'Primary Assessment'
+    }
+  };
+
+  const c = config[type];
+  if(!c) return;
+
+  const cls = document.getElementById(c.cls)?.value || '';
+  const subject = document.getElementById(c.subject)?.value || '';
+  const topic = (document.getElementById(c.topic)?.value || '').trim();
+  const extra = c.extra ? (document.getElementById(c.extra)?.value || '') : '';
+
+  if(!cls || !subject || !topic || (c.extra && !extra)){
+    result.textContent = 'Please complete the class, subject and topic fields before continuing.';
+    return;
+  }
+
+  result.innerHTML =
+    '<strong>' + c.title + '</strong> is ready for <strong>' +
+    cls + ' – ' + subject + '</strong>, topic: <strong>' +
+    topic.replace(/[<>]/g,'') + '</strong>' +
+    (extra ? ', ' + extra.replace(/[<>]/g,'') : '') +
+    '. This can now be sent to the secure AI teaching endpoint.';
+}
+</script><script>
+(function(){
+  const category = document.getElementById('teacherCategoryOnly');
+  const panel = document.getElementById('teacherChoicePanel');
+  const classSel = document.getElementById('teacherClassOnly');
+  const streamWrap = document.getElementById('teacherStreamOnlyWrap');
+  const streamSel = document.getElementById('teacherStreamOnly');
+  const subjectSel = document.getElementById('teacherSubjectOnly');
+  const msg = document.getElementById('teacherOnlyMessage');
+
+  if(!category) return;
+
+  const primarySubjects = ["English Language", "Mathematics (including Financial Literacy)", "Civic Education (Civics)", "Social Studies (including Environmental Studies)", "Physical & Health Education", "Music & Expressive Arts", "French Appreciation", "Science (including Basic Technology & How Things Work)", "ICT Literacy"];
+  const jssSubjects = ["English Language", "Mathematics", "Integrated Science", "Social Studies", "Civic Education", "Agricultural Science", "Business Studies", "Religious and Moral Education", "Physical and Health Education", "Creative Practical Arts", "Information and Communication Technology (ICT)", "French", "Krio"];
+  const sssStreams = {"Sciences & Technologies": ["Integrated Science", "Biology", "Chemistry", "Computer Science", "Agricultural Science", "ICT", "Robotics", "Physics", "Environmental Science", "Health Sciences", "Food Security", "Engineering Science", "Physical Health Education", "Genetics and Bio-Engineering", "Adolescent Health and Life Skills", "Computer Literacy", "Popular Science"], "Mathematics & Numeracy": ["Fundamentals of Mathematics", "Further Mathematics", "Statistics and Probability", "Calculus", "Mathematics for Business and Enterprise", "Applications of Mathematics for Coding", "Mathematics for STEAMM", "Computer Mathematics", "Mathematics in Other Disciplines", "Introductory Statistics and Probability", "Functional Mathematics"], "Economics, Business & Entrepreneurial Studies": ["Principles of Economics", "Entrepreneurship", "Principles of Accounting", "Business Management Studies", "Principles of Commerce", "Principles of Marketing", "Business Accounting", "Clerical Office Studies", "Insurance Management", "Business Economics", "Business and Society", "Customer Relationship Management", "Micro Small and Medium Enterprise Management", "Business Ethics"], "Languages & Literatures": ["English Language", "African Literature", "English Literature", "French as a Foreign Language", "Sierra Leonean Literature", "Mende Language", "Kathemne Language", "Hulimba Language", "Krio Language", "Creative Writing", "Business English", "French for Tourism", "Technical Writing", "English for STEAMM", "French for Business and Marketing", "Everyday Basic French", "Popular Literature Appreciation", "Arabic Language", "Fula"], "Social & Cultural Studies": ["Sierra Leone History", "African History", "Geography", "Music", "Dance and Drama Studies", "Politics and Governance", "Social Studies and Civics", "Religious and Moral Education", "Geography and the Environment", "Music as an Applied Subject", "Entertainment Industry", "Derivatives of Religious and Moral Education", "Dance Performance and Appreciation", "Mining Industry and the Environment", "Fishing Industry and the Environment", "Tourism and Conservation", "Living with Religious and Moral Education"]};
+
+  function fill(sel, items, placeholder){
+    sel.innerHTML = '';
+    const p = document.createElement('option');
+    p.value = '';
+    p.textContent = placeholder;
+    sel.appendChild(p);
+    items.forEach(item => {
+      const o = document.createElement('option');
+      o.value = item;
+      o.textContent = item;
+      sel.appendChild(o);
+    });
+  }
+
+  category.addEventListener('change', function(){
+    const level = category.value;
+    panel.hidden = !level;
+    msg.textContent = '';
+
+    if(level === 'primary'){
+      fill(classSel, ['Class 1','Class 2','Class 3','Class 4','Class 5','Class 6'], 'Select class');
+      fill(subjectSel, primarySubjects, 'Select subject');
+      fill(streamSel, [], 'Select stream');
+      streamWrap.hidden = true;
+    } else if(level === 'jss'){
+      fill(classSel, ['JSS 1','JSS 2','JSS 3'], 'Select class');
+      fill(subjectSel, jssSubjects, 'Select subject');
+      fill(streamSel, [], 'Select stream');
+      streamWrap.hidden = true;
+    } else if(level === 'sss'){
+      fill(classSel, ['SSS 1','SSS 2','SSS 3'], 'Select class');
+      fill(streamSel, Object.keys(sssStreams), 'Select stream');
+      fill(subjectSel, [], 'Select a stream first');
+      streamWrap.hidden = false;
+    }
+  });
+
+  streamSel.addEventListener('change', function(){
+    const list = sssStreams[streamSel.value] || [];
+    fill(subjectSel, list, list.length ? 'Select subject' : 'Select a stream first');
+  });
+
+  document.querySelectorAll('[data-teacher-tool]').forEach(btn => {
+    btn.addEventListener('click', function(){
+      const cls = classSel.value;
+      const subject = subjectSel.value;
+      const type = btn.getAttribute('data-teacher-tool');
+
+      let topic = '';
+      let extra = '';
+      if(type === 'curriculum'){
+        topic = (document.getElementById('teacherCurriculumTopicOnly').value || '').trim();
+      } else {
+        topic = (document.getElementById('teacherLessonTopicOnly').value || '').trim();
+        extra = document.getElementById('teacherLessonDurationOnly').value || '';
+      }
+
+      if(!category.value || !cls || !subject || !topic || (type === 'lesson-note' && !extra)){
+        msg.textContent = 'Please complete the teacher category, class, subject and topic before continuing.';
+        return;
+      }
+
+      const title = type === 'curriculum' ? 'Curriculum Guidance' : 'Lesson Note Preparation';
+      msg.innerHTML = '<strong>' + title + '</strong> is ready for <strong>' +
+        cls + ' – ' + subject + '</strong>, topic: <strong>' +
+        topic.replace(/[<>]/g,'') + '</strong>' +
+        (extra ? ', ' + extra : '') +
+        '. This selection can now be sent to the secure AI teaching endpoint.';
+    });
+  });
+})();
+</script><script>
+(function(){
+  const category = document.getElementById('teacherCategoryOnly');
+  const panel = document.getElementById('teacherChoicePanel');
+  const classSel = document.getElementById('teacherClassOnly');
+  const streamWrap = document.getElementById('teacherStreamOnlyWrap');
+  const streamSel = document.getElementById('teacherStreamOnly');
+  const subjectSel = document.getElementById('teacherSubjectOnly');
+  const prepareType = document.getElementById('teacherPrepareType');
+  const schemeForm = document.getElementById('schemeForm');
+  const lessonForm = document.getElementById('lessonForm');
+  const msg = document.getElementById('teacherOnlyMessage');
+
+  if(!category) return;
+
+  const primarySubjects = ["English Language", "Mathematics (including Financial Literacy)", "Civic Education (Civics)", "Social Studies (including Environmental Studies)", "Physical & Health Education", "Music & Expressive Arts", "French Appreciation", "Science (including Basic Technology & How Things Work)", "ICT Literacy"];
+  const jssSubjects = ["English Language", "Mathematics", "Integrated Science", "Social Studies", "Civic Education", "Agricultural Science", "Business Studies", "Religious and Moral Education", "Physical and Health Education", "Creative Practical Arts", "Information and Communication Technology (ICT)", "French", "Krio"];
+  const sssStreams = {"Sciences & Technologies": ["Integrated Science", "Biology", "Chemistry", "Computer Science", "Agricultural Science", "ICT", "Robotics", "Physics", "Environmental Science", "Health Sciences", "Food Security", "Engineering Science", "Physical Health Education", "Genetics and Bio-Engineering", "Adolescent Health and Life Skills", "Computer Literacy", "Popular Science"], "Mathematics & Numeracy": ["Fundamentals of Mathematics", "Further Mathematics", "Statistics and Probability", "Calculus", "Mathematics for Business and Enterprise", "Applications of Mathematics for Coding", "Mathematics for STEAMM", "Computer Mathematics", "Mathematics in Other Disciplines", "Introductory Statistics and Probability", "Functional Mathematics"], "Economics, Business & Entrepreneurial Studies": ["Principles of Economics", "Entrepreneurship", "Principles of Accounting", "Business Management Studies", "Principles of Commerce", "Principles of Marketing", "Business Accounting", "Clerical Office Studies", "Insurance Management", "Business Economics", "Business and Society", "Customer Relationship Management", "Micro Small and Medium Enterprise Management", "Business Ethics"], "Languages & Literatures": ["English Language", "African Literature", "English Literature", "French as a Foreign Language", "Sierra Leonean Literature", "Mende Language", "Kathemne Language", "Hulimba Language", "Krio Language", "Creative Writing", "Business English", "French for Tourism", "Technical Writing", "English for STEAMM", "French for Business and Marketing", "Everyday Basic French", "Popular Literature Appreciation", "Arabic Language", "Fula"], "Social & Cultural Studies": ["Sierra Leone History", "African History", "Geography", "Music", "Dance and Drama Studies", "Politics and Governance", "Social Studies and Civics", "Religious and Moral Education", "Geography and the Environment", "Music as an Applied Subject", "Entertainment Industry", "Derivatives of Religious and Moral Education", "Dance Performance and Appreciation", "Mining Industry and the Environment", "Fishing Industry and the Environment", "Tourism and Conservation", "Living with Religious and Moral Education"]};
+
+  function fill(sel, items, placeholder){
+    sel.innerHTML = '';
+    const p = document.createElement('option');
+    p.value=''; p.textContent=placeholder;
+    sel.appendChild(p);
+    items.forEach(item => {
+      const o=document.createElement('option');
+      o.value=item; o.textContent=item; sel.appendChild(o);
+    });
+  }
+
+  category.addEventListener('change', function(){
+    const level=category.value;
+    panel.hidden=!level;
+    schemeForm.hidden=true;
+    lessonForm.hidden=true;
+    prepareType.value='';
+    msg.textContent='';
+
+    if(level==='primary'){
+      fill(classSel,['Class 1','Class 2','Class 3','Class 4','Class 5','Class 6'],'Select class');
+      fill(subjectSel,primarySubjects,'Select subject');
+      streamWrap.hidden=true;
+      fill(streamSel,[],'Select stream');
+    } else if(level==='jss'){
+      fill(classSel,['JSS 1','JSS 2','JSS 3'],'Select class');
+      fill(subjectSel,jssSubjects,'Select subject');
+      streamWrap.hidden=true;
+      fill(streamSel,[],'Select stream');
+    } else if(level==='sss'){
+      fill(classSel,['SSS 1','SSS 2','SSS 3'],'Select class');
+      fill(streamSel,Object.keys(sssStreams),'Select stream');
+      fill(subjectSel,[],'Select a stream first');
+      streamWrap.hidden=false;
+    }
+  });
+
+  streamSel.addEventListener('change', function(){
+    fill(subjectSel,sssStreams[streamSel.value]||[],'Select subject');
+  });
+
+  prepareType.addEventListener('change', function(){
+    schemeForm.hidden = prepareType.value !== 'scheme';
+    lessonForm.hidden = prepareType.value !== 'lesson';
+    msg.textContent='';
+  });
+
+  function baseValid(){
+    return category.value && classSel.value && subjectSel.value &&
+      (category.value !== 'sss' || streamSel.value);
+  }
+
+  document.getElementById('prepareSchemeBtn')?.addEventListener('click', function(){
+    const required = [
+      document.getElementById('schemeTerm').value,
+      document.getElementById('schemeWeek').value.trim(),
+      document.getElementById('schemeUnit').value.trim(),
+      document.getElementById('schemeOutcome').value.trim(),
+      document.getElementById('schemeContent').value.trim(),
+      document.getElementById('schemePedagogy').value.trim(),
+      document.getElementById('schemeAssessment').value.trim(),
+      document.getElementById('schemeResources').value.trim()
+    ];
+    if(!baseValid() || required.some(v=>!v)){
+      msg.textContent='Please complete your teacher category, class, subject and all required scheme-of-work fields.';
+      return;
+    }
+    msg.innerHTML='<strong>Scheme of Work planning is ready.</strong> It will use the selected MBSSE-aligned learning outcomes, content, pedagogy, assessment and resources for <strong>'+classSel.value+' – '+subjectSel.value+'</strong>.';
+  });
+
+  document.getElementById('prepareLessonBtn')?.addEventListener('click', function(){
+    const required = [
+      document.getElementById('lessonDate').value,
+      document.getElementById('lessonTerm').value,
+      document.getElementById('lessonDuration').value,
+      document.getElementById('lessonTitle').value.trim(),
+      document.getElementById('lessonOutcome').value.trim(),
+      document.getElementById('lessonConcepts').value.trim(),
+      document.getElementById('lessonMaterials').value.trim(),
+      document.getElementById('lessonSteps').value.trim()
+    ];
+    if(!baseValid() || required.some(v=>!v)){
+      msg.textContent='Please complete your teacher category, class, subject and all required lesson-note fields.';
+      return;
+    }
+    msg.innerHTML='<strong>Lesson Note preparation is ready.</strong> It will follow the selected class and subject using lesson title, learning outcome, key concepts, materials and teaching steps.';
+  });
+})();
+</script><script>
+(function(){
+  const btn = document.getElementById('reviewEssayAnswerBtn');
+  if(!btn) return;
+
+  btn.addEventListener('click', function(){
+    const question = (document.getElementById('essayQuestionInput')?.value || '').trim();
+    const answer = (document.getElementById('essayAnswerInput')?.value || '').trim();
+    const msg = document.getElementById('essayReviewMessage');
+
+    if(!question || !answer){
+      msg.textContent = 'Please type both the essay question and your answer before requesting a review.';
+      return;
+    }
+
+    msg.innerHTML =
+      '<strong>Your essay is ready for review.</strong> The reviewer will assess whether your answer addresses the question, ' +
+      'then guide you on relevance, organisation, explanation, grammar, examples, introduction, body and conclusion. ' +
+      'This can now be sent to the secure AI review endpoint.';
+  });
+})();
+</script><script>
+(function(){
+  const btn = document.getElementById('reviewEssayAnswerBtn');
+  if(!btn) return;
+
+  btn.addEventListener('click', function(e){
+    e.stopImmediatePropagation();
+
+    const passage = (document.getElementById('essayPassageInput')?.value || '').trim();
+    const question = (document.getElementById('essayQuestionInput')?.value || '').trim();
+    const answer = (document.getElementById('essayAnswerInput')?.value || '').trim();
+    const msg = document.getElementById('essayReviewMessage');
+
+    if(!passage || !question || !answer){
+      msg.textContent = 'Please complete the essay or passage, the question, and your answer before requesting a review.';
+      return;
+    }
+
+    msg.innerHTML =
+      '<strong>Your work is ready for review.</strong> The reviewer will compare the essay or passage, the question, and your answer, ' +
+      'then provide guidance on accuracy, relevance, organisation, explanation, grammar and overall quality. ' +
+      'This can now be sent to the secure AI review endpoint.';
+  }, true);
+})();
+</script><script>
+(function(){
+  const btn = document.getElementById('reviewEssayAnswerBtn');
+  if(!btn) return;
+
+  btn.addEventListener('click', function(e){
+    e.stopImmediatePropagation();
+
+    const subject = (document.getElementById('wassceEssaySubject')?.value || '').trim();
+    const passage = (document.getElementById('essayPassageInput')?.value || '').trim();
+    const question = (document.getElementById('essayQuestionInput')?.value || '').trim();
+    const answer = (document.getElementById('essayAnswerInput')?.value || '').trim();
+    const msg = document.getElementById('essayReviewMessage');
+
+    if(!subject || !question || !answer){
+      msg.textContent = 'Please select the subject, type the question, and enter the student’s answer. Add the essay, passage or source material whenever the question depends on one.';
+      return;
+    }
+
+    msg.innerHTML =
+      '<strong>Your WASSCE answer is ready for comparison.</strong> The reviewer will use the selected subject, the question, ' +
+      (passage ? 'the essay or source material, and ' : '') +
+      'the student’s answer to show what is correct, what needs improvement, and a suggested correct answer for study and revision. ' +
+      'This can now be sent to the secure AI review endpoint.';
+  }, true);
+})();
+</script><script>
+(function(){
+  const form=document.getElementById('supportForm');
+  if(!form) return;
+  form.addEventListener('submit', async function(e){
+    e.preventDefault();
+    const status=document.getElementById('supportSubmitStatus');
+    const payload={
+      name:(document.getElementById('supportName')?.value||'').trim(),
+      user_type:document.getElementById('supportRole')?.value||'',
+      message_type:document.getElementById('supportType')?.value||'',
+      contact:(document.getElementById('supportContact')?.value||'').trim(),
+      message:(document.getElementById('supportMessage')?.value||'').trim()
+    };
+    if(!payload.name||!payload.user_type||!payload.message_type||!payload.message){
+      status.textContent='Please complete all required fields.';
+      status.classList.add('show');
+      return;
+    }
+    status.textContent='Sending your message…';
+    status.classList.add('show');
+    try{
+      const res=await fetch('/.netlify/functions/support-message',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify(payload)
+      });
+      const data=await res.json().catch(()=>({}));
+      if(!res.ok) throw new Error(data.error||'Unable to send message');
+      status.textContent='Thank you. Your message has been sent successfully.';
+      form.reset();
+    }catch(err){
+      status.textContent='Your message could not be sent right now. Please check your internet connection and try again.';
+    }
+  });
+})();
+</script><script>
+(function(){
+  fetch('/.netlify/functions/log-event',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({event_type:'page_view',section:'site',detail:'Salone Class Room'})
+  }).catch(()=>{});
+})();
+</script><div aria-hidden="true" class="platform-modal" id="registrationModal">
+<div class="platform-modal-card">
+<button class="modal-close" onclick="closeRegistrationModal()" type="button">×</button>
+<h2>Create your Salone Class Room account</h2>
+<p>You have already tried this function once. Complete the information below to continue.</p>
+<label for="regFullName">Full name</label><input id="regFullName" placeholder="Type your full name"/><div class="field-error" id="errFullName"></div>
+<label>Contact information</label>
+<div class="contact-grid"><div><input id="regEmail" placeholder="Email address, if available" type="email"/><div class="field-error" id="errEmail"></div></div>
+<div><input id="regPhone" placeholder="Phone number, if available" type="tel"/><div class="field-error" id="errPhone"></div></div></div>
+<p class="field-help">Provide at least one: an email address or a phone number.</p>
+<label for="regCategory">Category</label>
+<select id="regCategory"><option value="">Select your category</option><option value="primary">Primary School Pupil</option><option value="jss">JSS Student</option><option value="sss">SSS Student</option><option value="teacher">Teacher</option><option value="university">University Student</option></select>
+<div class="field-error" id="errCategory"></div>
+<label for="regTown">Town / City</label><input id="regTown" placeholder="Type your town or city"/><div class="field-error" id="errTown"></div>
+<div class="registration-price-box" hidden="" id="registrationPriceBox"><strong>Your payment category</strong><p id="registrationPriceText"></p><p class="field-help">Payment applies only after the free-access period.</p></div>
+<button class="btn btn-blue platform-submit" onclick="submitPlatformRegistration()" type="button">Create account and continue</button>
+<div class="modal-status" id="registrationStatus"></div>
+</div>
+</div><div aria-hidden="true" class="platform-modal" id="paymentModal">
+<div class="platform-modal-card">
+<button class="modal-close" onclick="closePaymentModal()" type="button">×</button>
+<h2>Activate paid access</h2><p id="paymentIntro"></p>
+<div class="payment-summary"><div><span>Category</span><strong id="paymentCategory"></strong></div><div><span>Amount</span><strong id="paymentAmount"></strong></div><div><span>Orange Money</span><strong id="paymentNumber"></strong></div></div>
+<label for="paymentSender">Orange Money sender number</label><input id="paymentSender" placeholder="Number used to make payment" type="tel"/><div class="field-error" id="errPaymentSender"></div>
+<label for="paymentReference">Transaction reference / ID</label><input id="paymentReference" placeholder="Type transaction reference"/><div class="field-error" id="errPaymentReference"></div>
+<button class="btn btn-blue platform-submit" onclick="submitPaymentRequest()" type="button">Submit payment for verification</button>
+<div class="modal-status" id="paymentStatus"></div>
+</div>
+</div><script>
+const PLATFORM_API='/.netlify/functions/platform-api';let platformConfig=null,pendingToolAction=null,currentProfile=null;
+function deviceId(){let x=localStorage.getItem('salone_device_id');if(!x){x='slc_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2);localStorage.setItem('salone_device_id',x)}return x}
+function uses(){try{return JSON.parse(localStorage.getItem('salone_tool_uses')||'{}')}catch{return {}}}function saveUses(x){localStorage.setItem('salone_tool_uses',JSON.stringify(x))}
+function profile(){try{return JSON.parse(localStorage.getItem('salone_profile')||'null')}catch{return null}}function saveProfile(x){localStorage.setItem('salone_profile',JSON.stringify(x));currentProfile=x}
+function cat(c){return({primary:'Primary School Pupil',jss:'JSS Student',sss:'SSS Student',teacher:'Teacher',university:'University Student'})[c]||c}function money(v){return'Le '+Number(v||0).toLocaleString()}
+function freeNow(){if(!platformConfig)return true;if(platformConfig.free_access_enabled)return true;return !!platformConfig.free_access_until&&new Date(platformConfig.free_access_until).getTime()>=Date.now()}
+function price(c){return Number(platformConfig?.prices?.[c]||0)}
+function keyFor(btn){let c=btn.closest('article,.card,.tool-card,.teacher-card,.feature-card,section,div'),t='';if(c){let h=c.querySelector('h2,h3,h4');if(h)t=h.textContent.trim()}if(!t)t=btn.textContent.trim();return t.toLowerCase().replace(/[^a-z0-9]+/g,'-').slice(0,80)||'tool'}
+function openRegistrationModal(){registrationModal.classList.add('open');document.body.style.overflow='hidden'}function closeRegistrationModal(){registrationModal.classList.remove('open');document.body.style.overflow=''}
+function openPaymentModal(p){paymentCategory.textContent=cat(p.category);paymentAmount.textContent=money(price(p.category));paymentNumber.textContent=platformConfig?.orange_money_number||'Not configured';paymentIntro.textContent='The free-access period has ended. Submit your Orange Money payment details for verification.';paymentModal.classList.add('open');document.body.style.overflow='hidden'}
+function closePaymentModal(){paymentModal.classList.remove('open');document.body.style.overflow=''}
+function clearErr(){['errFullName','errEmail','errPhone','errCategory','errTown'].forEach(i=>document.getElementById(i).textContent='')}
+function validateReg(){clearErr();let d={full_name:regFullName.value.trim(),email:regEmail.value.trim(),phone:regPhone.value.trim(),category:regCategory.value,town:regTown.value.trim()},ok=true;
+ if(d.full_name.length<3){errFullName.textContent='Please type your full name.';ok=false}
+ if(!d.email&&!d.phone){errEmail.textContent='Type an email address or use the phone box.';errPhone.textContent='Type a phone number or use the email box.';ok=false}
+ if(d.email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email)){errEmail.textContent='Please type a valid email address.';ok=false}
+ if(d.phone&&d.phone.replace(/\D/g,'').length<7){errPhone.textContent='Please type a complete phone number.';ok=false}
+ if(!d.category){errCategory.textContent='Please select your category.';ok=false}
+ if(d.town.length<2){errTown.textContent='Please type your town or city.';ok=false}return ok?d:null}
+async function submitPlatformRegistration(){let d=validateReg();if(!d)return;registrationStatus.textContent='Creating your account…';registrationStatus.classList.add('show');try{let r=await fetch(PLATFORM_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'register',device_id:deviceId(),...d})}),j=await r.json();if(!r.ok)throw Error(j.error||'Unable to create account');saveProfile(j.profile);closeRegistrationModal();if(freeNow()||j.profile.paid_active){if(pendingToolAction){let f=pendingToolAction;pendingToolAction=null;f()}}else openPaymentModal(j.profile)}catch(e){registrationStatus.textContent=e.message}}
+async function submitPaymentRequest(){errPaymentSender.textContent='';errPaymentReference.textContent='';let s=paymentSender.value.trim(),ref=paymentReference.value.trim(),ok=true;if(s.replace(/\D/g,'').length<7){errPaymentSender.textContent='Please type the Orange Money number used for payment.';ok=false}if(ref.length<3){errPaymentReference.textContent='Please type the transaction reference.';ok=false}if(!ok)return;paymentStatus.textContent='Submitting…';paymentStatus.classList.add('show');try{let r=await fetch(PLATFORM_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'payment_request',profile_id:currentProfile?.id,sender_number:s,transaction_reference:ref})}),j=await r.json();if(!r.ok)throw Error(j.error);paymentStatus.textContent='Payment submitted. Access will be activated after verification.'}catch(e){paymentStatus.textContent=e.message}}
+regCategory?.addEventListener('change',()=>{if(regCategory.value&&!freeNow()){registrationPriceText.textContent=cat(regCategory.value)+' — '+money(price(regCategory.value));registrationPriceBox.hidden=false}else registrationPriceBox.hidden=true});
+document.addEventListener('click',function(e){let b=e.target.closest('button');if(!b||b.closest('#registrationModal')||b.closest('#paymentModal'))return;let tx=(b.textContent||'').toLowerCase();if(tx.includes('administrator')||tx.includes('sign in'))return;let k=keyFor(b),u=uses(),p=profile();
+ if(p){if(freeNow()||p.paid_active)return;e.preventDefault();e.stopImmediatePropagation();pendingToolAction=()=>b.click();openPaymentModal(p);return}
+ if(Number(u[k]||0)<1){u[k]=1;saveUses(u);fetch(PLATFORM_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'tool_use',device_id:deviceId(),tool_key:k})}).catch(()=>{});return}
+ e.preventDefault();e.stopImmediatePropagation();pendingToolAction=()=>b.click();openRegistrationModal()},true);
+(async()=>{try{let r=await fetch(PLATFORM_API+'?action=config'),d=await r.json();if(r.ok){platformConfig=d;currentProfile=profile();if(d.announcement?.message){platformAnnouncementText.textContent=d.announcement.message;platformAnnouncement.hidden=false}}}catch(e){}})();
+</script></body>
+</html>

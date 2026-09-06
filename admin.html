@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1.0" name="viewport"/>
+<meta content="Salone Class Room Administration Dashboard" name="description"/>
+<title>Salone Class Room | Administration</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{
+  --navy:#082d57;--blue:#145d88;--soft:#eef5fb;--bg:#f4f7fb;--card:#fff;
+  --text:#20303d;--muted:#667786;--line:#d9e3eb;--good:#18794e;--warn:#a56712;--bad:#b42318;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
+button,input,select{font:inherit}
+.top{background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;padding:20px}
+.top-inner{max-width:1220px;margin:auto;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.top h1{font-size:1.35rem;margin:0}.top p{margin:4px 0 0;color:#dbe9f5;font-size:.9rem}
+.site-link{color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,.5);padding:9px 12px;border-radius:10px}
+.wrap{max-width:1220px;margin:24px auto;padding:0 16px}
+.login-card{max-width:460px;margin:55px auto;background:#fff;border:1px solid var(--line);border-radius:20px;padding:26px;box-shadow:0 12px 34px rgba(8,45,87,.08)}
+.login-card h2{margin-top:0;color:var(--navy)}
+label{font-weight:700;font-size:.9rem;display:block;margin:13px 0 6px}
+input,select{width:100%;padding:12px;border:1px solid #cbd7e2;border-radius:10px;background:#fff}
+.btn{border:0;border-radius:10px;padding:11px 14px;font-weight:800;cursor:pointer}
+.btn-primary{background:var(--blue);color:#fff}.btn-light{background:#edf3f8;color:var(--navy)}
+.login-card .btn{width:100%;margin-top:16px}
+.note{font-size:.84rem;color:var(--muted);line-height:1.5}
+.msg{margin-top:12px;padding:10px 12px;background:#f4f7fb;border-radius:9px;color:var(--muted);display:none}
+.msg.show{display:block}
+#dashboard{display:none}
+.toolbar{display:flex;justify-content:space-between;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+.status{font-size:.88rem;color:var(--muted)}
+.tabs{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:18px}
+.tab{border:1px solid #cbd7e2;background:#fff;color:#29455f;border-radius:999px;padding:9px 12px;font-weight:800;cursor:pointer}
+.tab.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+.panel{display:none}.panel.active{display:block}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.kpi,.box{background:#fff;border:1px solid var(--line);border-radius:16px;padding:17px}
+.kpi span{display:block;color:var(--muted);font-size:.78rem;font-weight:700}
+.kpi strong{display:block;font-size:1.65rem;color:var(--navy);margin-top:6px}
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:16px}
+.box h3{margin:0 0 12px;color:var(--navy);font-size:1rem}
+.table-wrap{overflow:auto;background:#fff;border:1px solid var(--line);border-radius:16px}
+table{width:100%;border-collapse:collapse;min-width:760px}
+th,td{text-align:left;padding:11px 12px;border-bottom:1px solid #e6edf3;font-size:.86rem}
+th{background:#f6f9fc;color:#3b5267}
+.pill{display:inline-block;padding:4px 8px;border-radius:999px;background:#e9f7ef;color:var(--good);font-weight:800;font-size:.72rem}
+.empty{padding:26px;text-align:center;color:var(--muted)}
+.metric-list{display:grid;gap:10px}.metric-row{display:flex;justify-content:space-between;border-bottom:1px solid #edf1f5;padding-bottom:8px}
+.footer{text-align:center;color:var(--muted);font-size:.8rem;padding:30px 12px}
+@media(max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}}
+@media(max-width:520px){.kpis{grid-template-columns:1fr}.wrap{padding:0 10px}}
+</style>
+</head>
+<body>
+<header class="top">
+<div class="top-inner">
+<div><h1>Salone Class Room Administration</h1><p>Pytbion Technology • Education Management Dashboard</p></div>
+<a class="site-link" href="index.html">← Return to Salone Class Room</a>
+</div>
+</header>
+<main class="wrap">
+<section class="login-card" id="loginGate">
+<h2>Administrator Login</h2>
+<p class="note">Only an authorized administrator can open this dashboard. Your password is handled by Supabase authentication and is not stored in this HTML.</p>
+<label for="adminEmail">Administrator email</label>
+<input autocomplete="username" id="adminEmail" placeholder="Enter administrator email" type="email"/>
+<label for="adminPassword">Password</label>
+<input autocomplete="current-password" id="adminPassword" placeholder="Enter password" type="password"/>
+<button class="btn btn-primary" onclick="signIn()">Sign in to dashboard</button>
+<div class="msg" id="loginMsg"></div>
+<p class="note">Deployment setup requires the public Supabase URL and anon key in this file. The sensitive service-role key stays only in Netlify environment variables.</p>
+</section>
+<section id="dashboard">
+<div class="toolbar">
+<div><strong>Dashboard</strong><div class="status" id="status">Ready</div></div>
+<div><button class="btn btn-light" onclick="refreshDashboard()">Refresh</button> <button class="btn btn-primary" onclick="signOut()">Sign out</button></div>
+</div>
+<nav class="tabs">
+<button class="tab active" onclick="showTab('overview',this)">Overview</button>
+<button class="tab" onclick="showTab('users',this)">Users</button>
+<button class="tab" onclick="showTab('activity',this)">Learning Activity</button>
+<button class="tab" onclick="showTab('exams',this)">Exam Practice</button>
+<button class="tab" onclick="showTab('teachers',this)">Teachers</button>
+<button class="tab" onclick="showTab('university',this)">University</button>
+<button class="tab" onclick="showTab('feedback',this)">Feedback</button>
+<button class="tab" onclick="showTab('system',this)">AI &amp; System</button>
+<button class="tab" onclick="showTab('settings',this)">Settings</button>
+<button class="tab" onclick="showTab('accounts',this)">Accounts</button><button class="tab" onclick="showTab('payments',this)">Payments</button><button class="tab" onclick="showTab('announcements',this)">Announcements</button><button class="tab" onclick="showTab('access',this)">Access &amp; Pricing</button></nav>
+<section class="panel active" id="panel-overview">
+<div class="kpis">
+<div class="kpi"><span>REGISTERED USERS</span><strong id="kUsers">—</strong></div>
+<div class="kpi"><span>NEW USERS • 30 DAYS</span><strong id="kNewUsers">—</strong></div>
+<div class="kpi"><span>LEARNING EVENTS • 30 DAYS</span><strong id="kEvents">—</strong></div>
+<div class="kpi"><span>NEW MESSAGES</span><strong id="kMessages">—</strong></div>
+<div class="kpi"><span>PRIMARY ACTIVITY</span><strong id="kPrimary">—</strong></div>
+<div class="kpi"><span>JSS / BECE ACTIVITY</span><strong id="kJss">—</strong></div>
+<div class="kpi"><span>SSS / WASSCE ACTIVITY</span><strong id="kSss">—</strong></div>
+<div class="kpi"><span>UNIVERSITY ACTIVITY</span><strong id="kUniversity">—</strong></div>
+</div>
+<div class="grid2">
+<div class="box"><h3>Learning Usage</h3><div class="metric-list" id="usageList"></div></div>
+<div class="box"><h3>System Status</h3><div class="metric-list" id="systemSummary"></div></div>
+</div>
+</section>
+<section class="panel" id="panel-users">
+<div class="table-wrap"><table><thead><tr><th>Email</th><th>Created</th><th>Last sign-in</th><th>Status</th></tr></thead><tbody id="usersBody"></tbody></table></div>
+</section>
+<section class="panel" id="panel-activity">
+<div class="table-wrap"><table><thead><tr><th>Date</th><th>Event</th><th>Section</th><th>Detail</th></tr></thead><tbody id="activityBody"></tbody></table></div>
+</section>
+<section class="panel" id="panel-exams">
+<div class="kpis">
+<div class="kpi"><span>NPSE EVENTS</span><strong id="npseCount">—</strong></div>
+<div class="kpi"><span>BECE EVENTS</span><strong id="beceCount">—</strong></div>
+<div class="kpi"><span>WASSCE EVENTS</span><strong id="wassceCount">—</strong></div>
+<div class="kpi"><span>ANSWER REVIEW EVENTS</span><strong id="reviewCount">—</strong></div>
+</div>
+</section>
+<section class="panel" id="panel-teachers">
+<div class="kpis">
+<div class="kpi"><span>TEACHER EVENTS</span><strong id="teacherEvents">—</strong></div>
+<div class="kpi"><span>SCHEME OF WORK</span><strong id="schemeEvents">—</strong></div>
+<div class="kpi"><span>LESSON NOTE</span><strong id="lessonEvents">—</strong></div>
+<div class="kpi"><span>OTHER TEACHING SUPPORT</span><strong id="otherTeacherEvents">—</strong></div>
+</div>
+</section>
+<section class="panel" id="panel-university">
+<div class="kpis">
+<div class="kpi"><span>UNIVERSITY EVENTS</span><strong id="universityEvents">—</strong></div>
+<div class="kpi"><span>TOPICS FINDER</span><strong id="topicEvents">—</strong></div>
+<div class="kpi"><span>PROPOSAL / RESEARCH</span><strong id="proposalEvents">—</strong></div>
+<div class="kpi"><span>DISSERTATION / DEFENSE</span><strong id="dissertationEvents">—</strong></div>
+</div>
+</section>
+<section class="panel" id="panel-feedback">
+<div class="table-wrap"><table><thead><tr><th>Date</th><th>Name</th><th>User Type</th><th>Type</th><th>Contact</th><th>Message</th><th>Status</th></tr></thead><tbody id="feedbackBody"></tbody></table></div>
+</section>
+<section class="panel" id="panel-system">
+<div class="grid2">
+<div class="box"><h3>Backend Connection</h3><div class="metric-list" id="backendInfo"></div></div>
+<div class="box"><h3>Deployment Safety</h3><p class="note">The Supabase service-role key must never be placed in index.html or admin.html. Keep it only in Netlify Environment Variables. Admin requests are validated server-side.</p></div>
+</div>
+</section>
+<section class="panel" id="panel-settings">
+<div class="box">
+<h3>Administration Settings</h3>
+<p class="note">Pricing is intentionally not included because Salone Class Room currently has no visible pricing/payment section. Add payment management later when you are ready to launch paid access.</p>
+<label>Administrator email</label>
+<input disabled="" id="settingAdminEmail"/>
+<p class="note">Change the authorized administrator through the Netlify <strong>ADMIN_EMAIL</strong> environment variable and Supabase Auth.</p>
+</div>
+</section>
+<section class="panel" id="panel-accounts">
+<div class="kpis">
+<div class="kpi"><span>REGISTERED PROFILES</span><strong id="profileCount">—</strong></div>
+<div class="kpi"><span>PRIMARY</span><strong id="profilePrimary">—</strong></div>
+<div class="kpi"><span>JSS / SSS</span><strong id="profileSecondary">—</strong></div>
+<div class="kpi"><span>TEACHERS / UNIVERSITY</span><strong id="profileAdvanced">—</strong></div>
+</div>
+<div class="table-wrap" style="margin-top:16px"><table><thead><tr><th>Name</th><th>Contact</th><th>Category</th><th>Town</th><th>Access</th><th>Action</th></tr></thead><tbody id="profilesBody"></tbody></table></div>
+</section><section class="panel" id="panel-payments">
+<div class="kpis">
+<div class="kpi"><span>PENDING</span><strong id="pendingPayments">—</strong></div>
+<div class="kpi"><span>VERIFIED</span><strong id="verifiedPayments">—</strong></div>
+<div class="kpi"><span>REJECTED</span><strong id="rejectedPayments">—</strong></div>
+<div class="kpi"><span>ORANGE MONEY</span><strong id="orangeMoneyKpi" style="font-size:1rem">—</strong></div>
+</div>
+<div class="table-wrap" style="margin-top:16px"><table><thead><tr><th>Date</th><th>User</th><th>Category</th><th>Amount</th><th>Sender</th><th>Reference</th><th>Status</th><th>Action</th></tr></thead><tbody id="paymentsBody"></tbody></table></div>
+</section><section class="panel" id="panel-announcements">
+<div class="grid2">
+<div class="box">
+<h3>Publish Announcement</h3>
+<label for="announcementMessage">Announcement</label><input id="announcementMessage" placeholder="Type the announcement users should see"/>
+<label for="announcementActive">Status</label><select id="announcementActive"><option value="true">Active</option><option value="false">Inactive</option></select>
+<button class="btn btn-primary" onclick="saveAnnouncement()" style="margin-top:12px">Publish announcement</button>
+<div class="msg" id="announcementStatus"></div>
+</div>
+<div class="box"><h3>Current Announcement</h3><p class="note" id="currentAnnouncement">No announcement loaded.</p></div>
+</div>
+</section><section class="panel" id="panel-access">
+<div class="grid2">
+<div class="box">
+<h3>Free Access Control</h3>
+<label for="freeAccessEnabled">Free access switch</label><select id="freeAccessEnabled"><option value="true">Free access ON</option><option value="false">Free access OFF</option></select>
+<label for="freeAccessUntil">Free access until</label><input id="freeAccessUntil" type="date"/>
+<label for="orangeMoneyNumber">Orange Money payment number</label><input id="orangeMoneyNumber" placeholder="Enter Orange Money number"/>
+<p class="note">Registered users are not asked to pay while free access is active.</p>
+</div>
+<div class="box">
+<h3>Prices by Category</h3>
+<label>Primary School Pupil</label><input id="pricePrimary" min="0" type="number"/>
+<label>JSS Student</label><input id="priceJss" min="0" type="number"/>
+<label>SSS Student</label><input id="priceSss" min="0" type="number"/>
+<label>Teacher</label><input id="priceTeacher" min="0" type="number"/>
+<label>University Student</label><input id="priceUniversity" min="0" type="number"/>
+<button class="btn btn-primary" onclick="saveAccessSettings()" style="margin-top:14px">Save access and prices</button>
+<div class="msg" id="accessStatus"></div>
+</div>
+</div>
+<div class="box" style="margin-top:16px">
+<h3>Access Rules</h3>
+<div class="metric-list">
+<div class="metric-row"><span>New visitor</span><strong>1 use of each function without account</strong></div>
+<div class="metric-row"><span>Second use of same function</span><strong>Registration required</strong></div>
+<div class="metric-row"><span>Registration</span><strong>Name + email or phone + category + town</strong></div>
+<div class="metric-row"><span>After free period</span><strong>Orange Money activation required</strong></div>
+</div>
+</div>
+<div class="box" style="margin-top:16px">
+<h3>Orange Money API Integration</h3>
+<p class="note">
+    Use this area when you are ready to connect an official Orange Money merchant/payment API.
+    Sensitive API secrets are never stored in this dashboard. Keep them only in Netlify Environment Variables.
+  </p>
+<label for="orangePaymentMode">Payment mode</label>
+<select id="orangePaymentMode">
+<option value="manual">Manual verification</option>
+<option value="api">Orange Money API</option>
+</select>
+<label for="orangeApiBaseUrl">Orange Money API base URL</label>
+<input id="orangeApiBaseUrl" placeholder="Example: https://api.orange.com/..."/>
+<label for="orangeMerchantId">Merchant / Partner ID</label>
+<input id="orangeMerchantId" placeholder="Enter merchant or partner identifier"/>
+<label for="orangeWebhookUrl">Webhook / callback URL</label>
+<input id="orangeWebhookUrl" placeholder="Example: https://your-site.netlify.app/.netlify/functions/orange-money-webhook"/>
+<div class="grid2" style="margin-top:12px">
+<div>
+<label for="orangeApiEnabled">API status</label>
+<select id="orangeApiEnabled">
+<option value="false">Disabled</option>
+<option value="true">Enabled</option>
+</select>
+</div>
+<div>
+<label>Secret storage</label>
+<input disabled="" value="Stored securely in Netlify Environment Variables"/>
+</div>
+</div>
+<button class="btn btn-primary" onclick="saveOrangeApiSettings()" style="margin-top:14px">Save Orange Money API settings</button>
+<button class="btn btn-light" onclick="testOrangeApiConnection()" style="margin-top:14px">Test API connection</button>
+<div class="msg" id="orangeApiStatus"></div>
+<p class="note" style="margin-top:12px">
+    Required secret environment variables can later be added in Netlify, for example:
+    <strong>ORANGE_MONEY_CLIENT_ID</strong>,
+    <strong>ORANGE_MONEY_CLIENT_SECRET</strong>,
+    <strong>ORANGE_MONEY_MERCHANT_KEY</strong>.
+    The exact names can be adjusted to match Orange Sierra Leone's API documentation when you receive merchant credentials.
+  </p>
+</div></section></section>
+</main>
+<div class="footer">Salone Class Room — Administration Dashboard • Pytbion Technology</div>
+<script>
+const SUPABASE_URL = "REPLACE_WITH_YOUR_SUPABASE_URL";
+const SUPABASE_ANON_KEY = "REPLACE_WITH_YOUR_SUPABASE_ANON_KEY";
+let sb=null;
+let currentData=null;
+
+function configured(){
+  return !SUPABASE_URL.startsWith("REPLACE_") && !SUPABASE_ANON_KEY.startsWith("REPLACE_");
+}
+if(configured()) sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+
+function msg(text){const el=document.getElementById('loginMsg');el.textContent=text;el.classList.add('show')}
+async function signIn(){
+  if(!configured()){msg('Supabase has not yet been configured in admin.html. Add your Supabase URL and anon key before deployment.');return}
+  const email=document.getElementById('adminEmail').value.trim();
+  const password=document.getElementById('adminPassword').value;
+  if(!email||!password){msg('Enter the administrator email and password.');return}
+  msg('Checking administrator access…');
+  const {data,error}=await sb.auth.signInWithPassword({email,password});
+  if(error){msg(error.message);return}
+  try{
+    const r=await fetch('/.netlify/functions/admin-api',{headers:{Authorization:'Bearer '+data.session.access_token}});
+    const body=await r.json();
+    if(!r.ok) throw new Error(body.error||'Administrator access denied');
+    document.getElementById('loginGate').style.display='none';
+    document.getElementById('dashboard').style.display='block';
+    document.getElementById('settingAdminEmail').value=email;
+    currentData=body;
+    render(body);
+  }catch(e){
+    await sb.auth.signOut();
+    msg(e.message);
+  }
+}
+async function signOut(){if(sb) await sb.auth.signOut();location.reload()}
+function showTab(name,btn){document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));document.getElementById('panel-'+name).classList.add('active');document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));btn.classList.add('active')}
+async function refreshDashboard(){
+  const {data}=await sb.auth.getSession();
+  if(!data.session){signOut();return}
+  document.getElementById('status').textContent='Refreshing…';
+  const r=await fetch('/.netlify/functions/admin-api',{headers:{Authorization:'Bearer '+data.session.access_token}});
+  const body=await r.json();
+  if(!r.ok){document.getElementById('status').textContent=body.error||'Unable to refresh';return}
+  currentData=body;render(body);
+}
+function n(v){return Number(v||0).toLocaleString()}
+function date(v){if(!v)return '—';try{return new Date(v).toLocaleString()}catch{return v}}
+function esc(v){const d=document.createElement('div');d.textContent=v??'';return d.innerHTML}
+function render(data){
+  const s=data.summary||{}, cats=data.categories||{};
+  document.getElementById('kUsers').textContent=n(s.registered_users);
+  document.getElementById('kNewUsers').textContent=n(s.new_users_30d);
+  document.getElementById('kEvents').textContent=n(s.events_30d);
+  document.getElementById('kMessages').textContent=n(s.new_messages);
+  document.getElementById('kPrimary').textContent=n(cats.primary);
+  document.getElementById('kJss').textContent=n(cats.jss);
+  document.getElementById('kSss').textContent=n(cats.sss);
+  document.getElementById('kUniversity').textContent=n(cats.university);
+
+  const usage=[['Primary',cats.primary],['JSS / BECE',cats.jss],['SSS / WASSCE',cats.sss],['Teachers',cats.teachers],['University',cats.university]];
+  document.getElementById('usageList').innerHTML=usage.map(x=>`<div class="metric-row"><span>${x[0]}</span><strong>${n(x[1])}</strong></div>`).join('');
+  document.getElementById('systemSummary').innerHTML=
+    `<div class="metric-row"><span>Supabase</span><strong>${data.system?.supabase?'Connected':'Check setup'}</strong></div>`+
+    `<div class="metric-row"><span>Admin API</span><strong>Connected</strong></div>`+
+    `<div class="metric-row"><span>Last refresh</span><strong>${new Date().toLocaleTimeString()}</strong></div>`;
+
+  const users=data.users||[];
+  document.getElementById('usersBody').innerHTML=users.length?users.map(u=>`<tr><td>${esc(u.email)}</td><td>${date(u.created_at)}</td><td>${date(u.last_sign_in_at)}</td><td><span class="pill">${u.banned_until?'Restricted':'Active'}</span></td></tr>`).join(''):`<tr><td colspan="4" class="empty">No users found.</td></tr>`;
+
+  const events=data.events||[];
+  document.getElementById('activityBody').innerHTML=events.length?events.map(e=>`<tr><td>${date(e.created_at)}</td><td>${esc(e.event_type)}</td><td>${esc(e.section)}</td><td>${esc(e.detail)}</td></tr>`).join(''):`<tr><td colspan="4" class="empty">No learning activity has been recorded yet.</td></tr>`;
+
+  const m=data.metrics||{};
+  ['npseCount','beceCount','wassceCount','reviewCount','teacherEvents','schemeEvents','lessonEvents','otherTeacherEvents','universityEvents','topicEvents','proposalEvents','dissertationEvents'].forEach(id=>document.getElementById(id).textContent=n(m[id]));
+
+  const feedback=data.messages||[];
+  document.getElementById('feedbackBody').innerHTML=feedback.length?feedback.map(f=>`<tr><td>${date(f.created_at)}</td><td>${esc(f.name)}</td><td>${esc(f.user_type)}</td><td>${esc(f.message_type)}</td><td>${esc(f.contact)}</td><td>${esc(f.message)}</td><td><span class="pill">${esc(f.status||'new')}</span></td></tr>`).join(''):`<tr><td colspan="7" class="empty">No messages yet.</td></tr>`;
+
+  document.getElementById('backendInfo').innerHTML=
+    `<div class="metric-row"><span>Supabase database</span><strong>${data.system?.supabase?'Connected':'Not ready'}</strong></div>`+
+    `<div class="metric-row"><span>Support messages table</span><strong>${data.system?.messages_table?'Ready':'Run SQL setup'}</strong></div>`+
+    `<div class="metric-row"><span>Activity table</span><strong>${data.system?.events_table?'Ready':'Run SQL setup'}</strong></div>`;
+
+  document.getElementById('status').textContent='Live data refreshed '+new Date().toLocaleTimeString();renderPlatformAdmin(data);
+}
+
+(async()=>{
+  if(!configured()) return;
+  const {data}=await sb.auth.getSession();
+  if(data.session){
+    try{
+      const r=await fetch('/.netlify/functions/admin-api',{headers:{Authorization:'Bearer '+data.session.access_token}});
+      if(r.ok){
+        const body=await r.json();
+        document.getElementById('loginGate').style.display='none';
+        document.getElementById('dashboard').style.display='block';
+        document.getElementById('settingAdminEmail').value=data.session.user.email||'';
+        render(body);
+      }
+    }catch(e){}
+  }
+})();
+</script>
+<script>
+async function adminPost(payload){
+ const {data}=await sb.auth.getSession();if(!data.session)throw Error('Administrator session expired.');
+ const r=await fetch('/.netlify/functions/admin-api',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+data.session.access_token},body:JSON.stringify(payload)});
+ const d=await r.json();if(!r.ok)throw Error(d.error||'Unable to save');return d;
+}
+async function saveAnnouncement(){
+ const s=document.getElementById('announcementStatus');s.classList.add('show');
+ const message=document.getElementById('announcementMessage').value.trim(),active=document.getElementById('announcementActive').value==='true';
+ if(!message){s.textContent='Please type the announcement first.';return}
+ try{await adminPost({action:'save_announcement',message,active});s.textContent='Announcement saved.';refreshDashboard()}catch(e){s.textContent=e.message}
+}
+async function saveAccessSettings(){
+ const s=document.getElementById('accessStatus');s.classList.add('show');
+ const payload={action:'save_settings',free_access_enabled:document.getElementById('freeAccessEnabled').value==='true',free_access_until:document.getElementById('freeAccessUntil').value||null,
+ orange_money_number:document.getElementById('orangeMoneyNumber').value.trim(),prices:{primary:+document.getElementById('pricePrimary').value||0,jss:+document.getElementById('priceJss').value||0,sss:+document.getElementById('priceSss').value||0,teacher:+document.getElementById('priceTeacher').value||0,university:+document.getElementById('priceUniversity').value||0}};
+ if(!payload.orange_money_number){s.textContent='Please enter the Orange Money payment number.';return}
+ try{await adminPost(payload);s.textContent='Access rules and prices saved.';refreshDashboard()}catch(e){s.textContent=e.message}
+}
+async function setPaymentStatus(id,status){try{await adminPost({action:'payment_status',id,status});refreshDashboard()}catch(e){alert(e.message)}}
+async function setProfilePaid(id,paid_active){try{await adminPost({action:'profile_paid',id,paid_active});refreshDashboard()}catch(e){alert(e.message)}}
+function renderPlatformAdmin(data){
+ const profiles=data.profiles||[],pays=data.payments||[],cfg=data.platform_settings||{},ann=data.announcement||null;
+ const cat=c=>({primary:'Primary',jss:'JSS',sss:'SSS',teacher:'Teacher',university:'University'})[c]||c;
+ const contact=p=>p.email||p.phone||'—';
+ profileCount.textContent=n(profiles.length);profilePrimary.textContent=n(profiles.filter(p=>p.category==='primary').length);profileSecondary.textContent=n(profiles.filter(p=>['jss','sss'].includes(p.category)).length);profileAdvanced.textContent=n(profiles.filter(p=>['teacher','university'].includes(p.category)).length);
+ profilesBody.innerHTML=profiles.length?profiles.map(p=>`<tr><td>${esc(p.full_name)}</td><td>${esc(contact(p))}</td><td>${esc(cat(p.category))}</td><td>${esc(p.town)}</td><td><span class="pill">${p.paid_active?'Paid Active':'Free / Unpaid'}</span></td><td><button class="btn btn-light" onclick="setProfilePaid('${p.id}',${!p.paid_active})">${p.paid_active?'Deactivate Paid':'Activate Paid'}</button></td></tr>`).join(''):`<tr><td colspan="6" class="empty">No registered profiles yet.</td></tr>`;
+ pendingPayments.textContent=n(pays.filter(p=>p.status==='pending').length);verifiedPayments.textContent=n(pays.filter(p=>p.status==='verified').length);rejectedPayments.textContent=n(pays.filter(p=>p.status==='rejected').length);orangeMoneyKpi.textContent=cfg.orange_money_number||'Not set';
+ paymentsBody.innerHTML=pays.length?pays.map(p=>`<tr><td>${date(p.created_at)}</td><td>${esc(p.full_name||'—')}</td><td>${esc(cat(p.category))}</td><td>${Number(p.amount||0).toLocaleString()}</td><td>${esc(p.sender_number)}</td><td>${esc(p.transaction_reference)}</td><td><span class="pill">${esc(p.status)}</span></td><td>${p.status==='pending'?`<button class="btn btn-light" onclick="setPaymentStatus('${p.id}','verified')">Verify</button> <button class="btn btn-light" onclick="setPaymentStatus('${p.id}','rejected')">Reject</button>`:'—'}</td></tr>`).join(''):`<tr><td colspan="8" class="empty">No payment requests yet.</td></tr>`;
+ freeAccessEnabled.value=String(!!cfg.free_access_enabled);freeAccessUntil.value=(cfg.free_access_until||'').slice(0,10);orangeMoneyNumber.value=cfg.orange_money_number||'';pricePrimary.value=cfg.price_primary||0;priceJss.value=cfg.price_jss||0;priceSss.value=cfg.price_sss||0;priceTeacher.value=cfg.price_teacher||0;priceUniversity.value=cfg.price_university||0;
+ currentAnnouncement.textContent=ann?.message||'No active announcement.';
+ orangePaymentMode.value=cfg.orange_payment_mode||'manual';
+ orangeApiBaseUrl.value=cfg.orange_api_base_url||'';
+ orangeMerchantId.value=cfg.orange_merchant_id||'';
+ orangeWebhookUrl.value=cfg.orange_webhook_url||'';
+ orangeApiEnabled.value=String(!!cfg.orange_api_enabled);
+if(ann){announcementMessage.value=ann.message||'';announcementActive.value=String(!!ann.active)}
+}
+</script><script>
+async function saveOrangeApiSettings(){
+  const s=document.getElementById('orangeApiStatus');
+  s.classList.add('show');
+  const payload={
+    action:'save_orange_api_settings',
+    payment_mode:document.getElementById('orangePaymentMode').value,
+    api_base_url:document.getElementById('orangeApiBaseUrl').value.trim(),
+    merchant_id:document.getElementById('orangeMerchantId').value.trim(),
+    webhook_url:document.getElementById('orangeWebhookUrl').value.trim(),
+    api_enabled:document.getElementById('orangeApiEnabled').value==='true'
+  };
+  if(payload.payment_mode==='api'){
+    if(!payload.api_base_url){s.textContent='Please enter the Orange Money API base URL.';return}
+    if(!payload.merchant_id){s.textContent='Please enter the Orange Money merchant or partner ID.';return}
+    if(!payload.webhook_url){s.textContent='Please enter the webhook/callback URL.';return}
+  }
+  try{
+    await adminPost(payload);
+    s.textContent='Orange Money API settings saved.';
+    refreshDashboard();
+  }catch(e){s.textContent=e.message}
+}
+
+async function testOrangeApiConnection(){
+  const s=document.getElementById('orangeApiStatus');
+  s.classList.add('show');
+  s.textContent='Testing Orange Money API configuration…';
+  try{
+    const d=await adminPost({action:'test_orange_api'});
+    s.textContent=d.message||'Orange Money API configuration test completed.';
+  }catch(e){s.textContent=e.message}
+}
+</script></body>
+</html>
