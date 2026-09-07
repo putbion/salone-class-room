@@ -1,71 +1,39 @@
-exports.handler = async (event) => {
-  const H = {'Content-Type':'application/json','Cache-Control':'no-store'};
-  const U = process.env.SUPABASE_URL;
-  const K = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!U || !K) return {statusCode:500,headers:H,body:JSON.stringify({error:'Learning database is not configured.'})};
-  if (event.httpMethod !== 'POST') return {statusCode:405,headers:H,body:JSON.stringify({error:'Method not allowed.'})};
-
-  let b={};
-  try { b=JSON.parse(event.body||'{}'); } catch { return {statusCode:400,headers:H,body:JSON.stringify({error:'Invalid request.'})}; }
-  const clean=(v,n=180)=>String(v||'').trim().slice(0,n);
-  const level=clean(b.level,30).toLowerCase();
-  const classLevel=clean(b.class_level,60);
-  const subject=clean(b.subject,160);
-  const topic=clean(b.topic,180);
-  if (!['primary','jss','sss','university'].includes(level) || !subject || !topic) {
-    return {statusCode:400,headers:H,body:JSON.stringify({error:'Choose a level and subject, then type a topic.'})};
+const crypto=require('crypto');
+const H={'Content-Type':'application/json','Cache-Control':'no-store'};
+const json=(s,b)=>({statusCode:s,headers:H,body:JSON.stringify(b)});
+const clean=(v,n=4000)=>String(v??'').trim().slice(0,n);
+const tokenHash=t=>crypto.createHash('sha256').update(t).digest('hex');
+const nowIn=(start,end)=>{const n=Date.now(),s=start?new Date(start).getTime():null,e=end?new Date(end).getTime():null;return(!s||n>=s)&&(!e||n<=e)};
+const terms=q=>clean(q,180).toLowerCase().replace(/[^a-z0-9\s-]/g,' ').split(/\s+/).filter(x=>x.length>2&&!['explain','what','does','mean','teach','about','please','give','define','tell'].includes(x)).slice(0,5);
+exports.handler=async(event)=>{
+ const U=process.env.SUPABASE_URL,K=process.env.SUPABASE_SERVICE_ROLE_KEY,G=process.env.GEMINI_API_KEY;
+ if(!U||!K)return json(500,{error:'Learning backend is not configured.'});if(event.httpMethod!=='POST')return json(405,{error:'Method not allowed.'});
+ let b={};try{b=JSON.parse(event.body||'{}')}catch{return json(400,{error:'Invalid request.'})}
+ const sf=(p,o={})=>fetch(U+p,{...o,headers:{apikey:K,Authorization:'Bearer '+K,'Content-Type':'application/json',...(o.headers||{})}});const arr=async p=>{const r=await sf(p);if(!r.ok)throw new Error(await r.text());return r.json()};
+ const s=(await arr('/rest/v1/platform_settings?id=eq.1&select=*').catch(()=>[]))[0]||{};
+ const getProfile=async()=>{const auth=event.headers.authorization||'',t=auth.startsWith('Bearer ')?auth.slice(7):'';if(!t)return null;const ss=await arr('/rest/v1/user_sessions?token_hash=eq.'+encodeURIComponent(tokenHash(t))+'&expires_at=gt.'+encodeURIComponent(new Date().toISOString())+'&select=profile_id&limit=1').catch(()=>[]);if(!ss[0])return null;return(await arr('/rest/v1/user_profiles?id=eq.'+encodeURIComponent(ss[0].profile_id)+'&select=*&limit=1').catch(()=>[]))[0]||null};
+ const p=await getProfile();const toolKey=clean(b.tool_key,100)||clean(b.task,100)||'learning-tool',deviceId=clean(b.device_id,120);
+ const allowedProfile=()=>{if(!p)return false;if((p.account_status||'active')!=='active')return false;if(s.free_access_enabled&&nowIn(s.free_access_start,s.free_access_until))return true;if(s[p.category+'_free'])return true;if((p.free_access_start||p.free_access_end)&&nowIn(p.free_access_start,p.free_access_end))return true;if(p.paid_active&&(!p.paid_access_end||nowIn(p.paid_access_start,p.paid_access_end)))return true;return false};
+ if(p&&!allowedProfile())return json(402,{error:'Your access period has ended. Please complete payment or contact the administrator.',code:'payment_required'});
+ if(!p){if(!deviceId)return json(401,{error:'Please create an account to continue.',code:'registration_required'});const prior=await arr('/rest/v1/tool_usage?device_id=eq.'+encodeURIComponent(deviceId)+'&tool_key=eq.'+encodeURIComponent(toolKey)+'&select=id&limit=1').catch(()=>[]);if(prior[0])return json(401,{error:'You have used the free trial for this function. Please create an account or log in to continue.',code:'registration_required'});await sf('/rest/v1/tool_usage',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({device_id:deviceId,tool_key:toolKey})}).catch(()=>{});}
+ if(p)await sf('/rest/v1/user_profiles?id=eq.'+encodeURIComponent(p.id),{method:'PATCH',body:JSON.stringify({last_seen_at:new Date().toISOString(),current_tool:toolKey})}).catch(()=>{});
+ const level=clean(b.level,30).toLowerCase(),classLevel=clean(b.class_level,80),subject=clean(b.subject,180),topic=clean(b.topic||b.prompt,1200),task=clean(b.task,80)||'tutor',context=clean(b.context,5000);
+ if(!topic)return json(400,{error:'Please type a topic, question or instruction.'});
+ await sf('/rest/v1/app_events',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({event_type:task||'learning',section:level||'learning',detail:(toolKey+' | '+subject+' | '+topic).slice(0,500)})}).catch(()=>{});
+ try{
+  // Supabase-first retrieval for tutor/explanation requests.
+  if(['tutor','explain','lesson'].includes(task)&&subject){
+   const ts=terms(topic);for(const q0 of [topic,...ts]){const q=encodeURIComponent(clean(q0,120));const lev=encodeURIComponent(level),subj=encodeURIComponent(subject);let content=[];try{content=await arr('/rest/v1/learning_content?education_level=eq.'+lev+'&subject=eq.'+subj+'&active=eq.true&or=(topic.ilike.*'+q+'*,title.ilike.*'+q+'*)&select=title,topic,short_answer,detailed_answer,content,example_question,example_answer,common_mistakes,memory_tip,sierra_leone_example,verified&order=verified.desc&limit=2')}catch{};if(content[0]){const c=content[0],parts=[c.title||c.topic||topic,c.short_answer||c.detailed_answer||c.content||''];if(c.detailed_answer&&c.detailed_answer!==c.short_answer)parts.push(c.detailed_answer);if(c.sierra_leone_example)parts.push('Sierra Leone example: '+c.sierra_leone_example);if(c.example_question)parts.push('Try this: '+c.example_question+(c.example_answer?'\nAnswer: '+c.example_answer:''));if(c.memory_tip)parts.push('Memory tip: '+c.memory_tip);if(c.common_mistakes)parts.push('Common mistake to avoid: '+c.common_mistakes);await sf('/rest/v1/ai_usage_log',{method:'POST',body:JSON.stringify({profile_id:p?.id||null,device_id:deviceId,tool_key:toolKey,source:'database',input_chars:topic.length,output_chars:parts.join('\n\n').length})}).catch(()=>{});return json(200,{source:'database',answer:parts.filter(Boolean).join('\n\n')})}
+    let curriculum=[];try{let path='/rest/v1/curriculum_topics?education_level=eq.'+lev+'&subject=eq.'+subj+'&active=eq.true';if(classLevel)path+='&class_level=eq.'+encodeURIComponent(classLevel);path+='&or=(topic.ilike.*'+q+'*,unit_title.ilike.*'+q+'*)&select=unit_title,topic,learning_outcomes,sierra_leone_context,teaching_notes,assessment_guidance,verified&order=verified.desc&limit=2';curriculum=await arr(path)}catch{};if(curriculum[0]&&curriculum[0].learning_outcomes){const c=curriculum[0],ans=[c.topic||c.unit_title||topic,'What you should understand: '+c.learning_outcomes,c.sierra_leone_context?'Sierra Leone context: '+c.sierra_leone_context:'',c.teaching_notes?'Explanation: '+c.teaching_notes:''].filter(Boolean).join('\n\n');await sf('/rest/v1/ai_usage_log',{method:'POST',body:JSON.stringify({profile_id:p?.id||null,device_id:deviceId,tool_key:toolKey,source:'database',input_chars:topic.length,output_chars:ans.length})}).catch(()=>{});return json(200,{source:'database',answer:ans})}}
   }
-
-  const sf=async(path)=>{
-    const r=await fetch(U+path,{headers:{apikey:K,Authorization:'Bearer '+K}});
-    if(!r.ok) throw new Error('Database lookup failed.');
-    return r.json();
-  };
-  const q=encodeURIComponent(topic.replace(/[,*()]/g,' ').trim());
-  const subj=encodeURIComponent(subject);
-  const lev=encodeURIComponent(level);
-  const cls=encodeURIComponent(classLevel);
-
-  try {
-    // 1) Prefer reusable learning content because it contains student-ready explanations.
-    let content=[];
-    try {
-      let path='/rest/v1/learning_content?education_level=eq.'+lev+'&subject=eq.'+subj+'&active=eq.true&or=(topic.ilike.*'+q+'*,title.ilike.*'+q+'*)&select=title,topic,short_answer,detailed_answer,content,example_question,example_answer,common_mistakes,memory_tip,sierra_leone_example,verified,reuse_allowed&order=verified.desc&limit=3';
-      content=await sf(path);
-    } catch(e) { content=[]; }
-
-    // 2) Find matching curriculum records for alignment/context.
-    let curriculum=[];
-    try {
-      let path='/rest/v1/curriculum_topics?education_level=eq.'+lev+'&subject=eq.'+subj+'&active=eq.true';
-      if(classLevel) path+='&class_level=eq.'+cls;
-      path+='&or=(topic.ilike.*'+q+'*,unit_title.ilike.*'+q+'*)&select=unit_title,topic,learning_outcomes,sierra_leone_context,verified,content_version&order=verified.desc&limit=5';
-      curriculum=await sf(path);
-    } catch(e) { curriculum=[]; }
-
-    if(!content.length && !curriculum.length){
-      return {statusCode:404,headers:H,body:JSON.stringify({found:false,source:'database',message:'I could not find a close match for this topic in the Salone Class Room knowledge database yet. Please check the spelling or try a broader topic.'})};
-    }
-
-    const c=content[0]||{};
-    const t=curriculum[0]||{};
-    const parts=[];
-    const title=c.title||t.topic||t.unit_title||topic;
-    parts.push(title);
-    parts.push('');
-    if(c.short_answer) parts.push(c.short_answer);
-    else if(c.detailed_answer) parts.push(c.detailed_answer);
-    else if(c.content) parts.push(c.content);
-    else if(t.learning_outcomes) parts.push('What you should understand: '+t.learning_outcomes);
-    if(c.detailed_answer && c.detailed_answer!==c.short_answer) { parts.push(''); parts.push(c.detailed_answer); }
-    if(c.sierra_leone_example){ parts.push(''); parts.push('Sierra Leone example: '+c.sierra_leone_example); }
-    else if(t.sierra_leone_context){ parts.push(''); parts.push('Sierra Leone context: '+t.sierra_leone_context); }
-    if(c.example_question){ parts.push(''); parts.push('Try this: '+c.example_question); if(c.example_answer) parts.push('Answer: '+c.example_answer); }
-    if(c.memory_tip){ parts.push(''); parts.push('Memory tip: '+c.memory_tip); }
-    if(c.common_mistakes){ parts.push(''); parts.push('Common mistake to avoid: '+c.common_mistakes); }
-
-    return {statusCode:200,headers:H,body:JSON.stringify({found:true,source:content.length?'learning_content':'curriculum_topics',verified:!!(c.verified||t.verified),answer:parts.join('\n')})};
-  } catch(e) {
-    return {statusCode:500,headers:H,body:JSON.stringify({error:'The learning database could not be reached right now.'})};
-  }
+  if(s.ai_enabled===false)return json(503,{error:'AI assistance is temporarily disabled by the administrator. Please try again later.'});if(!G)return json(503,{error:'The AI service is not configured yet.'});
+  const model=clean(s.ai_model,80)||process.env.GEMINI_MODEL||'gemini-3.6-flash';
+  const role=level==='primary'?'Use very simple child-friendly English.':level==='jss'?'Use clear Junior Secondary level English.':level==='sss'?'Use Senior Secondary/WASSCE-appropriate English.':level==='university'?'Use clear university-level academic guidance without inventing citations.':'Use clear educational English.';
+  const taskRules={assignment:'Give learning guidance: outline, key ideas, steps and explanation. Do not pretend the student wrote a finished submission.',review:'Review the learner draft for correctness, clarity, structure, grammar and missing ideas.',topics:'Suggest practical research topics relevant to the stated programme and Sierra Leone where appropriate. For each, give a one-line rationale.',proposal:'Prepare a proposal framework with background, problem, aim, objectives, research questions, methodology outline and suggested chapter structure. Do not invent references.',dissertation:'Guide the requested dissertation chapter/section using the common 5-chapter structure while stating that institution/supervisor rules take priority.',defense:'Prepare likely defense questions, strong response points, presentation structure and common mistakes.',teacher:'Prepare a practical Sierra Leone classroom resource aligned to the selected class, subject and topic.',quiz:'Return ONLY valid JSON array. Each object must have question, options (exactly 4), answer (0-3 integer), explanation, weakArea.'};
+  const prompt=['You are Salone Class Room, an educational assistant for Sierra Leone.',role,'Task: '+task+'.',taskRules[task]||'Explain accurately, step by step, with a relevant example.','Level: '+level+'.','Class: '+classLevel+'.','Subject: '+subject+'.','Learner/teacher request: '+topic+'.',context?'Additional form information: '+context+'.':'','Use Sierra Leone curriculum/exam context when applicable. If uncertain, say so. Do not fabricate official curriculum details or citations.'].filter(Boolean).join('\n');
+  const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+encodeURIComponent(model)+':generateContent',{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':G},body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{temperature:task==='quiz'?0.35:0.5,responseMimeType:task==='quiz'?'application/json':'text/plain'}})});if(!r.ok){const d=await r.text();console.error('[learning-api][gemini]',r.status,d.slice(0,800));return json(502,{error:'The AI service could not answer right now. Please try again.'})}
+  const gd=await r.json(),text=(gd.candidates?.[0]?.content?.parts||[]).map(x=>x.text||'').join('').trim();if(!text)return json(502,{error:'The AI service returned an empty answer. Please try again.'});await sf('/rest/v1/ai_usage_log',{method:'POST',body:JSON.stringify({profile_id:p?.id||null,device_id:deviceId,tool_key:toolKey,model,source:'ai',input_chars:prompt.length,output_chars:text.length})}).catch(()=>{});
+  if(task==='quiz'){let questions;try{questions=JSON.parse(text.replace(/^```json\s*|\s*```$/g,''))}catch{return json(502,{error:'The question service returned an invalid format. Please try again.'})}return json(200,{source:'ai',questions:Array.isArray(questions)?questions.slice(0,10):[]})}
+  return json(200,{source:'ai',answer:text});
+ }catch(e){console.error('[learning-api]',e);return json(500,{error:'The learning service could not complete the request. Please try again.'})}
 };
