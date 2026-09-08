@@ -1306,7 +1306,7 @@ function updateDissertationTopics(){
 </div>
 </footer>
 <script>
-    document.getElementById('year').textContent=new Date().getFullYear();
+    const yearEl=document.getElementById('year'); if(yearEl) yearEl.textContent=new Date().getFullYear();
     const jssSubjects=[
       'English Language','French','Civic Education','Mathematics','Integrated Science','Agricultural Science','Social Studies',
       'Sierra Leonean Languages','Introduction to Technology and ICT Literacy','Business Studies and Entrepreneurship','Religious and Moral Education','Arabic Language','Home Economics','Music and Expressive Arts','Physical and Health Education'
@@ -1486,56 +1486,8 @@ function renderNPSE(qs){const area=document.getElementById('npseQuizArea');if(!A
 function answerNPSE(btn,i,j){if(btn.closest('.quiz-question').dataset.done)return;btn.closest('.quiz-question').dataset.done='1';const q=npseState.qs[i],ok=Number(q.answer)===j;npseState.answered++;if(ok)npseState.correct++;const subject=npseSubject?.value||'',ts=npseTopicSelect,tm=npseTopic,topic=((ts?.value==='__other__'?tm?.value:ts?.value)||'').trim();recordPracticeAttempt('primary',subject,topic,q,j,ok).catch(()=>{});document.getElementById('npseFb'+i).innerHTML='<strong>'+(ok?'Correct':'Wrong')+'.</strong> '+safe(q.explanation||'');if(npseState.answered===npseState.qs.length){document.getElementById('npseSummary').innerHTML='<div class="notice"><strong>Result: '+npseState.correct+'/'+npseState.qs.length+' correct.</strong> Review the explanations above and practise weak areas again.</div>';loadLearningProgress().catch(()=>{})}}
 async function primaryAssignmentGuide(){const subject=primaryAssignmentSubject.value,topic=primaryAssignment.value.trim(),box=primaryAssignmentOutput;if(!subject||!topic){showOutput(box,'Please choose a subject and type the assignment first.');return}await callLearning({level:'primary',subject,topic,task:'assignment',tool_key:'primary-assignment-guide'},box)}
 </script><script>
-document.addEventListener('DOMContentLoaded', function() {
-  const lists = {
-    jss: ["English Language", "Mathematics", "Integrated Science", "Social Studies", "Civic Education", "Agricultural Science", "Business Studies", "Religious and Moral Education", "Physical and Health Education", "Creative Practical Arts", "Information and Communication Technology (ICT)", "French", "Krio"],
-    sss: ["Integrated Science", "Biology", "Chemistry", "Computer Science", "Agricultural Science", "ICT", "Robotics", "Physics", "Environmental Science", "Health Sciences", "Food Security", "Engineering Science", "Physical Health Education", "Climate Change Awareness, Preparedness and Resilience", "Adolescent Health and Life Skills", "Computer Literacy", "Popular Science", "Fundamentals of Mathematics", "Further Mathematics", "Statistics and Probability", "Calculus", "Mathematics for Business and Enterprise", "Applications of Mathematics for Coding", "Mathematics for STEAMM", "Computer Mathematics", "Mathematics in Other Disciplines", "Introductory Statistics and Probability", "Functional Mathematics", "Principles of Economics", "Entrepreneurship", "Principles of Accounting", "Business Management Studies", "Principles of Commerce", "Principles of Marketing", "Business Accounting", "Clerical Office Studies", "Insurance Management", "Business Economics", "Business and Society", "Customer Relationship Management", "Micro Small and Medium Enterprise Management", "Business Ethics", "English Language", "African Literature", "English Literature", "French as a Foreign Language", "Sierra Leonean Literature", "Mende Language", "Kathemne Language", "Hulimba Language", "Krio Language", "Creative Writing", "Business English", "French for Tourism", "Technical Writing", "English for STEAMM", "French for Business and Marketing", "Everyday Basic French", "Popular Literature Appreciation", "Arabic Language", "Fula", "Sierra Leone History", "African History", "Geography", "Music", "Dance and Drama Studies", "Politics and Governance", "Social Studies and Civics", "Religious and Moral Education", "Geography and the Environment", "Music as an Applied Subject", "Entertainment Industry", "Derivatives of Religious and Moral Education", "Dance Performance and Appreciation", "Mining Industry and the Environment", "Fishing Industry and the Environment", "Tourism and Conservation", "Living with Religious and Moral Education"]
-  };
-  function fillByHints(hints, subjects) {
-    document.querySelectorAll('select').forEach(function(sel) {
-      const id = (sel.id || '').toLowerCase();
-      const name = (sel.name || '').toLowerCase();
-      const context = ((sel.closest('article, .card, .tool-card, section') || sel.parentElement)?.innerText || '').toLowerCase();
-      const hay = id + ' ' + name + ' ' + context;
-      if (hints.some(h => hay.includes(h)) && !hay.includes('primary') && !hay.includes('npse')) {
-        if (sel.options.length <= 1) {
-          sel.innerHTML = '<option value="">Select subject</option>';
-          subjects.forEach(function(subject) {
-            const o = document.createElement('option');
-            o.value = subject;
-            o.textContent = subject;
-            sel.appendChild(o);
-          });
-        }
-      }
-    });
-  }
-  fillByHints(['jsssubject','jss subject','bece subject','bece'], lists.jss);
-  fillByHints(['ssssubject','sss subject','wassce subject','wassce'], lists.sss);
-
-  // Teacher subject dropdowns: infer level from the surrounding teacher card.
-  document.querySelectorAll('section').forEach(function(section) {
-    const st = (section.innerText || '').toLowerCase();
-    if (!st.includes('teacher')) return;
-    section.querySelectorAll('select').forEach(function(sel) {
-      const context = ((sel.closest('article, .card, .tool-card') || sel.parentElement)?.innerText || '').toLowerCase();
-      if (!context.includes('subject')) return;
-      let subjects = null;
-      if (context.includes('jss') || context.includes('bece')) subjects = lists.jss;
-      else if (context.includes('sss') || context.includes('wassce')) subjects = lists.sss;
-      if (subjects && sel.options.length <= 1) {
-        sel.innerHTML = '<option value="">Select subject</option>';
-        subjects.forEach(function(subject) {
-          const o = document.createElement('option');
-          o.value = subject;
-          o.textContent = subject;
-          sel.appendChild(o);
-        });
-      }
-    });
-  });
-});
-</script><script>
+// V3.3: removed obsolete broad subject-population script that could overwrite topic dropdowns.
+</script></script><script>
 (function(){
   const category = document.getElementById('teacherCategory');
   const dynamicArea = document.getElementById('teacherDynamicArea');
@@ -1923,7 +1875,8 @@ function preparePrimaryTeacherSupport(type){
       const n=firstName()||payload.name.split(/\s+/)[0]||'';status.textContent=n?`Thank you, ${n}. Your message has been sent successfully.`:'Thank you. Your message has been sent successfully.';
       form.reset();
     }catch(err){
-      status.textContent=err.message||'We could not send your message. Please try again.';
+      console.warn('Support submission failed',err);
+      status.textContent='Your message could not be sent right now. Please try again.';
     }
   });
 })();
