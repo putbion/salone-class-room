@@ -780,6 +780,12 @@ input:focus,select:focus,textarea:focus{
 
 /* MVP V3: curriculum topic pickers and learning progress */
 .topic-picker-row{display:grid;grid-template-columns:1fr;gap:10px;margin-top:10px}.topic-picker-row select,.topic-picker-row input{margin:0}.topic-help{font-size:.82rem;color:var(--muted);margin:6px 0 0}.progress-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0}.progress-card{background:#fff;border:1px solid #dbe5ef;border-radius:14px;padding:16px}.progress-card span{display:block;color:var(--muted);font-size:.8rem;font-weight:700}.progress-card strong{display:block;color:var(--blue);font-size:1.45rem;margin-top:5px}.progress-list{display:grid;gap:10px}.progress-line{display:flex;justify-content:space-between;gap:12px;padding:11px 12px;background:#f6f9fc;border-radius:10px}.progress-empty{padding:18px;background:#f6f9fc;border-radius:12px;color:var(--muted)}@media(max-width:760px){.progress-grid{grid-template-columns:repeat(2,1fr)}}
+
+/* V3.1 readability and concise-answer improvements */
+.output,.teacher-result-note{font-size:1.06rem;line-height:1.72;letter-spacing:.01em}
+.output.show,.teacher-result-note{padding:16px 18px}
+.answer-body p{margin:.55em 0}.answer-body h4{margin:.85em 0 .35em;color:var(--blue);font-size:1.08rem}.answer-body ul{margin:.4em 0 .7em 1.2em;padding:0}.answer-body li{margin:.25em 0}.answer-body strong{font-weight:800}.more-detail-btn{margin-top:12px}
+@media(max-width:620px){.output,.teacher-result-note{font-size:1.05rem;line-height:1.7}}
 </style>
 </head>
 <body>
@@ -818,7 +824,7 @@ input:focus,select:focus,textarea:focus{
 </div>
 </div>
 </header>
-<div class="wrap quick"><div class="quick-grid"><a href="#students"><strong>Student Tutor</strong><span>Understand difficult topics</span></a><a href="#research"><strong>Research Guide</strong><span>Structure original academic work</span></a></div></div>
+<div class="wrap quick"><div class="quick-grid"><a href="#students"><strong>Student Tutor</strong><span>Understand difficult topics</span></a><a href="#learning-progress"><strong>My Learning Journey</strong><span>See your practice, scores and weak areas</span></a><a href="#research"><strong>Research Guide</strong><span>Structure original academic work</span></a></div></div>
 <div class="platform-announcement" hidden="" id="platformAnnouncement">
 <div class="announcement-inner"><strong>Announcement</strong><span id="platformAnnouncementText"></span></div>
 </div><main class="wrap">
@@ -962,7 +968,7 @@ input:focus,select:focus,textarea:focus{
 </div></div>
 <div class="notice"><strong>Note:</strong> Answers are displayed for students to read and copy into their exercise books. Downloads are not provided.</div>
 </section>
-<section class="section ribbon-section" id="learning-progress"><div class="ribbon-intro"><div class="section-ribbon">My Learning Progress</div><p class="section-ribbon-description">Logged-in learners can see their practice tally, performance by subject and topic, recent results and areas that need more practice.</p></div><div class="card"><div id="progressSignedOut" class="progress-empty">Log in to see your learning progress.</div><div id="progressContent" hidden><div class="progress-grid"><div class="progress-card"><span>Questions attempted</span><strong id="progressAttempted">0</strong></div><div class="progress-card"><span>Correct</span><strong id="progressCorrect">0</strong></div><div class="progress-card"><span>Wrong</span><strong id="progressWrong">0</strong></div><div class="progress-card"><span>Overall score</span><strong id="progressScore">0%</strong></div></div><div class="grid"><div><h3>Performance by subject</h3><div class="progress-list" id="progressSubjects"></div></div><div><h3>Topics to improve</h3><div class="progress-list" id="progressWeak"></div></div></div><div style="margin-top:16px"><h3>Recent practice</h3><div class="progress-list" id="progressRecent"></div></div><button class="btn btn-light" type="button" onclick="loadLearningProgress()" style="margin-top:14px">Refresh my progress</button></div></div></section><section class="section ribbon-section" id="teachers"><div class="ribbon-intro">
+<section class="section ribbon-section" id="learning-progress"><div class="ribbon-intro"><div class="section-ribbon">My Learning Journey</div><p class="section-ribbon-description">See the questions you have attempted, your scores, subjects practised, recent results and topics that need more practice.</p></div><div class="card"><div id="progressSignedOut" class="progress-empty">Log in to see My Learning Journey.</div><div id="progressContent" hidden><div class="progress-grid"><div class="progress-card"><span>Questions attempted</span><strong id="progressAttempted">0</strong></div><div class="progress-card"><span>Correct</span><strong id="progressCorrect">0</strong></div><div class="progress-card"><span>Wrong</span><strong id="progressWrong">0</strong></div><div class="progress-card"><span>Overall score</span><strong id="progressScore">0%</strong></div></div><div class="grid"><div><h3>Performance by subject</h3><div class="progress-list" id="progressSubjects"></div></div><div><h3>Topics to improve</h3><div class="progress-list" id="progressWeak"></div></div></div><div style="margin-top:16px"><h3>Recent practice</h3><div class="progress-list" id="progressRecent"></div></div><button class="btn btn-light" type="button" onclick="loadLearningProgress()" style="margin-top:14px">Refresh my progress</button></div></div></section><section class="section ribbon-section" id="teachers"><div class="ribbon-intro">
 <div class="section-ribbon">Teachers</div>
 <p class="section-ribbon-description">
       This section is for teachers. Choose the school level you teach, and Salone Class Room will show only the classes,
@@ -1003,106 +1009,18 @@ input:focus,select:focus,textarea:focus{
 </div><p class="topic-help">The topic list is loaded from the curriculum database. Select Other / Type my own topic if necessary.</p><input id="teacherTopicOther" placeholder="Type another topic" hidden/>
 <div class="prepare-teach-box">
 <h3>Prepare to Teach</h3>
-<p>
-        Choose what you want to prepare. Curriculum / Scheme of Work Planning comes first because lesson preparation should follow the prescribed syllabus and learning outcomes.
-      </p>
+<p>Choose the type of document you want. You only need to select the class, subject and topic above, then add the date and duration. Salone Class Room will prepare the rest for you.</p>
 <label for="teacherPrepareType">What do you want to prepare?</label>
 <select id="teacherPrepareType">
 <option value="">Select one</option>
-<option value="scheme">1. Curriculum / Scheme of Work Planning</option>
-<option value="lesson">2. Lesson Note / Lesson Plan Preparation</option>
+<option value="curriculum">Curriculum / Teaching Guide</option>
+<option value="lesson">Lesson Note / Lesson Plan</option>
 </select>
+<div class="teacher-form-grid" style="margin-top:12px">
+<div><label for="teacherPrepDate">Date</label><input id="teacherPrepDate" type="date"/></div>
+<div><label for="teacherPrepDuration">Duration</label><select id="teacherPrepDuration"><option value="">Select duration</option><option>30 minutes</option><option>40 minutes</option><option>45 minutes</option><option>60 minutes</option><option>80 minutes</option></select></div>
 </div>
-<div class="teacher-prep-form" hidden="" id="schemeForm">
-<div class="prep-heading">
-<h3>Curriculum / Scheme of Work Planning</h3>
-<p>
-          Use the official syllabus to plan the teaching sequence. The structure below follows MBSSE's curriculum elements: learning outcomes, content, pedagogy, assessment and learning/teaching resources.
-        </p>
-</div>
-<div class="teacher-form-grid">
-<div>
-<label for="schemeTerm">Term</label>
-<select id="schemeTerm">
-<option value="">Select term</option>
-<option>Term 1</option>
-<option>Term 2</option>
-<option>Term 3</option>
-</select>
-</div>
-<div>
-<label for="schemeWeek">Week</label>
-<input id="schemeWeek" placeholder="Example: Week 3" type="text"/>
-</div>
-<div>
-<label for="schemePeriods">Number of periods</label>
-<input id="schemePeriods" max="20" min="1" placeholder="Example: 3" type="number"/>
-</div>
-</div>
-<label for="schemeUnit">Theme / Unit / Topic</label>
-<input id="schemeUnit" placeholder="Enter the theme, unit or topic from the prescribed syllabus" type="text"/>
-<label for="schemeOutcome">Specific Learning Outcome(s)</label>
-<textarea id="schemeOutcome" placeholder="What should pupils/students be able to know, understand or do by the end of this topic?" rows="3"></textarea>
-<label for="schemeContent">Content / Key Ideas</label>
-<textarea id="schemeContent" placeholder="Enter the syllabus content or key ideas to be covered" rows="3"></textarea>
-<label for="schemePedagogy">Teaching Style / Pedagogy</label>
-<textarea id="schemePedagogy" placeholder="Example: demonstration, guided practice, discussion, pair work, group work" rows="3"></textarea>
-<label for="schemeAssessment">Assessment Method(s)</label>
-<textarea id="schemeAssessment" placeholder="How will you check whether learners achieved the learning outcome?" rows="3"></textarea>
-<label for="schemeResources">Learning and Teaching Resources</label>
-<textarea id="schemeResources" placeholder="Example: textbook, chalkboard, flash cards, locally available materials" rows="3"></textarea>
-<button class="btn btn-blue" id="prepareSchemeBtn" type="button">
-        Click here to prepare your scheme of work
-      </button>
-</div>
-<div class="teacher-prep-form" hidden="" id="lessonForm">
-<div class="prep-heading">
-<h3>Lesson Note / Lesson Plan Preparation</h3>
-<p>
-          This follows the structure used in current MBSSE teacher guides: lesson title, learning outcome, key concepts, what you need and what you do, with basic school details added for practical lesson preparation.
-        </p>
-</div>
-<div class="teacher-form-grid">
-<div>
-<label for="lessonDate">Date</label>
-<input id="lessonDate" type="date"/>
-</div>
-<div>
-<label for="lessonTerm">Term</label>
-<select id="lessonTerm">
-<option value="">Select term</option>
-<option>Term 1</option>
-<option>Term 2</option>
-<option>Term 3</option>
-</select>
-</div>
-<div>
-<label for="lessonDuration">Duration</label>
-<select id="lessonDuration">
-<option value="">Select duration</option>
-<option>30 minutes</option>
-<option>40 minutes</option>
-<option>45 minutes</option>
-<option>60 minutes</option>
-<option>80 minutes</option>
-</select>
-</div>
-</div>
-<label for="lessonTitle">Lesson Title / Topic</label>
-<input id="lessonTitle" placeholder="Enter the lesson title or topic" type="text"/>
-<label for="lessonOutcome">Learning Outcome(s)</label>
-<textarea id="lessonOutcome" placeholder="What should learners achieve by the end of the lesson?" rows="3"></textarea>
-<label for="lessonConcepts">Key Concepts</label>
-<textarea id="lessonConcepts" placeholder="Enter the important ideas, terms or concepts learners need to understand" rows="3"></textarea>
-<label for="lessonMaterials">What You Need — Teaching and Learning Materials</label>
-<textarea id="lessonMaterials" placeholder="Example: chalkboard, textbook, chart, flash cards, specimens or locally available materials" rows="3"></textarea>
-<label for="lessonSteps">What You Do — Teaching and Learning Steps</label>
-<textarea id="lessonSteps" placeholder="Describe the teaching sequence: introduction, teacher/learner activities, guided practice, questions, assessment and lesson close" rows="5"></textarea>
-<label for="lessonInclusion">Learner Support / Inclusion</label>
-<textarea id="lessonInclusion" placeholder="How will you support learners who need extra help or have different learning needs?" rows="3"></textarea>
-<button class="btn btn-blue" id="prepareLessonBtn" type="button">
-        Click here to prepare your lesson note
-      </button>
+<button class="btn btn-blue" id="prepareTeacherSimpleBtn" type="button">Click here to prepare it</button>
 </div>
 <div aria-live="polite" class="teacher-result-note" id="teacherOnlyMessage"></div>
 </div>
@@ -1445,10 +1363,11 @@ function updateDissertationTopics(){
 
     async function startQuiz(level){
       const subject=document.getElementById(level+'QuizSubject').value;
-      const topicSel=document.getElementById(level+'QuizTopicSelect'),manual=document.getElementById(level+'QuizTopic');const topic=((topicSel?.value==='__other__'?manual?.value:topicSel?.value)||'').trim();
+      const topicSel=document.getElementById(level+'QuizTopicSelect'),manual=document.getElementById(level+'QuizTopic');let topic=((topicSel?.value==='__other__'?manual?.value:topicSel?.value)||'').trim();
       const box=document.getElementById(level+'Quiz');
       const exam=level==='jss'?'BECE':'WASSCE';
-      if(!subject||!topic){showOutput(box,'Please choose a subject and type the topic you want to practise.');return}
+      if(!subject){showOutput(box,'Please choose a subject first.');return}
+      if(!topic)topic='Mixed '+exam+' practice questions in '+subject;
       const used=getQuizUsage(level);if(used>=QUIZ_SESSION_LIMIT){showOutput(box,'You have reached the 50-question practice limit for this session. Review your previous answers and weak areas first.');return}
       showOutput(box,firstName()?`Preparing your ${exam} questions, ${firstName()}…`:'Preparing your '+exam+' questions…');
       try{
@@ -1861,8 +1780,6 @@ function preparePrimaryTeacherSupport(type){
   const topicSel = document.getElementById('teacherTopicOnly');
   const topicOther = document.getElementById('teacherTopicOther');
   const prepareType = document.getElementById('teacherPrepareType');
-  const schemeForm = document.getElementById('schemeForm');
-  const lessonForm = document.getElementById('lessonForm');
   const msg = document.getElementById('teacherOnlyMessage');
 
   if(!category) return;
@@ -1885,8 +1802,6 @@ function preparePrimaryTeacherSupport(type){
   category.addEventListener('change', function(){
     const level=category.value;
     panel.hidden=!level;
-    schemeForm.hidden=true;
-    lessonForm.hidden=true;
     prepareType.value='';
     msg.textContent='';
     fill(topicSel,[],'Choose class and subject first');topicOther.hidden=true;
@@ -1911,53 +1826,19 @@ function preparePrimaryTeacherSupport(type){
 
   streamSel.addEventListener('change', function(){fill(subjectSel,sssStreams[streamSel.value]||[],'Select subject');fill(topicSel,[],'Choose a subject first');topicOther.hidden=true;});
   async function loadTeacherTopics(){if(!category.value||!classSel.value||!subjectSel.value){fill(topicSel,[],'Choose class and subject first');topicOther.hidden=true;return}fill(topicSel,[],'Loading curriculum topics…');try{const d=await platformPost({action:'curriculum_topics',level:category.value,class_level:classSel.value,subject:subjectSel.value},18000);fill(topicSel,d.topics||[],(d.topics||[]).length?'Select prescribed topic':'No listed topic found');topicSel.appendChild(new Option('Other / Type my own topic','__other__'))}catch{fill(topicSel,[],'Topic list unavailable');topicSel.appendChild(new Option('Other / Type my own topic','__other__'))}}
-  classSel.addEventListener('change',loadTeacherTopics);subjectSel.addEventListener('change',loadTeacherTopics);topicSel.addEventListener('change',()=>{topicOther.hidden=topicSel.value!=='__other__';const t=topicSel.value==='__other__'?topicOther.value:topicSel.value;if(t){schemeUnit.value=t;lessonTitle.value=t}});topicOther.addEventListener('input',()=>{if(topicSel.value==='__other__'){schemeUnit.value=topicOther.value;lessonTitle.value=topicOther.value}});
+  classSel.addEventListener('change',loadTeacherTopics);subjectSel.addEventListener('change',loadTeacherTopics);topicSel.addEventListener('change',()=>{topicOther.hidden=topicSel.value!=='__other__';if(!topicOther.hidden)topicOther.focus()});
+  function baseValid(){return category.value&&classSel.value&&subjectSel.value&&(category.value!=='sss'||streamSel.value)}
 
-  prepareType.addEventListener('change', function(){
-    schemeForm.hidden = prepareType.value !== 'scheme';
-    lessonForm.hidden = prepareType.value !== 'lesson';
-    msg.textContent='';
-  });
-
-  function baseValid(){
-    return category.value && classSel.value && subjectSel.value &&
-      (category.value !== 'sss' || streamSel.value);
-  }
-
-  document.getElementById('prepareSchemeBtn')?.addEventListener('click', async function(){
-    const required = [
-      document.getElementById('schemeTerm').value,
-      document.getElementById('schemeWeek').value.trim(),
-      document.getElementById('schemeUnit').value.trim(),
-      document.getElementById('schemeOutcome').value.trim(),
-      document.getElementById('schemeContent').value.trim(),
-      document.getElementById('schemePedagogy').value.trim(),
-      document.getElementById('schemeAssessment').value.trim(),
-      document.getElementById('schemeResources').value.trim()
-    ];
-    if(!baseValid() || required.some(v=>!v)){
-      msg.textContent='Please complete your teacher category, class, subject and all required scheme-of-work fields.';
+  document.getElementById('prepareTeacherSimpleBtn')?.addEventListener('click', async function(){
+    const selectedTopic=(topicSel.value==='__other__'?topicOther.value:topicSel.value||'').trim();
+    const prepType=prepareType.value,prepDate=(document.getElementById('teacherPrepDate')?.value||'').trim(),duration=(document.getElementById('teacherPrepDuration')?.value||'').trim();
+    if(!baseValid()||!selectedTopic||!prepType||!prepDate||!duration){
+      msg.textContent='Please choose your teacher category, class, subject, topic, preparation type, date and duration.';
       return;
     }
-    const context=['Term: '+schemeTerm.value,'Week: '+schemeWeek.value,'Periods: '+schemePeriods.value,'Learning outcomes: '+schemeOutcome.value,'Content: '+schemeContent.value,'Pedagogy: '+schemePedagogy.value,'Assessment: '+schemeAssessment.value,'Resources: '+schemeResources.value].join('\n');await callLearning({level:category.value,class_level:classSel.value,subject:subjectSel.value,topic:schemeUnit.value,task:'teacher',context,tool_key:'teacher-scheme-of-work'},msg);
-  });
-
-  document.getElementById('prepareLessonBtn')?.addEventListener('click', async function(){
-    const required = [
-      document.getElementById('lessonDate').value,
-      document.getElementById('lessonTerm').value,
-      document.getElementById('lessonDuration').value,
-      document.getElementById('lessonTitle').value.trim(),
-      document.getElementById('lessonOutcome').value.trim(),
-      document.getElementById('lessonConcepts').value.trim(),
-      document.getElementById('lessonMaterials').value.trim(),
-      document.getElementById('lessonSteps').value.trim()
-    ];
-    if(!baseValid() || required.some(v=>!v)){
-      msg.textContent='Please complete your teacher category, class, subject and all required lesson-note fields.';
-      return;
-    }
-    const context=['Date: '+lessonDate.value,'Term: '+lessonTerm.value,'Duration: '+lessonDuration.value,'Outcomes: '+lessonOutcome.value,'Key concepts: '+lessonConcepts.value,'Materials: '+lessonMaterials.value,'Teaching steps: '+lessonSteps.value,'Inclusion: '+lessonInclusion.value].join('\n');await callLearning({level:category.value,class_level:classSel.value,subject:subjectSel.value,topic:lessonTitle.value,task:'teacher',context,tool_key:'teacher-lesson-note'},msg);
+    const documentName=prepType==='lesson'?'Lesson Note / Lesson Plan':'Curriculum / Teaching Guide';
+    const context=['Document: '+documentName,'Date: '+prepDate,'Duration: '+duration,'Prepare the complete document for the teacher. The teacher should not need to supply learning outcomes, teaching steps, materials or assessment details; generate suitable practical suggestions from the selected class, subject and topic.'].join('\n');
+    await callLearning({level:category.value,class_level:classSel.value,subject:subjectSel.value,topic:selectedTopic,task:'teacher',context,tool_key:prepType==='lesson'?'teacher-lesson-note':'teacher-curriculum-guide'},msg);
   });
 })();
 </script><script>
@@ -2039,10 +1920,10 @@ function preparePrimaryTeacherSupport(type){
       });
       const data=await res.json().catch(()=>({}));
       if(!res.ok) throw new Error(data.error||'Unable to send message');
-      status.textContent='Thank you. Your message has been sent successfully.';
+      const n=firstName()||payload.name.split(/\s+/)[0]||'';status.textContent=n?`Thank you, ${n}. Your message has been sent successfully.`:'Thank you. Your message has been sent successfully.';
       form.reset();
     }catch(err){
-      status.textContent='Your message could not be sent right now. Please check your internet connection and try again.';
+      status.textContent=err.message||'We could not send your message. Please try again.';
     }
   });
 })();
@@ -2086,22 +1967,30 @@ function sessionToken(){return localStorage.getItem('salone_session_token')||''}
 function cat(c){return({primary:'Primary School Pupil',jss:'JSS Student',sss:'SSS Student',teacher:'Teacher',university:'University Student'})[c]||c}function money(v){return'Le '+Number(v||0).toLocaleString()}
 function authHeaders(){const t=sessionToken();return t?{'Authorization':'Bearer '+t}:{}}
 function showOutput(box,text){box.textContent=text;box.classList.add('show');box.scrollIntoView({behavior:'smooth',block:'nearest'})}
+function formatAIText(text){
+  const esc=safe(String(text||'')).replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>').replace(/^#{1,4}\s*(.+)$/gm,'<h4>$1</h4>');
+  const lines=esc.split(/\n/),out=[];let inList=false;
+  for(const raw of lines){const line=raw.trim();if(/^[-•*]\s+/.test(line)){if(!inList){out.push('<ul>');inList=true}out.push('<li>'+line.replace(/^[-•*]\s+/,'')+'</li>');continue}if(inList){out.push('</ul>');inList=false}if(!line)continue;if(line.startsWith('<h4>'))out.push(line);else out.push('<p>'+line+'</p>')}if(inList)out.push('</ul>');return out.join('')
+}
+const lastLearningPayload={};
+function renderLearningAnswer(box,text,payload){box.innerHTML='<div class="answer-body">'+formatAIText(text)+'</div>';if(box.id&&payload&&['tutor','assignment','teacher'].includes((payload.task||'tutor').toLowerCase())){lastLearningPayload[box.id]=payload;const b=document.createElement('button');b.type='button';b.className='btn btn-light more-detail-btn';b.textContent='More detail';b.onclick=()=>requestMoreDetail(box.id);box.appendChild(b)}box.classList.add('show');box.scrollIntoView({behavior:'smooth',block:'nearest'})}
+async function requestMoreDetail(boxId){const box=document.getElementById(boxId),payload=lastLearningPayload[boxId];if(!box||!payload)return;showOutput(box,firstName()?`Adding more detail for you, ${firstName()}…`:'Adding more detail…');try{const d=await learningRequest({...payload,detail_mode:'more'});renderLearningAnswer(box,personalisedText(payload,d.answer||'No answer was returned. Please try again.'),payload)}catch(e){handleLearningError(e,box)}}
 async function platformPost(payload,timeout=30000){const c=new AbortController(),tm=setTimeout(()=>c.abort(),timeout);try{const r=await fetch(PLATFORM_API,{method:'POST',headers:{'Content-Type':'application/json',...authHeaders()},body:JSON.stringify(payload),signal:c.signal});const d=await r.json().catch(()=>({}));if(!r.ok){const e=new Error(d.error||'Unable to complete this request.');e.code=d.code;e.status=r.status;throw e}return d}finally{clearTimeout(tm)}}
 async function requestPasswordReset(){const contact=(document.getElementById('loginContact')?.value||document.getElementById('regContact')?.value||'').trim();if(!contact){loginStatus.textContent='Enter your registered phone number or email first.';loginStatus.classList.add('show');return}loginStatus.textContent='Sending your reset request…';loginStatus.classList.add('show');try{await platformPost({action:'password_reset_request',contact});loginStatus.textContent='Reset request sent. An administrator can now reset your password and give you a temporary password privately.'}catch(e){loginStatus.textContent=e.message}}
 async function recordPracticeAttempt(level,subject,topic,q,selectedIndex,isCorrect){if(!currentProfile)return;return platformPost({action:'practice_record',level,subject,topic,question:q.question||'',selected_index:selectedIndex,correct_index:Number(q.answer),is_correct:!!isCorrect,weak_area:q.weakArea||topic},12000)}
 async function loadLearningProgress(){const out=document.getElementById('progressSignedOut'),content=document.getElementById('progressContent');if(!out||!content)return;if(!currentProfile){out.hidden=false;content.hidden=true;return}out.hidden=true;content.hidden=false;try{const d=await platformPost({action:'progress'},20000);progressAttempted.textContent=d.attempted||0;progressCorrect.textContent=d.correct||0;progressWrong.textContent=d.wrong||0;progressScore.textContent=(d.score||0)+'%';progressSubjects.innerHTML=(d.subjects||[]).length?d.subjects.map(x=>`<div class="progress-line"><span>${safe(x.subject)}</span><strong>${x.score}% (${x.correct}/${x.attempted})</strong></div>`).join(''):'<div class="progress-empty">No subject results yet.</div>';progressWeak.innerHTML=(d.weak_topics||[]).length?d.weak_topics.map(x=>`<div class="progress-line"><span>${safe(x.topic)}</span><strong>${x.score}%</strong></div>`).join(''):'<div class="progress-empty">No weak areas identified yet.</div>';progressRecent.innerHTML=(d.recent||[]).length?d.recent.map(x=>`<div class="progress-line"><span>${safe(x.subject)} — ${safe(x.topic||'General')}</span><strong>${x.is_correct?'Correct':'Wrong'}</strong></div>`).join(''):'<div class="progress-empty">Start an exam practice to build your progress.</div>'}catch(e){progressSubjects.innerHTML='<div class="progress-empty">'+safe(e.message)+'</div>'}}
 async function learningRequest(payload){const controller=new AbortController(),tm=setTimeout(()=>controller.abort(),85000);try{const adminToken=localStorage.getItem('salone_admin_token')||'';const r=await fetch(LEARNING_API,{method:'POST',headers:{'Content-Type':'application/json',...authHeaders(),...(adminToken?{'X-Admin-Token':adminToken}:{})},body:JSON.stringify({...payload,device_id:deviceId()}),signal:controller.signal});const d=await r.json().catch(()=>({}));if(!r.ok){const e=new Error(d.error||'Unable to complete this request.');e.code=d.code;e.status=r.status;throw e}return d}finally{clearTimeout(tm)}}
 function handleLearningError(e,box){if(e.name==='AbortError')return showOutput(box,'This request is taking longer than expected. Please try again. If it continues, the AI service may be busy.');if(e.code==='registration_required'){pendingToolAction=null;showAccountTab('register');openAccountModal();return}if(e.code==='payment_required'||e.status===402){openPaymentModal(currentProfile||{category:'university'});return}showOutput(box,e.message||'Something went wrong. Please try again.')}
-async function firstName(){const n=(currentProfile?.full_name||'').trim();return n?n.split(/\s+/)[0]:''}
-function personalLead(payload){const n=firstName();if(!n)return '';const t=(payload?.task||'').toLowerCase();if(t==='assignment')return `Thank you, ${n}. Here is your step-by-step assignment guide.`;if(t==='review')return `Thank you, ${n}. Here is feedback on your answer.`;if(t==='topics')return `${n}, here are research topic suggestions for you.`;if(t==='proposal')return `${n}, here is your proposal framework.`;if(t==='dissertation')return `${n}, here is your dissertation guidance.`;if(t==='defense')return `${n}, here is your dissertation defense preparation guide.`;if(t==='teacher')return `Thank you, ${n}. Here is the teaching support you requested.`;if((payload?.level||'').toLowerCase()==='university'||t==='lecturer')return `Thank you, ${n}. Here is your lecturer-style explanation.`;return `Thank you, ${n}. Here is your lesson explanation.`}
+function firstName(){const n=(currentProfile?.full_name||'').trim();return n?n.split(/\s+/)[0]:''}
+function personalLead(payload){const n=firstName();if(!n)return '';const t=(payload?.task||'').toLowerCase();if(t==='assignment')return `Thank you, ${n}. Here is your assignment guide.`;if(t==='review')return `Thank you, ${n}. Here is feedback on your answer.`;if(t==='topics')return `${n}, here are research topic suggestions for you.`;if(t==='proposal')return `${n}, here is your proposal framework.`;if(t==='dissertation')return `${n}, here is your dissertation guidance.`;if(t==='defense')return `${n}, here is your dissertation defense preparation guide.`;if(t==='teacher')return `Thank you, ${n}. Here is the teaching support you requested.`;if((payload?.level||'').toLowerCase()==='university'||t==='lecturer')return `Thank you, ${n}. Here is your lecturer-style explanation.`;return `Thank you, ${n}. Here is your lesson explanation.`}
 function personalisedText(payload,text){const lead=personalLead(payload);return lead?lead+'\n\n'+text:text}
-async function callLearning(payload,box){const n=firstName();showOutput(box,n?`Preparing your answer, ${n}…`:'Preparing your answer…');try{const d=await learningRequest(payload);showOutput(box,personalisedText(payload,d.answer||'No answer was returned. Please try again.'))}catch(e){handleLearningError(e,box)}}
+async function callLearning(payload,box){const n=firstName();showOutput(box,n?`Preparing your answer, ${n}…`:'Preparing your answer…');try{const d=await learningRequest(payload);renderLearningAnswer(box,personalisedText(payload,d.answer||'No answer was returned. Please try again.'),payload)}catch(e){handleLearningError(e,box)}}
 function openAccountModal(){accountModal.classList.add('open');document.body.style.overflow='hidden';renderAccount()}function closeAccountModal(){accountModal.classList.remove('open');document.body.style.overflow=''}
 function showAccountTab(which){registerPane.hidden=which!=='register';loginPane.hidden=which!=='login';registerTabBtn.classList.toggle('active',which==='register');loginTabBtn.classList.toggle('active',which==='login')}
 function renderAccount(){const signed=!!currentProfile;accountSignedOut.hidden=signed;accountSignedIn.hidden=!signed;if(signed){acctName.textContent=currentProfile.full_name;acctCategory.textContent=cat(currentProfile.category);acctAccess.textContent=currentAccess?.status||'Checking';acctExpiry.textContent=currentProfile.paid_access_end?'Paid access until '+new Date(currentProfile.paid_access_end).toLocaleDateString():currentProfile.free_access_end?'Free access until '+new Date(currentProfile.free_access_end).toLocaleDateString():''}accountBtn.textContent=signed?'My Account':'Login';loadLearningProgress().catch(()=>{})}
 function validContact(v){return v.includes('@')?/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v):/^\+?[0-9\s()-]{7,20}$/.test(v)}
 async function submitPlatformRegistration(){['errFullName','errContact','errPassword','errCategory','errTown'].forEach(i=>document.getElementById(i).textContent='');const d={full_name:regFullName.value.trim(),contact:regContact.value.trim(),password:regPassword.value,category:regCategory.value,town:regTown.value.trim()};let ok=true;if(d.full_name.length<3){errFullName.textContent='Please type your full name.';ok=false}if(!validContact(d.contact)){errContact.textContent='Type a valid phone number or email.';ok=false}if(d.password.length<6){errPassword.textContent='Use at least 6 characters.';ok=false}if(!d.category){errCategory.textContent='Please select your category.';ok=false}if(d.town.length<2){errTown.textContent='Please type your town or city.';ok=false}if(!ok)return;registrationStatus.textContent='Creating your account…';registrationStatus.classList.add('show');try{const j=await platformPost({action:'register',device_id:deviceId(),...d},45000);saveSession(j.session);currentProfile=j.profile;currentAccess=j.access;registrationStatus.textContent='Account created successfully.';renderAccount();setTimeout(closeAccountModal,500)}catch(e){registrationStatus.textContent=e.message}}
-async function submitLogin(){loginStatus.textContent='Logging in…';loginStatus.classList.add('show');try{const j=await platformPost({action:'login',device_id:deviceId(),contact:loginContact.value.trim(),password:loginPassword.value},45000);saveSession(j.session);currentProfile=j.profile;currentAccess=j.access;loginStatus.textContent=firstName()?`Login successful. Welcome, ${firstName()}.`:'Login successful.';renderAccount();setTimeout(closeAccountModal,400)}catch(e){loginStatus.textContent=e.name==='AbortError'?'Login took too long. Please try again.':e.message}}
+async function submitLogin(){loginStatus.textContent='Logging in…';loginStatus.classList.add('show');try{const j=await platformPost({action:'login',device_id:deviceId(),contact:loginContact.value.trim(),password:loginPassword.value},45000);saveSession(j.session);currentProfile=j.profile;currentAccess=j.access;loginStatus.textContent=firstName()?`Login successful. Welcome, ${firstName()}.`:'Login successful.';renderAccount();setTimeout(closeAccountModal,400)}catch(e){loginStatus.textContent=e.name==='AbortError'?'Login is taking longer than expected. Please try again.':(e.message||'We could not log you in. Please try again.')}}
 async function logoutPlatform(){try{await fetch(PLATFORM_API,{method:'POST',headers:{'Content-Type':'application/json',...authHeaders()},body:JSON.stringify({action:'logout'})})}catch{}clearSession();renderAccount();showAccountTab('login')}
 function price(c){return Number(platformConfig?.prices?.[c]||0)}function openPaymentModal(p){if(!p){openAccountModal();showAccountTab('login');return}paymentCategory.textContent=cat(p.category);paymentAmount.textContent=money(price(p.category));paymentNumber.textContent=platformConfig?.orange_money_number||'Contact administrator';paymentModal.classList.add('open');document.body.style.overflow='hidden'}function closePaymentModal(){paymentModal.classList.remove('open');document.body.style.overflow=''}
 async function submitPaymentRequest(){const s=paymentSender.value.trim(),ref=paymentReference.value.trim();errPaymentSender.textContent='';errPaymentReference.textContent='';if(s.replace(/\D/g,'').length<7){errPaymentSender.textContent='Please type the number used for payment.';return}if(ref.length<3){errPaymentReference.textContent='Please type the transaction reference.';return}paymentStatus.textContent='Submitting…';try{const r=await fetch(PLATFORM_API,{method:'POST',headers:{'Content-Type':'application/json',...authHeaders()},body:JSON.stringify({action:'payment_request',sender_number:s,transaction_reference:ref})}),j=await r.json();if(!r.ok)throw Error(j.error||'Unable to submit');paymentStatus.textContent='Payment submitted. The administrator will activate your access after verification.'}catch(e){paymentStatus.textContent=e.message}}
