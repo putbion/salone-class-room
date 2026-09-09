@@ -922,7 +922,7 @@ input:focus,select:focus,textarea:focus{
 <div class="level-block" id="student-jss"><h3 class="subsection-title">Junior Secondary School (JSS) &amp; BECE</h3><div class="grid">
 <article class="card"><span class="step">1</span><h3>JSS Text Tutor</h3><p class="guide">Choose your class and subject, type the word or topic you do not understand, then click the blue button for a simple explanation.</p><div class="row"><div><label>Class</label><select id="jssClass"><option>JSS 1</option><option>JSS 2</option><option>JSS 3</option></select></div><div><label>Subject</label><select data-jss-subject="" id="jssSubject"><option value="">Select subject</option><option value="English Language">English Language</option><option value="Mathematics">Mathematics</option><option value="Integrated Science">Integrated Science</option><option value="Social Studies">Social Studies</option><option value="Civic Education">Civic Education</option><option value="Agricultural Science">Agricultural Science</option><option value="Business Studies">Business Studies</option><option value="Religious and Moral Education">Religious and Moral Education</option><option value="Physical and Health Education">Physical and Health Education</option><option value="Creative Practical Arts">Creative Practical Arts</option><option value="Information and Communication Technology (ICT)">Information and Communication Technology (ICT)</option><option value="French">French</option><option value="Krio">Krio</option></select></div></div><label>Curriculum topic</label><select id="jssTopicSelect" data-topic-level="jss" data-class-id="jssClass" data-subject-id="jssSubject"><option value="">Choose class and subject first</option></select><input id="jssTopic" placeholder="Type your own topic" hidden/><p class="topic-help">Choose the prescribed topic you want explained, or select Other.</p><button class="btn btn-blue" onclick="curriculumExplain('jss','jssClass','jssSubject','jssTopicSelect','jssTutor','jssTopic')">Click here for your explanation</button><div class="output" id="jssTutor"></div></article>
 <article class="card"><span class="step">2</span><h3>BECE Practice</h3>
-<p class="guide"><strong>Let’s practise some objective questions.</strong> Choose your subject and type the topic you want to practise. You will receive 10 questions at a time. Select one answer for each question. You will immediately see whether your answer is correct or wrong. At the end, you will see your total correct answers, total wrong answers and the areas you need to revise.</p>
+<p class="guide"><strong>Let’s practise some objective questions.</strong> Choose your subject and type the topic you want to practise. You will receive 5 questions at a time. Select one answer for each question. You will immediately see whether your answer is correct or wrong. At the end, you will see your total correct answers, total wrong answers and the areas you need to revise.</p>
 <label>Subject</label><select data-jss-subject="" id="jssQuizSubject"><option value="">Select subject</option><option value="English Language">English Language</option><option value="Mathematics">Mathematics</option><option value="Integrated Science">Integrated Science</option><option value="Social Studies">Social Studies</option><option value="Civic Education">Civic Education</option><option value="Agricultural Science">Agricultural Science</option><option value="Business Studies">Business Studies</option><option value="Religious and Moral Education">Religious and Moral Education</option><option value="Physical and Health Education">Physical and Health Education</option><option value="Creative Practical Arts">Creative Practical Arts</option><option value="Information and Communication Technology (ICT)">Information and Communication Technology (ICT)</option><option value="French">French</option><option value="Krio">Krio</option></select>
 <label>Topic you would like to practise</label><select id="jssQuizTopicSelect" data-topic-level="jss" data-subject-id="jssQuizSubject"><option value="">Choose a subject first</option></select><input id="jssQuizTopic" placeholder="Type your own topic" hidden/><p class="topic-help">Topics are listed from the curriculum database across JSS 1–3.</p>
 <button class="btn btn-blue" type="button" onclick="startQuiz('jss')">Click here to start your BECE practice</button>
@@ -933,7 +933,7 @@ input:focus,select:focus,textarea:focus{
 <div class="level-block" id="student-sss" style="margin-top:42px"><div class="subsection-ribbon-intro"><div class="section-ribbon subsection-ribbon">Senior Secondary School Students</div><p class="section-ribbon-description">Support for SSS students to understand difficult topics, practise WASSCE questions and improve examination readiness.</p></div><div class="grid">
 <article class="card"><span class="step">1</span><h3>SSS Text Tutor</h3><p class="guide">Choose your class and subject, type the word or topic you do not understand, then click the blue button for an explanation based on that subject.</p><div class="row"><div><label>Class</label><select id="sssClass"><option>SSS 1</option><option>SSS 2</option><option>SSS 3</option></select></div><div><label>Stream (optional)</label><select data-sss-stream="" data-target="sssSubject" id="sssStream"><option value="">Select stream</option><option value="Sciences &amp; Technologies">Sciences &amp; Technologies</option><option value="Mathematics &amp; Numeracy">Mathematics &amp; Numeracy</option><option value="Economics, Business &amp; Entrepreneurial Studies">Economics, Business &amp; Entrepreneurial Studies</option><option value="Languages &amp; Literatures">Languages &amp; Literatures</option><option value="Social &amp; Cultural Studies">Social &amp; Cultural Studies</option></select></div></div><label>Subject</label><select id="sssSubject"><option value="">Select subject</option><option value="Integrated Science">Integrated Science</option><option value="Biology">Biology</option><option value="Chemistry">Chemistry</option><option value="Computer Science">Computer Science</option><option value="Agricultural Science">Agricultural Science</option><option value="ICT">ICT</option><option value="Robotics">Robotics</option><option value="Physics">Physics</option><option value="Environmental Science">Environmental Science</option><option value="Health Sciences">Health Sciences</option><option value="Food Security">Food Security</option><option value="Engineering Science">Engineering Science</option><option value="Physical Health Education">Physical Health Education</option><option value="Climate Change Awareness, Preparedness and Resilience">Climate Change Awareness, Preparedness and Resilience</option><option value="Adolescent Health and Life Skills">Adolescent Health and Life Skills</option><option value="Computer Literacy">Computer Literacy</option><option value="Popular Science">Popular Science</option><option value="Fundamentals of Mathematics">Fundamentals of Mathematics</option><option value="Further Mathematics">Further Mathematics</option><option value="Statistics and Probability">Statistics and Probability</option><option value="Calculus">Calculus</option><option value="Mathematics for Business and Enterprise">Mathematics for Business and Enterprise</option><option value="Applications of Mathematics for Coding">Applications of Mathematics for Coding</option><option value="Mathematics for STEAMM">Mathematics for STEAMM</option><option value="Computer Mathematics">Computer Mathematics</option><option value="Mathematics in Other Disciplines">Mathematics in Other Disciplines</option><option value="Introductory Statistics and Probability">Introductory Statistics and Probability</option><option value="Functional Mathematics">Functional Mathematics</option><option value="Principles of Economics">Principles of Economics</option><option value="Entrepreneurship">Entrepreneurship</option><option value="Principles of Accounting">Principles of Accounting</option><option value="Business Management Studies">Business Management Studies</option><option value="Principles of Commerce">Principles of Commerce</option><option value="Principles of Marketing">Principles of Marketing</option><option value="Business Accounting">Business Accounting</option><option value="Clerical Office Studies">Clerical Office Studies</option><option value="Insurance Management">Insurance Management</option><option value="Business Economics">Business Economics</option><option value="Business and Society">Business and Society</option><option value="Customer Relationship Management">Customer Relationship Management</option><option value="Micro Small and Medium Enterprise Management">Micro Small and Medium Enterprise Management</option><option value="Business Ethics">Business Ethics</option><option value="English Language">English Language</option><option value="African Literature">African Literature</option><option value="English Literature">English Literature</option><option value="French as a Foreign Language">French as a Foreign Language</option><option value="Sierra Leonean Literature">Sierra Leonean Literature</option><option value="Mende Language">Mende Language</option><option value="Kathemne Language">Kathemne Language</option><option value="Hulimba Language">Hulimba Language</option><option value="Krio Language">Krio Language</option><option value="Creative Writing">Creative Writing</option><option value="Business English">Business English</option><option value="French for Tourism">French for Tourism</option><option value="Technical Writing">Technical Writing</option><option value="English for STEAMM">English for STEAMM</option><option value="French for Business and Marketing">French for Business and Marketing</option><option value="Everyday Basic French">Everyday Basic French</option><option value="Popular Literature Appreciation">Popular Literature Appreciation</option><option value="Arabic Language">Arabic Language</option><option value="Fula">Fula</option><option value="Sierra Leone History">Sierra Leone History</option><option value="African History">African History</option><option value="Geography">Geography</option><option value="Music">Music</option><option value="Dance and Drama Studies">Dance and Drama Studies</option><option value="Politics and Governance">Politics and Governance</option><option value="Social Studies and Civics">Social Studies and Civics</option><option value="Religious and Moral Education">Religious and Moral Education</option><option value="Geography and the Environment">Geography and the Environment</option><option value="Music as an Applied Subject">Music as an Applied Subject</option><option value="Entertainment Industry">Entertainment Industry</option><option value="Derivatives of Religious and Moral Education">Derivatives of Religious and Moral Education</option><option value="Dance Performance and Appreciation">Dance Performance and Appreciation</option><option value="Mining Industry and the Environment">Mining Industry and the Environment</option><option value="Fishing Industry and the Environment">Fishing Industry and the Environment</option><option value="Tourism and Conservation">Tourism and Conservation</option><option value="Living with Religious and Moral Education">Living with Religious and Moral Education</option></select><label>Curriculum topic</label><select id="sssTopicSelect" data-topic-level="sss" data-class-id="sssClass" data-subject-id="sssSubject"><option value="">Choose class and subject first</option></select><input id="sssTopic" placeholder="Type your own topic" hidden/><p class="topic-help">Choose the prescribed topic you want explained, or select Other.</p><button class="btn btn-blue" onclick="curriculumExplain('sss','sssClass','sssSubject','sssTopicSelect','sssTutor','sssTopic')">Click here for your explanation</button><div class="output" id="sssTutor"></div></article>
 <article class="card"><span class="step">2</span><h3>WASSCE Practice</h3>
-<p class="guide"><strong>Let’s practise some objective questions.</strong> Choose your stream if necessary, select your subject and type the topic you want to practise. You will receive 10 questions at a time. Select one answer for each question. You will immediately see whether your answer is correct or wrong. At the end, you will see your total correct answers, total wrong answers and the areas you need to revise.</p>
+<p class="guide"><strong>Let’s practise some objective questions.</strong> Choose your stream if necessary, select your subject and type the topic you want to practise. You will receive 5 questions at a time. Select one answer for each question. You will immediately see whether your answer is correct or wrong. At the end, you will see your total correct answers, total wrong answers and the areas you need to revise.</p>
 <label>Stream (optional)</label><select data-sss-stream="" data-target="sssQuizSubject" id="sssQuizStream"><option value="">Select stream</option><option value="Sciences &amp; Technologies">Sciences &amp; Technologies</option><option value="Mathematics &amp; Numeracy">Mathematics &amp; Numeracy</option><option value="Economics, Business &amp; Entrepreneurial Studies">Economics, Business &amp; Entrepreneurial Studies</option><option value="Languages &amp; Literatures">Languages &amp; Literatures</option><option value="Social &amp; Cultural Studies">Social &amp; Cultural Studies</option></select>
 <label>Subject</label><select id="sssQuizSubject"><option value="">Select subject</option><option value="Integrated Science">Integrated Science</option><option value="Biology">Biology</option><option value="Chemistry">Chemistry</option><option value="Computer Science">Computer Science</option><option value="Agricultural Science">Agricultural Science</option><option value="ICT">ICT</option><option value="Robotics">Robotics</option><option value="Physics">Physics</option><option value="Environmental Science">Environmental Science</option><option value="Health Sciences">Health Sciences</option><option value="Food Security">Food Security</option><option value="Engineering Science">Engineering Science</option><option value="Physical Health Education">Physical Health Education</option><option value="Climate Change Awareness, Preparedness and Resilience">Climate Change Awareness, Preparedness and Resilience</option><option value="Adolescent Health and Life Skills">Adolescent Health and Life Skills</option><option value="Computer Literacy">Computer Literacy</option><option value="Popular Science">Popular Science</option><option value="Fundamentals of Mathematics">Fundamentals of Mathematics</option><option value="Further Mathematics">Further Mathematics</option><option value="Statistics and Probability">Statistics and Probability</option><option value="Calculus">Calculus</option><option value="Mathematics for Business and Enterprise">Mathematics for Business and Enterprise</option><option value="Applications of Mathematics for Coding">Applications of Mathematics for Coding</option><option value="Mathematics for STEAMM">Mathematics for STEAMM</option><option value="Computer Mathematics">Computer Mathematics</option><option value="Mathematics in Other Disciplines">Mathematics in Other Disciplines</option><option value="Introductory Statistics and Probability">Introductory Statistics and Probability</option><option value="Functional Mathematics">Functional Mathematics</option><option value="Principles of Economics">Principles of Economics</option><option value="Entrepreneurship">Entrepreneurship</option><option value="Principles of Accounting">Principles of Accounting</option><option value="Business Management Studies">Business Management Studies</option><option value="Principles of Commerce">Principles of Commerce</option><option value="Principles of Marketing">Principles of Marketing</option><option value="Business Accounting">Business Accounting</option><option value="Clerical Office Studies">Clerical Office Studies</option><option value="Insurance Management">Insurance Management</option><option value="Business Economics">Business Economics</option><option value="Business and Society">Business and Society</option><option value="Customer Relationship Management">Customer Relationship Management</option><option value="Micro Small and Medium Enterprise Management">Micro Small and Medium Enterprise Management</option><option value="Business Ethics">Business Ethics</option><option value="English Language">English Language</option><option value="African Literature">African Literature</option><option value="English Literature">English Literature</option><option value="French as a Foreign Language">French as a Foreign Language</option><option value="Sierra Leonean Literature">Sierra Leonean Literature</option><option value="Mende Language">Mende Language</option><option value="Kathemne Language">Kathemne Language</option><option value="Hulimba Language">Hulimba Language</option><option value="Krio Language">Krio Language</option><option value="Creative Writing">Creative Writing</option><option value="Business English">Business English</option><option value="French for Tourism">French for Tourism</option><option value="Technical Writing">Technical Writing</option><option value="English for STEAMM">English for STEAMM</option><option value="French for Business and Marketing">French for Business and Marketing</option><option value="Everyday Basic French">Everyday Basic French</option><option value="Popular Literature Appreciation">Popular Literature Appreciation</option><option value="Arabic Language">Arabic Language</option><option value="Fula">Fula</option><option value="Sierra Leone History">Sierra Leone History</option><option value="African History">African History</option><option value="Geography">Geography</option><option value="Music">Music</option><option value="Dance and Drama Studies">Dance and Drama Studies</option><option value="Politics and Governance">Politics and Governance</option><option value="Social Studies and Civics">Social Studies and Civics</option><option value="Religious and Moral Education">Religious and Moral Education</option><option value="Geography and the Environment">Geography and the Environment</option><option value="Music as an Applied Subject">Music as an Applied Subject</option><option value="Entertainment Industry">Entertainment Industry</option><option value="Derivatives of Religious and Moral Education">Derivatives of Religious and Moral Education</option><option value="Dance Performance and Appreciation">Dance Performance and Appreciation</option><option value="Mining Industry and the Environment">Mining Industry and the Environment</option><option value="Fishing Industry and the Environment">Fishing Industry and the Environment</option><option value="Tourism and Conservation">Tourism and Conservation</option><option value="Living with Religious and Moral Education">Living with Religious and Moral Education</option></select>
 <label>Topic you would like to practise</label><select id="sssQuizTopicSelect" data-topic-level="sss" data-subject-id="sssQuizSubject"><option value="">Choose a subject first</option></select><input id="sssQuizTopic" placeholder="Type your own topic" hidden/><p class="topic-help">Topics are listed from the curriculum database across SSS 1–3.</p>
@@ -1048,7 +1048,7 @@ input:focus,select:focus,textarea:focus{
 <p class="guide">Are you looking for a research topic? Type your department or programme of study below. Salone Class Room will help you find suitable research topics related to your area of study, with attention to relevant issues and contexts in Sierra Leone where appropriate.</p>
 <label>Programme of study or department</label>
 <input id="topicProgramme" placeholder="Type your department or programme of study"/>
-<button class="btn btn-blue" onclick="demoResult('topics','research topic suggestions')">Click here to see suggested topics</button>
+<button class="btn btn-blue" onclick="findResearchTopics()" type="button">Click here to see suggested topics</button>
 <div class="output" id="topics"></div>
 </article>
 <article class="card">
@@ -1288,7 +1288,7 @@ function updateDissertationTopics(){
 <input id="supportContact" name="contact" placeholder="Enter a phone number or email only if you want us to reply" type="text"/>
 <label for="supportMessage">Your message</label>
 <textarea id="supportMessage" name="message" placeholder="Write your comment, question, enquiry or support request here..." required="" rows="6"></textarea>
-<button class="btn btn-blue" type="submit">Click here to send your message</button>
+<button class="btn btn-blue" id="supportSendBtn" type="submit">Click here to send your message</button>
 <p class="form-help">
         Your message will be sent to Salone Class Room support. You do not need to open an email app to send it.
       </p>
@@ -1325,7 +1325,7 @@ function updateDissertationTopics(){
     function updateSSSSubjects(streamSelect){const target=document.getElementById(streamSelect.dataset.target);fillSelect(target,streamSelect.value?sssSubjects[streamSelect.value]:allSssSubjects,'Choose subject')}
     document.querySelectorAll('[data-sss-stream]').forEach(select=>{fillSelect(select,Object.keys(sssSubjects),'All streams');fillSelect(document.getElementById(select.dataset.target),allSssSubjects,'Choose subject');select.addEventListener('change',()=>{updateSSSSubjects(select);setTimeout(()=>document.querySelectorAll('[data-topic-level]').forEach(t=>{if(t.dataset.subjectId===select.dataset.target)loadTopicPicker(t)}),0)})});
     setTimeout(wireTopicPickers,0);
-    async function loadTopicPicker(select){const level=select.dataset.topicLevel,subject=document.getElementById(select.dataset.subjectId)?.value||'',classLevel=select.dataset.classFixed||document.getElementById(select.dataset.classId)?.value||'';const manualId=select.id.replace('Select','');const manual=document.getElementById(manualId);if(!subject){fillSelect(select,[],'Choose a subject first');if(manual)manual.hidden=true;return}fillSelect(select,[],'Loading curriculum topics…');try{const d=await platformPost({action:'curriculum_topics',level,class_level:classLevel,subject},18000);const items=(d.topics||[]).filter(Boolean);fillSelect(select,items,items.length?'Choose curriculum topic':'No listed topic found');select.add(new Option('Other / Type my own topic','__other__'))}catch{fillSelect(select,[],'Topic list unavailable');select.add(new Option('Other / Type my own topic','__other__'))}if(manual)manual.hidden=true}
+    async function loadTopicPicker(select){const level=select.dataset.topicLevel,subject=document.getElementById(select.dataset.subjectId)?.value||'',classLevel=select.dataset.classFixed||document.getElementById(select.dataset.classId)?.value||'';const manualId=select.id.replace('Select','');const manual=document.getElementById(manualId);if(!subject){fillSelect(select,[],'Choose a subject first');if(manual)manual.hidden=true;return}fillSelect(select,[],'Loading curriculum topics…');try{const d=await platformPost({action:'curriculum_topics',level,class_level:classLevel,subject},18000);let items=(d.topics||[]).filter(Boolean);if(level==='primary'&&subject==='General Paper'&&!items.length){items=['Science','Agricultural Science','Home Economics','Physical and Health Education','Social Studies']}fillSelect(select,items,items.length?'Choose curriculum topic':'No listed topic found');select.add(new Option('Other / Type my own topic','__other__'))}catch{let items=[];if(level==='primary'&&subject==='General Paper')items=['Science','Agricultural Science','Home Economics','Physical and Health Education','Social Studies'];fillSelect(select,items,items.length?'Choose curriculum topic':'Topic list unavailable');select.add(new Option('Other / Type my own topic','__other__'))}if(manual)manual.hidden=true}
     function wireTopicPickers(){document.querySelectorAll('[data-topic-level]').forEach(sel=>{const subject=document.getElementById(sel.dataset.subjectId),cls=sel.dataset.classId?document.getElementById(sel.dataset.classId):null;subject?.addEventListener('change',()=>loadTopicPicker(sel));cls?.addEventListener('change',()=>loadTopicPicker(sel));sel.addEventListener('change',()=>{const manual=document.getElementById(sel.id.replace('Select',''));if(manual){manual.hidden=sel.value!=='__other__';if(!manual.hidden)manual.focus()}})})}
     async function curriculumExplain(level,classId,subjectId,topicSelectId,outputId,manualId){
       const schoolClass=document.getElementById(classId)?.value||'',subject=document.getElementById(subjectId)?.value||'',sel=document.getElementById(topicSelectId),manual=manualId?document.getElementById(manualId):null,topic=(sel?.value==='__other__'?(manual?.value||''):sel?.value||'').trim(),box=document.getElementById(outputId);
@@ -1348,8 +1348,8 @@ function updateDissertationTopics(){
     }
 
     // ----- Interactive BECE / WASSCE objective practice -----
-    // Ten questions are generated per round. A browser session can generate no more than 50.
-    const QUIZ_ROUND_SIZE = 10;
+    // Five fresh questions are generated per round. A browser session can generate no more than 50.
+    const QUIZ_ROUND_SIZE = 5;
     const QUIZ_SESSION_LIMIT = 50;
     const quizState = {jss:null, sss:null};
 
@@ -1361,6 +1361,32 @@ function updateDissertationTopics(){
     function rememberSeenQuestions(level,subject,topic,questions){const all=[...getSeenQuestions(level,subject,topic),...questions.map(q=>q.question).filter(Boolean)];sessionStorage.setItem(seenKey(level,subject,topic),JSON.stringify([...new Set(all)].slice(-50)))}
 
 
+    function normalizedQuestionText(text){return String(text||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim()}
+    async function fetchFreshQuestions({level,subject,topic,exam,count,toolKey}){
+      const previous=getSeenQuestions(level,subject,topic);
+      const blocked=new Set(previous.map(normalizedQuestionText));
+      const collected=[];
+      for(let attempt=0; attempt<4 && collected.length<count; attempt++){
+        const nonce=Date.now()+'-'+attempt+'-'+Math.random().toString(36).slice(2,8);
+        const requestTopic=topic+'\n\nFresh practice set ID: '+nonce+'. Generate different questions from earlier practice sets.';
+        const data=await learningRequest({
+          level,subject,topic:requestTopic,exam,task:'quiz',
+          question_count:count-collected.length,
+          tool_key:toolKey,
+          excluded_questions:[...previous,...collected.map(q=>q.question)],
+          context:'Return fresh, non-repeated questions only. Do not reuse any question from excluded_questions. Every question in this set must also be different from the others.'
+        });
+        for(const q of (data.questions||[])){
+          const key=normalizedQuestionText(q?.question);
+          if(key && !blocked.has(key)){
+            blocked.add(key);collected.push(q);
+            if(collected.length===count)break;
+          }
+        }
+      }
+      return collected.slice(0,count);
+    }
+
     async function startQuiz(level){
       const subject=document.getElementById(level+'QuizSubject').value;
       const topicSel=document.getElementById(level+'QuizTopicSelect'),manual=document.getElementById(level+'QuizTopic');let topic=((topicSel?.value==='__other__'?manual?.value:topicSel?.value)||'').trim();
@@ -1369,10 +1395,11 @@ function updateDissertationTopics(){
       if(!subject){showOutput(box,'Please choose a subject first.');return}
       if(!topic)topic='Mixed '+exam+' practice questions in '+subject;
       const used=getQuizUsage(level);if(used>=QUIZ_SESSION_LIMIT){showOutput(box,'You have reached the 50-question practice limit for this session. Review your previous answers and weak areas first.');return}
-      showOutput(box,firstName()?`Preparing your ${exam} questions, ${firstName()}…`:'Preparing your '+exam+' questions…');
+      const wanted=Math.min(QUIZ_ROUND_SIZE,QUIZ_SESSION_LIMIT-used);
+      showOutput(box,firstName()?`Preparing ${wanted} new ${exam} questions, ${firstName()}…`:'Preparing '+wanted+' new '+exam+' questions…');
       try{
-        const data=await learningRequest({level,subject,topic,question_count:Math.min(QUIZ_ROUND_SIZE,QUIZ_SESSION_LIMIT-used),exam,task:'quiz',tool_key:level+'-'+exam.toLowerCase()+'-practice',excluded_questions:getSeenQuestions(level,subject,topic)});
-        if(data.questions) renderQuiz(level,data.questions); else showOutput(box,data.error||'Unable to prepare questions.');
+        const questions=await fetchFreshQuestions({level,subject,topic,exam,count:wanted,toolKey:level+'-'+exam.toLowerCase()+'-practice'});
+        if(questions.length===wanted) renderQuiz(level,questions); else showOutput(box,'We could not prepare five new questions this time. Please click the practice button again.');
       }catch(e){handleLearningError(e,box)}
     }
 
@@ -1479,10 +1506,16 @@ let npseState=null;
 async function startNPSEQuiz(){
   const subject=document.getElementById('npseSubject')?.value||'',ts=document.getElementById('npseTopicSelect'),tm=document.getElementById('npseTopic'),topic=((ts?.value==='__other__'?tm?.value:ts?.value)||'').trim(),area=document.getElementById('npseQuizArea');
   if(!subject){area.innerHTML='<div class="quiz-notice">Please choose an NPSE paper first.</div>';return}
-  area.innerHTML='<div class="quiz-notice">Preparing 10 NPSE questions…</div>';
-  try{const d=await learningRequest({level:'primary',class_level:'Class 6',subject,topic,exam:'NPSE',question_count:10,excluded_questions:getSeenQuestions('npse',subject,topic),task:'quiz',tool_key:'primary-npse-practice'});rememberSeenQuestions('npse',subject,topic,d.questions||[]);renderNPSE(d.questions||[])}catch(e){if(e.code==='registration_required'){showAccountTab('register');openAccountModal();return}area.innerHTML='<div class="quiz-notice">'+safe(e.message||'Unable to prepare questions.')+'</div>'}
+  const practiceTopic=topic||('Mixed NPSE practice questions in '+subject);
+  area.innerHTML='<div class="quiz-notice">Preparing 5 new NPSE questions…</div>';
+  try{
+    const questions=await fetchFreshQuestions({level:'primary',subject,topic:practiceTopic,exam:'NPSE',count:5,toolKey:'primary-npse-practice'});
+    if(questions.length!==5){area.innerHTML='<div class="quiz-notice">We could not prepare five new questions this time. Please click the practice button again.</div>';return}
+    rememberSeenQuestions('primary',subject,practiceTopic,questions);
+    renderNPSE(questions);
+  }catch(e){if(e.code==='registration_required'){showAccountTab('register');openAccountModal();return}area.innerHTML='<div class="quiz-notice">'+safe(e.message||'Unable to prepare questions.')+'</div>'}
 }
-function renderNPSE(qs){const area=document.getElementById('npseQuizArea');if(!Array.isArray(qs)||!qs.length){area.innerHTML='<div class="quiz-notice">No questions were returned. Please try again.</div>';return}npseState={qs:qs.slice(0,10),answered:0,correct:0};area.innerHTML=npseState.qs.map((q,i)=>'<div class="quiz-question" style="margin:14px 0;padding:14px;border:1px solid #d7e1ed;border-radius:12px;background:#fff"><p><strong>'+(i+1)+'. '+safe(q.question)+'</strong></p>'+(q.options||[]).slice(0,4).map((o,j)=>'<button class="btn" style="display:block;width:100%;text-align:left;justify-content:flex-start;margin:7px 0;background:#eef4fb;color:#17324d" onclick="answerNPSE(this,'+i+','+j+')">'+String.fromCharCode(65+j)+'. '+safe(o)+'</button>').join('')+'<div id="npseFb'+i+'"></div></div>').join('')+'<div id="npseSummary"></div>'}
+function renderNPSE(qs){const area=document.getElementById('npseQuizArea');if(!Array.isArray(qs)||!qs.length){area.innerHTML='<div class="quiz-notice">No questions were returned. Please try again.</div>';return}npseState={qs:qs.slice(0,5),answered:0,correct:0};area.innerHTML=npseState.qs.map((q,i)=>'<div class="quiz-question" style="margin:14px 0;padding:14px;border:1px solid #d7e1ed;border-radius:12px;background:#fff"><p><strong>'+(i+1)+'. '+safe(q.question)+'</strong></p>'+(q.options||[]).slice(0,4).map((o,j)=>'<button class="btn" style="display:block;width:100%;text-align:left;justify-content:flex-start;margin:7px 0;background:#eef4fb;color:#17324d" onclick="answerNPSE(this,'+i+','+j+')">'+String.fromCharCode(65+j)+'. '+safe(o)+'</button>').join('')+'<div id="npseFb'+i+'"></div></div>').join('')+'<div id="npseSummary"></div>'}
 function answerNPSE(btn,i,j){if(btn.closest('.quiz-question').dataset.done)return;btn.closest('.quiz-question').dataset.done='1';const q=npseState.qs[i],ok=Number(q.answer)===j;npseState.answered++;if(ok)npseState.correct++;const subject=npseSubject?.value||'',ts=npseTopicSelect,tm=npseTopic,topic=((ts?.value==='__other__'?tm?.value:ts?.value)||'').trim();recordPracticeAttempt('primary',subject,topic,q,j,ok).catch(()=>{});document.getElementById('npseFb'+i).innerHTML='<strong>'+(ok?'Correct':'Wrong')+'.</strong> '+safe(q.explanation||'');if(npseState.answered===npseState.qs.length){document.getElementById('npseSummary').innerHTML='<div class="notice"><strong>Result: '+npseState.correct+'/'+npseState.qs.length+' correct.</strong> Review the explanations above and practise weak areas again.</div>';loadLearningProgress().catch(()=>{})}}
 async function primaryAssignmentGuide(){const subject=primaryAssignmentSubject.value,topic=primaryAssignment.value.trim(),box=primaryAssignmentOutput;if(!subject||!topic){showOutput(box,'Please choose a subject and type the assignment first.');return}await callLearning({level:'primary',subject,topic,task:'assignment',tool_key:'primary-assignment-guide'},box)}
 </script><script>
@@ -1844,41 +1877,73 @@ function preparePrimaryTeacherSupport(type){
   btn.addEventListener('click',async function(e){e.stopImmediatePropagation();const subject=(document.getElementById('wassceEssaySubject')?.value||'').trim(),passage=(document.getElementById('essayPassageInput')?.value||'').trim(),question=(document.getElementById('essayQuestionInput')?.value||'').trim(),answer=(document.getElementById('essayAnswerInput')?.value||'').trim(),msg=document.getElementById('essayReviewMessage');if(!subject||!question||!answer){msg.textContent='Please select the subject, type the question, and enter the student’s answer.';return}await callLearning({level:'sss',subject,topic:question,task:'review',context:'Source/passage: '+passage+'\nStudent answer: '+answer,tool_key:'wassce-answer-reviewer'},msg)},true);
 })();
 </script><script>
+async function findResearchTopics(){
+  const box=document.getElementById('topics');
+  const programme=(document.getElementById('topicProgramme')?.value||'').trim();
+  if(!programme){showOutput(box,'Please type your programme of study or department first.');return}
+  showOutput(box,firstName()?`Finding three research topics for you, ${firstName()}…`:'Finding three research topics…');
+  try{
+    const d=await learningRequest({level:'university',subject:programme,topic:programme,task:'topics',tool_key:'university-topic-finder',context:'Return EXACTLY THREE research topic titles and no more than three. Number them 1, 2 and 3. Keep each topic concise and suitable for university research, with Sierra Leone context where appropriate.'});
+    const raw=String(d.answer||'').trim();
+    const lines=raw.split(/\n+/).map(x=>x.trim()).filter(Boolean);
+    let topics=lines
+      .filter(x=>/^(?:[1-3][.)]|[-•*])\s+/.test(x))
+      .map(x=>x.replace(/^(?:[1-3][.)]|[-•*])\s+/, '').replace(/\*\*/g,'').trim())
+      .filter(Boolean)
+      .slice(0,3);
+    if(topics.length<3){
+      for(const line of lines){
+        if(topics.length>=3)break;
+        const cleaned=line.replace(/^#+\s*/,'').replace(/\*\*/g,'').replace(/^(?:\d+[.)]|[-•*])\s+/, '').trim();
+        if(cleaned && !/^here are/i.test(cleaned) && !topics.includes(cleaned))topics.push(cleaned);
+      }
+    }
+    topics=topics.slice(0,3);
+    if(!topics.length){showOutput(box,'No research topics were returned. Please try again.');return}
+    const lead=firstName()?`${safe(firstName())}, here are three research topic suggestions for you.`:'Here are three research topic suggestions for you.';
+    box.innerHTML='<div class="answer-body"><p>'+lead+'</p><ol>'+topics.map(t=>'<li>'+safe(t)+'</li>').join('')+'</ol></div>';
+    box.classList.add('show');box.scrollIntoView({behavior:'smooth',block:'nearest'});
+  }catch(e){handleLearningError(e,box)}
+}
+
+async function submitSupportMessage(e){
+  if(e)e.preventDefault();
+  const form=document.getElementById('supportForm');
+  const status=document.getElementById('supportSubmitStatus');
+  const btn=document.getElementById('supportSendBtn');
+  if(!form||!status)return false;
+  const payload={
+    name:(document.getElementById('supportName')?.value||'').trim(),
+    user_type:document.getElementById('supportRole')?.value||'',
+    message_type:document.getElementById('supportType')?.value||'',
+    contact:(document.getElementById('supportContact')?.value||'').trim(),
+    message:(document.getElementById('supportMessage')?.value||'').trim()
+  };
+  if(!payload.name||!payload.user_type||!payload.message_type||!payload.message){
+    status.textContent='Please complete all required fields.';status.classList.add('show');return false;
+  }
+  if(btn){btn.disabled=true;btn.textContent='Sending…'}
+  status.textContent='Sending…';status.classList.add('show');
+  try{
+    const res=await fetch('/.netlify/functions/support-message',{
+      method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),cache:'no-store'
+    });
+    const data=await res.json().catch(()=>({}));
+    if(!res.ok)throw new Error(data.error||'Unable to send message');
+    form.reset();
+    status.textContent='Sent';
+  }catch(err){
+    console.warn('Support submission failed',err);
+    status.textContent='Your message could not be sent right now. Please try again.';
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='Click here to send your message'}
+  }
+  return false;
+}
 (function(){
   const form=document.getElementById('supportForm');
-  if(!form) return;
-  form.addEventListener('submit', async function(e){
-    e.preventDefault();
-    const status=document.getElementById('supportSubmitStatus');
-    const payload={
-      name:(document.getElementById('supportName')?.value||'').trim(),
-      user_type:document.getElementById('supportRole')?.value||'',
-      message_type:document.getElementById('supportType')?.value||'',
-      contact:(document.getElementById('supportContact')?.value||'').trim(),
-      message:(document.getElementById('supportMessage')?.value||'').trim()
-    };
-    if(!payload.name||!payload.user_type||!payload.message_type||!payload.message){
-      status.textContent='Please complete all required fields.';
-      status.classList.add('show');
-      return;
-    }
-    status.textContent='Sending your message…';
-    status.classList.add('show');
-    try{
-      const res=await fetch('/.netlify/functions/support-message',{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify(payload)
-      });
-      const data=await res.json().catch(()=>({}));
-      if(!res.ok) throw new Error(data.error||'Unable to send message');
-      const n=firstName()||payload.name.split(/\s+/)[0]||'';status.textContent=n?`Thank you, ${n}. Your message has been sent successfully.`:'Thank you. Your message has been sent successfully.';
-      form.reset();
-    }catch(err){
-      console.warn('Support submission failed',err);
-      status.textContent='Your message could not be sent right now. Please try again.';
-    }
-  });
+  if(!form)return;
+  form.addEventListener('submit',submitSupportMessage,false);
 })();
 </script><script>
 (function(){
