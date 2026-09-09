@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- Salone Class Room V3.6 — updated frontend base for Groq + DeepSeek migration -->
 
 <html lang="en">
 <head>
@@ -1031,7 +1032,7 @@ input:focus,select:focus,textarea:focus{
   </div>
 <div class="grid">
 <article class="card">
-<h3>Advanced Text Lecturer</h3>
+<h3>AI Lecturer</h3>
 <p class="guide">Enter a course, module or difficult concept and state the level of explanation you need.</p><div class="university-focus-field">
 <label for="universityLecturerFocus">What should the Lecturer focus on or explain to you today?</label>
 <textarea id="universityLecturerFocus" placeholder="Type the topic, concept, question or area you want the Lecturer to explain" rows="4"></textarea>
@@ -1044,8 +1045,8 @@ input:focus,select:focus,textarea:focus{
 <div class="output" id="tertiaryTutor"></div>
 </article>
 <article class="card">
-<h3>Topics Finder</h3>
-<p class="guide">Are you looking for a research topic? Type your department or programme of study below. Salone Class Room will help you find suitable research topics related to your area of study, with attention to relevant issues and contexts in Sierra Leone where appropriate.</p>
+<h3>Topic Finder</h3>
+<p class="guide">Are you looking for a research topic? Type your department or programme of study below. Salone Class Room will suggest exactly three suitable research topics related to your area of study, with attention to relevant issues and contexts in Sierra Leone where appropriate.</p>
 <label>Programme of study or department</label>
 <input id="topicProgramme" placeholder="Type your department or programme of study"/>
 <button class="btn btn-blue" onclick="findResearchTopics()" type="button">Click here to see suggested topics</button>
@@ -1348,14 +1349,9 @@ function updateDissertationTopics(){
     }
 
     // ----- Interactive BECE / WASSCE objective practice -----
-    // Five fresh questions are generated per round. A browser session can generate no more than 50.
+    // Exactly five fresh questions are generated per round. Monthly subject limits are enforced by the backend.
     const QUIZ_ROUND_SIZE = 5;
-    const QUIZ_SESSION_LIMIT = 50;
     const quizState = {jss:null, sss:null};
-
-    function quizUsageKey(level){ return 'saloneQuizQuestions_'+level; }
-    function getQuizUsage(level){ return Number(sessionStorage.getItem(quizUsageKey(level)) || 0); }
-    function setQuizUsage(level,value){ sessionStorage.setItem(quizUsageKey(level), String(value)); }
     function seenKey(level,subject,topic){return 'saloneSeen_'+[level,subject,topic].join('|').toLowerCase()}
     function getSeenQuestions(level,subject,topic){try{return JSON.parse(sessionStorage.getItem(seenKey(level,subject,topic))||'[]').slice(-50)}catch{return []}}
     function rememberSeenQuestions(level,subject,topic,questions){const all=[...getSeenQuestions(level,subject,topic),...questions.map(q=>q.question).filter(Boolean)];sessionStorage.setItem(seenKey(level,subject,topic),JSON.stringify([...new Set(all)].slice(-50)))}
@@ -1394,8 +1390,7 @@ function updateDissertationTopics(){
       const exam=level==='jss'?'BECE':'WASSCE';
       if(!subject){showOutput(box,'Please choose a subject first.');return}
       if(!topic)topic='Mixed '+exam+' practice questions in '+subject;
-      const used=getQuizUsage(level);if(used>=QUIZ_SESSION_LIMIT){showOutput(box,'You have reached the 50-question practice limit for this session. Review your previous answers and weak areas first.');return}
-      const wanted=Math.min(QUIZ_ROUND_SIZE,QUIZ_SESSION_LIMIT-used);
+      const wanted=QUIZ_ROUND_SIZE;
       showOutput(box,firstName()?`Preparing ${wanted} new ${exam} questions, ${firstName()}…`:'Preparing '+wanted+' new '+exam+' questions…');
       try{
         const questions=await fetchFreshQuestions({level,subject,topic,exam,count:wanted,toolKey:level+'-'+exam.toLowerCase()+'-practice'});
@@ -1407,14 +1402,11 @@ function updateDissertationTopics(){
       const box=document.getElementById(level+'Quiz');
       const exam=level==='jss'?'BECE':'WASSCE';
       if(!Array.isArray(questions)){box.textContent='The question service returned an invalid response. Please try again.';box.classList.add('show');return}
-      const used=getQuizUsage(level);
-      const allowed=Math.max(0,QUIZ_SESSION_LIMIT-used);
-      questions=questions.slice(0,Math.min(QUIZ_ROUND_SIZE,allowed));
-      if(!questions.length){box.innerHTML='<strong>You have reached the 50-question practice limit for this session.</strong>';box.classList.add('show');return}
+      questions=questions.slice(0,QUIZ_ROUND_SIZE);
+      if(!questions.length){box.innerHTML='<strong>No questions were returned. Please try again.</strong>';box.classList.add('show');return}
 
       quizState[level]={questions,answered:0,correct:0,wrong:0,weakAreas:{},responses:[]};
       const qSubject=document.getElementById(level+'QuizSubject')?.value||'',qSel=document.getElementById(level+'QuizTopicSelect'),qManual=document.getElementById(level+'QuizTopic'),qTopic=((qSel?.value==='__other__'?qManual?.value:qSel?.value)||'').trim();rememberSeenQuestions(level,qSubject,qTopic,questions);
-      setQuizUsage(level,used+questions.length);
 
       box.innerHTML='<div class="quiz-head"><strong>'+exam+' Objective Practice</strong><br><span>Answer all '+questions.length+' questions. Your result and weak areas will appear at the end.</span></div>'+
         questions.map((q,i)=>{
@@ -1476,7 +1468,6 @@ function updateDissertationTopics(){
         '<p><strong>Correct:</strong> '+state.correct+' out of '+total+' &nbsp; | &nbsp; <strong>Wrong:</strong> '+state.wrong+' out of '+total+' &nbsp; | &nbsp; <strong>Score:</strong> '+percent+'%</p>'+
         '<p>'+message+'</p>'+
         (weak.length?'<p><strong>Areas to revise:</strong> '+weak.map(safe).join(', ')+'.</p>':'<p><strong>Areas to revise:</strong> No weak areas were identified in this round.</p>')+
-        '<p><small>You have used '+getQuizUsage(level)+' of the maximum '+QUIZ_SESSION_LIMIT+' questions allowed in this practice session.</small></p>'+
         '</div>';
       summary.scrollIntoView({behavior:'smooth',block:'nearest'});
     }
@@ -1975,9 +1966,9 @@ async function submitSupportMessage(e){
 <p class="field-help">The administrator can reset it to a temporary password. Existing passwords are never displayed or stored in readable form.</p>
 <div class="modal-status" id="loginStatus"></div></div>
 </div>
-<div id="accountSignedIn" hidden><h2>My Account</h2><div class="payment-summary"><div><span>Name</span><strong id="acctName"></strong></div><div><span>Category</span><strong id="acctCategory"></strong></div><div><span>Access</span><strong id="acctAccess"></strong></div></div><p id="acctExpiry" class="field-help"></p><button class="btn btn-light" onclick="logoutPlatform()" type="button">Logout</button></div>
+<div id="accountSignedIn" hidden><h2>My Account</h2><div class="payment-summary"><div><span>Name</span><strong id="acctName"></strong></div><div><span>Category</span><strong id="acctCategory"></strong></div><div><span>Access</span><strong id="acctAccess"></strong></div></div><p id="acctExpiry" class="field-help"></p><p class="field-help">Your available tools and usage balance are controlled by your account category and platform access.</p><button class="btn btn-light" onclick="logoutPlatform()" type="button">Logout</button></div>
 </div></div>
-<div aria-hidden="true" class="platform-modal" id="paymentModal"><div class="platform-modal-card"><button class="modal-close" onclick="closePaymentModal()" type="button">×</button><h2>Activate paid access</h2><p id="paymentIntro">Your free access has ended. Pay through Orange Money and submit the details below for manual verification.</p><div class="payment-summary"><div><span>Category</span><strong id="paymentCategory"></strong></div><div><span>Amount</span><strong id="paymentAmount"></strong></div><div><span>Orange Money</span><strong id="paymentNumber"></strong></div></div><label for="paymentSender">Orange Money sender number</label><input id="paymentSender" placeholder="Number used to make payment" type="tel"/><div class="field-error" id="errPaymentSender"></div><label for="paymentReference">Transaction reference / ID</label><input id="paymentReference" placeholder="Type transaction reference"/><div class="field-error" id="errPaymentReference"></div><button class="btn btn-blue platform-submit" onclick="submitPaymentRequest()" type="button">Submit payment for verification</button><div class="modal-status" id="paymentStatus"></div></div></div>
+<div aria-hidden="true" class="platform-modal" id="paymentModal"><div class="platform-modal-card"><button class="modal-close" onclick="closePaymentModal()" type="button">×</button><h2>Platform Usage Payment</h2><p id="paymentIntro">Your free platform access has ended. Make the required Platform Usage Payment through Orange Money and submit the details below for verification.</p><div class="payment-summary"><div><span>Category</span><strong id="paymentCategory"></strong></div><div><span>Amount</span><strong id="paymentAmount"></strong></div><div><span>Orange Money</span><strong id="paymentNumber"></strong></div></div><label for="paymentSender">Orange Money sender number</label><input id="paymentSender" placeholder="Number used to make payment" type="tel"/><div class="field-error" id="errPaymentSender"></div><label for="paymentReference">Transaction reference / ID</label><input id="paymentReference" placeholder="Type transaction reference"/><div class="field-error" id="errPaymentReference"></div><button class="btn btn-blue platform-submit" onclick="submitPaymentRequest()" type="button">Submit payment for verification</button><div class="modal-status" id="paymentStatus"></div></div></div>
 <script>
 const PLATFORM_API='/.netlify/functions/platform-api',LEARNING_API='/.netlify/functions/learning-api';let platformConfig=null,pendingToolAction=null,currentProfile=null,currentAccess=null;
 function deviceId(){let x=localStorage.getItem('salone_device_id');if(!x){x='slc_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2);localStorage.setItem('salone_device_id',x)}return x}
