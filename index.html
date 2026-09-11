@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Salone Class Room V3.6 — updated frontend base for Groq + DeepSeek migration -->
+<!-- Salone Class Room V3.11 — consolidated interface and education repair -->
 
 <html lang="en">
 <head>
@@ -12,7 +12,7 @@
 <style>
     :root{--blue:#073b8c;--blue2:#0b57c8;--sky:#eaf3ff;--gold:#f5b700;--ink:#172033;--muted:#5f6b7a;--white:#fff;--bg:#f5f8fc;--green:#16794b;--red:#b42318;--radius:18px;--shadow:0 14px 40px rgba(14,47,94,.09)}
     *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}button,input,select,textarea{font:inherit}a{color:inherit}.wrap{width:min(1160px,calc(100% - 32px));margin:auto}
-    .topbar{background:#052c69;color:#fff;text-align:center;padding:8px 16px;font-size:.88rem}.nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.96);backdrop-filter:blur(12px);border-bottom:1px solid #dfe7f2}.nav-in{min-height:70px;display:flex;align-items:center;justify-content:space-between;gap:24px}.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-size:1.15rem;font-weight:800;color:var(--blue)}.mark{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:var(--blue);color:#fff}.links{display:flex;gap:22px;list-style:none;margin:0;padding:0}.links a{text-decoration:none;font-weight:650;font-size:.92rem}.links a:hover{color:var(--blue2)}
+    .topbar{background:#052c69;color:#fff;text-align:center;padding:8px 16px;font-size:.88rem}.nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.96);backdrop-filter:blur(12px);border-bottom:1px solid #dfe7f2}.nav-in{min-height:70px;display:flex;align-items:center;justify-content:space-between;gap:24px}.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-size:1.15rem;font-weight:800;color:var(--blue)}.mark{display:grid;place-items:center;min-width:48px;width:48px;height:38px;border-radius:12px;background:var(--blue);color:#fff}.links{display:flex;gap:22px;list-style:none;margin:0;padding:0}.links a{text-decoration:none;font-weight:650;font-size:.92rem}.links a:hover{color:var(--blue2)}
     .hero{background:radial-gradient(circle at 80% 10%,rgba(255,255,255,.18),transparent 28%),linear-gradient(135deg,#073b8c,#0a5acb);color:#fff;padding:78px 0 70px}.hero-grid{display:grid;grid-template-columns:1.3fr .7fr;gap:50px;align-items:center}.eyebrow{display:inline-block;padding:7px 12px;border:1px solid rgba(255,255,255,.35);border-radius:999px;font-size:.82rem;font-weight:750;letter-spacing:.04em}.hero h1{font-size:clamp(2.35rem,6vw,4.5rem);line-height:1.02;letter-spacing:-.045em;margin:20px 0}.hero p{font-size:1.08rem;max-width:700px;color:#eaf3ff}.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}.btn{border:0;border-radius:11px;padding:12px 18px;font-weight:750;cursor:pointer;transition:.2s;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px}.btn:hover{transform:translateY(-2px)}.btn-gold{background:var(--gold);color:#18202f}.btn-light{background:#fff;color:var(--blue)}.btn-blue{background:var(--blue);color:#fff}.btn-green{background:var(--green);color:#fff}.hero-card{background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.28);border-radius:24px;padding:24px}.hero-card h3{margin-top:0}.hero-card ul{padding-left:20px;margin-bottom:0}.hero-card li+li{margin-top:10px}
     .quick{margin-top:-30px;position:relative}.quick-grid{display:grid;grid-template-columns:repeat(4,1fr);background:#fff;border-radius:18px;box-shadow:var(--shadow);overflow:hidden}.quick a{text-decoration:none;padding:22px;border-right:1px solid #e5ebf3}.quick a:last-child{border:0}.quick strong{display:block;color:var(--blue)}.quick span{font-size:.87rem;color:var(--muted)}
     main{padding:68px 0}.section{margin-bottom:68px;scroll-margin-top:92px}.section-head{max-width:760px;margin-bottom:26px}.kicker{color:var(--blue2);font-size:.78rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase}.section h2{font-size:clamp(1.75rem,4vw,2.6rem);line-height:1.12;margin:8px 0 12px;letter-spacing:-.025em}.section-head p,.muted{color:var(--muted)}.subsection-title{color:var(--blue);font-size:1.45rem;margin:0 0 18px;padding-bottom:8px;border-bottom:2px solid var(--sky)}
@@ -789,21 +789,34 @@ input:focus,select:focus,textarea:focus{
 .answer-body p{margin:.55em 0}.answer-body h4{margin:.85em 0 .35em;color:var(--blue);font-size:1.08rem}.answer-body ul{margin:.4em 0 .7em 1.2em;padding:0}.answer-body li{margin:.25em 0}.answer-body strong{font-weight:800}.more-detail-btn{margin-top:12px}
 @media(max-width:620px){.output,.teacher-result-note{font-size:1.05rem;line-height:1.7}}
 
-/* V3.9: make every dropdown clearly identifiable on phones and computers */
+/* V3.11: highly visible dropdown indicator on phones, tablets and computers */
 select{
-  -webkit-appearance:none;
-  appearance:none;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M5 8l7 8 7-8z' fill='%23073b8c'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;
-  background-position:right 12px center;
-  background-size:22px 22px;
-  padding-right:48px!important;
+  -webkit-appearance:none !important;
+  appearance:none !important;
+  background-color:#fff !important;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath d='M6 11l10 11 10-11z' fill='%23073b8c'/%3E%3C/svg%3E") !important;
+  background-repeat:no-repeat !important;
+  background-position:right 10px center !important;
+  background-size:30px 30px !important;
+  padding-right:52px !important;
+  min-height:48px;
 }
+select:disabled{background-color:#f3f6f9 !important;color:#7a8794 !important;opacity:1}
+.no-download-note{text-align:center}
+.no-download-note p{max-width:900px;margin-left:auto;margin-right:auto}
+.mark{font-size:.92rem;letter-spacing:.02em}
 </style>
 </head>
 <body>
 <div class="topbar">Built for Sierra Leonean learners and teachers • Text-first • Mobile-friendly</div>
-<nav class="nav"><div class="wrap nav-in"><a class="brand" href="#home"><span class="mark">SC</span>Salone Class Room</a><div style="display:flex;gap:8px;align-items:center"><button type="button" class="btn btn-light" id="accountBtn" onclick="openAccountModal()" style="padding:8px 12px;border:1px solid #cbd6e4">Login</button><button aria-label="Open menu" class="mobile" onclick="toggleMenu()">Menu</button></div><ul class="links" id="navLinks"><li><a href="#students">Students</a></li><li></li><li><a href="#research">Research</a></li><li></li><li></li></ul></div></nav>
+<nav class="nav"><div class="wrap nav-in"><a class="brand" href="#home"><span class="mark">SCR</span>Salone Class Room</a><div style="display:flex;gap:8px;align-items:center"><button type="button" class="btn btn-light" id="accountBtn" onclick="openAccountModal()" style="padding:8px 12px;border:1px solid #cbd6e4">Login</button><button aria-label="Open menu" class="mobile" onclick="toggleMenu()">Menu</button></div><ul class="links" id="navLinks">
+<li><a href="#students">Students</a></li>
+<li><a href="#teachers">Teachers</a></li>
+<li><a href="#research">University Students</a></li>
+<li><a href="#learning-progress">My Learning Journey</a></li>
+<li><a href="#about-salone-classroom">About</a></li>
+<li><a href="#contact-support">Comments</a></li>
+</ul></div></nav>
 <header class="hero welcome-hero" id="home">
 <div class="wrap welcome-grid">
 <div aria-label="Sierra Leone flag" class="corner-flag corner-flag-left">
@@ -823,9 +836,9 @@ select{
       </p>
 <div class="welcome-benefits top-learning-benefits">
 <div><strong>Learn with confidence</strong><span>Get simple explanations for difficult topics.</span></div>
-<div><strong>Practise for exams</strong><span>Prepare for BECE and WASSCE and discover your weak areas.</span></div>
+<div><strong>Practise for Examinations</strong><span>Prepare for BECE and WASSCE examinations and identify areas that need improvement.</span></div>
 <div><strong>Support for teachers</strong><span>Prepare lesson notes and theory examination questions.</span></div>
-<div><strong>University support</strong><span>Get help with research, dissertations, dissertation defense preparation and study guidance.</span></div>
+<div><strong>University support</strong><span>Get help with research, dissertations, dissertation defence preparation and study guidance.</span></div>
 </div>
 <p class="welcome-message">
         Whether you are learning a new topic, preparing for an examination, teaching a class or working on a dissertation,
@@ -981,7 +994,7 @@ select{
 </div></div>
 <div class="notice"><strong>Note:</strong> Answers are displayed for students to read and copy into their exercise books. Downloads are not provided.</div>
 </section>
-<section class="section ribbon-section" id="learning-progress"><div class="ribbon-intro"><div class="section-ribbon">My Learning Journey</div><p class="section-ribbon-description">See the questions you have attempted, your scores, subjects practised, recent results and topics that need more practice.</p></div><div class="card"><div id="progressSignedOut" class="progress-empty">Log in to see My Learning Journey.</div><div id="progressContent" hidden><div class="progress-grid"><div class="progress-card"><span>Questions attempted</span><strong id="progressAttempted">0</strong></div><div class="progress-card"><span>Correct</span><strong id="progressCorrect">0</strong></div><div class="progress-card"><span>Wrong</span><strong id="progressWrong">0</strong></div><div class="progress-card"><span>Overall score</span><strong id="progressScore">0%</strong></div></div><div class="grid"><div><h3>Performance by subject</h3><div class="progress-list" id="progressSubjects"></div></div><div><h3>Topics to improve</h3><div class="progress-list" id="progressWeak"></div></div></div><div style="margin-top:16px"><h3>Recent practice</h3><div class="progress-list" id="progressRecent"></div></div><button class="btn btn-light" id="refreshProgressBtn" type="button" style="margin-top:14px">Refresh my progress</button><div class="result" id="progressRefreshStatus" aria-live="polite"></div></div></div></section><section class="section ribbon-section" id="teachers"><div class="ribbon-intro">
+<section class="section ribbon-section" id="learning-progress"><div class="ribbon-intro"><div class="section-ribbon">My Learning Journey</div><p class="section-ribbon-description">See the questions you have attempted, your scores, subjects practised, recent results, weaknesses and areas that need improvement.</p></div><div class="card"><div id="progressSignedOut" class="progress-empty">Log in to see My Learning Journey.</div><div id="progressContent" hidden><div class="progress-grid"><div class="progress-card"><span>Questions attempted</span><strong id="progressAttempted">0</strong></div><div class="progress-card"><span>Correct</span><strong id="progressCorrect">0</strong></div><div class="progress-card"><span>Wrong</span><strong id="progressWrong">0</strong></div><div class="progress-card"><span>Overall score</span><strong id="progressScore">0%</strong></div></div><div class="grid"><div><h3>Performance by subject</h3><div class="progress-list" id="progressSubjects"></div></div><div><h3>Weaknesses / Areas to Improve</h3><div class="progress-list" id="progressWeak"></div></div></div><div style="margin-top:16px"><h3>Recent practice</h3><div class="progress-list" id="progressRecent"></div></div><button class="btn btn-light" id="refreshProgressBtn" type="button" style="margin-top:14px">Refresh my progress</button><div class="result" id="progressRefreshStatus" aria-live="polite"></div></div></div></section><section class="section ribbon-section" id="teachers"><div class="ribbon-intro">
 <div class="section-ribbon">Teachers</div>
 <p class="section-ribbon-description">Prepare practical lesson notes and theory examination questions for the class and subject you teach.</p>
 </div>
@@ -992,7 +1005,7 @@ select{
 <label for="teacherCategoryOnly">Teacher category</label>
 <select id="teacherCategoryOnly"><option value="">Select teacher category</option><option value="primary">Primary School Teacher</option><option value="jss">Junior Secondary School (JSS) Teacher</option><option value="sss">Senior Secondary School (SSS) Teacher</option></select>
 </div>
-<div class="teacher-choice-panel" hidden id="teacherChoicePanel">
+<div class="teacher-choice-panel" id="teacherChoicePanel">
 <div class="teacher-form-grid">
 <div><label for="teacherClassOnly">Class</label><select id="teacherClassOnly"><option value="">Select class</option></select></div>
 <div hidden id="teacherStreamOnlyWrap"><label for="teacherStreamOnly">SSS stream</label><select id="teacherStreamOnly"><option value="">Select stream</option></select></div>
@@ -1003,19 +1016,31 @@ select{
 <input id="teacherTopicOther" placeholder="Or type your own topic" hidden/>
 
 <div class="prepare-teach-box">
-<h3>Lesson Notes</h3>
-<p>Use the class, subject and topic selected above. Add the date and lesson duration, then Salone Class Room will prepare the lesson note.</p>
+<h3>Prepare Lesson Note</h3>
+<p>Use the class, subject and topic selected above. Add the date and lesson duration, then Salone Class Room will prepare a structured lesson note.</p>
 <div class="teacher-form-grid" style="margin-top:12px">
 <div><label for="teacherPrepDate">Date</label><input id="teacherPrepDate" type="date"/></div>
 <div><label for="teacherPrepDuration">Duration</label><select id="teacherPrepDuration"><option value="">Select duration</option><option>30 minutes</option><option>40 minutes</option><option>45 minutes</option><option>60 minutes</option><option>80 minutes</option></select></div>
 </div>
-<button class="btn btn-blue" id="prepareTeacherLessonBtn" type="button">Prepare lesson notes</button>
+<button class="btn btn-blue" id="prepareTeacherLessonBtn" type="button">Prepare Lesson Note</button>
 </div>
 
 <div class="prepare-teach-box" style="margin-top:18px">
 <h3>Prepare Exam Questions</h3>
-<p>Choose the subject and choose or type a topic above. Salone Class Room will generate exactly <strong>5 theory questions</strong>. No multiple-choice options will be added.</p>
-<button class="btn btn-blue" id="prepareTeacherExamBtn" type="button">Generate 5 theory questions</button>
+<p>Choose a subject, then choose a curriculum topic or type your own topic. Salone Class Room will generate exactly <strong>5 theory questions</strong>. Multiple-choice options, answers and marking schemes will not be included.</p>
+<div class="teacher-form-grid" style="margin-top:12px">
+<div>
+<label for="teacherExamSubject">Subject</label>
+<select id="teacherExamSubject"><option value="">Select teacher category and class first</option></select>
+</div>
+<div>
+<label for="teacherExamTopic">Type or choose your topic</label>
+<select id="teacherExamTopic"><option value="">Choose a subject first</option></select>
+</div>
+</div>
+<input id="teacherExamTopicOther" placeholder="Or type your own topic" hidden/>
+<p class="topic-help">Select “Other / Type my own topic” if the topic you want is not listed.</p>
+<button class="btn btn-blue" id="prepareTeacherExamBtn" type="button">Generate 5 Theory Questions</button>
 </div>
 <div aria-live="polite" class="teacher-result-note" id="teacherOnlyMessage"></div>
 </div>
@@ -1084,7 +1109,7 @@ select{
 <div class="output" id="chapter"></div>
 </article>
 <article class="card">
-<h3>Dissertation Defense Guide</h3>
+<h3>Dissertation Defence Guide</h3>
 <p class="guide">Prepare for your oral defense by organising the key parts of your study. The guide should help you explain your research clearly and prepare for likely panel questions.</p>
 <label>Dissertation topic</label>
 <input id="defenseTopic" placeholder="Enter your approved dissertation topic"/>
@@ -1106,7 +1131,7 @@ select{
 <textarea id="defenseRecommendations" placeholder="Enter your main recommendations..."></textarea>
 <label>Limitations of the study</label>
 <textarea id="defenseLimitations" placeholder="State important limitations honestly..."></textarea>
-<button class="btn btn-blue" onclick="demoResult('defenseGuide','dissertation dissertation defense preparation guide')">Click here to prepare your dissertation defense guide</button>
+<button class="btn btn-blue" onclick="demoResult('defenseGuide','dissertation dissertation defence preparation guide')">Click here to prepare your dissertation defence guide</button>
 <div class="output" id="defenseGuide"></div>
 </article>
 </div>
@@ -1202,7 +1227,7 @@ function updateDissertationTopics(){
 <article class="about-salone-card">
 <h3>Supporting Accessible Education in Sierra Leone</h3>
 <p>
-        Salone Class Room is designed to complement the Government of Sierra Leone's efforts to make education more accessible and affordable. Our goal is to provide additional learning and teaching support to Sierra Leoneans regardless of where they live. As long as reliable internet access is available, a learner or teacher can use Salone Class Room to obtain educational guidance from a phone, laptop or desktop computer.
+        Salone Class Room is designed to complement the Government of Sierra Leone's efforts to make education more accessible and affordable. Our goal is to provide additional learning and teaching support to Sierra Leoneans regardless of where they live. As long as reliable internet access is available, a learner or teacher can use Salone Class Room to obtain educational guidance from a phone, tablet, laptop or desktop computer.
       </p>
 <p>
         This is particularly important for learners and teachers in communities where access to libraries, textbooks and other educational resources may be limited.
@@ -1211,7 +1236,7 @@ function updateDissertationTopics(){
 <article class="about-salone-card">
 <h3>Supporting Teachers</h3>
 <p>
-        Salone Class Room also provides practical support for teachers. It can help teachers prepare lesson notes, work with curriculum topics and prepare theory examination questions for classroom assessment. It may also be useful to individuals supporting learning who can read and write effectively but have had limited access to formal teacher training, helping them prepare more carefully and make a more positive contribution in the classroom.
+        Salone Class Room also provides practical support for teachers. It can help teachers prepare lesson notes and prepare theory examination questions for classroom assessment. It may also be useful to individuals supporting learning who can read and write effectively but have had limited access to formal teacher training, helping them prepare more carefully and make a more positive contribution in the classroom.
       </p>
 <p>
         The platform, however, does not provide a teaching qualification and should not be regarded as a substitute for professional teacher training, approved curricula, official textbooks, teacher guides or other materials prescribed by the relevant education authorities.
@@ -1240,7 +1265,7 @@ function updateDissertationTopics(){
 <article class="about-salone-card university-guidance-note">
 <h3>Guidance for University Students</h3>
 <p>The university and research tools on Salone Class Room are intended to provide guidance, help students understand academic processes, and support the organisation of their own work. They should not be used to replace independent academic work or the official requirements of a university.</p>
-<p>University Students, particularly those working on proposals, research projects, dissertations, or theses, should continue to work closely with their lecturers, research supervisors, and departments. Where guidance from Salone Class Room differs from the requirements of a student's institution or supervisor, the institution's official requirements and the supervisor's guidance should take priority.</p>
+<p>University students, particularly those working on proposals, research projects, dissertations, or theses, should continue to work closely with their lecturers, research supervisors, and departments. Where guidance from Salone Class Room differs from the requirements of a student's institution or supervisor, the institution's official requirements and the supervisor's guidance should take priority.</p>
 </article>
 <div class="about-closing-message">
 <strong>Our Purpose</strong>
@@ -1333,7 +1358,7 @@ function updateDissertationTopics(){
     async function demoResult(id,type){
       const box=document.getElementById(id),card=box.closest('article,.card,section')||document.body;
       const values=[...card.querySelectorAll('input,select,textarea')].map(el=>{const v=(el.value||'').trim();if(!v)return '';const label=el.id?card.querySelector('label[for="'+el.id+'"]')?.textContent:'';return (label||el.getAttribute('placeholder')||el.name||'Information')+': '+v}).filter(Boolean);
-      const map={'assignment guide':'assignment','writing feedback':'review','advanced lesson':'tutor','research topic suggestions':'topics','proposal framework':'proposal','dissertation guidance':'dissertation','dissertation dissertation defense preparation guide':'defense'};
+      const map={'assignment guide':'assignment','writing feedback':'review','advanced lesson':'tutor','research topic suggestions':'topics','proposal framework':'proposal','dissertation guidance':'dissertation','dissertation dissertation defence preparation guide':'defense'};
       const task=map[type]||'tutor';
       const level=box.id.toLowerCase().includes('tertiary')||['topics','proposal','chapter','defenseGuide'].includes(box.id)?'university':box.id.startsWith('sss')?'sss':box.id.startsWith('jss')?'jss':'primary';
       const subject=[...card.querySelectorAll('select')].map(x=>x.value).find(v=>v&&!(v.match(/Primary|JSS|SSS|University|Class|Year|Term|Stream/i)))||'';
@@ -1761,6 +1786,9 @@ function preparePrimaryTeacherSupport(type){
   const subjectSel=document.getElementById('teacherSubjectOnly');
   const topicSel=document.getElementById('teacherTopicOnly');
   const topicOther=document.getElementById('teacherTopicOther');
+  const examSubject=document.getElementById('teacherExamSubject');
+  const examTopic=document.getElementById('teacherExamTopic');
+  const examTopicOther=document.getElementById('teacherExamTopicOther');
   const msg=document.getElementById('teacherOnlyMessage');
   if(!category)return;
 
@@ -1768,14 +1796,18 @@ function preparePrimaryTeacherSupport(type){
   const jssSubjects=["English Language","Mathematics","Integrated Science","Social Studies","Civic Education","Agricultural Science","Business Studies","Religious and Moral Education","Physical and Health Education","Creative Practical Arts","Information and Communication Technology (ICT)","French","Krio"];
   const sssStreams={"Sciences & Technologies":["Integrated Science","Biology","Chemistry","Computer Science","Agricultural Science","ICT","Robotics","Physics","Environmental Science","Health Sciences","Food Security","Engineering Science","Physical Health Education","Climate Change Awareness, Preparedness and Resilience","Adolescent Health and Life Skills","Computer Literacy","Popular Science"],"Mathematics & Numeracy":["Fundamentals of Mathematics","Further Mathematics","Statistics and Probability","Calculus","Mathematics for Business and Enterprise","Applications of Mathematics for Coding","Mathematics for STEAMM","Computer Mathematics","Mathematics in Other Disciplines","Introductory Statistics and Probability","Functional Mathematics"],"Economics, Business & Entrepreneurial Studies":["Principles of Economics","Entrepreneurship","Principles of Accounting","Business Management Studies","Principles of Commerce","Principles of Marketing","Business Accounting","Clerical Office Studies","Insurance Management","Business Economics","Business and Society","Customer Relationship Management","Micro Small and Medium Enterprise Management","Business Ethics"],"Languages & Literatures":["English Language","African Literature","English Literature","French as a Foreign Language","Sierra Leonean Literature","Mende Language","Kathemne Language","Hulimba Language","Krio Language","Creative Writing","Business English","French for Tourism","Technical Writing","English for STEAMM","French for Business and Marketing","Everyday Basic French","Popular Literature Appreciation","Arabic Language","Fula"],"Social & Cultural Studies":["Sierra Leone History","African History","Geography","Music","Dance and Drama Studies","Politics and Governance","Social Studies and Civics","Religious and Moral Education","Geography and the Environment","Music as an Applied Subject","Entertainment Industry","Derivatives of Religious and Moral Education","Dance Performance and Appreciation","Mining Industry and the Environment","Fishing Industry and the Environment","Tourism and Conservation","Living with Religious and Moral Education"]};
   function fill(sel,items,placeholder){sel.innerHTML='';sel.appendChild(new Option(placeholder,''));items.forEach(x=>sel.appendChild(new Option(x,x)));}
-  category.addEventListener('change',()=>{const level=category.value;panel.hidden=!level;msg.textContent='';fill(topicSel,[],'Choose class and subject first');topicOther.hidden=true;if(level==='primary'){fill(classSel,['Class 1','Class 2','Class 3','Class 4','Class 5','Class 6'],'Select class');fill(subjectSel,primarySubjects,'Select subject');streamWrap.hidden=true;fill(streamSel,[],'Select stream')}else if(level==='jss'){fill(classSel,['JSS 1','JSS 2','JSS 3'],'Select class');fill(subjectSel,jssSubjects,'Select subject');streamWrap.hidden=true;fill(streamSel,[],'Select stream')}else if(level==='sss'){fill(classSel,['SSS 1','SSS 2','SSS 3'],'Select class');fill(streamSel,Object.keys(sssStreams),'Select stream');fill(subjectSel,[],'Select a stream first');streamWrap.hidden=false}});
-  streamSel.addEventListener('change',()=>{fill(subjectSel,sssStreams[streamSel.value]||[],'Select subject');fill(topicSel,[],'Choose a subject first');topicOther.hidden=true});
+  category.addEventListener('change',()=>{const level=category.value;panel.hidden=false;msg.textContent='';fill(topicSel,[],'Choose class and subject first');fill(examTopic,[],'Choose a subject first');topicOther.hidden=true;examTopicOther.hidden=true;if(level==='primary'){fill(classSel,['Class 1','Class 2','Class 3','Class 4','Class 5','Class 6'],'Select class');fill(subjectSel,primarySubjects,'Select subject');fill(examSubject,primarySubjects,'Select subject');streamWrap.hidden=true;fill(streamSel,[],'Select stream')}else if(level==='jss'){fill(classSel,['JSS 1','JSS 2','JSS 3'],'Select class');fill(subjectSel,jssSubjects,'Select subject');fill(examSubject,jssSubjects,'Select subject');streamWrap.hidden=true;fill(streamSel,[],'Select stream')}else if(level==='sss'){fill(classSel,['SSS 1','SSS 2','SSS 3'],'Select class');fill(streamSel,Object.keys(sssStreams),'Select stream');fill(subjectSel,[],'Select a stream first');fill(examSubject,[],'Select a stream first');streamWrap.hidden=false}else{fill(classSel,[],'Select teacher category first');fill(subjectSel,[],'Select teacher category first');fill(examSubject,[],'Select teacher category first');streamWrap.hidden=true}});
+  streamSel.addEventListener('change',()=>{const items=sssStreams[streamSel.value]||[];fill(subjectSel,items,items.length?'Select subject':'Select a stream first');fill(examSubject,items,items.length?'Select subject':'Select a stream first');fill(topicSel,[],'Choose a subject first');fill(examTopic,[],'Choose a subject first');topicOther.hidden=true;examTopicOther.hidden=true});
   async function loadTeacherTopics(){if(!category.value||!classSel.value||!subjectSel.value){fill(topicSel,[],'Choose class and subject first');topicOther.hidden=true;return}fill(topicSel,[],'Loading curriculum topics…');try{const d=await platformPost({action:'curriculum_topics',level:category.value,class_level:classSel.value,subject:subjectSel.value},18000);fill(topicSel,d.topics||[],(d.topics||[]).length?'Choose a topic':'No listed topic found');topicSel.appendChild(new Option('Other / Type my own topic','__other__'))}catch{fill(topicSel,[],'Topic list unavailable');topicSel.appendChild(new Option('Other / Type my own topic','__other__'))}}
   classSel.addEventListener('change',loadTeacherTopics);subjectSel.addEventListener('change',loadTeacherTopics);topicSel.addEventListener('change',()=>{topicOther.hidden=topicSel.value!=='__other__';if(!topicOther.hidden)topicOther.focus()});
+  async function loadTeacherExamTopics(){if(!category.value||!classSel.value||!examSubject.value){fill(examTopic,[],'Choose a subject first');examTopicOther.hidden=true;return}fill(examTopic,[],'Loading curriculum topics…');try{const d=await platformPost({action:'curriculum_topics',level:category.value,class_level:classSel.value,subject:examSubject.value},18000);fill(examTopic,d.topics||[],(d.topics||[]).length?'Choose a topic':'No listed topic found');examTopic.appendChild(new Option('Other / Type my own topic','__other__'))}catch{fill(examTopic,[],'Topic list unavailable');examTopic.appendChild(new Option('Other / Type my own topic','__other__'))}}
+  examSubject.addEventListener('change',loadTeacherExamTopics);
+  examTopic.addEventListener('change',()=>{examTopicOther.hidden=examTopic.value!=='__other__';if(!examTopicOther.hidden)examTopicOther.focus()});
   const selectedTopic=()=>((topicSel.value==='__other__'?topicOther.value:topicSel.value)||'').trim();
+  const selectedExamTopic=()=>((examTopic.value==='__other__'?examTopicOther.value:examTopic.value)||'').trim();
   const baseValid=()=>category.value&&classSel.value&&subjectSel.value&&(category.value!=='sss'||streamSel.value);
   document.getElementById('prepareTeacherLessonBtn')?.addEventListener('click',async()=>{const topic=selectedTopic(),date=(document.getElementById('teacherPrepDate')?.value||'').trim(),duration=(document.getElementById('teacherPrepDuration')?.value||'').trim();if(!baseValid()||!topic||!date||!duration){msg.textContent='Please choose the teacher category, class, subject and topic, then add the date and duration.';return}const context=['Document: Lesson Notes','Date: '+date,'Duration: '+duration,'Prepare practical lesson notes for the selected class, subject and topic.'].join('\n');await callLearning({level:category.value,class_level:classSel.value,subject:subjectSel.value,topic,task:'teacher',context,tool_key:'teacher-lesson-note'},msg)});
-  document.getElementById('prepareTeacherExamBtn')?.addEventListener('click',async()=>{const topic=selectedTopic();if(!baseValid()||!topic){msg.textContent='Please choose the teacher category, class, subject and choose or type a topic first.';return}await callLearning({level:category.value,class_level:classSel.value,subject:subjectSel.value,topic,task:'teacher_exam',context:'Generate exactly five theory examination questions only. Number them 1 to 5. Do not include answers, marking schemes or multiple-choice options.',tool_key:'teacher-exam-questions'},msg)});
+  document.getElementById('prepareTeacherExamBtn')?.addEventListener('click',async()=>{const subject=(examSubject.value||'').trim(),topic=selectedExamTopic();if(!category.value||!classSel.value||(category.value==='sss'&&!streamSel.value)||!subject||!topic){msg.textContent='Please choose the teacher category, class and subject, then choose or type a topic.';return}await callLearning({level:category.value,class_level:classSel.value,subject,topic,task:'teacher_exam',context:'Generate exactly five theory examination questions only. Number them 1 to 5. Do not include answers, marking schemes or multiple-choice options.',tool_key:'teacher-exam-questions'},msg)});
 })();
 </script><script>
 (function(){
@@ -1962,7 +1994,7 @@ async function loadLearningProgress(){
   const attempted=document.getElementById('progressAttempted'),correct=document.getElementById('progressCorrect'),wrong=document.getElementById('progressWrong'),score=document.getElementById('progressScore'),subjects=document.getElementById('progressSubjects'),weak=document.getElementById('progressWeak'),recent=document.getElementById('progressRecent');
   if(attempted)attempted.textContent=d.attempted||0;if(correct)correct.textContent=d.correct||0;if(wrong)wrong.textContent=d.wrong||0;if(score)score.textContent=(d.score||0)+'%';
   if(subjects)subjects.innerHTML=(d.subjects||[]).length?d.subjects.map(x=>`<div class="progress-line"><span>${safe(x.subject)}</span><strong>${x.score}% (${x.correct}/${x.attempted})</strong></div>`).join(''):'<div class="progress-empty">No subject results yet.</div>';
-  if(weak)weak.innerHTML=(d.weak_topics||[]).length?d.weak_topics.map(x=>`<div class="progress-line"><span>${safe(x.topic)}</span><strong>${x.score}%</strong></div>`).join(''):'<div class="progress-empty">No weak areas identified yet.</div>';
+  if(weak){const rawWeak=d.weak_topics||d.weak_areas||d.areas_to_improve||[];const derived=(d.subjects||[]).filter(x=>Number(x.score)<60).map(x=>({topic:x.subject,score:x.score}));const weakItems=rawWeak.length?rawWeak:derived;weak.innerHTML=weakItems.length?weakItems.map(x=>`<div class="progress-line"><span>${safe(x.topic||x.weak_area||x.subject||'Area to improve')}</span><strong>${Number(x.score||0)}%</strong></div>`).join(''):'<div class="progress-empty">No weaknesses have been identified yet. Complete more practice questions to receive improvement guidance.</div>';}
   if(recent)recent.innerHTML=(d.recent||[]).length?d.recent.map(x=>`<div class="progress-line"><span>${safe(x.subject)} — ${safe(x.topic||'General')}</span><strong>${x.is_correct?'Correct':'Wrong'}</strong></div>`).join(''):'<div class="progress-empty">Start an exam practice to build your progress.</div>';
   if(status)status.textContent='Progress refreshed.';
  }catch(e){if(status)status.textContent=e.message||'Unable to refresh progress right now.'}
@@ -1971,7 +2003,7 @@ async function loadLearningProgress(){
 async function learningRequest(payload){const controller=new AbortController(),tm=setTimeout(()=>controller.abort(),85000);try{const adminToken=localStorage.getItem('salone_admin_token')||'';const r=await fetch(LEARNING_API,{method:'POST',headers:{'Content-Type':'application/json',...authHeaders(),...(adminToken?{'X-Admin-Token':adminToken}:{})},body:JSON.stringify({...payload,device_id:deviceId()}),signal:controller.signal});const d=await r.json().catch(()=>({}));if(!r.ok){const e=new Error(d.error||'Unable to complete this request.');e.code=d.code;e.status=r.status;throw e}return d}finally{clearTimeout(tm)}}
 function handleLearningError(e,box){if(e.name==='AbortError')return showOutput(box,'This request is taking longer than expected. Please try again. If it continues, the AI service may be busy.');if(e.code==='registration_required'){pendingToolAction=null;showAccountTab('register');openAccountModal();return}if(e.code==='payment_required'||e.status===402){openPaymentModal(currentProfile||{category:'university'});return}showOutput(box,e.message||'Something went wrong. Please try again.')}
 function firstName(){const n=(currentProfile?.full_name||'').trim();return n?n.split(/\s+/)[0]:''}
-function personalLead(payload){const n=firstName();if(!n)return '';const t=(payload?.task||'').toLowerCase();if(t==='assignment')return `Thank you, ${n}. Here is your assignment guide.`;if(t==='review')return `Thank you, ${n}. Here is feedback on your answer.`;if(t==='topics')return `${n}, here are research topic suggestions for you.`;if(t==='proposal')return `${n}, here is your proposal framework.`;if(t==='dissertation')return `${n}, here is your dissertation guidance.`;if(t==='defense')return `${n}, here is your dissertation defense preparation guide.`;if(t==='teacher')return `Thank you, ${n}. Here is the teaching support you requested.`;if((payload?.level||'').toLowerCase()==='university'||t==='lecturer')return `Thank you, ${n}. Here is your lecturer-style explanation.`;return `Thank you, ${n}. Here is your lesson explanation.`}
+function personalLead(payload){const n=firstName();if(!n)return '';const t=(payload?.task||'').toLowerCase();if(t==='assignment')return `Thank you, ${n}. Here is your assignment guide.`;if(t==='review')return `Thank you, ${n}. Here is feedback on your answer.`;if(t==='topics')return `${n}, here are research topic suggestions for you.`;if(t==='proposal')return `${n}, here is your proposal framework.`;if(t==='dissertation')return `${n}, here is your dissertation guidance.`;if(t==='defense')return `${n}, here is your dissertation defence preparation guide.`;if(t==='teacher')return `Thank you, ${n}. Here is the teaching support you requested.`;if((payload?.level||'').toLowerCase()==='university'||t==='lecturer')return `Thank you, ${n}. Here is your lecturer-style explanation.`;return `Thank you, ${n}. Here is your lesson explanation.`}
 function personalisedText(payload,text){const lead=personalLead(payload);return lead?lead+'\n\n'+text:text}
 async function callLearning(payload,box){const n=firstName();showOutput(box,n?`Preparing your answer, ${n}…`:'Preparing your answer…');try{const d=await learningRequest(payload);renderLearningAnswer(box,personalisedText(payload,d.answer||'No answer was returned. Please try again.'),payload)}catch(e){handleLearningError(e,box)}}
 function openAccountModal(){accountModal.classList.add('open');document.body.style.overflow='hidden';renderAccount()}function closeAccountModal(){accountModal.classList.remove('open');document.body.style.overflow=''}
