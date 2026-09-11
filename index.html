@@ -177,6 +177,14 @@ main section{
 }
 .edu-jss .section-head .kicker{background:#dceef8;color:#315f7a}
 .edu-sss .section-head .kicker{background:#e1f2e6;color:#376b49}
+
+.teacher-category-label{
+  display:block;
+  font-size:1.2rem!important;
+  font-weight:800!important;
+  color:#173d59;
+  margin-bottom:8px;
+}
 .edu-teachers .section-head .kicker{background:#f8edc9;color:#755c22}
 .edu-university .section-head .kicker{background:#e9e3f5;color:#5c4d82}
 
@@ -901,7 +909,7 @@ select:disabled{background-color:#f3f6f9 !important;color:#7a8794 !important;opa
 <span class="tool-badge">Class 6 • NPSE</span>
 <h3>NPSE Practice</h3>
 <p>
-        Let’s practise some NPSE questions. Choose a paper and 5 questions will be generated immediately. You may also choose or type a topic if you want questions from a particular area.
+        Let’s practise some NPSE questions. Choose a paper and, if you wish, a topic. Questions will only be generated after you click the button below. You may also choose or type a topic if you want questions from a particular area.
         Answer carefully and use your mistakes to identify the areas you need to revise.
       </p>
 <label for="npseSubject">Choose your NPSE paper</label>
@@ -914,7 +922,7 @@ select:disabled{background-color:#f3f6f9 !important;color:#7a8794 !important;opa
 <option>General Paper</option>
 </select>
 <label for="npseTopicSelect">Type or choose your topic (optional)</label><select id="npseTopicSelect" data-topic-level="primary" data-class-fixed="Class 6" data-subject-id="npseSubject"><option value="">Choose a paper first</option></select><input id="npseTopic" placeholder="Or type your own topic" type="text"/><p class="topic-help">Choose a listed topic or type your own topic below. Topic is optional for exam practice.</p>
-<button class="btn btn-blue" onclick="startNPSEQuiz()" type="button">Generate another 5 NPSE questions</button>
+<button class="btn btn-blue" onclick="startNPSEQuiz()" type="button">Generate 5 NPSE Questions</button>
 <div aria-live="polite" class="quiz-area" id="npseQuizArea"></div>
 </article>
 <article class="card tool-card primary-card">
@@ -948,10 +956,10 @@ select:disabled{background-color:#f3f6f9 !important;color:#7a8794 !important;opa
 <div class="level-block" id="student-jss"><h3 class="subsection-title">Junior Secondary School (JSS) &amp; BECE</h3><div class="grid">
 <article class="card"><span class="step">1</span><h3>JSS Text Tutor</h3><p class="guide">Choose your class and subject, type the word or topic you do not understand, then click the blue button for a simple explanation.</p><div class="row"><div><label>Class</label><select id="jssClass"><option>JSS 1</option><option>JSS 2</option><option>JSS 3</option></select></div><div><label>Subject</label><select data-jss-subject="" id="jssSubject"><option value="">Select subject</option><option value="English Language">English Language</option><option value="Mathematics">Mathematics</option><option value="Integrated Science">Integrated Science</option><option value="Social Studies">Social Studies</option><option value="Civic Education">Civic Education</option><option value="Agricultural Science">Agricultural Science</option><option value="Business Studies">Business Studies</option><option value="Religious and Moral Education">Religious and Moral Education</option><option value="Physical and Health Education">Physical and Health Education</option><option value="Creative Practical Arts">Creative Practical Arts</option><option value="Information and Communication Technology (ICT)">Information and Communication Technology (ICT)</option><option value="French">French</option><option value="Krio">Krio</option></select></div></div><label>Type or choose your topic</label><select id="jssTopicSelect" data-topic-level="jss" data-class-id="jssClass" data-subject-id="jssSubject"><option value="">Choose class and subject first</option></select><input id="jssTopic" placeholder="Or type your own topic"/><p class="topic-help">Choose the prescribed topic you want explained, or select Other.</p><button class="btn btn-blue" onclick="curriculumExplain('jss','jssClass','jssSubject','jssTopicSelect','jssTutor','jssTopic')">Click here for your explanation</button><div class="output" id="jssTutor"></div></article>
 <article class="card"><span class="step">2</span><h3>BECE Practice</h3>
-<p class="guide"><strong>Let’s practise some objective questions.</strong> Choose your subject and 5 questions will be generated immediately. Choosing or typing a topic is optional if you want to focus on a particular area. You will receive 5 questions at a time. Select one answer for each question. You will immediately see whether your answer is correct or wrong. At the end, you will see your total correct answers, total wrong answers and the areas you need to revise.</p>
+<p class="guide"><strong>Let’s practise some objective questions.</strong> Choose your subject and, if you wish, a topic. Questions will only be generated after you click the button below. Choosing or typing a topic is optional if you want to focus on a particular area. You will receive 5 questions at a time. Select one answer for each question. You will immediately see whether your answer is correct or wrong. At the end, you will see your total correct answers, total wrong answers and the areas you need to revise.</p>
 <label>Subject</label><select data-jss-subject="" id="jssQuizSubject"><option value="">Select subject</option><option value="English Language">English Language</option><option value="Mathematics">Mathematics</option><option value="Integrated Science">Integrated Science</option><option value="Social Studies">Social Studies</option><option value="Civic Education">Civic Education</option><option value="Agricultural Science">Agricultural Science</option><option value="Business Studies">Business Studies</option><option value="Religious and Moral Education">Religious and Moral Education</option><option value="Physical and Health Education">Physical and Health Education</option><option value="Creative Practical Arts">Creative Practical Arts</option><option value="Information and Communication Technology (ICT)">Information and Communication Technology (ICT)</option><option value="French">French</option><option value="Krio">Krio</option></select>
 <label>Type or choose your topic (optional)</label><select id="jssQuizTopicSelect" data-topic-level="jss" data-subject-id="jssQuizSubject"><option value="">Choose a subject first</option></select><input id="jssQuizTopic" placeholder="Or type your own topic"/><p class="topic-help">Choose a listed topic or type your own topic. If you leave it blank, questions will be mixed from the selected subject.</p>
-<button class="btn btn-blue" type="button" onclick="startQuiz('jss')">Generate another 5 BECE questions</button>
+<button class="btn btn-blue" type="button" onclick="startQuiz('jss')">Generate 5 BECE Questions</button>
 <div class="output" id="jssQuiz"></div>
 </article>
 <article class="card"><span class="step">3</span><h3>Assignment Learning Guide</h3><p class="guide">Paste the question. You will receive clues, steps and an explanation that helps you write your own answer.</p><label>Type the assignment given to you</label><textarea id="jssAssignment" placeholder="Type the assignment given to you here"></textarea><button class="btn btn-blue" onclick="demoResult('jssGuide','assignment guide')">Click here for your step-by-step guide</button><div class="output" id="jssGuide"></div></article>
@@ -963,7 +971,7 @@ select:disabled{background-color:#f3f6f9 !important;color:#7a8794 !important;opa
 <label>Stream (optional)</label><select data-sss-stream="" data-target="sssQuizSubject" id="sssQuizStream"><option value="">Select stream</option><option value="Sciences &amp; Technologies">Sciences &amp; Technologies</option><option value="Mathematics &amp; Numeracy">Mathematics &amp; Numeracy</option><option value="Economics, Business &amp; Entrepreneurial Studies">Economics, Business &amp; Entrepreneurial Studies</option><option value="Languages &amp; Literatures">Languages &amp; Literatures</option><option value="Social &amp; Cultural Studies">Social &amp; Cultural Studies</option></select>
 <label>Subject</label><select id="sssQuizSubject"><option value="">Select subject</option><option value="Integrated Science">Integrated Science</option><option value="Biology">Biology</option><option value="Chemistry">Chemistry</option><option value="Computer Science">Computer Science</option><option value="Agricultural Science">Agricultural Science</option><option value="ICT">ICT</option><option value="Robotics">Robotics</option><option value="Physics">Physics</option><option value="Environmental Science">Environmental Science</option><option value="Health Sciences">Health Sciences</option><option value="Food Security">Food Security</option><option value="Engineering Science">Engineering Science</option><option value="Physical Health Education">Physical Health Education</option><option value="Climate Change Awareness, Preparedness and Resilience">Climate Change Awareness, Preparedness and Resilience</option><option value="Adolescent Health and Life Skills">Adolescent Health and Life Skills</option><option value="Computer Literacy">Computer Literacy</option><option value="Popular Science">Popular Science</option><option value="Fundamentals of Mathematics">Fundamentals of Mathematics</option><option value="Further Mathematics">Further Mathematics</option><option value="Statistics and Probability">Statistics and Probability</option><option value="Calculus">Calculus</option><option value="Mathematics for Business and Enterprise">Mathematics for Business and Enterprise</option><option value="Applications of Mathematics for Coding">Applications of Mathematics for Coding</option><option value="Mathematics for STEAMM">Mathematics for STEAMM</option><option value="Computer Mathematics">Computer Mathematics</option><option value="Mathematics in Other Disciplines">Mathematics in Other Disciplines</option><option value="Introductory Statistics and Probability">Introductory Statistics and Probability</option><option value="Functional Mathematics">Functional Mathematics</option><option value="Principles of Economics">Principles of Economics</option><option value="Entrepreneurship">Entrepreneurship</option><option value="Principles of Accounting">Principles of Accounting</option><option value="Business Management Studies">Business Management Studies</option><option value="Principles of Commerce">Principles of Commerce</option><option value="Principles of Marketing">Principles of Marketing</option><option value="Business Accounting">Business Accounting</option><option value="Clerical Office Studies">Clerical Office Studies</option><option value="Insurance Management">Insurance Management</option><option value="Business Economics">Business Economics</option><option value="Business and Society">Business and Society</option><option value="Customer Relationship Management">Customer Relationship Management</option><option value="Micro Small and Medium Enterprise Management">Micro Small and Medium Enterprise Management</option><option value="Business Ethics">Business Ethics</option><option value="English Language">English Language</option><option value="African Literature">African Literature</option><option value="English Literature">English Literature</option><option value="French as a Foreign Language">French as a Foreign Language</option><option value="Sierra Leonean Literature">Sierra Leonean Literature</option><option value="Mende Language">Mende Language</option><option value="Kathemne Language">Kathemne Language</option><option value="Hulimba Language">Hulimba Language</option><option value="Krio Language">Krio Language</option><option value="Creative Writing">Creative Writing</option><option value="Business English">Business English</option><option value="French for Tourism">French for Tourism</option><option value="Technical Writing">Technical Writing</option><option value="English for STEAMM">English for STEAMM</option><option value="French for Business and Marketing">French for Business and Marketing</option><option value="Everyday Basic French">Everyday Basic French</option><option value="Popular Literature Appreciation">Popular Literature Appreciation</option><option value="Arabic Language">Arabic Language</option><option value="Fula">Fula</option><option value="Sierra Leone History">Sierra Leone History</option><option value="African History">African History</option><option value="Geography">Geography</option><option value="Music">Music</option><option value="Dance and Drama Studies">Dance and Drama Studies</option><option value="Politics and Governance">Politics and Governance</option><option value="Social Studies and Civics">Social Studies and Civics</option><option value="Religious and Moral Education">Religious and Moral Education</option><option value="Geography and the Environment">Geography and the Environment</option><option value="Music as an Applied Subject">Music as an Applied Subject</option><option value="Entertainment Industry">Entertainment Industry</option><option value="Derivatives of Religious and Moral Education">Derivatives of Religious and Moral Education</option><option value="Dance Performance and Appreciation">Dance Performance and Appreciation</option><option value="Mining Industry and the Environment">Mining Industry and the Environment</option><option value="Fishing Industry and the Environment">Fishing Industry and the Environment</option><option value="Tourism and Conservation">Tourism and Conservation</option><option value="Living with Religious and Moral Education">Living with Religious and Moral Education</option></select>
 <label>Type or choose your topic (optional)</label><select id="sssQuizTopicSelect" data-topic-level="sss" data-subject-id="sssQuizSubject"><option value="">Choose a subject first</option></select><input id="sssQuizTopic" placeholder="Or type your own topic"/><p class="topic-help">Topics are listed from the curriculum database across SSS 1–3.</p>
-<button class="btn btn-blue" type="button" onclick="startQuiz('sss')">Generate another 5 WASSCE questions</button>
+<button class="btn btn-blue" type="button" onclick="startQuiz('sss')">Generate 5 WASSCE Questions</button>
 <div class="output" id="sssQuiz"></div>
 </article>
 <article class="card"><span class="step">3</span><h3>Assignment Learning Guide</h3><p class="guide">Get an outline, key ideas and steps. Use them to prepare your own complete response.</p><label>Type the assignment given to you</label><textarea placeholder="Type the assignment given to you here"></textarea><button class="btn btn-blue" onclick="demoResult('sssGuide','assignment guide')">Click here for your step-by-step guide</button><div class="output" id="sssGuide"></div></article>
@@ -1002,7 +1010,7 @@ select:disabled{background-color:#f3f6f9 !important;color:#7a8794 !important;opa
 <div class="teacher-selector-card">
 <h3>Choose your teaching area</h3>
 <p>Select the school level, class and subject. For the topic, choose one from the curriculum list or type your own.</p>
-<label for="teacherCategoryOnly">Teacher category</label>
+<label for="teacherCategoryOnly" class="teacher-category-label">Teacher Category</label>
 <select id="teacherCategoryOnly"><option value="">Select teacher category</option><option value="primary">Primary School Teacher</option><option value="jss">Junior Secondary School (JSS) Teacher</option><option value="sss">Senior Secondary School (SSS) Teacher</option></select>
 </div>
 <div class="teacher-choice-panel" id="teacherChoicePanel">
@@ -1051,7 +1059,7 @@ select:disabled{background-color:#f3f6f9 !important;color:#7a8794 !important;opa
   </div>
 <div class="grid">
 <article class="card">
-<h3>AI Lecturer</h3>
+<h3>Salone Class Room Lecturer</h3>
 <p class="guide">Enter a course, module or difficult concept and state the level of explanation you need.</p><div class="university-focus-field">
 <label for="universityLecturerFocus">What should the Lecturer focus on or explain to you today?</label>
 <textarea id="universityLecturerFocus" placeholder="Type the topic, concept, question or area you want the Lecturer to explain" rows="4"></textarea>
@@ -1276,15 +1284,18 @@ function updateDissertationTopics(){
 </div>
 </section><section class="section ribbon-section" id="contact-support"><div class="ribbon-intro"><div class="section-ribbon">Support, Comments &amp; Enquiries</div><p class="section-ribbon-description">Send us your questions, comments, suggestions or support requests directly through this section.</p></div>
 <div class="contact-support-card">
-<form action="#" class="support-form" id="supportForm" method="post">
+<form action="https://formsubmit.co/pytbion26@gmail.com" class="support-form" id="supportForm" method="POST">
+<input name="_subject" type="hidden" value="New Salone Class Room Support / Comment / Enquiry"/>
+<input name="_captcha" type="hidden" value="false"/>
+<input name="_template" type="hidden" value="table"/>
 <div class="form-grid">
 <div>
 <label for="supportName">Your name</label>
-<input id="supportName" name="name" placeholder="Enter your name" required="" type="text"/>
+<input id="supportName" name="Name" placeholder="Enter your name" required="" type="text"/>
 </div>
 <div>
 <label for="supportRole">You are a</label>
-<select id="supportRole" name="user_type" required="">
+<select id="supportRole" name="User type" required="">
 <option value="">Select one</option>
 <option>JSS Student</option>
 <option>SSS Student</option>
@@ -1296,7 +1307,7 @@ function updateDissertationTopics(){
 </div>
 </div>
 <label for="supportType">What would you like to send?</label>
-<select id="supportType" name="message_type" required="">
+<select id="supportType" name="Message type" required="">
 <option value="">Select one</option>
 <option>Support Request</option>
 <option>Comment</option>
@@ -1305,9 +1316,9 @@ function updateDissertationTopics(){
 <option>Report a Problem</option>
 </select>
 <label for="supportContact">Phone number or email (optional)</label>
-<input id="supportContact" name="contact" placeholder="Enter a phone number or email only if you want us to reply" type="text"/>
+<input id="supportContact" name="Contact" placeholder="Enter a phone number or email only if you want us to reply" type="text"/>
 <label for="supportMessage">Your message</label>
-<textarea id="supportMessage" name="message" placeholder="Write your comment, question, enquiry or support request here..." required="" rows="6"></textarea>
+<textarea id="supportMessage" name="Message" placeholder="Write your comment, question, enquiry or support request here..." required="" rows="6"></textarea>
 <button class="btn btn-blue" id="supportSendBtn" type="submit">Click here to send your message</button>
 <p class="form-help">
         Your message will be sent directly to Salone Class Room support at pytbion26@gmail.com. You do not need to open an email app.
@@ -1527,16 +1538,7 @@ async function startNPSEQuiz(){
 }
 function renderNPSE(qs){const area=document.getElementById('npseQuizArea');if(!Array.isArray(qs)||!qs.length){area.innerHTML='<div class="quiz-notice">No questions were returned. Please try again.</div>';return}npseState={qs:qs.slice(0,5),answered:0,correct:0};area.innerHTML=npseState.qs.map((q,i)=>'<div class="quiz-question" style="margin:14px 0;padding:14px;border:1px solid #d7e1ed;border-radius:12px;background:#fff"><p><strong>'+(i+1)+'. '+safe(q.question)+'</strong></p>'+(q.options||[]).slice(0,4).map((o,j)=>'<button class="btn" style="display:block;width:100%;text-align:left;justify-content:flex-start;margin:7px 0;background:#eef4fb;color:#17324d" onclick="answerNPSE(this,'+i+','+j+')">'+String.fromCharCode(65+j)+'. '+safe(o)+'</button>').join('')+'<div id="npseFb'+i+'"></div></div>').join('')+'<div id="npseSummary"></div>'}
 
-// V3.8: Exam practice starts as soon as a subject/paper is selected. Topic remains optional.
-function wireAutomaticExamPractice(){
-  const npse=document.getElementById('npseSubject');
-  const bece=document.getElementById('jssQuizSubject');
-  const wassce=document.getElementById('sssQuizSubject');
-  if(npse && !npse.dataset.autoPractice){npse.dataset.autoPractice='1';npse.addEventListener('change',()=>{if(npse.value) startNPSEQuiz();});}
-  if(bece && !bece.dataset.autoPractice){bece.dataset.autoPractice='1';bece.addEventListener('change',()=>{if(bece.value) startQuiz('jss');});}
-  if(wassce && !wassce.dataset.autoPractice){wassce.dataset.autoPractice='1';wassce.addEventListener('change',()=>{if(wassce.value) startQuiz('sss');});}
-}
-setTimeout(wireAutomaticExamPractice,0);
+// Exam practice is manual: selecting a subject or topic never generates questions automatically.
 
 function answerNPSE(btn,i,j){if(btn.closest('.quiz-question').dataset.done)return;btn.closest('.quiz-question').dataset.done='1';const q=npseState.qs[i],ok=Number(q.answer)===j;npseState.answered++;if(ok)npseState.correct++;const subject=npseSubject?.value||'',ts=npseTopicSelect,tm=npseTopic,topic=(((tm?.value||'').trim()) || (ts?.value==='__other__'?'':ts?.value||'')).trim();recordPracticeAttempt('primary',subject,topic,q,j,ok).catch(()=>{});document.getElementById('npseFb'+i).innerHTML='<strong>'+(ok?'Correct':'Wrong')+'.</strong> '+safe(q.explanation||'');if(npseState.answered===npseState.qs.length){document.getElementById('npseSummary').innerHTML='<div class="notice"><strong>Result: '+npseState.correct+'/'+npseState.qs.length+' correct.</strong> Review the explanations above and practise weak areas again.</div>';loadLearningProgress().catch(()=>{})}}
 async function primaryAssignmentGuide(){const subject=primaryAssignmentSubject.value,topic=primaryAssignment.value.trim(),box=primaryAssignmentOutput;if(!subject||!topic){showOutput(box,'Please choose a subject and type the assignment first.');return}await callLearning({level:'primary',subject,topic,task:'assignment',tool_key:'primary-assignment-guide'},box)}
@@ -1889,45 +1891,7 @@ async function findResearchTopics(){
   }catch(e){handleLearningError(e,box)}
 }
 
-async function submitSupportMessage(e){
-  if(e)e.preventDefault();
-  const form=document.getElementById('supportForm');
-  const status=document.getElementById('supportSubmitStatus');
-  const btn=document.getElementById('supportSendBtn');
-  if(!form||!status)return false;
-  const payload={
-    name:(document.getElementById('supportName')?.value||'').trim(),
-    user_type:document.getElementById('supportRole')?.value||'',
-    message_type:document.getElementById('supportType')?.value||'',
-    contact:(document.getElementById('supportContact')?.value||'').trim(),
-    message:(document.getElementById('supportMessage')?.value||'').trim()
-  };
-  if(!payload.name||!payload.user_type||!payload.message_type||!payload.message){
-    status.textContent='Please complete all required fields.';status.classList.add('show');return false;
-  }
-  if(btn){btn.disabled=true;btn.textContent='Sending…'}
-  status.textContent='Sending…';status.classList.add('show');
-  try{
-    const res=await fetch('/.netlify/functions/support-message',{
-      method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),cache:'no-store'
-    });
-    const data=await res.json().catch(()=>({}));
-    if(!res.ok)throw new Error(data.error||'Unable to send message');
-    form.reset();
-    status.textContent='Sent';
-  }catch(err){
-    console.warn('Support submission failed',err);
-    status.textContent='Your message could not be sent right now. Please try again.';
-  }finally{
-    if(btn){btn.disabled=false;btn.textContent='Click here to send your message'}
-  }
-  return false;
-}
-(function(){
-  const form=document.getElementById('supportForm');
-  if(!form)return;
-  form.addEventListener('submit',submitSupportMessage,false);
-})();
+// Support form submits directly to pytbion26@gmail.com through FormSubmit.
 (function(){
   const btn=document.getElementById('refreshProgressBtn');
   if(btn)btn.addEventListener('click',()=>loadLearningProgress(),false);
@@ -1982,30 +1946,59 @@ function renderLearningAnswer(box,text,payload){box.innerHTML='<div class="answe
 async function requestMoreDetail(boxId){const box=document.getElementById(boxId),payload=lastLearningPayload[boxId];if(!box||!payload)return;showOutput(box,firstName()?`Adding more detail for you, ${firstName()}…`:'Adding more detail…');try{const expanded={...payload,detail_mode:'more'};const d=await learningRequest(expanded);renderLearningAnswer(box,personalisedText(expanded,d.answer||'No answer was returned. Please try again.'),expanded)}catch(e){handleLearningError(e,box)}}
 async function platformPost(payload,timeout=30000){const c=new AbortController(),tm=setTimeout(()=>c.abort(),timeout);try{const r=await fetch(PLATFORM_API,{method:'POST',headers:{'Content-Type':'application/json',...authHeaders()},body:JSON.stringify(payload),signal:c.signal});const d=await r.json().catch(()=>({}));if(!r.ok){const e=new Error(d.error||'Unable to complete this request.');e.code=d.code;e.status=r.status;throw e}return d}finally{clearTimeout(tm)}}
 async function requestPasswordReset(){const contact=(document.getElementById('loginContact')?.value||document.getElementById('regContact')?.value||'').trim();if(!contact){loginStatus.textContent='Enter your registered phone number or email first.';loginStatus.classList.add('show');return}loginStatus.textContent='Sending your reset request…';loginStatus.classList.add('show');try{await platformPost({action:'password_reset_request',contact});loginStatus.textContent='Reset request sent. An administrator can now reset your password and give you a temporary password privately.'}catch(e){loginStatus.textContent=e.message}}
-async function recordPracticeAttempt(level,subject,topic,q,selectedIndex,isCorrect){if(!currentProfile)return;return platformPost({action:'practice_record',level,subject,topic,question:q.question||'',selected_index:selectedIndex,correct_index:Number(q.answer),is_correct:!!isCorrect,weak_area:q.weakArea||topic},12000)}
+function localProgressKey(){return 'salone_learning_progress_'+(currentProfile?.id||currentProfile?.contact||'device')}
+function readLocalProgress(){try{return JSON.parse(localStorage.getItem(localProgressKey())||'[]')}catch{return []}}
+function saveLocalPractice(level,subject,topic,q,selectedIndex,isCorrect){
+ const rows=readLocalProgress();rows.unshift({level,subject:subject||'General',topic:topic||'General',question:q?.question||'',selected_index:selectedIndex,correct_index:Number(q?.answer),is_correct:!!isCorrect,weak_area:q?.weakArea||topic||subject||'General',created_at:new Date().toISOString()});
+ localStorage.setItem(localProgressKey(),JSON.stringify(rows.slice(0,300)));
+}
+async function recordPracticeAttempt(level,subject,topic,q,selectedIndex,isCorrect){
+ if(!currentProfile)return;
+ saveLocalPractice(level,subject,topic,q,selectedIndex,isCorrect);
+ try{return await platformPost({action:'practice_record',level,subject,topic,question:q.question||'',selected_index:selectedIndex,correct_index:Number(q.answer),is_correct:!!isCorrect,weak_area:q.weakArea||topic},12000)}catch(e){console.warn('Remote progress save failed; kept local copy.',e)}
+}
+function buildLocalProgress(){
+ const rows=readLocalProgress();
+ const attempted=rows.length,correct=rows.filter(x=>x.is_correct).length,wrong=attempted-correct,score=attempted?Math.round(correct*100/attempted):0;
+ const map={};
+ rows.forEach(x=>{const k=x.subject||'General';if(!map[k])map[k]={subject:k,attempted:0,correct:0};map[k].attempted++;if(x.is_correct)map[k].correct++});
+ const subjects=Object.values(map).map(x=>({...x,score:x.attempted?Math.round(x.correct*100/x.attempted):0})).sort((a,b)=>b.attempted-a.attempted);
+ const weak_topics=subjects.filter(x=>x.score<60).map(x=>({topic:x.subject,score:x.score}));
+ return {attempted,correct,wrong,score,subjects,weak_topics,recent:rows.slice(0,8)};
+}
+function renderProgressData(d){
+ const attempted=document.getElementById('progressAttempted'),correct=document.getElementById('progressCorrect'),wrong=document.getElementById('progressWrong'),score=document.getElementById('progressScore'),subjects=document.getElementById('progressSubjects'),weak=document.getElementById('progressWeak'),recent=document.getElementById('progressRecent');
+ if(attempted)attempted.textContent=Number(d.attempted||0);if(correct)correct.textContent=Number(d.correct||0);if(wrong)wrong.textContent=Number(d.wrong||0);if(score)score.textContent=Number(d.score||0)+'%';
+ const subjectRows=Array.isArray(d.subjects)?d.subjects:[];
+ if(subjects)subjects.innerHTML=subjectRows.length?subjectRows.map(x=>`<div class="progress-line"><span>${safe(x.subject||'General')}</span><strong>${Number(x.score||0)}% (${Number(x.correct||0)}/${Number(x.attempted||0)})</strong></div>`).join(''):'<div class="progress-empty">No subject results yet. Complete an NPSE, BECE or WASSCE practice question first.</div>';
+ if(weak){const raw=Array.isArray(d.weak_topics)?d.weak_topics:(Array.isArray(d.weak_areas)?d.weak_areas:(Array.isArray(d.areas_to_improve)?d.areas_to_improve:[]));const derived=subjectRows.filter(x=>Number(x.score)<60).map(x=>({topic:x.subject,score:x.score}));const items=raw.length?raw:derived;weak.innerHTML=items.length?items.map(x=>`<div class="progress-line"><span>${safe(x.topic||x.weak_area||x.subject||'Area to improve')}</span><strong>${Number(x.score||0)}%</strong></div>`).join(''):'<div class="progress-empty">No weaknesses identified yet. Complete more practice questions.</div>'}
+ const recentRows=Array.isArray(d.recent)?d.recent:[];
+ if(recent)recent.innerHTML=recentRows.length?recentRows.map(x=>`<div class="progress-line"><span>${safe(x.subject||'General')} — ${safe(x.topic||'General')}</span><strong>${x.is_correct?'Correct':'Wrong'}</strong></div>`).join(''):'<div class="progress-empty">Start an exam practice to build your progress.</div>';
+}
 async function loadLearningProgress(){
  const out=document.getElementById('progressSignedOut'),content=document.getElementById('progressContent'),status=document.getElementById('progressRefreshStatus'),btn=document.getElementById('refreshProgressBtn');
  if(!out||!content)return;
  if(!currentProfile){out.hidden=false;content.hidden=true;if(status){status.textContent='Log in to refresh your learning progress.';status.classList.add('show')}return}
  out.hidden=true;content.hidden=false;
- if(btn){btn.disabled=true;btn.textContent='Refreshing…'}if(status){status.textContent='Refreshing…';status.classList.add('show')}
+ if(btn){btn.disabled=true;btn.textContent='Refreshing…'}if(status){status.textContent='Refreshing your latest results…';status.classList.add('show')}
+ const local=buildLocalProgress();
  try{
-  const d=await platformPost({action:'progress'},20000);
-  const attempted=document.getElementById('progressAttempted'),correct=document.getElementById('progressCorrect'),wrong=document.getElementById('progressWrong'),score=document.getElementById('progressScore'),subjects=document.getElementById('progressSubjects'),weak=document.getElementById('progressWeak'),recent=document.getElementById('progressRecent');
-  if(attempted)attempted.textContent=d.attempted||0;if(correct)correct.textContent=d.correct||0;if(wrong)wrong.textContent=d.wrong||0;if(score)score.textContent=(d.score||0)+'%';
-  if(subjects)subjects.innerHTML=(d.subjects||[]).length?d.subjects.map(x=>`<div class="progress-line"><span>${safe(x.subject)}</span><strong>${x.score}% (${x.correct}/${x.attempted})</strong></div>`).join(''):'<div class="progress-empty">No subject results yet.</div>';
-  if(weak){const rawWeak=d.weak_topics||d.weak_areas||d.areas_to_improve||[];const derived=(d.subjects||[]).filter(x=>Number(x.score)<60).map(x=>({topic:x.subject,score:x.score}));const weakItems=rawWeak.length?rawWeak:derived;weak.innerHTML=weakItems.length?weakItems.map(x=>`<div class="progress-line"><span>${safe(x.topic||x.weak_area||x.subject||'Area to improve')}</span><strong>${Number(x.score||0)}%</strong></div>`).join(''):'<div class="progress-empty">No weaknesses have been identified yet. Complete more practice questions to receive improvement guidance.</div>';}
-  if(recent)recent.innerHTML=(d.recent||[]).length?d.recent.map(x=>`<div class="progress-line"><span>${safe(x.subject)} — ${safe(x.topic||'General')}</span><strong>${x.is_correct?'Correct':'Wrong'}</strong></div>`).join(''):'<div class="progress-empty">Start an exam practice to build your progress.</div>';
-  if(status)status.textContent='Progress refreshed.';
- }catch(e){if(status)status.textContent=e.message||'Unable to refresh progress right now.'}
- finally{if(btn){btn.disabled=false;btn.textContent='Refresh my progress'}}
+  const remote=await platformPost({action:'progress'},20000);
+  const useRemote=remote && (Number(remote.attempted||0)>0 || (Array.isArray(remote.subjects)&&remote.subjects.length));
+  renderProgressData(useRemote?remote:local);
+  if(status)status.textContent=(useRemote||local.attempted)?'Progress refreshed successfully.':'No practice results yet. Answer NPSE, BECE or WASSCE questions and your progress will appear here.';
+ }catch(e){
+  renderProgressData(local);
+  if(status)status.textContent=local.attempted?'Progress refreshed from this device. Online synchronisation is temporarily unavailable.':(e.message||'No saved practice results found yet.');
+ }finally{if(btn){btn.disabled=false;btn.textContent='Refresh my progress'}}
 }
 async function learningRequest(payload){const controller=new AbortController(),tm=setTimeout(()=>controller.abort(),85000);try{const adminToken=localStorage.getItem('salone_admin_token')||'';const r=await fetch(LEARNING_API,{method:'POST',headers:{'Content-Type':'application/json',...authHeaders(),...(adminToken?{'X-Admin-Token':adminToken}:{})},body:JSON.stringify({...payload,device_id:deviceId()}),signal:controller.signal});const d=await r.json().catch(()=>({}));if(!r.ok){const e=new Error(d.error||'Unable to complete this request.');e.code=d.code;e.status=r.status;throw e}return d}finally{clearTimeout(tm)}}
 function handleLearningError(e,box){if(e.name==='AbortError')return showOutput(box,'This request is taking longer than expected. Please try again. If it continues, the AI service may be busy.');if(e.code==='registration_required'){pendingToolAction=null;showAccountTab('register');openAccountModal();return}if(e.code==='payment_required'||e.status===402){openPaymentModal(currentProfile||{category:'university'});return}showOutput(box,e.message||'Something went wrong. Please try again.')}
 function firstName(){const n=(currentProfile?.full_name||'').trim();return n?n.split(/\s+/)[0]:''}
 function personalLead(payload){const n=firstName();if(!n)return '';const t=(payload?.task||'').toLowerCase();if(t==='assignment')return `Thank you, ${n}. Here is your assignment guide.`;if(t==='review')return `Thank you, ${n}. Here is feedback on your answer.`;if(t==='topics')return `${n}, here are research topic suggestions for you.`;if(t==='proposal')return `${n}, here is your proposal framework.`;if(t==='dissertation')return `${n}, here is your dissertation guidance.`;if(t==='defense')return `${n}, here is your dissertation defence preparation guide.`;if(t==='teacher')return `Thank you, ${n}. Here is the teaching support you requested.`;if((payload?.level||'').toLowerCase()==='university'||t==='lecturer')return `Thank you, ${n}. Here is your lecturer-style explanation.`;return `Thank you, ${n}. Here is your lesson explanation.`}
 function personalisedText(payload,text){const lead=personalLead(payload);return lead?lead+'\n\n'+text:text}
-async function callLearning(payload,box){const n=firstName();showOutput(box,n?`Preparing your answer, ${n}…`:'Preparing your answer…');try{const d=await learningRequest(payload);renderLearningAnswer(box,personalisedText(payload,d.answer||'No answer was returned. Please try again.'),payload)}catch(e){handleLearningError(e,box)}}
+function requestLoadingText(payload){const t=(payload?.task||'').toLowerCase();if(t==='teacher')return 'Preparing your lesson notes…';if(t==='teacher_exam')return 'Generating your theory questions…';if(t==='topics')return 'Finding suitable research topics…';if(t==='proposal')return 'Preparing your proposal framework…';if(t==='dissertation')return 'Preparing your dissertation guidance…';if(t==='defense')return 'Preparing your dissertation defence guide…';if(t==='review')return 'Reviewing your work…';if(t==='assignment')return 'Preparing your step-by-step assignment guide…';if(t==='lecturer'||(payload?.level||'').toLowerCase()==='university')return 'Preparing your Salone Class Room Lecturer explanation…';return 'Preparing your lesson explanation…'}
+async function callLearning(payload,box){const n=firstName(),msg=requestLoadingText(payload);showOutput(box,n?msg.replace('…',`, ${n}…`):msg);try{const d=await learningRequest(payload);renderLearningAnswer(box,personalisedText(payload,d.answer||'No response was returned. Please try again.'),payload)}catch(e){handleLearningError(e,box)}}
 function openAccountModal(){accountModal.classList.add('open');document.body.style.overflow='hidden';renderAccount()}function closeAccountModal(){accountModal.classList.remove('open');document.body.style.overflow=''}
 function showAccountTab(which){registerPane.hidden=which!=='register';loginPane.hidden=which!=='login';registerTabBtn.classList.toggle('active',which==='register');loginTabBtn.classList.toggle('active',which==='login')}
 function renderAccount(){const signed=!!currentProfile;accountSignedOut.hidden=signed;accountSignedIn.hidden=!signed;if(signed){acctName.textContent=currentProfile.full_name;acctCategory.textContent=cat(currentProfile.category);acctAccess.textContent=currentAccess?.status||'Checking';acctExpiry.textContent=currentProfile.paid_access_end?'Paid access until '+new Date(currentProfile.paid_access_end).toLocaleDateString():currentProfile.free_access_end?'Free access until '+new Date(currentProfile.free_access_end).toLocaleDateString():''}accountBtn.textContent=signed?'My Account':'Login';loadLearningProgress().catch(()=>{})}
