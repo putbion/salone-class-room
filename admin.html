@@ -146,10 +146,10 @@ th{background:#f6f9fc;color:#3b5267}
 </section>
 <section class="panel" id="panel-aiusage">
 <div class="kpis">
-<div class="kpi"><span>AI CALLS • TODAY</span><strong id="aiCallsToday">—</strong></div>
-<div class="kpi"><span>AI CALLS • 30 DAYS</span><strong id="aiCalls30d">—</strong></div>
-<div class="kpi"><span>REGISTERED AI USERS</span><strong id="aiRegisteredUsers">—</strong></div>
-<div class="kpi"><span>ANONYMOUS / DEVICE CALLS</span><strong id="aiAnonymousCalls">—</strong></div>
+<div class="kpi"><span>AI CALLS • TODAY</span><strong id="aiCallsToday">0</strong></div>
+<div class="kpi"><span>AI CALLS • 30 DAYS</span><strong id="aiCalls30d">0</strong></div>
+<div class="kpi"><span>REGISTERED AI USERS</span><strong id="aiRegisteredUsers">0</strong></div>
+<div class="kpi"><span>ANONYMOUS / DEVICE CALLS</span><strong id="aiAnonymousCalls">0</strong></div>
 </div>
 <div class="box" style="margin-top:16px">
 <h3>Platform Usage Ranking</h3>
@@ -159,10 +159,10 @@ th{background:#f6f9fc;color:#3b5267}
 <div class="box" style="margin:0"><h3>Lowest User(s)</h3><div id="lowestUsageUsers" class="metric-list"><div class="empty">No usage data yet.</div></div></div>
 </div>
 <div class="kpis" style="margin-top:16px">
-<div class="kpi"><span>HIGHEST RECORDED CALLS</span><strong id="highestUsageCount">—</strong></div>
-<div class="kpi"><span>LOWEST RECORDED CALLS</span><strong id="lowestUsageCount">—</strong></div>
-<div class="kpi"><span>USERS WITH NO AI USE</span><strong id="zeroUsageUsers">—</strong></div>
-<div class="kpi"><span>USERS WITH AI ACTIVITY</span><strong id="usersWithUsage">—</strong></div>
+<div class="kpi"><span>HIGHEST RECORDED CALLS</span><strong id="highestUsageCount">0</strong></div>
+<div class="kpi"><span>LOWEST RECORDED CALLS</span><strong id="lowestUsageCount">0</strong></div>
+<div class="kpi"><span>USERS WITH NO AI USE</span><strong id="zeroUsageUsers">0</strong></div>
+<div class="kpi"><span>USERS WITH AI ACTIVITY</span><strong id="usersWithUsage">0</strong></div>
 </div>
 </div>
 <div class="box" style="margin-top:16px">
@@ -171,7 +171,7 @@ th{background:#f6f9fc;color:#3b5267}
 <label for="aiUsageUserFilter">Filter by registered user</label>
 <select id="aiUsageUserFilter" onchange="renderAIUsage(currentData)"><option value="">All registered users</option></select>
 </div>
-<div class="table-wrap" style="margin-top:16px"><table><thead><tr><th>Name</th><th>Contact</th><th>Category</th><th>Today</th><th>30 Days</th><th>Total Logged</th><th>Input Chars</th><th>Output Chars</th><th>Last AI Use</th></tr></thead><tbody id="aiUsageByUserBody"></tbody></table></div>
+<div class="table-wrap" style="margin-top:16px"><table><thead><tr><th>Name</th><th>Email / Phone</th><th>Category</th><th>Today</th><th>30 Days</th><th>Total Logged</th><th>Input Chars</th><th>Output Chars</th><th>Last AI Use</th></tr></thead><tbody id="aiUsageByUserBody"></tbody></table></div>
 <div class="box" style="margin-top:16px"><h3>Recent AI Requests</h3><p class="note">This shows the latest logged AI requests for the selected user, or for everyone when no user is selected.</p><div class="table-wrap"><table><thead><tr><th>Date</th><th>User</th><th>Tool</th><th>Provider</th><th>Model</th><th>Input</th><th>Output</th></tr></thead><tbody id="aiUsageRecentBody"></tbody></table></div></div>
 </section>
 <section class="panel" id="panel-settings">
@@ -199,14 +199,14 @@ th{background:#f6f9fc;color:#3b5267}
 </div></section>
 <section class="panel" id="panel-accounts">
 <div class="kpis">
-<div class="kpi"><span>REGISTERED PROFILES</span><strong id="profileCount">—</strong></div>
-<div class="kpi"><span>PRIMARY</span><strong id="profilePrimary">—</strong></div>
-<div class="kpi"><span>JSS / SSS</span><strong id="profileSecondary">—</strong></div>
-<div class="kpi"><span>TEACHERS / UNIVERSITY</span><strong id="profileAdvanced">—</strong></div>
+<div class="kpi"><span>REGISTERED PROFILES</span><strong id="profileCount">0</strong></div>
+<div class="kpi"><span>PRIMARY</span><strong id="profilePrimary">0</strong></div>
+<div class="kpi"><span>JSS / SSS</span><strong id="profileSecondary">0</strong></div>
+<div class="kpi"><span>TEACHERS / UNIVERSITY</span><strong id="profileAdvanced">0</strong></div>
 </div>
 <div class="box" style="margin-top:16px">
 <h3>Individual User Access Control</h3>
-<p class="note">Choose one registered user below. You can grant access, block, unblock or open the full access manager for that user. These changes affect only the selected account.</p>
+<p class="note">Choose one registered user below. You can grant access, block, unblock or open the full access manager for that user. The registered email or phone number is displayed so you can identify and contact the person. These changes affect only the selected account.</p>
 <label for="individualUserSelect">Registered user</label>
 <select id="individualUserSelect" onchange="syncIndividualUserSummary()"><option value="">Select a user</option></select>
 <div id="individualUserSummary" class="note" style="margin-top:10px">Select a registered user to manage individual access.</div>
@@ -216,7 +216,7 @@ th{background:#f6f9fc;color:#3b5267}
 </div>
 <div class="msg" id="individualUserStatus"></div>
 </div>
-<div class="table-wrap" style="margin-top:16px"><table><thead><tr><th>Name</th><th>Contact</th><th>Category</th><th>Town</th><th>Last seen</th><th>Status</th><th>Access</th><th>Action</th></tr></thead><tbody id="profilesBody"></tbody></table></div>
+<div class="table-wrap" style="margin-top:16px"><table><thead><tr><th>Name</th><th>Email / Phone</th><th>Category</th><th>Town</th><th>Last seen</th><th>Status</th><th>Access</th><th>Action</th></tr></thead><tbody id="profilesBody"></tbody></table></div>
 </section><section class="panel" id="panel-payments">
 <div class="kpis">
 <div class="kpi"><span>PENDING</span><strong id="pendingPayments">—</strong></div>
@@ -324,6 +324,16 @@ async function refreshDashboard(){const t=adminToken();if(!t)return;document.get
 function n(v){return Number(v||0).toLocaleString()}
 function date(v){if(!v)return '—';try{return new Date(v).toLocaleString()}catch{return v}}
 function esc(v){const d=document.createElement('div');d.textContent=v??'';return d.innerHTML}
+function profileContactText(p){
+  p=p||{};
+  const email=String(p.email||'').trim(),phone=String(p.phone||'').trim(),fallback=String(p.contact||'').trim();
+  const parts=[];
+  if(email)parts.push('Email: '+email);
+  if(phone)parts.push('Phone: '+phone);
+  if(!parts.length&&fallback)parts.push((fallback.includes('@')?'Email: ':'Phone: ')+fallback);
+  return parts.join(' | ')||'No contact';
+}
+function profileContactHtml(p){return esc(profileContactText(p)).replace(/ \| /g,'<br>')}
 function render(data){
   const s=data.summary||{}, cats=data.categories||{};
   document.getElementById('kUsers').textContent=n(s.registered_users);
@@ -377,38 +387,42 @@ async function saveAnnouncement(){
 }
 function renderAIUsage(data){
  const logs=Array.isArray(data?.ai_usage)?data.ai_usage:[],profiles=Array.isArray(data?.profiles)?data.profiles:[];
- const now=Date.now(),day=86400000,d30=30*day;
+ const now=Date.now(),day=86400000,d30=30*day,todayStart=new Date();todayStart.setHours(0,0,0,0);const todayMs=todayStart.getTime();
  const profileMap=new Map(profiles.map(p=>[String(p.id),p]));
  const selectedEl=document.getElementById('aiUsageUserFilter');
  if(!selectedEl)return;
  const previous=selectedEl.value;
- selectedEl.innerHTML='<option value="">All registered users</option>'+profiles.map(p=>`<option value="${esc(p.id)}">${esc(p.full_name||'Unnamed user')} — ${esc(p.contact||p.email||p.phone||'No contact')}</option>`).join('');
+ selectedEl.innerHTML='<option value="">All registered users</option>'+profiles.map(p=>`<option value="${esc(p.id)}">${esc(p.full_name||'Unnamed user')} — ${esc(profileContactText(p))}</option>`).join('');
  if(profiles.some(p=>String(p.id)===String(previous)))selectedEl.value=previous;
  const selected=selectedEl.value;
  const registeredLogs=logs.filter(x=>x.profile_id&&profileMap.has(String(x.profile_id)));
- const filteredRegistered=selected?registeredLogs.filter(x=>String(x.profile_id)===String(selected)):registeredLogs;
- const today=logs.filter(x=>x.created_at&&now-new Date(x.created_at).getTime()<=day).length;
+ const today=logs.filter(x=>x.created_at&&new Date(x.created_at).getTime()>=todayMs).length;
  const thirty=logs.filter(x=>x.created_at&&now-new Date(x.created_at).getTime()<=d30).length;
  document.getElementById('aiCallsToday').textContent=n(today);
  document.getElementById('aiCalls30d').textContent=n(thirty);
  document.getElementById('aiRegisteredUsers').textContent=n(new Set(registeredLogs.map(x=>String(x.profile_id))).size);
  document.getElementById('aiAnonymousCalls').textContent=n(logs.filter(x=>!x.profile_id).length);
- const grouped=new Map();
- for(const l of filteredRegistered){const id=String(l.profile_id),g=grouped.get(id)||{id,calls:0,today:0,d30:0,input:0,output:0,last:null};g.calls++;const t=l.created_at?new Date(l.created_at).getTime():0;if(t&&now-t<=day)g.today++;if(t&&now-t<=d30)g.d30++;g.input+=Number(l.input_chars||0);g.output+=Number(l.output_chars||0);if(!g.last||t>new Date(g.last).getTime())g.last=l.created_at;grouped.set(id,g)}
- const rows=[...grouped.values()].sort((a,b)=>b.calls-a.calls);
 
- // Platform usage ranking: include every registered profile, including users with zero AI calls.
+ // Build a row for EVERY registered user, including users with zero AI calls.
+ const rows=profiles.map(p=>{
+   const id=String(p.id),userLogs=registeredLogs.filter(x=>String(x.profile_id)===id);
+   let input=0,output=0,last=null,todayCount=0,d30Count=0;
+   for(const l of userLogs){const t=l.created_at?new Date(l.created_at).getTime():0;input+=Number(l.input_chars||0);output+=Number(l.output_chars||0);if(t>=todayMs)todayCount++;if(t&&now-t<=d30)d30Count++;if(t&&(!last||t>new Date(last).getTime()))last=l.created_at}
+   return {id,profile:p,calls:userLogs.length,today:todayCount,d30:d30Count,input,output,last};
+ }).filter(g=>!selected||g.id===String(selected)).sort((a,b)=>b.calls-a.calls||String(a.profile.full_name||'').localeCompare(String(b.profile.full_name||'')));
+
+ // Platform usage ranking includes every registered profile. Ties are preserved.
  const allUsage=profiles.map(p=>{
-   const id=String(p.id), userLogs=registeredLogs.filter(x=>String(x.profile_id)===id);
+   const id=String(p.id),userLogs=registeredLogs.filter(x=>String(x.profile_id)===id);
    const last=userLogs.reduce((acc,x)=>!acc||new Date(x.created_at).getTime()>new Date(acc).getTime()?x.created_at:acc,null);
    return {id,profile:p,calls:userLogs.length,last};
  });
  const positive=allUsage.filter(x=>x.calls>0);
- const highest=positive.length?Math.max(...positive.map(x=>x.calls)):0;
+ const highest=allUsage.length?Math.max(...allUsage.map(x=>x.calls)):0;
  const lowest=allUsage.length?Math.min(...allUsage.map(x=>x.calls)):0;
- const highestUsers=allUsage.filter(x=>x.calls===highest && (highest>0 || allUsage.length));
+ const highestUsers=allUsage.filter(x=>x.calls===highest);
  const lowestUsers=allUsage.filter(x=>x.calls===lowest);
- const rankRow=x=>`<div class="metric-row"><span>${esc(x.profile.full_name||'Unnamed user')} <small style="display:block;color:var(--muted)">${esc((x.profile.category||'—').toUpperCase())} • ${esc(x.profile.contact||x.profile.email||x.profile.phone||'No contact')}</small></span><strong>${n(x.calls)} call${x.calls===1?'':'s'}</strong></div>`;
+ const rankRow=x=>`<div class="metric-row"><span>${esc(x.profile.full_name||'Unnamed user')} <small style="display:block;color:var(--muted)">${esc((x.profile.category||'—').toUpperCase())}<br>${profileContactHtml(x.profile)}</small></span><strong>${n(x.calls)} call${x.calls===1?'':'s'}</strong></div>`;
  const highEl=document.getElementById('highestUsageUsers'),lowEl=document.getElementById('lowestUsageUsers');
  if(highEl)highEl.innerHTML=highestUsers.length?highestUsers.map(rankRow).join(''):'<div class="empty">No registered users yet.</div>';
  if(lowEl)lowEl.innerHTML=lowestUsers.length?lowestUsers.map(rankRow).join(''):'<div class="empty">No registered users yet.</div>';
@@ -416,7 +430,7 @@ function renderAIUsage(data){
  setText('highestUsageCount',highest);setText('lowestUsageCount',lowest);
  setText('zeroUsageUsers',allUsage.filter(x=>x.calls===0).length);setText('usersWithUsage',positive.length);
 
- document.getElementById('aiUsageByUserBody').innerHTML=rows.length?rows.map(g=>{const p=profileMap.get(g.id)||{};return `<tr><td>${esc(p.full_name||'Unknown user')}</td><td>${esc(p.contact||p.email||p.phone||'—')}</td><td>${esc((p.category||'—').toUpperCase())}</td><td>${n(g.today)}</td><td>${n(g.d30)}</td><td><strong>${n(g.calls)}</strong></td><td>${n(g.input)}</td><td>${n(g.output)}</td><td>${date(g.last)}</td></tr>`}).join(''):'<tr><td colspan="9" class="empty">No registered-user AI usage has been recorded yet.</td></tr>';
+ document.getElementById('aiUsageByUserBody').innerHTML=rows.length?rows.map(g=>{const p=g.profile||{};return `<tr><td>${esc(p.full_name||'Unknown user')}</td><td>${profileContactHtml(p)}</td><td>${esc((p.category||'—').toUpperCase())}</td><td>${n(g.today)}</td><td>${n(g.d30)}</td><td><strong>${n(g.calls)}</strong></td><td>${n(g.input)}</td><td>${n(g.output)}</td><td>${date(g.last)}</td></tr>`}).join(''):'<tr><td colspan="9" class="empty">No registered users found.</td></tr>';
  const recent=(selected?logs.filter(x=>String(x.profile_id||'')===String(selected)):logs).slice(0,100);
  document.getElementById('aiUsageRecentBody').innerHTML=recent.length?recent.map(l=>{const p=l.profile_id?profileMap.get(String(l.profile_id)):null;return `<tr><td>${date(l.created_at)}</td><td>${esc(p?.full_name||(l.profile_id?'Unknown user':'Anonymous / device'))}</td><td>${esc(l.tool_key||'—')}</td><td>${esc(l.source||'—')}</td><td>${esc(l.model||'—')}</td><td>${n(l.input_chars)}</td><td>${n(l.output_chars)}</td></tr>`}).join(''):'<tr><td colspan="7" class="empty">No AI requests have been recorded yet.</td></tr>';
 }
@@ -433,10 +447,10 @@ function renderPlatformAdmin(data){
  const profiles=data.profiles||[],pays=data.payments||[],cfg=data.platform_settings||{},ann=data.announcement||null;
  const admins=data.admins||[],resetRequests=data.reset_requests||[],features=data.features||[],identity=data.admin_identity||{};settingAdminEmail.value=identity.email||settingAdminEmail.value||'';adminsBody.innerHTML=[{email:identity.role==='owner'?identity.email:'',role:'owner',active:true,added_by:'Main administrator'},...admins.filter(a=>a.email!==identity.email)].filter(a=>a.email).map(a=>`<tr><td>${esc(a.email)}</td><td>${esc((a.role||'assistant').toUpperCase())}</td><td><span class="pill">${a.active===false?'DISABLED':'ACTIVE'}</span></td><td>${esc(a.added_by||'—')}</td><td>${(a.role||'')==='owner'?'Main admin':`<button class="btn btn-light" onclick="toggleAssistantAdmin(decodeURIComponent('${encodeURIComponent(String(a.email||''))}'),${a.active===false})">${a.active===false?'Enable':'Disable'}</button>`}</td></tr>`).join('')||'<tr><td colspan="5" class="empty">No administrator accounts found.</td></tr>';resetRequestsBody.innerHTML=resetRequests.length?resetRequests.map(r=>`<tr><td>${date(r.created_at)}</td><td>${esc(r.user_profiles?.full_name||'—')}</td><td>${esc(r.contact||r.user_profiles?.contact||r.user_profiles?.email||r.user_profiles?.phone||'—')}</td><td><span class="pill">${esc(r.status||'pending')}</span></td><td>${r.status==='pending'?`<button class="btn btn-light" onclick="resolveResetRequest(decodeURIComponent('${encodeURIComponent(String(r.id||''))}'))">Mark resolved</button>`:'—'}</td></tr>`).join(''):'<tr><td colspan="5" class="empty">No password reset requests.</td></tr>';featuresBody.innerHTML=features.length?features.map(f=>`<tr><td><strong>${esc(f.feature_name)}</strong><br><small>${esc(f.feature_key)}</small></td><td>${esc(f.section)}</td><td>${esc(f.target_category)}</td><td><span class="pill">${f.enabled?'ENABLED':'DISABLED'}</span></td><td>Le ${Number(f.price||0).toLocaleString()}</td><td>${Number(f.display_order||100)}</td><td><button class="btn btn-light" onclick="editFeature(decodeURIComponent('${encodeURIComponent(String(f.id||''))}'))">Edit</button> <button class="btn btn-light" onclick="toggleFeature(decodeURIComponent('${encodeURIComponent(String(f.id||''))}'),${!f.enabled})">${f.enabled?'Disable':'Enable'}</button></td></tr>`).join(''):'<tr><td colspan="7" class="empty">No features registered yet.</td></tr>';window._featureRows=features;
  const cat=c=>({primary:'Primary',jss:'JSS',sss:'SSS',teacher:'Teacher',university:'University'})[c]||c;
- const contact=p=>p.email||p.phone||'—';
+ const contact=p=>profileContactText(p);
  profileCount.textContent=n(profiles.length);profilePrimary.textContent=n(profiles.filter(p=>p.category==='primary').length);profileSecondary.textContent=n(profiles.filter(p=>['jss','sss'].includes(p.category)).length);profileAdvanced.textContent=n(profiles.filter(p=>['teacher','university'].includes(p.category)).length);
- profilesBody.innerHTML=profiles.length?profiles.map(p=>{const now=Date.now(),online=p.last_seen_at&&now-new Date(p.last_seen_at).getTime()<=300000;const paid=p.paid_active&&(!p.paid_access_end||new Date(p.paid_access_end)>=new Date());const free=(p.free_access_start||p.free_access_end)&&(!p.free_access_end||new Date(p.free_access_end)>=new Date());const access=p.account_status==='blocked'?'BLOCKED':paid?'PAID ACTIVE':free?'FREE':'UNPAID / EXPIRED';return `<tr><td>${esc(p.full_name)}</td><td>${esc(p.contact||contact(p))}</td><td>${esc(cat(p.category))}</td><td>${esc(p.town)}</td><td>${online?'<span class="pill">Online</span> ':''}${date(p.last_seen_at)}</td><td><span class="pill">${esc((p.account_status||'active').toUpperCase())}</span></td><td><span class="pill">${access}</span></td><td><button class="btn btn-light" onclick="openUserManager(decodeURIComponent('${encodeURIComponent(String(p.id||''))}'))">Manage</button></td></tr>`}).join(''):`<tr><td colspan="8" class="empty">No registered profiles yet.</td></tr>`;
- const previousSelected=individualUserSelect.value;individualUserSelect.innerHTML='<option value="">Select a user</option>'+profiles.map(p=>`<option value="${esc(p.id)}">${esc(p.full_name||'Unnamed user')} — ${esc(p.contact||contact(p))} (${esc(cat(p.category))})</option>`).join('');if(profiles.some(p=>p.id===previousSelected))individualUserSelect.value=previousSelected;syncIndividualUserSummary();
+ profilesBody.innerHTML=profiles.length?profiles.map(p=>{const now=Date.now(),online=p.last_seen_at&&now-new Date(p.last_seen_at).getTime()<=300000;const paid=p.paid_active&&(!p.paid_access_end||new Date(p.paid_access_end)>=new Date());const free=(p.free_access_start||p.free_access_end)&&(!p.free_access_end||new Date(p.free_access_end)>=new Date());const access=p.account_status==='blocked'?'BLOCKED':paid?'PAID ACTIVE':free?'FREE':'UNPAID / EXPIRED';return `<tr><td>${esc(p.full_name)}</td><td>${profileContactHtml(p)}</td><td>${esc(cat(p.category))}</td><td>${esc(p.town)}</td><td>${online?'<span class="pill">Online</span> ':''}${date(p.last_seen_at)}</td><td><span class="pill">${esc((p.account_status||'active').toUpperCase())}</span></td><td><span class="pill">${access}</span></td><td><button class="btn btn-light" onclick="openUserManager(decodeURIComponent('${encodeURIComponent(String(p.id||''))}'))">Manage</button></td></tr>`}).join(''):`<tr><td colspan="8" class="empty">No registered profiles yet.</td></tr>`;
+ const previousSelected=individualUserSelect.value;individualUserSelect.innerHTML='<option value="">Select a user</option>'+profiles.map(p=>`<option value="${esc(p.id)}">${esc(p.full_name||'Unnamed user')} — ${esc(contact(p))} (${esc(cat(p.category))})</option>`).join('');if(profiles.some(p=>p.id===previousSelected))individualUserSelect.value=previousSelected;syncIndividualUserSummary();
  pendingPayments.textContent=n(pays.filter(p=>p.status==='pending').length);verifiedPayments.textContent=n(pays.filter(p=>p.status==='verified').length);rejectedPayments.textContent=n(pays.filter(p=>p.status==='rejected').length);orangeMoneyKpi.textContent=cfg.orange_money_number||'Not set';
  paymentsBody.innerHTML=pays.length?pays.map(p=>`<tr><td>${date(p.created_at)}</td><td>${esc(p.full_name||'—')}</td><td>${esc(cat(p.category))}</td><td>Le ${Number(p.amount||0).toLocaleString()}</td><td>${esc(p.sender_number)}</td><td>${esc(p.transaction_reference)}</td><td><span class="pill">${esc(p.status)}</span></td><td>${p.status==='pending'?`<button class="btn btn-light" onclick="setPaymentStatus(decodeURIComponent('${encodeURIComponent(String(p.id||''))}'),'verified')">Verify</button> <button class="btn btn-light" onclick="setPaymentStatus(decodeURIComponent('${encodeURIComponent(String(p.id||''))}'),'rejected')">Reject</button>`:'—'}</td></tr>`).join(''):`<tr><td colspan="8" class="empty">No payment requests yet.</td></tr>`;
  freeAccessEnabled.value=String(!!cfg.free_access_enabled);freeAccessStart.value=(cfg.free_access_start||'').slice(0,10);freeAccessUntil.value=(cfg.free_access_until||'').slice(0,10);defaultAccessDays.value=cfg.default_access_days||30;orangeMoneyNumber.value=cfg.orange_money_number||'';pricePrimary.value=cfg.price_primary||0;priceJss.value=cfg.price_jss||0;priceSss.value=cfg.price_sss||0;priceTeacher.value=cfg.price_teacher||0;priceUniversity.value=cfg.price_university||0;aiEnabled.value=String(cfg.ai_enabled!==false);aiModel.value=cfg.ai_model||'gemini-3.6-flash';primaryFree.checked=!!cfg.primary_free;jssFree.checked=!!cfg.jss_free;sssFree.checked=!!cfg.sss_free;teacherFree.checked=!!cfg.teacher_free;universityFree.checked=!!cfg.university_free;
@@ -450,13 +464,13 @@ if(ann){announcementMessage.value=ann.message||'';announcementActive.value=Strin
 }
 function selectedIndividualUser(){const id=document.getElementById('individualUserSelect')?.value||'';return (currentData?.profiles||[]).find(p=>String(p.id)===String(id))||null}
 function individualStatus(text){const el=document.getElementById('individualUserStatus');if(!el)return;el.classList.add('show');el.textContent=text}
-function syncIndividualUserSummary(){const el=document.getElementById('individualUserSummary');if(!el)return;const p=selectedIndividualUser();if(!p){el.textContent='Select a registered user to manage individual access.';return}const paid=p.paid_active&&(!p.paid_access_end||new Date(p.paid_access_end)>=new Date());const free=(p.free_access_start||p.free_access_end)&&(!p.free_access_end||new Date(p.free_access_end)>=new Date());const access=p.account_status==='blocked'?'BLOCKED':paid?'PAID ACTIVE':free?'INDIVIDUAL FREE ACCESS':'UNPAID / EXPIRED';el.textContent=`${p.full_name||'User'} • ${p.contact||p.email||p.phone||'No contact'} • ${(p.category||'').toUpperCase()} • Status: ${(p.account_status||'active').toUpperCase()} • Access: ${access}`}
+function syncIndividualUserSummary(){const el=document.getElementById('individualUserSummary');if(!el)return;const p=selectedIndividualUser();if(!p){el.textContent='Select a registered user to manage individual access.';return}const paid=p.paid_active&&(!p.paid_access_end||new Date(p.paid_access_end)>=new Date());const free=(p.free_access_start||p.free_access_end)&&(!p.free_access_end||new Date(p.free_access_end)>=new Date());const access=p.account_status==='blocked'?'BLOCKED':paid?'PAID ACTIVE':free?'INDIVIDUAL FREE ACCESS':'UNPAID / EXPIRED';el.textContent=`${p.full_name||'User'} • ${profileContactText(p)} • ${(p.category||'').toUpperCase()} • Status: ${(p.account_status||'active').toUpperCase()} • Access: ${access}`}
 async function grantSelectedUserAccess(){const p=selectedIndividualUser();if(!p){individualStatus('Select a user first.');return}const days=Math.max(1,Math.min(365,Number(document.getElementById('individualAccessDays').value)||30));const start=new Date(),end=new Date(start.getTime()+days*86400000);individualStatus('Granting access…');try{await adminPost({action:'profile_access',id:p.id,account_status:'active',free_access_start:start.toISOString(),free_access_end:end.toISOString(),paid_access_start:p.paid_access_start||null,paid_access_end:p.paid_access_end||null,paid_active:!!p.paid_active,admin_note:p.admin_note||''});individualStatus(`Access granted to ${p.full_name||'user'} for ${days} days.`);await refreshDashboard()}catch(e){individualStatus(e.message)}}
 async function blockSelectedUser(){const p=selectedIndividualUser();if(!p){individualStatus('Select a user first.');return}if(!confirm(`Block ${p.full_name||'this user'}? The account will be signed out and unable to use Salone Class Room.`))return;individualStatus('Blocking user…');try{await adminPost({action:'profile_access',id:p.id,account_status:'blocked',free_access_start:p.free_access_start||null,free_access_end:p.free_access_end||null,paid_access_start:p.paid_access_start||null,paid_access_end:p.paid_access_end||null,paid_active:!!p.paid_active,admin_note:p.admin_note||''});individualStatus(`${p.full_name||'User'} has been blocked.`);await refreshDashboard()}catch(e){individualStatus(e.message)}}
 async function unblockSelectedUser(){const p=selectedIndividualUser();if(!p){individualStatus('Select a user first.');return}individualStatus('Unblocking user…');try{await adminPost({action:'profile_access',id:p.id,account_status:'active',free_access_start:p.free_access_start||null,free_access_end:p.free_access_end||null,paid_access_start:p.paid_access_start||null,paid_access_end:p.paid_access_end||null,paid_active:!!p.paid_active,admin_note:p.admin_note||''});individualStatus(`${p.full_name||'User'} has been unblocked.`);await refreshDashboard()}catch(e){individualStatus(e.message)}}
 function manageSelectedUser(){const p=selectedIndividualUser();if(!p){individualStatus('Select a user first.');return}openUserManager(p.id)}
 function toLocalInput(v){if(!v)return '';const d=new Date(v);return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,16)}
-function openUserManager(id){const p=(currentData?.profiles||[]).find(x=>x.id===id);if(!p)return;manageUserId.value=p.id;manageUserName.textContent=(p.full_name||'')+' • '+(p.contact||p.email||p.phone||'')+' • '+(p.category||'');manageStatus.value=p.account_status||'active';manageFreeStart.value=toLocalInput(p.free_access_start);manageFreeEnd.value=toLocalInput(p.free_access_end);managePaidStart.value=toLocalInput(p.paid_access_start);managePaidEnd.value=toLocalInput(p.paid_access_end);managePaidActive.checked=!!p.paid_active;manageNote.value=p.admin_note||'';manageUserStatus.textContent='';userManageModal.style.display='block'}
+function openUserManager(id){const p=(currentData?.profiles||[]).find(x=>x.id===id);if(!p)return;manageUserId.value=p.id;manageUserName.textContent=(p.full_name||'')+' • '+profileContactText(p)+' • '+(p.category||'');manageStatus.value=p.account_status||'active';manageFreeStart.value=toLocalInput(p.free_access_start);manageFreeEnd.value=toLocalInput(p.free_access_end);managePaidStart.value=toLocalInput(p.paid_access_start);managePaidEnd.value=toLocalInput(p.paid_access_end);managePaidActive.checked=!!p.paid_active;manageNote.value=p.admin_note||'';manageUserStatus.textContent='';userManageModal.style.display='block'}
 function closeUserManager(){userManageModal.style.display='none'}
 async function saveUserAccess(){const st=manageUserStatus;st.classList.add('show');try{await adminPost({action:'profile_access',id:manageUserId.value,account_status:manageStatus.value,free_access_start:manageFreeStart.value?new Date(manageFreeStart.value).toISOString():null,free_access_end:manageFreeEnd.value?new Date(manageFreeEnd.value).toISOString():null,paid_access_start:managePaidStart.value?new Date(managePaidStart.value).toISOString():null,paid_access_end:managePaidEnd.value?new Date(managePaidEnd.value).toISOString():null,paid_active:managePaidActive.checked,admin_note:manageNote.value});st.textContent='User access saved.';await refreshDashboard();setTimeout(closeUserManager,500)}catch(e){st.textContent=e.message}}
 async function resetUserPassword(){const pw=prompt('Enter a temporary password with at least 12 characters. Give it privately to the user.');if(!pw)return;try{await adminPost({action:'profile_reset_password',id:manageUserId.value,password:pw});alert('Password reset. Existing sessions were signed out.')}catch(e){alert(e.message)}}
