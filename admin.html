@@ -354,8 +354,9 @@ function render(data){
     `<div class="metric-row"><span>Admin API</span><strong>Connected</strong></div>`+
     `<div class="metric-row"><span>Last refresh</span><strong>${new Date().toLocaleTimeString()}</strong></div>`;
 
-  const users=data.users||[];
-  document.getElementById('usersBody').innerHTML=users.length?users.map(u=>`<tr><td>${esc(u.email)}</td><td>${date(u.created_at)}</td><td>${date(u.last_sign_in_at)}</td><td><span class="pill">${u.banned_until?'Restricted':'Active'}</span></td></tr>`).join(''):`<tr><td colspan="4" class="empty">No users found.</td></tr>`;
+  // Authentication-user rendering removed: this dashboard uses the Administrator Accounts
+  // table (adminsBody). Referencing the old usersBody element stopped the rest of the
+  // dashboard from rendering, including registered profiles and individual access controls.
 
   const events=data.events||[];
   document.getElementById('activityBody').innerHTML=events.length?events.map(e=>`<tr><td>${date(e.created_at)}</td><td>${esc(e.event_type)}</td><td>${esc(e.section)}</td><td>${esc(e.detail)}</td></tr>`).join(''):`<tr><td colspan="4" class="empty">No learning activity has been recorded yet.</td></tr>`;
