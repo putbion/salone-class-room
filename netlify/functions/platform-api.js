@@ -1,7 +1,6 @@
 const crypto=require('crypto');
-const H={'Content-Type':'application/json','Cache-Control':'no-store'};
+const {json,enforceRate,bodyTooLarge}=require('./_security');
 const clean=(v,n=500)=>String(v??'').trim().slice(0,n);
-const json=(status,body)=>({statusCode:status,headers:H,body:JSON.stringify(body)});
 const tokenHash=t=>crypto.createHash('sha256').update(t).digest('hex');
 const questionHash=t=>crypto.createHash('sha256').update(String(t||'').trim().toLowerCase()).digest('hex');
 const normalizeContact=v=>{const x=clean(v,180);if(x.includes('@'))return x.toLowerCase();return x.replace(/[\s()-]/g,'').replace(/^00/,'+');};
@@ -27,6 +26,8 @@ const subjectKey=v=>{
 const levelKey=v=>{const n=norm(v);if(n.includes('primary'))return'primary';if(n.includes('junior')||n==='jss')return'jss';if(n.includes('senior')||n==='sss')return'sss';return n};
 
 exports.handler=async(event)=>{
+ if(bodyTooLarge(event,32768))return json(413,{error:'Request is too large.'});
+ const generalLimit=enforceRate(event,{name:'platform',limit:90,windowMs:60000});if(generalLimit)return generalLimit;
  const U=String(process.env.SUPABASE_URL||'').replace(/\/+$/,''),K=process.env.SUPABASE_SERVICE_ROLE_KEY;
  if(!U||!K){console.error('[platform-api] Missing Supabase environment variables');return json(500,{error:'Platform backend is not configured.'})}
  const sf=(p,o={})=>fetch(U+(p.startsWith('/')?p:'/'+p),{...o,headers:{apikey:K,Authorization:'Bearer '+K,'Content-Type':'application/json',...(o.headers||{})}});
@@ -46,7 +47,7 @@ exports.handler=async(event)=>{
   const auth=event.headers.authorization||event.headers.Authorization||'',t=auth.startsWith('Bearer ')?auth.slice(7):'';if(!t)return null;
   try{const ss=await arr('/rest/v1/user_sessions?token_hash=eq.'+encodeURIComponent(tokenHash(t))+'&expires_at=gt.'+encodeURIComponent(new Date().toISOString())+'&select=id,profile_id&limit=1');if(!ss[0])return null;const ps=await arr('/rest/v1/user_profiles?id=eq.'+encodeURIComponent(ss[0].profile_id)+'&select=*&limit=1');if(!ps[0])return null;await sf('/rest/v1/user_sessions?id=eq.'+encodeURIComponent(ss[0].id),{method:'PATCH',body:JSON.stringify({last_seen_at:new Date().toISOString()})}).catch(()=>{});return ps[0]}catch(e){console.error('[platform-api][session]',e.message);return null}
  };
- const createSession=async(profileId,deviceId)=>{const token=crypto.randomBytes(32).toString('hex'),expires=new Date(Date.now()+90*86400000).toISOString();const row={profile_id:profileId,token_hash:tokenHash(token),device_id:clean(deviceId,120)||null,expires_at:expires,user_agent:clean(event.headers['user-agent'],300)||null};const r=await sf('/rest/v1/user_sessions',{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify(row)});if(!r.ok)throw new Error(await r.text());return{token,expires_at:expires}};
+ const createSession=async(profileId,deviceId)=>{const token=crypto.randomBytes(32).toString('hex'),expires=new Date(Date.now()+7*86400000).toISOString();const row={profile_id:profileId,token_hash:tokenHash(token),device_id:clean(deviceId,120)||null,expires_at:expires,user_agent:clean(event.headers['user-agent'],300)||null};const r=await sf('/rest/v1/user_sessions',{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify(row)});if(!r.ok)throw new Error(await r.text());return{token,expires_at:expires}};
  try{
   if(event.httpMethod==='GET'){
    const s=await settings();let a=null;try{const aa=await arr('/rest/v1/announcements?active=eq.true&select=message,active,created_at,starts_at,ends_at,target_category&order=created_at.desc&limit=5');const n=Date.now();a=aa.find(x=>(!x.starts_at||new Date(x.starts_at).getTime()<=n)&&(!x.ends_at||new Date(x.ends_at).getTime()>=n))||null}catch{}
@@ -56,6 +57,7 @@ exports.handler=async(event)=>{
   let b={};try{b=JSON.parse(event.body||'{}')}catch{return json(400,{error:'Invalid request.'})}
 
   if(b.action==='curriculum_topics'){
+   const rl=enforceRate(event,{name:'curriculum-topics',limit:60,windowMs:60000});if(rl)return rl;
    const wantedLevel=levelKey(b.level),wantedSubject=subjectKey(b.subject),wantedClass=norm(b.class_level);
    if(!wantedLevel||!wantedSubject)return json(400,{error:'Choose a school level and subject.'});
    let rows=[];
@@ -69,19 +71,20 @@ exports.handler=async(event)=>{
   }
 
   if(b.action==='register'){
+   const rl=enforceRate(event,{name:'register',limit:5,windowMs:60*60*1000});if(rl)return rl;
    const contact=normalizeContact(b.contact),password=String(b.password||'');const row={device_id:clean(b.device_id,120)||('acct_'+crypto.randomBytes(10).toString('hex')),full_name:clean(b.full_name,120),contact,contact_normalized:contact,category:clean(b.category,30),town:clean(b.town,120),paid_active:false,account_status:'active',last_login_at:new Date().toISOString(),last_seen_at:new Date().toISOString()};
-   if(!row.full_name||!validContact(contact)||password.length<6||!['primary','jss','sss','teacher','university'].includes(row.category)||!row.town)return json(400,{error:'Complete your name, phone number or email, password, category and town/city.'});
+   if(!row.full_name||!validContact(contact)||password.length<12||password.length>128||!['primary','jss','sss','teacher','university'].includes(row.category)||!row.town)return json(400,{error:'Complete your name, phone number or email, password, category and town/city.'});
    const exists=await arr('/rest/v1/user_profiles?contact_normalized=eq.'+encodeURIComponent(contact)+'&select=id&limit=1').catch(()=>[]);if(exists[0])return json(409,{error:'An account already exists for this phone number or email. Please use Login.'});
    const salt=crypto.randomBytes(16).toString('hex');row.password_salt=salt;row.password_hash=hashPassword(password,salt);if(contact.includes('@'))row.email=contact;else row.phone=contact;
-   const r=await sf('/rest/v1/user_profiles',{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify(row)});if(!r.ok){const detail=await r.text();console.error('[platform-api][register]',r.status,detail);return json(500,{error:'We could not create your account. Please try again.',diagnostic:detail.slice(0,400)})}
+   const r=await sf('/rest/v1/user_profiles',{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify(row)});if(!r.ok){const detail=await r.text();console.error('[platform-api][register]',r.status,detail);return json(500,{error:'We could not create your account. Please try again.'})}
    const p=(await r.json())[0],ses=await createSession(p.id,row.device_id),s=await settings();delete p.password_hash;delete p.password_salt;return json(200,{profile:p,session:ses,access:accessFor(p,s)});
   }
   if(b.action==='login'){
-   const contact=normalizeContact(b.contact),password=String(b.password||''),ps=await arr('/rest/v1/user_profiles?contact_normalized=eq.'+encodeURIComponent(contact)+'&select=*&limit=1').catch(()=>[]),p=ps[0];if(!p||!verifyPassword(password,p.password_salt,p.password_hash))return json(401,{error:'Phone number/email or password is incorrect.'});if((p.account_status||'active')!=='active')return json(403,{error:'This account is blocked. Please contact Salone Class Room support.'});const t=new Date().toISOString();await sf('/rest/v1/user_profiles?id=eq.'+encodeURIComponent(p.id),{method:'PATCH',body:JSON.stringify({last_login_at:t,last_seen_at:t,device_id:clean(b.device_id,120)||p.device_id})});const ses=await createSession(p.id,b.device_id),s=await settings();delete p.password_hash;delete p.password_salt;return json(200,{profile:p,session:ses,access:accessFor(p,s)});
+   const rl=enforceRate(event,{name:'login',limit:10,windowMs:15*60*1000});if(rl)return rl;
+   const contact=normalizeContact(b.contact),password=String(b.password||'');if(password.length>128)return json(401,{error:'Phone number/email or password is incorrect.'});const ps=await arr('/rest/v1/user_profiles?contact_normalized=eq.'+encodeURIComponent(contact)+'&select=*&limit=1').catch(()=>[]),p=ps[0];if(!p||!verifyPassword(password,p.password_salt,p.password_hash))return json(401,{error:'Phone number/email or password is incorrect.'});if((p.account_status||'active')!=='active')return json(403,{error:'This account is blocked. Please contact Salone Class Room support.'});const t=new Date().toISOString();await sf('/rest/v1/user_profiles?id=eq.'+encodeURIComponent(p.id),{method:'PATCH',body:JSON.stringify({last_login_at:t,last_seen_at:t,device_id:clean(b.device_id,120)||p.device_id})});const ses=await createSession(p.id,b.device_id),s=await settings();delete p.password_hash;delete p.password_salt;return json(200,{profile:p,session:ses,access:accessFor(p,s)});
   }
   if(b.action==='logout'){const auth=event.headers.authorization||'',t=auth.startsWith('Bearer ')?auth.slice(7):'';if(t)await sf('/rest/v1/user_sessions?token_hash=eq.'+encodeURIComponent(tokenHash(t)),{method:'DELETE'}).catch(()=>{});return json(200,{ok:true})}
   if(b.action==='heartbeat'){const p=await sessionProfile();if(!p)return json(401,{error:'Sign in required.'});const tool=clean(b.current_tool,120)||null;await sf('/rest/v1/user_profiles?id=eq.'+encodeURIComponent(p.id),{method:'PATCH',body:JSON.stringify({last_seen_at:new Date().toISOString(),current_tool:tool})});const s=await settings();return json(200,{ok:true,access:accessFor(p,s)})}
-  if(b.action==='tool_use'){await sf('/rest/v1/tool_usage',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({device_id:clean(b.device_id,120),tool_key:clean(b.tool_key,100)})}).catch(()=>{});return json(200,{ok:true})}
 
   if(b.action==='practice_record'){
    const p=await sessionProfile();if(!p)return json(401,{error:'Please log in to save your learning journey.'});const q=clean(b.question,2000);if(!q)return json(400,{error:'Question is required.'});const row={profile_id:p.id,level:clean(b.level,30)||null,subject:clean(b.subject,180)||'General',topic:clean(b.topic,220)||null,question_text:q,question_hash:questionHash(q),selected_index:Number.isInteger(+b.selected_index)?+b.selected_index:null,correct_index:Number.isInteger(+b.correct_index)?+b.correct_index:null,is_correct:!!b.is_correct,weak_area:clean(b.weak_area,220)||null};const r=await sf('/rest/v1/practice_attempts',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify(row)});return r.ok?json(200,{ok:true}):json(500,{error:'Your practice result could not be saved.'});
@@ -92,6 +95,7 @@ exports.handler=async(event)=>{
 
 
   if(b.action==='password_reset_request'){
+   const rl=enforceRate(event,{name:'password-reset',limit:5,windowMs:60*60*1000});if(rl)return rl;
    const contact=normalizeContact(b.contact);
    if(!contact||!validContact(contact))return json(400,{error:'Enter the phone number or email used for your account.'});
    const ps=await arr('/rest/v1/user_profiles?contact_normalized=eq.'+encodeURIComponent(contact)+'&select=id,full_name,contact,email,phone&limit=1').catch(()=>[]);
@@ -107,7 +111,7 @@ exports.handler=async(event)=>{
    return json(200,{ok:true});
   }
 
-  if(b.action==='payment_request'){const p=await sessionProfile();if(!p)return json(401,{error:'Please log in before submitting payment.'});const s=await settings(),row={profile_id:p.id,amount:+s['price_'+p.category]||0,sender_number:clean(b.sender_number,60),transaction_reference:clean(b.transaction_reference,120),status:'pending'};if(!row.sender_number||!row.transaction_reference)return json(400,{error:'Provide the Orange Money sender number and transaction reference.'});const r=await sf('/rest/v1/payment_requests',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify(row)});return r.ok?json(200,{ok:true}):json(500,{error:'Unable to save payment request.'})}
+  if(b.action==='payment_request'){const rl=enforceRate(event,{name:'payment-request',limit:8,windowMs:60*60*1000});if(rl)return rl;const p=await sessionProfile();if(!p)return json(401,{error:'Please log in before submitting payment.'});const s=await settings(),row={profile_id:p.id,amount:+s['price_'+p.category]||0,sender_number:clean(b.sender_number,60),transaction_reference:clean(b.transaction_reference,120),status:'pending'};if(!row.sender_number||!row.transaction_reference)return json(400,{error:'Provide the Orange Money sender number and transaction reference.'});const r=await sf('/rest/v1/payment_requests',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify(row)});return r.ok?json(200,{ok:true}):json(500,{error:'Unable to save payment request.'})}
   return json(400,{error:'Unknown action.'});
  }catch(e){console.error('[platform-api] Unexpected error',e);return json(500,{error:'We could not complete this request. Please try again.'})}
 };

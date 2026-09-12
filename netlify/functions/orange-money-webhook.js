@@ -1,21 +1,8 @@
-
+const {json,enforceRate,bodyTooLarge}=require('./_security');
 exports.handler=async(event)=>{
-  const H={'Content-Type':'application/json'};
-  if(event.httpMethod!=='POST') return {statusCode:405,headers:H,body:JSON.stringify({error:'Method not allowed'})};
-
-  // Placeholder for Orange Money payment callback/webhook.
-  // IMPORTANT:
-  // 1. Verify Orange's webhook signature/token before trusting any payment.
-  // 2. Match the transaction/reference to a pending payment request.
-  // 3. Update payment_requests to verified only after successful verification.
-  // 4. Then activate the related user_profiles.paid_active record.
-  //
-  // Exact implementation depends on the official Orange Money API documentation
-  // and credentials issued to Pytbion/Salone Class Room.
-
-  return {
-    statusCode:200,
-    headers:H,
-    body:JSON.stringify({received:true,status:'placeholder'})
-  };
+  if(event.httpMethod!=='POST')return json(405,{error:'Method not allowed'});
+  if(bodyTooLarge(event,32768))return json(413,{error:'Request is too large.'});
+  const rl=enforceRate(event,{name:'orange-webhook',limit:60,windowMs:60000});if(rl)return rl;
+  // Payment activation is intentionally disabled until Orange signature verification is implemented.
+  return json(501,{received:false,error:'Orange Money webhook verification is not configured. No payment state was changed.'});
 };

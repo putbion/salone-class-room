@@ -1,18 +1,19 @@
 const crypto=require('crypto');
-const H={'Content-Type':'application/json','Cache-Control':'no-store'};
-const json=(s,b)=>({statusCode:s,headers:H,body:JSON.stringify(b)});
+const {json,enforceRate,bodyTooLarge,fingerprint}=require('./_security');
 const clean=(v,n=4000)=>String(v??'').trim().slice(0,n);
 const tokenHash=t=>crypto.createHash('sha256').update(t).digest('hex');
 const nowIn=(start,end)=>{const n=Date.now(),s=start?new Date(start).getTime():null,e=end?new Date(end).getTime():null;return(!s||n>=s)&&(!e||n<=e)};
 const terms=q=>clean(q,180).toLowerCase().replace(/[^a-z0-9\s-]/g,' ').split(/\s+/).filter(x=>x.length>2&&!['explain','what','does','mean','teach','about','please','give','define','tell'].includes(x)).slice(0,5);
 exports.handler=async(event)=>{
+ if(bodyTooLarge(event,65536))return json(413,{error:'Request is too large.'});
+ const generalLimit=enforceRate(event,{name:'learning',limit:30,windowMs:60000});if(generalLimit)return generalLimit;
  const U=String(process.env.SUPABASE_URL||'').replace(/\/+$/,''),K=process.env.SUPABASE_SERVICE_ROLE_KEY,GROQ=process.env.GROQ_API_KEY,DEEPSEEK=process.env.DEEPSEEK_API_KEY;
  if(!U||!K)return json(500,{error:'Learning backend is not configured.'});if(event.httpMethod!=='POST')return json(405,{error:'Method not allowed.'});
  let b={};try{b=JSON.parse(event.body||'{}')}catch{return json(400,{error:'Invalid request.'})}
  const sf=(p,o={})=>fetch(U+(p.startsWith('/')?p:'/'+p),{...o,headers:{apikey:K,Authorization:'Bearer '+K,'Content-Type':'application/json',...(o.headers||{})}});const arr=async p=>{const r=await sf(p);if(!r.ok)throw new Error(await r.text());return r.json()};
  const s=(await arr('/rest/v1/platform_settings?id=eq.1&select=*').catch(()=>[]))[0]||{};
  const getProfile=async()=>{const auth=event.headers.authorization||'',t=auth.startsWith('Bearer ')?auth.slice(7):'';if(!t)return null;const ss=await arr('/rest/v1/user_sessions?token_hash=eq.'+encodeURIComponent(tokenHash(t))+'&expires_at=gt.'+encodeURIComponent(new Date().toISOString())+'&select=profile_id&limit=1').catch(()=>[]);if(!ss[0])return null;return(await arr('/rest/v1/user_profiles?id=eq.'+encodeURIComponent(ss[0].profile_id)+'&select=*&limit=1').catch(()=>[]))[0]||null};
- const p=await getProfile(),toolKey=clean(b.tool_key,100)||clean(b.task,100)||'learning-tool',deviceId=clean(b.device_id,120);
+ const p=await getProfile(),toolKey=clean(b.tool_key,100)||clean(b.task,100)||'learning-tool',clientDeviceId=clean(b.device_id,120),anonDeviceId='anon_'+fingerprint(event),deviceId=p?clientDeviceId:anonDeviceId;
  // Administrator sessions are separate from ordinary learner/teacher sessions.
  // Validate the admin token against the existing secure admin-api before granting free platform access.
  const rawAdminToken=clean(event.headers?.['x-admin-token']||event.headers?.['X-Admin-Token'],1000);
@@ -26,6 +27,7 @@ exports.handler=async(event)=>{
   }catch(e){console.warn('[learning-api][admin-validation]',e.message);return false}
  };
  const isAdmin=await validateAdmin();
+ const aiKey=isAdmin?('admin:'+tokenHash(rawAdminToken)):(p?('profile:'+p.id):anonDeviceId);const aiRate=enforceRate(event,{name:'ai-generation',limit:isAdmin?120:(p?60:8),windowMs:60*60*1000,key:aiKey});if(aiRate)return aiRate;
  const allowedProfile=()=>{if(!p)return false;if((p.account_status||'active')!=='active')return false;if(s.free_access_enabled&&nowIn(s.free_access_start,s.free_access_until))return true;if(s[p.category+'_free'])return true;if((p.free_access_start||p.free_access_end)&&nowIn(p.free_access_start,p.free_access_end))return true;if(p.paid_active&&(!p.paid_access_end||nowIn(p.paid_access_start,p.paid_access_end)))return true;return false};
  // Verified administrators bypass learner payment and category-access locks.
  if(!isAdmin&&p&&!allowedProfile())return json(402,{error:'Your access period has ended. Please complete payment or contact the administrator.',code:'payment_required'});
@@ -35,6 +37,8 @@ exports.handler=async(event)=>{
  const questionCount=Math.max(1,Math.min(5,Number(b.question_count)||5));
  const excludedQuestions=Array.isArray(b.excluded_questions)?b.excluded_questions.map(x=>clean(x,500)).filter(Boolean).slice(-50):[];
  if(!topic)return json(400,{error:'Please choose or type a topic, question or instruction.'});
+ const allowedTasks=new Set(['tutor','assignment','review','topics','proposal','dissertation','defense','teacher','teacher_exam','quiz','lecturer']);if(!allowedTasks.has(task))return json(400,{error:'Unsupported learning task.'});
+ const allowedLevels=new Set(['','primary','jss','sss','npse','bece','wassce','university']);if(!allowedLevels.has(level))return json(400,{error:'Unsupported education level.'});
  await sf('/rest/v1/app_events',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({event_type:task||'learning',section:level||'learning',detail:(toolKey+' | '+subject+' | '+topic).slice(0,500)})}).catch(()=>{});
  try{
   // Retrieve Sierra Leone curriculum material as grounding. Do not return short DB snippets directly:
@@ -43,7 +47,7 @@ exports.handler=async(event)=>{
   if(subject){
    const ts=terms(topic),bits=[];
    for(const q0 of [topic,...ts].slice(0,3)){
-    const q=encodeURIComponent(clean(q0,120)),lev=encodeURIComponent(level),subj=encodeURIComponent(subject);
+    const safeQ=clean(q0,120).replace(/[^a-zA-Z0-9\s-]/g,' ').replace(/\s+/g,' ').trim();if(!safeQ)continue;const q=encodeURIComponent(safeQ),lev=encodeURIComponent(level),subj=encodeURIComponent(subject);
     try{
      const rows=await arr('/rest/v1/curriculum_topics?education_level=eq.'+lev+'&subject=eq.'+subj+'&active=eq.true&or=(topic.ilike.*'+q+'*,unit_title.ilike.*'+q+'*)&select=unit_title,topic,learning_outcomes,sierra_leone_context,verified&order=verified.desc&limit=3');
      for(const c of rows)bits.push([c.unit_title,c.topic,c.learning_outcomes,c.sierra_leone_context,c.verified?'Verified curriculum record':''].filter(Boolean).join(' | '));

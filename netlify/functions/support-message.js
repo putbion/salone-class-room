@@ -1,8 +1,9 @@
-const H={'Content-Type':'application/json','Cache-Control':'no-store'};
-const json=(statusCode,body)=>({statusCode,headers:H,body:JSON.stringify(body)});
+const {json,enforceRate,bodyTooLarge}=require('./_security');
 const clean=(v,n)=>String(v??'').trim().slice(0,n);
 const htmlEscape=s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 exports.handler=async(event)=>{
+ if(bodyTooLarge(event,16384))return json(413,{error:'Message is too large.'});
+ const rl=enforceRate(event,{name:'support',limit:5,windowMs:60*60*1000});if(rl)return rl;
  if(event.httpMethod!=='POST')return json(405,{error:'Method not allowed'});
  const U=String(process.env.SUPABASE_URL||'').replace(/\/+$/,''),K=process.env.SUPABASE_SERVICE_ROLE_KEY,RESEND=process.env.RESEND_API_KEY;
  const TO=process.env.SUPPORT_TO_EMAIL||process.env.ADMIN_EMAIL||'pytbion26@gmail.com';
