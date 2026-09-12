@@ -1284,14 +1284,11 @@ function updateDissertationTopics(){
 </div>
 </section><section class="section ribbon-section" id="contact-support"><div class="ribbon-intro"><div class="section-ribbon">Support, Comments &amp; Enquiries</div><p class="section-ribbon-description">Send us your questions, comments, suggestions or support requests directly through this section.</p></div>
 <div class="contact-support-card">
-<form action="https://formsubmit.co/pytbion26@gmail.com" class="support-form" id="supportForm" method="POST">
-<input name="_subject" type="hidden" value="New Salone Class Room Support / Comment / Enquiry"/>
-<input name="_captcha" type="hidden" value="false"/>
-<input name="_template" type="hidden" value="table"/>
+<form action="/.netlify/functions/support-message" class="support-form" id="supportForm" method="POST">
 <div class="form-grid">
 <div>
 <label for="supportName">Your name</label>
-<input id="supportName" name="Name" placeholder="Enter your name" required="" type="text"/>
+<input id="supportName" maxlength="120" name="Name" autocomplete="name" placeholder="Enter your name" required="" type="text"/>
 </div>
 <div>
 <label for="supportRole">You are a</label>
@@ -1316,9 +1313,9 @@ function updateDissertationTopics(){
 <option>Report a Problem</option>
 </select>
 <label for="supportContact">Phone number or email (optional)</label>
-<input id="supportContact" name="Contact" placeholder="Enter a phone number or email only if you want us to reply" type="text"/>
+<input id="supportContact" maxlength="180" name="Contact" autocomplete="email" placeholder="Enter a phone number or email only if you want us to reply" type="text"/>
 <label for="supportMessage">Your message</label>
-<textarea id="supportMessage" name="Message" placeholder="Write your comment, question, enquiry or support request here..." required="" rows="6"></textarea>
+<textarea id="supportMessage" maxlength="4000" name="Message" placeholder="Write your comment, question, enquiry or support request here..." required="" rows="6"></textarea>
 <button class="btn btn-blue" id="supportSendBtn" type="submit">Click here to send your message</button>
 <p class="form-help">
         Your message will be sent directly to Salone Class Room support at pytbion26@gmail.com. You do not need to open an email app.
@@ -1489,7 +1486,7 @@ function updateDissertationTopics(){
           return '<div class="quiz-question" data-qindex="'+i+'" style="margin:18px 0;padding:16px;border:1px solid #d7e1ed;border-radius:12px;background:#fff">'+
             '<p><strong>'+(i+1)+'. '+safe(q.question||'Question')+'</strong></p>'+
             '<div class="quiz-options">'+opts.map((opt,j)=>
-              `<button type="button" class="btn" style="display:block;width:100%;text-align:left;justify-content:flex-start;margin:8px 0;background:#eef4fb;color:#17324d" onclick="checkQuizAnswer(this,'${level}',${i},${j})">${String.fromCharCode(65+j)}. ${safe(opt)}</button>`
+              `<button type="button" class="btn" style="display:block;width:100%;text-align:left;justify-content:flex-start;margin:8px 0;background:#eef4fb;color:#17324d" onclick="checkQuizAnswer(this,decodeURIComponent('${encodeURIComponent(String(level||''))}'),${i},${j})">${String.fromCharCode(65+j)}. ${safe(opt)}</button>`
             ).join('')+'</div><div class="feedback" style="margin-top:10px"></div></div>';
         }).join('')+
         '<div id="'+level+'QuizSummary"></div>';
@@ -1676,8 +1673,8 @@ async function primaryAssignmentGuide(){const subject=primaryAssignmentSubject.v
     };
 
     message.innerHTML = '<strong>' + toolNames[tool] + '</strong> is ready for <strong>' +
-      cls + ' – ' + subject + '</strong>, topic: <strong>' +
-      enteredTopic.replace(/[<>]/g,'') + '</strong>. This selection can now be sent to the secure AI teaching endpoint.';
+      safe(cls) + ' – ' + safe(subject) + '</strong>, topic: <strong>' +
+      safe(enteredTopic) + '</strong>. This selection can now be sent to the secure AI teaching endpoint.';
   });
 })();
 </script><script>
@@ -1729,9 +1726,9 @@ function preparePrimaryTeacherSupport(type){
 
   result.innerHTML =
     '<strong>' + c.title + '</strong> is ready for <strong>' +
-    cls + ' – ' + subject + '</strong>, topic: <strong>' +
-    topic.replace(/[<>]/g,'') + '</strong>' +
-    (extra ? ', ' + extra.replace(/[<>]/g,'') : '') +
+    safe(cls) + ' – ' + safe(subject) + '</strong>, topic: <strong>' +
+    safe(topic) + '</strong>' +
+    (extra ? ', ' + safe(extra) : '') +
     '. This can now be sent to the secure AI teaching endpoint.';
 }
 </script><script>
@@ -1816,9 +1813,9 @@ function preparePrimaryTeacherSupport(type){
 
       const title = type === 'curriculum' ? 'Curriculum Guidance' : 'Lesson Note Preparation';
       msg.innerHTML = '<strong>' + title + '</strong> is ready for <strong>' +
-        cls + ' – ' + subject + '</strong>, topic: <strong>' +
-        topic.replace(/[<>]/g,'') + '</strong>' +
-        (extra ? ', ' + extra : '') +
+        safe(cls) + ' – ' + safe(subject) + '</strong>, topic: <strong>' +
+        safe(topic) + '</strong>' +
+        (extra ? ', ' + safe(extra) : '') +
         '. This selection can now be sent to the secure AI teaching endpoint.';
     });
   });
@@ -1956,28 +1953,28 @@ async function findResearchTopics(){
 <div class="tabs" style="margin-bottom:14px"><button class="tab active" id="registerTabBtn" onclick="showAccountTab('register')" type="button">Create account</button><button class="tab" id="loginTabBtn" onclick="showAccountTab('login')" type="button">Login</button></div>
 <div id="registerPane">
 <h2>Create your Salone Class Room account</h2><p>Register once. Your account can be used again on this device or another device.</p>
-<label for="regFullName">Full name</label><input id="regFullName" placeholder="Type your full name"/><div class="field-error" id="errFullName"></div>
-<label for="regContact">Phone number or email</label><input id="regContact" placeholder="Example: +23276123456 or name@email.com"/><div class="field-error" id="errContact"></div>
-<label for="regPassword">Password</label><input id="regPassword" type="password" placeholder="At least 6 characters"/><div class="field-error" id="errPassword"></div>
+<label for="regFullName">Full name</label><input id="regFullName" maxlength="100" autocomplete="name" placeholder="Type your full name"/><div class="field-error" id="errFullName"></div>
+<label for="regContact">Phone number or email</label><input id="regContact" maxlength="254" autocomplete="username" placeholder="Example: +23276123456 or name@email.com"/><div class="field-error" id="errContact"></div>
+<label for="regPassword">Password</label><input id="regPassword" type="password" minlength="12" maxlength="128" autocomplete="new-password" placeholder="At least 12 characters"/><div class="field-error" id="errPassword"></div>
 <label for="regCategory">Category</label><select id="regCategory"><option value="">Select your category</option><option value="primary">Primary School Pupil</option><option value="jss">JSS Student</option><option value="sss">SSS Student</option><option value="teacher">Teacher</option><option value="university">University Student</option></select><div class="field-error" id="errCategory"></div>
-<label for="regTown">Town / City</label><input id="regTown" placeholder="Type your town or city"/><div class="field-error" id="errTown"></div>
+<label for="regTown">Town / City</label><input id="regTown" maxlength="100" autocomplete="address-level2" placeholder="Type your town or city"/><div class="field-error" id="errTown"></div>
 <button class="btn btn-blue platform-submit" onclick="submitPlatformRegistration()" type="button">Create account and continue</button>
 <div class="modal-status" id="registrationStatus"></div></div>
 <div id="loginPane" hidden>
 <h2>Login</h2><p>Use the same phone number or email and password you used when registering.</p>
-<label for="loginContact">Phone number or email</label><input id="loginContact" placeholder="Phone number or email"/>
-<label for="loginPassword">Password</label><input id="loginPassword" type="password" placeholder="Password"/>
+<label for="loginContact">Phone number or email</label><input id="loginContact" maxlength="254" autocomplete="username" placeholder="Phone number or email"/>
+<label for="loginPassword">Password</label><input id="loginPassword" type="password" maxlength="128" autocomplete="current-password" placeholder="Password"/>
 <button class="btn btn-blue platform-submit" onclick="submitLogin()" type="button">Login</button><button class="btn btn-light" type="button" onclick="requestPasswordReset()" style="width:100%;margin-top:8px">Forgot password? Request a reset</button>
 <p class="field-help">The administrator can reset it to a temporary password. Existing passwords are never displayed or stored in readable form.</p>
 <div class="modal-status" id="loginStatus"></div></div>
 </div>
 <div id="accountSignedIn" hidden><h2>My Account</h2><div class="payment-summary"><div><span>Name</span><strong id="acctName"></strong></div><div><span>Category</span><strong id="acctCategory"></strong></div><div><span>Access</span><strong id="acctAccess"></strong></div></div><p id="acctExpiry" class="field-help"></p><p class="field-help">After login, you can use all learning sections unless an administrator has applied a category restriction to your account.</p><button class="btn btn-light" onclick="logoutPlatform()" type="button">Logout</button></div>
 </div></div>
-<div aria-hidden="true" class="platform-modal" id="paymentModal"><div class="platform-modal-card"><button class="modal-close" onclick="closePaymentModal()" type="button">×</button><h2>Platform Usage Payment</h2><p id="paymentIntro">Your free platform access has ended. Make the required Platform Usage Payment through Orange Money and submit the details below for verification.</p><div class="payment-summary"><div><span>Category</span><strong id="paymentCategory"></strong></div><div><span>Amount</span><strong id="paymentAmount"></strong></div><div><span>Orange Money</span><strong id="paymentNumber"></strong></div></div><label for="paymentSender">Orange Money sender number</label><input id="paymentSender" placeholder="Number used to make payment" type="tel"/><div class="field-error" id="errPaymentSender"></div><label for="paymentReference">Transaction reference / ID</label><input id="paymentReference" placeholder="Type transaction reference"/><div class="field-error" id="errPaymentReference"></div><button class="btn btn-blue platform-submit" onclick="submitPaymentRequest()" type="button">Submit payment for verification</button><div class="modal-status" id="paymentStatus"></div></div></div>
+<div aria-hidden="true" class="platform-modal" id="paymentModal"><div class="platform-modal-card"><button class="modal-close" onclick="closePaymentModal()" type="button">×</button><h2>Platform Usage Payment</h2><p id="paymentIntro">Your free platform access has ended. Make the required Platform Usage Payment through Orange Money and submit the details below for verification.</p><div class="payment-summary"><div><span>Category</span><strong id="paymentCategory"></strong></div><div><span>Amount</span><strong id="paymentAmount"></strong></div><div><span>Orange Money</span><strong id="paymentNumber"></strong></div></div><label for="paymentSender">Orange Money sender number</label><input id="paymentSender" maxlength="25" autocomplete="tel" placeholder="Number used to make payment" type="tel"/><div class="field-error" id="errPaymentSender"></div><label for="paymentReference">Transaction reference / ID</label><input id="paymentReference" maxlength="120" placeholder="Type transaction reference"/><div class="field-error" id="errPaymentReference"></div><button class="btn btn-blue platform-submit" onclick="submitPaymentRequest()" type="button">Submit payment for verification</button><div class="modal-status" id="paymentStatus"></div></div></div>
 <script>
 const PLATFORM_API='/.netlify/functions/platform-api',LEARNING_API='/.netlify/functions/learning-api';let platformConfig=null,pendingToolAction=null,currentProfile=null,currentAccess=null;
 function deviceId(){let x=localStorage.getItem('salone_device_id');if(!x){x='slc_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2);localStorage.setItem('salone_device_id',x)}return x}
-function sessionToken(){return localStorage.getItem('salone_session_token')||''}function saveSession(x){if(x?.token)localStorage.setItem('salone_session_token',x.token)}function clearSession(){localStorage.removeItem('salone_session_token');currentProfile=null;currentAccess=null}
+function sessionToken(){return sessionStorage.getItem('salone_session_token')||''}function saveSession(x){if(x?.token){sessionStorage.setItem('salone_session_token',x.token);localStorage.removeItem('salone_session_token')}}function clearSession(){sessionStorage.removeItem('salone_session_token');localStorage.removeItem('salone_session_token');currentProfile=null;currentAccess=null}
 function cat(c){return({primary:'Primary School Pupil',jss:'JSS Student',sss:'SSS Student',teacher:'Teacher',university:'University Student'})[c]||c}function money(v){return'Le '+Number(v||0).toLocaleString()}
 function authHeaders(){const t=sessionToken();return t?{'Authorization':'Bearer '+t}:{}}
 function showOutput(box,text){box.textContent=text;box.classList.add('show');box.scrollIntoView({behavior:'smooth',block:'nearest'})}
@@ -2037,7 +2034,7 @@ async function loadLearningProgress(){
   if(status)status.textContent=local.attempted?'Progress refreshed from this device. Online synchronisation is temporarily unavailable.':(e.message||'No saved practice results found yet.');
  }finally{if(btn){btn.disabled=false;btn.textContent='Refresh my progress'}}
 }
-async function learningRequest(payload){const controller=new AbortController(),tm=setTimeout(()=>controller.abort(),85000);try{const adminToken=localStorage.getItem('salone_admin_token')||'';const r=await fetch(LEARNING_API,{method:'POST',headers:{'Content-Type':'application/json',...authHeaders(),...(adminToken?{'X-Admin-Token':adminToken}:{})},body:JSON.stringify({...payload,device_id:deviceId()}),signal:controller.signal});const d=await r.json().catch(()=>({}));if(!r.ok){const e=new Error(d.error||'Unable to complete this request.');e.code=d.code;e.status=r.status;throw e}return d}finally{clearTimeout(tm)}}
+async function learningRequest(payload){const controller=new AbortController(),tm=setTimeout(()=>controller.abort(),85000);try{const adminToken=sessionStorage.getItem('salone_admin_token')||'';const r=await fetch(LEARNING_API,{method:'POST',headers:{'Content-Type':'application/json',...authHeaders(),...(adminToken?{'X-Admin-Token':adminToken}:{})},body:JSON.stringify({...payload,device_id:deviceId()}),signal:controller.signal});const d=await r.json().catch(()=>({}));if(!r.ok){const e=new Error(d.error||'Unable to complete this request.');e.code=d.code;e.status=r.status;throw e}return d}finally{clearTimeout(tm)}}
 function handleLearningError(e,box){if(e.name==='AbortError')return showOutput(box,'This request is taking longer than expected. Please try again. If it continues, the AI service may be busy.');if(e.code==='registration_required'){pendingToolAction=null;showAccountTab('register');openAccountModal();return}if(e.code==='payment_required'||e.status===402){openPaymentModal(currentProfile||{category:'university'});return}showOutput(box,e.message||'Something went wrong. Please try again.')}
 function firstName(){const n=(currentProfile?.full_name||'').trim();return n?n.split(/\s+/)[0]:''}
 function personalLead(payload){const n=firstName();if(!n)return '';const t=(payload?.task||'').toLowerCase();if(t==='assignment')return `Thank you, ${n}. Here is your assignment guide.`;if(t==='review')return `Thank you, ${n}. Here is feedback on your answer.`;if(t==='topics')return `${n}, here are research topic suggestions for you.`;if(t==='proposal')return `${n}, here is your proposal framework.`;if(t==='dissertation')return `${n}, here is your dissertation guidance.`;if(t==='defense')return `${n}, here is your dissertation defence preparation guide.`;if(t==='teacher')return `Thank you, ${n}. Here is the teaching support you requested.`;if((payload?.level||'').toLowerCase()==='university'||t==='lecturer')return `Thank you, ${n}. Here is your lecturer-style explanation.`;return `Thank you, ${n}. Here is your lesson explanation.`}
@@ -2048,12 +2045,23 @@ function openAccountModal(){accountModal.classList.add('open');document.body.sty
 function showAccountTab(which){registerPane.hidden=which!=='register';loginPane.hidden=which!=='login';registerTabBtn.classList.toggle('active',which==='register');loginTabBtn.classList.toggle('active',which==='login')}
 function renderAccount(){const signed=!!currentProfile;accountSignedOut.hidden=signed;accountSignedIn.hidden=!signed;if(signed){acctName.textContent=currentProfile.full_name;acctCategory.textContent=cat(currentProfile.category);acctAccess.textContent=currentAccess?.status||'Checking';acctExpiry.textContent=currentProfile.paid_access_end?'Paid access until '+new Date(currentProfile.paid_access_end).toLocaleDateString():currentProfile.free_access_end?'Free access until '+new Date(currentProfile.free_access_end).toLocaleDateString():''}accountBtn.textContent=signed?'My Account':'Login';loadLearningProgress().catch(()=>{})}
 function validContact(v){return v.includes('@')?/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v):/^\+?[0-9\s()-]{7,20}$/.test(v)}
-async function submitPlatformRegistration(){['errFullName','errContact','errPassword','errCategory','errTown'].forEach(i=>document.getElementById(i).textContent='');const d={full_name:regFullName.value.trim(),contact:regContact.value.trim(),password:regPassword.value,category:regCategory.value,town:regTown.value.trim()};let ok=true;if(d.full_name.length<3){errFullName.textContent='Please type your full name.';ok=false}if(!validContact(d.contact)){errContact.textContent='Type a valid phone number or email.';ok=false}if(d.password.length<6){errPassword.textContent='Use at least 6 characters.';ok=false}if(!d.category){errCategory.textContent='Please select your category.';ok=false}if(d.town.length<2){errTown.textContent='Please type your town or city.';ok=false}if(!ok)return;registrationStatus.textContent='Creating your account…';registrationStatus.classList.add('show');try{const j=await platformPost({action:'register',device_id:deviceId(),...d},45000);saveSession(j.session);currentProfile=j.profile;currentAccess=j.access;registrationStatus.textContent='Account created successfully.';renderAccount();setTimeout(closeAccountModal,500)}catch(e){registrationStatus.textContent=e.message}}
+async function submitPlatformRegistration(){['errFullName','errContact','errPassword','errCategory','errTown'].forEach(i=>document.getElementById(i).textContent='');const d={full_name:regFullName.value.trim(),contact:regContact.value.trim(),password:regPassword.value,category:regCategory.value,town:regTown.value.trim()};let ok=true;if(d.full_name.length<3){errFullName.textContent='Please type your full name.';ok=false}if(!validContact(d.contact)){errContact.textContent='Type a valid phone number or email.';ok=false}if(d.password.length<12){errPassword.textContent='Use at least 12 characters.';ok=false}if(!d.category){errCategory.textContent='Please select your category.';ok=false}if(d.town.length<2){errTown.textContent='Please type your town or city.';ok=false}if(!ok)return;registrationStatus.textContent='Creating your account…';registrationStatus.classList.add('show');try{const j=await platformPost({action:'register',device_id:deviceId(),...d},45000);saveSession(j.session);currentProfile=j.profile;currentAccess=j.access;registrationStatus.textContent='Account created successfully.';renderAccount();setTimeout(closeAccountModal,500)}catch(e){registrationStatus.textContent=e.message}}
 async function submitLogin(){loginStatus.textContent='Logging in…';loginStatus.classList.add('show');try{const j=await platformPost({action:'login',device_id:deviceId(),contact:loginContact.value.trim(),password:loginPassword.value},45000);saveSession(j.session);currentProfile=j.profile;currentAccess=j.access;loginStatus.textContent=firstName()?`Login successful. Welcome, ${firstName()}.`:'Login successful.';renderAccount();setTimeout(closeAccountModal,400)}catch(e){loginStatus.textContent=e.name==='AbortError'?'Login is taking longer than expected. Please try again.':(e.message||'We could not log you in. Please try again.')}}
 async function logoutPlatform(){try{await fetch(PLATFORM_API,{method:'POST',headers:{'Content-Type':'application/json',...authHeaders()},body:JSON.stringify({action:'logout'})})}catch{}clearSession();renderAccount();showAccountTab('login')}
 function price(c){return Number(platformConfig?.prices?.[c]||0)}function openPaymentModal(p){if(!p){openAccountModal();showAccountTab('login');return}paymentCategory.textContent=cat(p.category);paymentAmount.textContent=money(price(p.category));paymentNumber.textContent=platformConfig?.orange_money_number||'Contact administrator';paymentModal.classList.add('open');document.body.style.overflow='hidden'}function closePaymentModal(){paymentModal.classList.remove('open');document.body.style.overflow=''}
 async function submitPaymentRequest(){const s=paymentSender.value.trim(),ref=paymentReference.value.trim();errPaymentSender.textContent='';errPaymentReference.textContent='';if(s.replace(/\D/g,'').length<7){errPaymentSender.textContent='Please type the number used for payment.';return}if(ref.length<3){errPaymentReference.textContent='Please type the transaction reference.';return}paymentStatus.textContent='Submitting…';try{const r=await fetch(PLATFORM_API,{method:'POST',headers:{'Content-Type':'application/json',...authHeaders()},body:JSON.stringify({action:'payment_request',sender_number:s,transaction_reference:ref})}),j=await r.json();if(!r.ok)throw Error(j.error||'Unable to submit');paymentStatus.textContent='Payment submitted. The administrator will activate your access after verification.'}catch(e){paymentStatus.textContent=e.message}}
 async function refreshPlatform(){try{const r=await fetch(PLATFORM_API,{headers:authHeaders()}),d=await r.json();if(r.ok){platformConfig=d;currentProfile=d.profile||null;currentAccess=d.access||null;if(sessionToken()&&!d.profile)clearSession();renderAccount();if(d.announcement?.message){platformAnnouncementText.textContent=d.announcement.message;platformAnnouncement.hidden=false}}}catch(e){console.warn('Platform refresh failed',e)}}
+(function(){
+ const form=document.getElementById('supportForm'),status=document.getElementById('supportSubmitStatus'),btn=document.getElementById('supportSendBtn');
+ if(!form)return;
+ form.addEventListener('submit',async e=>{
+  e.preventDefault();
+  const payload={name:supportName.value.trim(),user_type:supportRole.value,message_type:supportType.value,contact:supportContact.value.trim(),message:supportMessage.value.trim()};
+  if(!payload.name||!payload.user_type||!payload.message_type||!payload.message){status.textContent='Please complete all required fields.';status.classList.add('show');return}
+  btn.disabled=true;status.textContent='Sending your message…';status.classList.add('show');
+  try{const r=await fetch('/.netlify/functions/support-message',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}),d=await r.json().catch(()=>({}));if(!r.ok)throw Error(d.error||'Unable to send your message.');status.textContent='Your message has been sent to Salone Class Room support.';form.reset()}catch(err){status.textContent=err.message||'Unable to send your message right now.'}finally{btn.disabled=false}
+ });
+})();
 setInterval(()=>{if(!sessionToken())return;fetch(PLATFORM_API,{method:'POST',headers:{'Content-Type':'application/json',...authHeaders()},body:JSON.stringify({action:'heartbeat',current_tool:document.visibilityState==='visible'?'Salone Class Room':''})}).then(r=>r.json()).then(d=>{if(d.access)currentAccess=d.access}).catch(()=>{})},120000);
 refreshPlatform();
 </script></body>
