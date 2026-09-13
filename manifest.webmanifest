@@ -1,0 +1,67 @@
+{
+  "id": "/",
+  "name": "Salone Class Room",
+  "short_name": "Salone Class Room",
+  "description": "AI-assisted learning, exam practice, teacher support and research guidance for Sierra Leone.",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f5f8fc",
+  "theme_color": "#073b8c",
+  "lang": "en",
+  "dir": "ltr",
+  "orientation": "any",
+  "categories": [
+    "education",
+    "productivity"
+  ],
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Primary School",
+      "short_name": "Primary",
+      "url": "/#primary",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "JSS & BECE",
+      "short_name": "JSS",
+      "url": "/#students",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "My Learning Journey",
+      "short_name": "Progress",
+      "url": "/#learning-progress",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ]
+}
