@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
 <meta content="Salone Class Room provides AI-assisted text learning, exam practice, teacher lesson planning and research guidance for Sierra Leone." name="description"/>
 <meta content="#073b8c" name="theme-color"/>
 <!-- Salone Class Room V3.10: verified administrators receive free access to all learning sections -->
@@ -813,34 +813,29 @@ select:disabled{background-color:#f3f6f9 !important;color:#7a8794 !important;opa
 .no-download-note{text-align:center}
 .no-download-note p{max-width:900px;margin-left:auto;margin-right:auto}
 .mark{font-size:.92rem;letter-spacing:.02em}
-</style>
 
-<!-- Salone Class Room PWA -->
+/* Cross-device compatibility: phones, tablets, laptops and desktop browsers */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{min-width:0;overflow-x:hidden;padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
+img,svg,video,canvas{max-width:100%;height:auto}
+button,a,input,select,textarea{touch-action:manipulation}
+button,.btn,.tab,.mobile{min-height:44px}
+input,select,textarea{max-width:100%;font-size:16px}
+pre,.output{max-width:100%;overflow-wrap:anywhere;word-break:break-word}
+.platform-modal{padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right))}
+#pwaInstallPrompt{bottom:max(14px,env(safe-area-inset-bottom))!important}
+@media(max-width:680px){.actions>.btn,.admin-actions>.btn{flex:1 1 160px}.nav-in{gap:10px}.brand{min-width:0}.brand .mark{flex:0 0 auto}}
+@media(max-width:380px){.hero h1{font-size:2.15rem}.card{padding:16px}.wrap{width:calc(100% - 16px)}}
+</style>
 <link rel="manifest" href="/manifest.webmanifest">
-<meta name="mobile-web-app-capable" content="yes">
+<link rel="apple-touch-icon" href="/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Salone Class Room">
-<link rel="apple-touch-icon" href="/icon-192.png">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
-
-
-<style id="pwa-child-accessibility">
-/* PWA + child-friendly accessibility layer */
-.skip-link{position:absolute;left:-9999px;top:8px;z-index:10000;background:#fff;color:#073b8c;padding:12px 16px;border-radius:10px;font-weight:800}.skip-link:focus{left:8px}
-button,.btn,a.quick-link,input,select,textarea{min-height:48px}
-button,.btn{touch-action:manipulation}
-:focus-visible{outline:4px solid #f5b700!important;outline-offset:3px!important}
-.pwa-install-bar{display:none;position:sticky;bottom:10px;z-index:9000;width:min(720px,calc(100% - 20px));margin:10px auto;padding:12px;background:#fff;border:2px solid #0b57c8;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.16);align-items:center;justify-content:space-between;gap:12px}
-.pwa-install-bar.show{display:flex}.pwa-install-copy{font-size:.92rem;line-height:1.35}.pwa-install-copy strong{display:block;color:#073b8c;font-size:1rem}.pwa-install-actions{display:flex;gap:8px;flex-wrap:wrap}.pwa-install-actions button{padding:10px 14px;border-radius:10px;border:0;font-weight:800;cursor:pointer}.pwa-install-primary{background:#073b8c;color:#fff}.pwa-install-later{background:#edf3f9;color:#31465d}
-.pwa-offline-note{display:none;margin:12px auto;padding:12px 16px;max-width:760px;background:#fff8df;border:1px solid #e6c453;border-radius:12px;color:#5c4700;font-weight:700}.pwa-offline-note.show{display:block}
-@media(max-width:600px){body{font-size:17px}.btn,button{width:100%;font-size:1rem}.actions .btn{width:auto}.pwa-install-bar{align-items:stretch;flex-direction:column}.pwa-install-actions button{width:auto;flex:1}.section-ribbon{font-size:1.25rem!important}.card h3{font-size:1.2rem}.quick-grid a{min-height:84px;display:flex;flex-direction:column;justify-content:center}.platform-modal-card{padding:20px 16px}.modal-close{width:48px!important;height:48px!important}}
-@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
-</style>
-</head>
+<meta name="theme-color" content="#0b5ed7"></head>
 <body>
-<a class="skip-link" href="#primary">Skip to learning</a>
-<div id="pwaOfflineNote" class="pwa-offline-note" role="status" aria-live="polite">You are offline. You can open the app, but AI answers, login and account updates need internet.</div>
 <div class="topbar">Built for Sierra Leonean learners and teachers • Text-first • Mobile-friendly</div>
 <nav class="nav"><div class="wrap nav-in"><a class="brand" href="#home"><span class="mark">SCR</span>Salone Class Room</a><div style="display:flex;gap:8px;align-items:center"><button type="button" class="btn btn-light" id="accountBtn" onclick="openAccountModal()" style="padding:8px 12px;border:1px solid #cbd6e4">Login</button><button aria-label="Open menu" class="mobile" onclick="toggleMenu()">Menu</button></div><ul class="links" id="navLinks">
 <li><a href="#students">Students</a></li>
@@ -987,7 +982,7 @@ button,.btn{touch-action:manipulation}
 <button class="btn btn-blue" type="button" onclick="startQuiz('jss')">Generate 5 BECE Questions</button>
 <div class="output" id="jssQuiz"></div>
 </article>
-<article class="card"><span class="step">3</span><h3>Assignment Learning Guide</h3><p class="guide">Paste the question. You will receive clues, steps and an explanation that helps you write your own answer.</p><label>Type the assignment given to you</label><textarea id="jssAssignment" placeholder="Type the assignment given to you here"></textarea><button class="btn btn-blue" onclick="demoResult('jssGuide','assignment guide')">Click here for your step-by-step guide</button><div class="output" id="jssGuide"></div></article>
+<article class="card"><span class="step">3</span><h3>Assignment Learning Guide</h3><p class="guide">Choose the subject and type the assignment. Salone Class Room will prepare a fresh, level-appropriate guide.</p><label>Subject</label><select id="jssAssignmentSubject"><option value="">Select subject</option><option>English Language</option><option>Mathematics</option><option>Integrated Science</option><option>Social Studies</option><option>Civic Education</option><option>Agricultural Science</option><option>Business Studies</option><option>Religious and Moral Education</option><option>ICT</option></select><label>Type the assignment given to you</label><textarea id="jssAssignment" placeholder="Type the assignment given to you here"></textarea><button class="btn btn-blue" onclick="schoolAssignmentGuide('jss')">Generate Assignment Guide</button><div class="output" id="jssGuide"></div></article>
 </div></div>
 <div class="level-block" id="student-sss" style="margin-top:42px"><div class="subsection-ribbon-intro"><div class="section-ribbon subsection-ribbon">Senior Secondary School Students</div><p class="section-ribbon-description">Support for SSS students to understand difficult topics, practise WASSCE questions and improve examination readiness.</p></div><div class="grid">
 <article class="card"><span class="step">1</span><h3>SSS Text Tutor</h3><p class="guide">Choose your class and subject, type the word or topic you do not understand, then click the blue button for an explanation based on that subject.</p><div class="row"><div><label>Class</label><select id="sssClass"><option>SSS 1</option><option>SSS 2</option><option>SSS 3</option></select></div><div><label>Stream (optional)</label><select data-sss-stream="" data-target="sssSubject" id="sssStream"><option value="">Select stream</option><option value="Sciences &amp; Technologies">Sciences &amp; Technologies</option><option value="Mathematics &amp; Numeracy">Mathematics &amp; Numeracy</option><option value="Economics, Business &amp; Entrepreneurial Studies">Economics, Business &amp; Entrepreneurial Studies</option><option value="Languages &amp; Literatures">Languages &amp; Literatures</option><option value="Social &amp; Cultural Studies">Social &amp; Cultural Studies</option></select></div></div><label>Subject</label><select id="sssSubject"><option value="">Select subject</option><option value="Integrated Science">Integrated Science</option><option value="Biology">Biology</option><option value="Chemistry">Chemistry</option><option value="Computer Science">Computer Science</option><option value="Agricultural Science">Agricultural Science</option><option value="ICT">ICT</option><option value="Robotics">Robotics</option><option value="Physics">Physics</option><option value="Environmental Science">Environmental Science</option><option value="Health Sciences">Health Sciences</option><option value="Food Security">Food Security</option><option value="Engineering Science">Engineering Science</option><option value="Physical Health Education">Physical Health Education</option><option value="Climate Change Awareness, Preparedness and Resilience">Climate Change Awareness, Preparedness and Resilience</option><option value="Adolescent Health and Life Skills">Adolescent Health and Life Skills</option><option value="Computer Literacy">Computer Literacy</option><option value="Popular Science">Popular Science</option><option value="Fundamentals of Mathematics">Fundamentals of Mathematics</option><option value="Further Mathematics">Further Mathematics</option><option value="Statistics and Probability">Statistics and Probability</option><option value="Calculus">Calculus</option><option value="Mathematics for Business and Enterprise">Mathematics for Business and Enterprise</option><option value="Applications of Mathematics for Coding">Applications of Mathematics for Coding</option><option value="Mathematics for STEAMM">Mathematics for STEAMM</option><option value="Computer Mathematics">Computer Mathematics</option><option value="Mathematics in Other Disciplines">Mathematics in Other Disciplines</option><option value="Introductory Statistics and Probability">Introductory Statistics and Probability</option><option value="Functional Mathematics">Functional Mathematics</option><option value="Principles of Economics">Principles of Economics</option><option value="Entrepreneurship">Entrepreneurship</option><option value="Principles of Accounting">Principles of Accounting</option><option value="Business Management Studies">Business Management Studies</option><option value="Principles of Commerce">Principles of Commerce</option><option value="Principles of Marketing">Principles of Marketing</option><option value="Business Accounting">Business Accounting</option><option value="Clerical Office Studies">Clerical Office Studies</option><option value="Insurance Management">Insurance Management</option><option value="Business Economics">Business Economics</option><option value="Business and Society">Business and Society</option><option value="Customer Relationship Management">Customer Relationship Management</option><option value="Micro Small and Medium Enterprise Management">Micro Small and Medium Enterprise Management</option><option value="Business Ethics">Business Ethics</option><option value="English Language">English Language</option><option value="African Literature">African Literature</option><option value="English Literature">English Literature</option><option value="French as a Foreign Language">French as a Foreign Language</option><option value="Sierra Leonean Literature">Sierra Leonean Literature</option><option value="Mende Language">Mende Language</option><option value="Kathemne Language">Kathemne Language</option><option value="Hulimba Language">Hulimba Language</option><option value="Krio Language">Krio Language</option><option value="Creative Writing">Creative Writing</option><option value="Business English">Business English</option><option value="French for Tourism">French for Tourism</option><option value="Technical Writing">Technical Writing</option><option value="English for STEAMM">English for STEAMM</option><option value="French for Business and Marketing">French for Business and Marketing</option><option value="Everyday Basic French">Everyday Basic French</option><option value="Popular Literature Appreciation">Popular Literature Appreciation</option><option value="Arabic Language">Arabic Language</option><option value="Fula">Fula</option><option value="Sierra Leone History">Sierra Leone History</option><option value="African History">African History</option><option value="Geography">Geography</option><option value="Music">Music</option><option value="Dance and Drama Studies">Dance and Drama Studies</option><option value="Politics and Governance">Politics and Governance</option><option value="Social Studies and Civics">Social Studies and Civics</option><option value="Religious and Moral Education">Religious and Moral Education</option><option value="Geography and the Environment">Geography and the Environment</option><option value="Music as an Applied Subject">Music as an Applied Subject</option><option value="Entertainment Industry">Entertainment Industry</option><option value="Derivatives of Religious and Moral Education">Derivatives of Religious and Moral Education</option><option value="Dance Performance and Appreciation">Dance Performance and Appreciation</option><option value="Mining Industry and the Environment">Mining Industry and the Environment</option><option value="Fishing Industry and the Environment">Fishing Industry and the Environment</option><option value="Tourism and Conservation">Tourism and Conservation</option><option value="Living with Religious and Moral Education">Living with Religious and Moral Education</option></select><label>Type or choose your topic</label><select id="sssTopicSelect" data-topic-level="sss" data-class-id="sssClass" data-subject-id="sssSubject"><option value="">Choose class and subject first</option></select><input id="sssTopic" placeholder="Or type your own topic"/><p class="topic-help">Choose the prescribed topic you want explained, or select Other.</p><button class="btn btn-blue" onclick="curriculumExplain('sss','sssClass','sssSubject','sssTopicSelect','sssTutor','sssTopic')">Click here for your explanation</button><div class="output" id="sssTutor"></div></article>
@@ -999,7 +994,7 @@ button,.btn{touch-action:manipulation}
 <button class="btn btn-blue" type="button" onclick="startQuiz('sss')">Generate 5 WASSCE Questions</button>
 <div class="output" id="sssQuiz"></div>
 </article>
-<article class="card"><span class="step">3</span><h3>Assignment Learning Guide</h3><p class="guide">Get an outline, key ideas and steps. Use them to prepare your own complete response.</p><label>Type the assignment given to you</label><textarea placeholder="Type the assignment given to you here"></textarea><button class="btn btn-blue" onclick="demoResult('sssGuide','assignment guide')">Click here for your step-by-step guide</button><div class="output" id="sssGuide"></div></article>
+<article class="card"><span class="step">3</span><h3>Assignment Learning Guide</h3><p class="guide">Choose the subject and type the assignment. The response will match Senior Secondary/WASSCE level where applicable.</p><label>Subject</label><select id="sssAssignmentSubject"><option value="">Select subject</option><option>English Language</option><option>Mathematics</option><option>Integrated Science</option><option>Biology</option><option>Chemistry</option><option>Physics</option><option>Agricultural Science</option><option>Economics</option><option>Government</option><option>Geography</option><option>History</option><option>Literature-in-English</option><option>Principles of Accounting</option><option>Business Management</option><option>ICT</option></select><label>Type the assignment given to you</label><textarea id="sssAssignment" placeholder="Type the assignment given to you here"></textarea><button class="btn btn-blue" onclick="schoolAssignmentGuide('sss')">Generate Assignment Guide</button><div class="output" id="sssGuide"></div></article>
 <article class="card"><span class="step">4</span><h3>WASSCE Essay Question &amp; Answer Reviewer</h3><div class="essay-review-guide tool-use-guide">
 <strong>How to use this WASSCE reviewer</strong>
 <p>
@@ -1028,13 +1023,13 @@ button,.btn{touch-action:manipulation}
 <div class="notice"><strong>Note:</strong> Answers are displayed for students to read and copy into their exercise books. Downloads are not provided.</div>
 </section>
 <section class="section ribbon-section" id="learning-progress"><div class="ribbon-intro"><div class="section-ribbon">My Learning Journey</div><p class="section-ribbon-description">See the questions you have attempted, your scores, subjects practised, recent results, weaknesses and areas that need improvement.</p></div><div class="card"><div id="progressSignedOut" class="progress-empty">Log in to see My Learning Journey.</div><div id="progressContent" hidden><div class="progress-grid"><div class="progress-card"><span>Questions attempted</span><strong id="progressAttempted">0</strong></div><div class="progress-card"><span>Correct</span><strong id="progressCorrect">0</strong></div><div class="progress-card"><span>Wrong</span><strong id="progressWrong">0</strong></div><div class="progress-card"><span>Overall score</span><strong id="progressScore">0%</strong></div></div><div class="grid"><div><h3>Performance by subject</h3><div class="progress-list" id="progressSubjects"></div></div><div><h3>Weaknesses / Areas to Improve</h3><div class="progress-list" id="progressWeak"></div></div></div><div style="margin-top:16px"><h3>Recent practice</h3><div class="progress-list" id="progressRecent"></div></div><button class="btn btn-light" id="refreshProgressBtn" type="button" style="margin-top:14px">Refresh my progress</button><div class="result" id="progressRefreshStatus" aria-live="polite"></div></div></div></section><section class="section ribbon-section" id="teachers"><div class="ribbon-intro">
-<div class="section-ribbon">Teachers</div>
+<div class="section-ribbon">For Teachers</div>
 <p class="section-ribbon-description">Prepare practical lesson notes and theory examination questions for the class and subject you teach.</p>
 </div>
 <div class="teacher-single-wrap">
 <div class="teacher-selector-card">
-<h3>Choose your teaching area</h3>
-<p>Select the school level, class and subject. For the topic, choose one from the curriculum list or type your own.</p>
+<h3>Prepare Lesson Note</h3>
+<p>Choose your category, class and subject, then choose a curriculum topic or type your own topic if it is not listed.</p>
 <label for="teacherCategoryOnly" class="teacher-category-label">Teacher Category</label>
 <select id="teacherCategoryOnly"><option value="">Select teacher category</option><option value="primary">Primary School Teacher</option><option value="jss">Junior Secondary School (JSS) Teacher</option><option value="sss">Senior Secondary School (SSS) Teacher</option></select>
 </div>
@@ -1049,8 +1044,8 @@ button,.btn{touch-action:manipulation}
 <input id="teacherTopicOther" placeholder="Or type your own topic" hidden/>
 
 <div class="prepare-teach-box">
-<h3>Prepare Lesson Note</h3>
-<p>Use the class, subject and topic selected above. Add the date and lesson duration, then Salone Class Room will prepare a structured lesson note.</p>
+<h3>Lesson Details</h3>
+<p>Use the category, class, subject and topic selected above. Add the date and lesson duration, then Salone Class Room will prepare a structured lesson note.</p>
 <div class="teacher-form-grid" style="margin-top:12px">
 <div><label for="teacherPrepDate">Date</label><input id="teacherPrepDate" type="date"/></div>
 <div><label for="teacherPrepDuration">Duration</label><select id="teacherPrepDuration"><option value="">Select duration</option><option>30 minutes</option><option>40 minutes</option><option>45 minutes</option><option>60 minutes</option><option>80 minutes</option></select></div>
@@ -1059,8 +1054,8 @@ button,.btn{touch-action:manipulation}
 </div>
 
 <div class="prepare-teach-box" style="margin-top:18px">
-<h3>Prepare Exam Questions</h3>
-<p>Choose a subject, then choose a curriculum topic or type your own topic. Salone Class Room will generate exactly <strong>5 theory questions</strong>. Multiple-choice options, answers and marking schemes will not be included.</p>
+<h3>Conduct Exam</h3>
+<p>Choose the subject and topic, then choose the exam type. Theory generates exactly 5 questions. Objective generates exactly 10 multiple-choice questions. A new click produces a fresh set.</p>
 <div class="teacher-form-grid" style="margin-top:12px">
 <div>
 <label for="teacherExamSubject">Subject</label>
@@ -1071,9 +1066,9 @@ button,.btn{touch-action:manipulation}
 <select id="teacherExamTopic"><option value="">Choose a subject first</option></select>
 </div>
 </div>
-<input id="teacherExamTopicOther" placeholder="Or type your own topic" hidden/>
+<input id="teacherExamTopicOther" placeholder="Or type your own topic" hidden/><label for="teacherExamType">Choose exam type</label><select id="teacherExamType"><option value="theory">Theory — 5 questions</option><option value="objective">Objective — 10 questions</option></select>
 <p class="topic-help">Select “Other / Type my own topic” if the topic you want is not listed.</p>
-<button class="btn btn-blue" id="prepareTeacherExamBtn" type="button">Generate 5 Theory Questions</button>
+<button class="btn btn-blue" id="prepareTeacherExamBtn" type="button">Generate Exam Questions</button>
 </div>
 <div aria-live="polite" class="teacher-result-note" id="teacherOnlyMessage"></div>
 </div>
@@ -1084,18 +1079,16 @@ button,.btn{touch-action:manipulation}
   </div>
 <div class="grid">
 <article class="card">
-<h3>Salone Class Room Lecturer</h3>
+<h3>Lecture Yourself</h3>
 <p class="guide">Enter a course, module or difficult concept and state the level of explanation you need.</p><div class="university-focus-field">
-<label for="universityLecturerFocus">What should the Lecturer focus on or explain to you today?</label>
-<textarea id="universityLecturerFocus" placeholder="Type the topic, concept, question or area you want the Lecturer to explain" rows="4"></textarea>
+<label for="universityLecturerFocus">Type the topic, concept, question or area you want to study</label>
+<textarea id="universityLecturerFocus" placeholder="Type the topic, concept, question, problem or area you want explained" rows="4"></textarea>
 </div>
-<label>Course/module and topic</label>
-<input placeholder="Example: BUS 301 — strategic analysis"/>
-<label>What should the lecturer focus on?</label>
-<textarea placeholder="Explain the models with Sierra Leone examples..."></textarea>
-<button class="btn btn-blue" onclick="demoResult('tertiaryTutor','advanced lesson')">Click here for your lesson explanation</button>
+<label>Module name</label><input id="universityLectureModule" placeholder="Example: BUS 301 — Strategic Management"/><label>Year of study</label><select id="universityLectureYear"><option value="">Select year</option><option>Year 1</option><option>Year 2</option><option>Year 3</option><option>Year 4</option><option>Year 5</option><option>Postgraduate</option></select>
+<button class="btn btn-blue" onclick="universityLectureYourself()">Generate Explanation</button>
 <div class="output" id="tertiaryTutor"></div>
 </article>
+<article class="card"><h3>University Assignment Support</h3><p class="guide">Enter the module, year of study and the exact assignment. The response will be written at the selected university level. Where a Sierra Leone law, policy or official framework is relevant, it should be treated carefully and not invented.</p><label>Module name</label><input id="universityAssignmentModule" placeholder="Example: Public Finance"/><label>Year of study</label><select id="universityAssignmentYear"><option value="">Select year</option><option>Year 1</option><option>Year 2</option><option>Year 3</option><option>Year 4</option><option>Year 5</option><option>Postgraduate</option></select><label>Type the assignment given to you</label><textarea id="universityAssignmentText" rows="5" placeholder="Type or paste the complete assignment here"></textarea><button class="btn btn-blue" type="button" onclick="universityAssignmentGuide()">Generate University-Level Answer Guide</button><div class="output" id="universityAssignmentOutput"></div></article>
 <article class="card">
 <h3>Topic Finder</h3>
 <p class="guide">Are you looking for a research topic? Type your department or programme of study below. Salone Class Room will suggest exactly three suitable research topics related to your area of study, with attention to relevant issues and contexts in Sierra Leone where appropriate.</p>
@@ -1309,14 +1302,11 @@ function updateDissertationTopics(){
 </div>
 </section><section class="section ribbon-section" id="contact-support"><div class="ribbon-intro"><div class="section-ribbon">Support, Comments &amp; Enquiries</div><p class="section-ribbon-description">Send us your questions, comments, suggestions or support requests directly through this section.</p></div>
 <div class="contact-support-card">
-<form action="https://formsubmit.co/pytbion26@gmail.com" class="support-form" id="supportForm" method="POST">
-<input name="_subject" type="hidden" value="New Salone Class Room Support / Comment / Enquiry"/>
-<input name="_captcha" type="hidden" value="false"/>
-<input name="_template" type="hidden" value="table"/>
+<form action="/.netlify/functions/support-message" class="support-form" id="supportForm" method="POST">
 <div class="form-grid">
 <div>
 <label for="supportName">Your name</label>
-<input id="supportName" name="Name" placeholder="Enter your name" required="" type="text"/>
+<input id="supportName" maxlength="120" name="Name" autocomplete="name" placeholder="Enter your name" required="" type="text"/>
 </div>
 <div>
 <label for="supportRole">You are a</label>
@@ -1341,9 +1331,9 @@ function updateDissertationTopics(){
 <option>Report a Problem</option>
 </select>
 <label for="supportContact">Phone number or email (optional)</label>
-<input id="supportContact" name="Contact" placeholder="Enter a phone number or email only if you want us to reply" type="text"/>
+<input id="supportContact" maxlength="180" name="Contact" autocomplete="email" placeholder="Enter a phone number or email only if you want us to reply" type="text"/>
 <label for="supportMessage">Your message</label>
-<textarea id="supportMessage" name="Message" placeholder="Write your comment, question, enquiry or support request here..." required="" rows="6"></textarea>
+<textarea id="supportMessage" maxlength="4000" name="Message" placeholder="Write your comment, question, enquiry or support request here..." required="" rows="6"></textarea>
 <button class="btn btn-blue" id="supportSendBtn" type="submit">Click here to send your message</button>
 <p class="form-help">
         Your message will be sent directly to Salone Class Room support at pytbion26@gmail.com. You do not need to open an email app.
@@ -1514,7 +1504,7 @@ function updateDissertationTopics(){
           return '<div class="quiz-question" data-qindex="'+i+'" style="margin:18px 0;padding:16px;border:1px solid #d7e1ed;border-radius:12px;background:#fff">'+
             '<p><strong>'+(i+1)+'. '+safe(q.question||'Question')+'</strong></p>'+
             '<div class="quiz-options">'+opts.map((opt,j)=>
-              `<button type="button" class="btn" style="display:block;width:100%;text-align:left;justify-content:flex-start;margin:8px 0;background:#eef4fb;color:#17324d" onclick="checkQuizAnswer(this,'${level}',${i},${j})">${String.fromCharCode(65+j)}. ${safe(opt)}</button>`
+              `<button type="button" class="btn" style="display:block;width:100%;text-align:left;justify-content:flex-start;margin:8px 0;background:#eef4fb;color:#17324d" onclick="checkQuizAnswer(this,decodeURIComponent('${encodeURIComponent(String(level||''))}'),${i},${j})">${String.fromCharCode(65+j)}. ${safe(opt)}</button>`
             ).join('')+'</div><div class="feedback" style="margin-top:10px"></div></div>';
         }).join('')+
         '<div id="'+level+'QuizSummary"></div>';
@@ -1611,6 +1601,9 @@ function renderNPSE(qs){const area=document.getElementById('npseQuizArea');if(!A
 // Exam practice is manual: selecting a subject or topic never generates questions automatically.
 
 function answerNPSE(btn,i,j){if(btn.closest('.quiz-question').dataset.done)return;btn.closest('.quiz-question').dataset.done='1';const q=npseState.qs[i],ok=Number(q.answer)===j;npseState.answered++;if(ok)npseState.correct++;const subject=npseSubject?.value||'',ts=npseTopicSelect,tm=npseTopic,topic=(((tm?.value||'').trim()) || (ts?.value==='__other__'?'':ts?.value||'')).trim();recordPracticeAttempt('primary',subject,topic,q,j,ok).catch(()=>{});document.getElementById('npseFb'+i).innerHTML='<strong>'+(ok?'Correct':'Wrong')+'.</strong> '+safe(q.explanation||'');if(npseState.answered===npseState.qs.length){document.getElementById('npseSummary').innerHTML='<div class="notice"><strong>Result: '+npseState.correct+'/'+npseState.qs.length+' correct.</strong> Review the explanations above and practise weak areas again.</div>';loadLearningProgress().catch(()=>{})}}
+async function schoolAssignmentGuide(level){const subject=document.getElementById(level+'AssignmentSubject')?.value||'',topic=document.getElementById(level+'Assignment')?.value.trim()||'',box=document.getElementById(level+'Guide');if(!subject||!topic){showOutput(box,'Please choose a subject and type the assignment first.');return}await callLearning({level,subject,topic,task:'assignment',tool_key:level+'-assignment-guide'},box)}
+async function universityAssignmentGuide(){const module=universityAssignmentModule.value.trim(),year=universityAssignmentYear.value,topic=universityAssignmentText.value.trim(),box=universityAssignmentOutput;if(!module||!year||!topic){showOutput(box,'Please enter the module name, year of study and assignment.');return}await callLearning({level:'university',class_level:year,subject:module,topic,task:'assignment',context:'Answer at '+year+' university standard for the module '+module+'. Use Sierra Leone context or official frameworks where applicable, but do not invent laws, policies, citations or institutional requirements.',tool_key:'university-assignment'},box)}
+async function universityLectureYourself(){const module=document.getElementById('universityLectureModule')?.value.trim()||'',year=document.getElementById('universityLectureYear')?.value||'',topic=document.getElementById('universityLecturerFocus')?.value.trim()||'',box=document.getElementById('tertiaryTutor');if(!module||!year||!topic){showOutput(box,'Please enter the module, year of study and what you want to learn.');return}await callLearning({level:'university',class_level:year,subject:module,topic,task:'lecturer',context:'Teach this at '+year+' university standard. Explain the concept clearly, with examples and application where useful.',tool_key:'lecture-yourself'},box)}
 async function primaryAssignmentGuide(){const subject=primaryAssignmentSubject.value,topic=primaryAssignment.value.trim(),box=primaryAssignmentOutput;if(!subject||!topic){showOutput(box,'Please choose a subject and type the assignment first.');return}await callLearning({level:'primary',subject,topic,task:'assignment',tool_key:'primary-assignment-guide'},box)}
 </script><script>
 // V3.3: removed obsolete broad subject-population script that could overwrite topic dropdowns.
@@ -1701,8 +1694,8 @@ async function primaryAssignmentGuide(){const subject=primaryAssignmentSubject.v
     };
 
     message.innerHTML = '<strong>' + toolNames[tool] + '</strong> is ready for <strong>' +
-      cls + ' – ' + subject + '</strong>, topic: <strong>' +
-      enteredTopic.replace(/[<>]/g,'') + '</strong>. This selection can now be sent to the secure AI teaching endpoint.';
+      safe(cls) + ' – ' + safe(subject) + '</strong>, topic: <strong>' +
+      safe(enteredTopic) + '</strong>. This selection can now be sent to the secure AI teaching endpoint.';
   });
 })();
 </script><script>
@@ -1754,9 +1747,9 @@ function preparePrimaryTeacherSupport(type){
 
   result.innerHTML =
     '<strong>' + c.title + '</strong> is ready for <strong>' +
-    cls + ' – ' + subject + '</strong>, topic: <strong>' +
-    topic.replace(/[<>]/g,'') + '</strong>' +
-    (extra ? ', ' + extra.replace(/[<>]/g,'') : '') +
+    safe(cls) + ' – ' + safe(subject) + '</strong>, topic: <strong>' +
+    safe(topic) + '</strong>' +
+    (extra ? ', ' + safe(extra) : '') +
     '. This can now be sent to the secure AI teaching endpoint.';
 }
 </script><script>
@@ -1841,9 +1834,9 @@ function preparePrimaryTeacherSupport(type){
 
       const title = type === 'curriculum' ? 'Curriculum Guidance' : 'Lesson Note Preparation';
       msg.innerHTML = '<strong>' + title + '</strong> is ready for <strong>' +
-        cls + ' – ' + subject + '</strong>, topic: <strong>' +
-        topic.replace(/[<>]/g,'') + '</strong>' +
-        (extra ? ', ' + extra : '') +
+        safe(cls) + ' – ' + safe(subject) + '</strong>, topic: <strong>' +
+        safe(topic) + '</strong>' +
+        (extra ? ', ' + safe(extra) : '') +
         '. This selection can now be sent to the secure AI teaching endpoint.';
     });
   });
@@ -1879,7 +1872,7 @@ function preparePrimaryTeacherSupport(type){
   const selectedExamTopic=()=>((examTopic.value==='__other__'?examTopicOther.value:examTopic.value)||'').trim();
   const baseValid=()=>category.value&&classSel.value&&subjectSel.value&&(category.value!=='sss'||streamSel.value);
   document.getElementById('prepareTeacherLessonBtn')?.addEventListener('click',async()=>{const topic=selectedTopic(),date=(document.getElementById('teacherPrepDate')?.value||'').trim(),duration=(document.getElementById('teacherPrepDuration')?.value||'').trim();if(!baseValid()||!topic||!date||!duration){msg.textContent='Please choose the teacher category, class, subject and topic, then add the date and duration.';return}const context=['Document: Lesson Notes','Date: '+date,'Duration: '+duration,'Prepare practical lesson notes for the selected class, subject and topic.'].join('\n');await callLearning({level:category.value,class_level:classSel.value,subject:subjectSel.value,topic,task:'teacher',context,tool_key:'teacher-lesson-note'},msg)});
-  document.getElementById('prepareTeacherExamBtn')?.addEventListener('click',async()=>{const subject=(examSubject.value||'').trim(),topic=selectedExamTopic();if(!category.value||!classSel.value||(category.value==='sss'&&!streamSel.value)||!subject||!topic){msg.textContent='Please choose the teacher category, class and subject, then choose or type a topic.';return}await callLearning({level:category.value,class_level:classSel.value,subject,topic,task:'teacher_exam',context:'Generate exactly five theory examination questions only. Number them 1 to 5. Do not include answers, marking schemes or multiple-choice options.',tool_key:'teacher-exam-questions'},msg)});
+  document.getElementById('prepareTeacherExamBtn')?.addEventListener('click',async()=>{const subject=(examSubject.value||'').trim(),topic=selectedExamTopic(),examType=document.getElementById('teacherExamType')?.value||'theory';if(!category.value||!classSel.value||(category.value==='sss'&&!streamSel.value)||!subject||!topic){msg.textContent='Please choose the teacher category, class and subject, then choose or type a topic.';return}const context=examType==='objective'?'Generate exactly 10 objective multiple-choice questions with four options A-D. Do not show answers.':'Generate exactly 5 theory questions only. Do not include answers or marking schemes.';await callLearning({level:category.value,class_level:classSel.value,subject,topic,task:'teacher_exam',exam_type:examType,context,tool_key:'teacher-exam-'+examType},msg)});
 })();
 </script><script>
 (function(){
@@ -1974,35 +1967,35 @@ async function findResearchTopics(){
     body:JSON.stringify({event_type:'page_view',section:'site',detail:'Salone Class Room'})
   }).catch(()=>{});
 })();
-</script><div aria-hidden="true" class="platform-modal" id="accountModal">
+</script><div id="pwaInstallPrompt" hidden style="position:fixed;left:12px;right:12px;bottom:14px;z-index:1400;max-width:560px;margin:auto;background:#fff;border:1px solid #cbd6e4;border-radius:16px;padding:16px;box-shadow:0 10px 35px rgba(0,0,0,.22)"><strong>Install Salone Class Room</strong><p style="margin:7px 0 12px">Install it on this device for faster, easier access from your home screen.</p><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-blue" type="button" id="pwaInstallBtn">Install</button><button class="btn btn-light" type="button" id="pwaLaterBtn">Later</button></div><p id="pwaInstallHelp" hidden style="margin:10px 0 0;font-size:.9rem;color:#5f6b7a"></p></div><div aria-hidden="true" class="platform-modal" id="accountModal">
 <div class="platform-modal-card">
 <button class="modal-close" onclick="closeAccountModal()" type="button">×</button>
 <div id="accountSignedOut">
 <div class="tabs" style="margin-bottom:14px"><button class="tab active" id="registerTabBtn" onclick="showAccountTab('register')" type="button">Create account</button><button class="tab" id="loginTabBtn" onclick="showAccountTab('login')" type="button">Login</button></div>
 <div id="registerPane">
 <h2>Create your Salone Class Room account</h2><p>Register once. Your account can be used again on this device or another device.</p>
-<label for="regFullName">Full name</label><input id="regFullName" placeholder="Type your full name"/><div class="field-error" id="errFullName"></div>
-<label for="regContact">Phone number or email</label><input id="regContact" placeholder="Example: +23276123456 or name@email.com"/><div class="field-error" id="errContact"></div>
-<label for="regPassword">Password</label><input id="regPassword" type="password" placeholder="At least 6 characters"/><div class="field-error" id="errPassword"></div>
+<label for="regFullName">Full name</label><input id="regFullName" maxlength="100" autocomplete="name" placeholder="Type your full name"/><div class="field-error" id="errFullName"></div>
+<label for="regContact">Phone number or email</label><input id="regContact" maxlength="254" autocomplete="username" placeholder="Example: +23276123456 or name@email.com"/><div class="field-error" id="errContact"></div>
+<label for="regPassword">Password</label><input id="regPassword" type="password" minlength="12" maxlength="128" autocomplete="new-password" placeholder="At least 12 characters"/><div class="field-error" id="errPassword"></div>
 <label for="regCategory">Category</label><select id="regCategory"><option value="">Select your category</option><option value="primary">Primary School Pupil</option><option value="jss">JSS Student</option><option value="sss">SSS Student</option><option value="teacher">Teacher</option><option value="university">University Student</option></select><div class="field-error" id="errCategory"></div>
-<label for="regTown">Town / City</label><input id="regTown" placeholder="Type your town or city"/><div class="field-error" id="errTown"></div>
+<label for="regTown">Town / City</label><input id="regTown" maxlength="100" autocomplete="address-level2" placeholder="Type your town or city"/><div class="field-error" id="errTown"></div>
 <button class="btn btn-blue platform-submit" onclick="submitPlatformRegistration()" type="button">Create account and continue</button>
 <div class="modal-status" id="registrationStatus"></div></div>
 <div id="loginPane" hidden>
 <h2>Login</h2><p>Use the same phone number or email and password you used when registering.</p>
-<label for="loginContact">Phone number or email</label><input id="loginContact" placeholder="Phone number or email"/>
-<label for="loginPassword">Password</label><input id="loginPassword" type="password" placeholder="Password"/>
+<label for="loginContact">Phone number or email</label><input id="loginContact" maxlength="254" autocomplete="username" placeholder="Phone number or email"/>
+<label for="loginPassword">Password</label><input id="loginPassword" type="password" maxlength="128" autocomplete="current-password" placeholder="Password"/>
 <button class="btn btn-blue platform-submit" onclick="submitLogin()" type="button">Login</button><button class="btn btn-light" type="button" onclick="requestPasswordReset()" style="width:100%;margin-top:8px">Forgot password? Request a reset</button>
 <p class="field-help">The administrator can reset it to a temporary password. Existing passwords are never displayed or stored in readable form.</p>
 <div class="modal-status" id="loginStatus"></div></div>
 </div>
 <div id="accountSignedIn" hidden><h2>My Account</h2><div class="payment-summary"><div><span>Name</span><strong id="acctName"></strong></div><div><span>Category</span><strong id="acctCategory"></strong></div><div><span>Access</span><strong id="acctAccess"></strong></div></div><p id="acctExpiry" class="field-help"></p><p class="field-help">After login, you can use all learning sections unless an administrator has applied a category restriction to your account.</p><button class="btn btn-light" onclick="logoutPlatform()" type="button">Logout</button></div>
 </div></div>
-<div aria-hidden="true" class="platform-modal" id="paymentModal"><div class="platform-modal-card"><button class="modal-close" onclick="closePaymentModal()" type="button">×</button><h2>Platform Usage Payment</h2><p id="paymentIntro">Your free platform access has ended. Make the required Platform Usage Payment through Orange Money and submit the details below for verification.</p><div class="payment-summary"><div><span>Category</span><strong id="paymentCategory"></strong></div><div><span>Amount</span><strong id="paymentAmount"></strong></div><div><span>Orange Money</span><strong id="paymentNumber"></strong></div></div><label for="paymentSender">Orange Money sender number</label><input id="paymentSender" placeholder="Number used to make payment" type="tel"/><div class="field-error" id="errPaymentSender"></div><label for="paymentReference">Transaction reference / ID</label><input id="paymentReference" placeholder="Type transaction reference"/><div class="field-error" id="errPaymentReference"></div><button class="btn btn-blue platform-submit" onclick="submitPaymentRequest()" type="button">Submit payment for verification</button><div class="modal-status" id="paymentStatus"></div></div></div>
+<div aria-hidden="true" class="platform-modal" id="paymentModal"><div class="platform-modal-card"><button class="modal-close" onclick="closePaymentModal()" type="button">×</button><h2>Platform Usage Payment</h2><p id="paymentIntro">Your free platform access has ended. Make the required Platform Usage Payment through Orange Money and submit the details below for verification.</p><div class="payment-summary"><div><span>Category</span><strong id="paymentCategory"></strong></div><div><span>Amount</span><strong id="paymentAmount"></strong></div><div><span>Orange Money</span><strong id="paymentNumber"></strong></div></div><label for="paymentSender">Orange Money sender number</label><input id="paymentSender" maxlength="25" autocomplete="tel" placeholder="Number used to make payment" type="tel"/><div class="field-error" id="errPaymentSender"></div><label for="paymentReference">Transaction reference / ID</label><input id="paymentReference" maxlength="120" placeholder="Type transaction reference"/><div class="field-error" id="errPaymentReference"></div><button class="btn btn-blue platform-submit" onclick="submitPaymentRequest()" type="button">Submit payment for verification</button><div class="modal-status" id="paymentStatus"></div></div></div>
 <script>
 const PLATFORM_API='/.netlify/functions/platform-api',LEARNING_API='/.netlify/functions/learning-api';let platformConfig=null,pendingToolAction=null,currentProfile=null,currentAccess=null;
 function deviceId(){let x=localStorage.getItem('salone_device_id');if(!x){x='slc_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2);localStorage.setItem('salone_device_id',x)}return x}
-function sessionToken(){return localStorage.getItem('salone_session_token')||''}function saveSession(x){if(x?.token)localStorage.setItem('salone_session_token',x.token)}function clearSession(){localStorage.removeItem('salone_session_token');currentProfile=null;currentAccess=null}
+function sessionToken(){return sessionStorage.getItem('salone_session_token')||''}function saveSession(x){if(x?.token){sessionStorage.setItem('salone_session_token',x.token);localStorage.removeItem('salone_session_token')}}function clearSession(){sessionStorage.removeItem('salone_session_token');localStorage.removeItem('salone_session_token');currentProfile=null;currentAccess=null}
 function cat(c){return({primary:'Primary School Pupil',jss:'JSS Student',sss:'SSS Student',teacher:'Teacher',university:'University Student'})[c]||c}function money(v){return'Le '+Number(v||0).toLocaleString()}
 function authHeaders(){const t=sessionToken();return t?{'Authorization':'Bearer '+t}:{}}
 function showOutput(box,text){box.textContent=text;box.classList.add('show');box.scrollIntoView({behavior:'smooth',block:'nearest'})}
@@ -2062,44 +2055,36 @@ async function loadLearningProgress(){
   if(status)status.textContent=local.attempted?'Progress refreshed from this device. Online synchronisation is temporarily unavailable.':(e.message||'No saved practice results found yet.');
  }finally{if(btn){btn.disabled=false;btn.textContent='Refresh my progress'}}
 }
-async function learningRequest(payload){const controller=new AbortController(),tm=setTimeout(()=>controller.abort(),85000);try{const adminToken=localStorage.getItem('salone_admin_token')||'';const r=await fetch(LEARNING_API,{method:'POST',headers:{'Content-Type':'application/json',...authHeaders(),...(adminToken?{'X-Admin-Token':adminToken}:{})},body:JSON.stringify({...payload,device_id:deviceId()}),signal:controller.signal});const d=await r.json().catch(()=>({}));if(!r.ok){const e=new Error(d.error||'Unable to complete this request.');e.code=d.code;e.status=r.status;throw e}return d}finally{clearTimeout(tm)}}
+async function learningRequest(payload){const controller=new AbortController(),tm=setTimeout(()=>controller.abort(),85000);try{const adminToken=sessionStorage.getItem('salone_admin_token')||'';const r=await fetch(LEARNING_API,{method:'POST',headers:{'Content-Type':'application/json',...authHeaders(),...(adminToken?{'X-Admin-Token':adminToken}:{})},body:JSON.stringify({...payload,device_id:deviceId(),request_nonce:(Date.now()+'-'+Math.random().toString(36).slice(2))}),signal:controller.signal});const d=await r.json().catch(()=>({}));if(!r.ok){const e=new Error(d.error||'Unable to complete this request.');e.code=d.code;e.status=r.status;throw e}return d}finally{clearTimeout(tm)}}
 function handleLearningError(e,box){if(e.name==='AbortError')return showOutput(box,'This request is taking longer than expected. Please try again. If it continues, the AI service may be busy.');if(e.code==='registration_required'){pendingToolAction=null;showAccountTab('register');openAccountModal();return}if(e.code==='payment_required'||e.status===402){openPaymentModal(currentProfile||{category:'university'});return}showOutput(box,e.message||'Something went wrong. Please try again.')}
 function firstName(){const n=(currentProfile?.full_name||'').trim();return n?n.split(/\s+/)[0]:''}
-function personalLead(payload){const n=firstName();if(!n)return '';const t=(payload?.task||'').toLowerCase();if(t==='assignment')return `Thank you, ${n}. Here is your assignment guide.`;if(t==='review')return `Thank you, ${n}. Here is feedback on your answer.`;if(t==='topics')return `${n}, here are research topic suggestions for you.`;if(t==='proposal')return `${n}, here is your proposal framework.`;if(t==='dissertation')return `${n}, here is your dissertation guidance.`;if(t==='defense')return `${n}, here is your dissertation defence preparation guide.`;if(t==='teacher')return `Thank you, ${n}. Here is the teaching support you requested.`;if((payload?.level||'').toLowerCase()==='university'||t==='lecturer')return `Thank you, ${n}. Here is your lecturer-style explanation.`;return `Thank you, ${n}. Here is your lesson explanation.`}
+function personalLead(payload){const n=firstName();if(!n)return '';const t=(payload?.task||'').toLowerCase();if(t==='assignment')return `Thank you, ${n}. Here is your assignment guide.`;if(t==='review')return `Thank you, ${n}. Here is feedback on your answer.`;if(t==='topics')return `${n}, here are research topic suggestions for you.`;if(t==='proposal')return `${n}, here is your proposal framework.`;if(t==='dissertation')return `${n}, here is your dissertation guidance.`;if(t==='defense')return `${n}, here is your dissertation defence preparation guide.`;if(t==='teacher')return `Thank you, ${n}. Here is the teaching support you requested.`;if((payload?.level||'').toLowerCase()==='university'||t==='lecturer')return `Thank you, ${n}. Here is your university-level explanation.`;return `Thank you, ${n}. Here is your lesson explanation.`}
 function personalisedText(payload,text){const lead=personalLead(payload);return lead?lead+'\n\n'+text:text}
-function requestLoadingText(payload){const t=(payload?.task||'').toLowerCase();if(t==='teacher')return 'Preparing your lesson notes…';if(t==='teacher_exam')return 'Generating your theory questions…';if(t==='topics')return 'Finding suitable research topics…';if(t==='proposal')return 'Preparing your proposal framework…';if(t==='dissertation')return 'Preparing your dissertation guidance…';if(t==='defense')return 'Preparing your dissertation defence guide…';if(t==='review')return 'Reviewing your work…';if(t==='assignment')return 'Preparing your step-by-step assignment guide…';if(t==='lecturer'||(payload?.level||'').toLowerCase()==='university')return 'Preparing your Salone Class Room Lecturer explanation…';return 'Preparing your lesson explanation…'}
+function requestLoadingText(payload){const t=(payload?.task||'').toLowerCase();if(t==='teacher')return 'Preparing your lesson notes…';if(t==='teacher_exam')return 'Generating fresh exam questions…';if(t==='topics')return 'Finding suitable research topics…';if(t==='proposal')return 'Preparing your proposal framework…';if(t==='dissertation')return 'Preparing your dissertation guidance…';if(t==='defense')return 'Preparing your dissertation defence guide…';if(t==='review')return 'Reviewing your work…';if(t==='assignment')return 'Preparing your step-by-step assignment guide…';if(t==='lecturer'||(payload?.level||'').toLowerCase()==='university')return 'Preparing your Salone Class Room Lecturer explanation…';return 'Preparing your lesson explanation…'}
 async function callLearning(payload,box){const n=firstName(),msg=requestLoadingText(payload);showOutput(box,n?msg.replace('…',`, ${n}…`):msg);try{const d=await learningRequest(payload);renderLearningAnswer(box,personalisedText(payload,d.answer||'No response was returned. Please try again.'),payload)}catch(e){handleLearningError(e,box)}}
 function openAccountModal(){accountModal.classList.add('open');document.body.style.overflow='hidden';renderAccount()}function closeAccountModal(){accountModal.classList.remove('open');document.body.style.overflow=''}
 function showAccountTab(which){registerPane.hidden=which!=='register';loginPane.hidden=which!=='login';registerTabBtn.classList.toggle('active',which==='register');loginTabBtn.classList.toggle('active',which==='login')}
 function renderAccount(){const signed=!!currentProfile;accountSignedOut.hidden=signed;accountSignedIn.hidden=!signed;if(signed){acctName.textContent=currentProfile.full_name;acctCategory.textContent=cat(currentProfile.category);acctAccess.textContent=currentAccess?.status||'Checking';acctExpiry.textContent=currentProfile.paid_access_end?'Paid access until '+new Date(currentProfile.paid_access_end).toLocaleDateString():currentProfile.free_access_end?'Free access until '+new Date(currentProfile.free_access_end).toLocaleDateString():''}accountBtn.textContent=signed?'My Account':'Login';loadLearningProgress().catch(()=>{})}
 function validContact(v){return v.includes('@')?/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v):/^\+?[0-9\s()-]{7,20}$/.test(v)}
-async function submitPlatformRegistration(){['errFullName','errContact','errPassword','errCategory','errTown'].forEach(i=>document.getElementById(i).textContent='');const d={full_name:regFullName.value.trim(),contact:regContact.value.trim(),password:regPassword.value,category:regCategory.value,town:regTown.value.trim()};let ok=true;if(d.full_name.length<3){errFullName.textContent='Please type your full name.';ok=false}if(!validContact(d.contact)){errContact.textContent='Type a valid phone number or email.';ok=false}if(d.password.length<6){errPassword.textContent='Use at least 6 characters.';ok=false}if(!d.category){errCategory.textContent='Please select your category.';ok=false}if(d.town.length<2){errTown.textContent='Please type your town or city.';ok=false}if(!ok)return;registrationStatus.textContent='Creating your account…';registrationStatus.classList.add('show');try{const j=await platformPost({action:'register',device_id:deviceId(),...d},45000);saveSession(j.session);currentProfile=j.profile;currentAccess=j.access;registrationStatus.textContent='Account created successfully.';renderAccount();setTimeout(closeAccountModal,500)}catch(e){registrationStatus.textContent=e.message}}
-async function submitLogin(){loginStatus.textContent='Logging in…';loginStatus.classList.add('show');try{const j=await platformPost({action:'login',device_id:deviceId(),contact:loginContact.value.trim(),password:loginPassword.value},45000);saveSession(j.session);currentProfile=j.profile;currentAccess=j.access;loginStatus.textContent=firstName()?`Login successful. Welcome, ${firstName()}.`:'Login successful.';renderAccount();setTimeout(closeAccountModal,400)}catch(e){loginStatus.textContent=e.name==='AbortError'?'Login is taking longer than expected. Please try again.':(e.message||'We could not log you in. Please try again.')}}
+let deferredInstallPrompt=null;function isStandalone(){return window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true}function isIOS(){return /iphone|ipad|ipod/i.test(navigator.userAgent)}function installBox(){return document.getElementById('pwaInstallPrompt')}function installHelp(){return document.getElementById('pwaInstallHelp')}window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferredInstallPrompt=e;if(currentProfile&&!isStandalone())offerPwaInstall()});window.addEventListener('appinstalled',function(){deferredInstallPrompt=null;var b=installBox();if(b)b.hidden=true});var installBtn=document.getElementById('pwaInstallBtn');if(installBtn)installBtn.addEventListener('click',async function(){var h=installHelp();if(deferredInstallPrompt){deferredInstallPrompt.prompt();await deferredInstallPrompt.userChoice;deferredInstallPrompt=null;var b=installBox();if(b)b.hidden=true;return}if(h){h.hidden=false;h.textContent=isIOS()?'On iPhone/iPad: open this page in Safari, tap Share, then choose Add to Home Screen.':'Use your browser menu and choose Install app or Add to Home screen. If that option is not shown, keep using Salone Class Room in the browser.'}});var laterBtn=document.getElementById('pwaLaterBtn');if(laterBtn)laterBtn.addEventListener('click',function(){var b=installBox();if(b)b.hidden=true});function offerPwaInstall(){if(isStandalone())return;var b=installBox(),h=installHelp();if(!b)return;if(deferredInstallPrompt){if(h)h.hidden=true;b.hidden=false;return}if(isIOS()){if(h){h.hidden=false;h.textContent='On iPhone/iPad: tap Install below for instructions to add Salone Class Room to your Home Screen.'}b.hidden=false;return}if(h){h.hidden=false;h.textContent='If your browser supports app installation, use its menu and choose Install app or Add to Home screen.'}b.hidden=false}if('serviceWorker' in navigator)window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){})});
+async function submitPlatformRegistration(){['errFullName','errContact','errPassword','errCategory','errTown'].forEach(i=>document.getElementById(i).textContent='');const d={full_name:regFullName.value.trim(),contact:regContact.value.trim(),password:regPassword.value,category:regCategory.value,town:regTown.value.trim()};let ok=true;if(d.full_name.length<3){errFullName.textContent='Please type your full name.';ok=false}if(!validContact(d.contact)){errContact.textContent='Type a valid phone number or email.';ok=false}if(d.password.length<12){errPassword.textContent='Use at least 12 characters.';ok=false}if(!d.category){errCategory.textContent='Please select your category.';ok=false}if(d.town.length<2){errTown.textContent='Please type your town or city.';ok=false}if(!ok)return;registrationStatus.textContent='Creating your account…';registrationStatus.classList.add('show');try{const j=await platformPost({action:'register',device_id:deviceId(),...d},45000);saveSession(j.session);currentProfile=j.profile;currentAccess=j.access;registrationStatus.textContent='Account created successfully.';renderAccount();offerPwaInstall();setTimeout(closeAccountModal,500)}catch(e){registrationStatus.textContent=e.message}}
+async function submitLogin(){loginStatus.textContent='Logging in…';loginStatus.classList.add('show');try{const j=await platformPost({action:'login',device_id:deviceId(),contact:loginContact.value.trim(),password:loginPassword.value},45000);saveSession(j.session);currentProfile=j.profile;currentAccess=j.access;loginStatus.textContent=firstName()?`Login successful. Welcome, ${firstName()}.`:'Login successful.';renderAccount();offerPwaInstall();setTimeout(closeAccountModal,400)}catch(e){loginStatus.textContent=e.name==='AbortError'?'Login is taking longer than expected. Please try again.':(e.message||'We could not log you in. Please try again.')}}
 async function logoutPlatform(){try{await fetch(PLATFORM_API,{method:'POST',headers:{'Content-Type':'application/json',...authHeaders()},body:JSON.stringify({action:'logout'})})}catch{}clearSession();renderAccount();showAccountTab('login')}
 function price(c){return Number(platformConfig?.prices?.[c]||0)}function openPaymentModal(p){if(!p){openAccountModal();showAccountTab('login');return}paymentCategory.textContent=cat(p.category);paymentAmount.textContent=money(price(p.category));paymentNumber.textContent=platformConfig?.orange_money_number||'Contact administrator';paymentModal.classList.add('open');document.body.style.overflow='hidden'}function closePaymentModal(){paymentModal.classList.remove('open');document.body.style.overflow=''}
 async function submitPaymentRequest(){const s=paymentSender.value.trim(),ref=paymentReference.value.trim();errPaymentSender.textContent='';errPaymentReference.textContent='';if(s.replace(/\D/g,'').length<7){errPaymentSender.textContent='Please type the number used for payment.';return}if(ref.length<3){errPaymentReference.textContent='Please type the transaction reference.';return}paymentStatus.textContent='Submitting…';try{const r=await fetch(PLATFORM_API,{method:'POST',headers:{'Content-Type':'application/json',...authHeaders()},body:JSON.stringify({action:'payment_request',sender_number:s,transaction_reference:ref})}),j=await r.json();if(!r.ok)throw Error(j.error||'Unable to submit');paymentStatus.textContent='Payment submitted. The administrator will activate your access after verification.'}catch(e){paymentStatus.textContent=e.message}}
 async function refreshPlatform(){try{const r=await fetch(PLATFORM_API,{headers:authHeaders()}),d=await r.json();if(r.ok){platformConfig=d;currentProfile=d.profile||null;currentAccess=d.access||null;if(sessionToken()&&!d.profile)clearSession();renderAccount();if(d.announcement?.message){platformAnnouncementText.textContent=d.announcement.message;platformAnnouncement.hidden=false}}}catch(e){console.warn('Platform refresh failed',e)}}
+(function(){
+ const form=document.getElementById('supportForm'),status=document.getElementById('supportSubmitStatus'),btn=document.getElementById('supportSendBtn');
+ if(!form)return;
+ form.addEventListener('submit',async e=>{
+  e.preventDefault();
+  const payload={name:supportName.value.trim(),user_type:supportRole.value,message_type:supportType.value,contact:supportContact.value.trim(),message:supportMessage.value.trim()};
+  if(!payload.name||!payload.user_type||!payload.message_type||!payload.message){status.textContent='Please complete all required fields.';status.classList.add('show');return}
+  btn.disabled=true;status.textContent='Sending your message…';status.classList.add('show');
+  try{const r=await fetch('/.netlify/functions/support-message',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}),d=await r.json().catch(()=>({}));if(!r.ok)throw Error(d.error||'Unable to send your message.');status.textContent='Your message has been sent to Salone Class Room support.';form.reset()}catch(err){status.textContent=err.message||'Unable to send your message right now.'}finally{btn.disabled=false}
+ });
+})();
 setInterval(()=>{if(!sessionToken())return;fetch(PLATFORM_API,{method:'POST',headers:{'Content-Type':'application/json',...authHeaders()},body:JSON.stringify({action:'heartbeat',current_tool:document.visibilityState==='visible'?'Salone Class Room':''})}).then(r=>r.json()).then(d=>{if(d.access)currentAccess=d.access}).catch(()=>{})},120000);
 refreshPlatform();
-</script>
-<div class="pwa-install-bar" id="pwaInstallBar" role="region" aria-label="Install Salone Class Room">
-  <div class="pwa-install-copy"><strong>Keep Salone Class Room on this device</strong><span>Install it on the home screen for quicker access.</span></div>
-  <div class="pwa-install-actions"><button class="pwa-install-primary" id="pwaInstallBtn" type="button">Install</button><button class="pwa-install-later" id="pwaInstallLater" type="button">Later</button></div>
-</div>
-<script>
-(function(){
-  'use strict';
-  const bar=document.getElementById('pwaInstallBar'), installBtn=document.getElementById('pwaInstallBtn'), laterBtn=document.getElementById('pwaInstallLater'), offline=document.getElementById('pwaOfflineNote');
-  let deferredPrompt=null;
-  function updateOnline(){if(offline)offline.classList.toggle('show',!navigator.onLine)}
-  window.addEventListener('online',updateOnline); window.addEventListener('offline',updateOnline); updateOnline();
-  if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('/service-worker.js',{scope:'/'}).catch(()=>{}));}
-  window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;if(bar&&!localStorage.getItem('scr_install_later'))bar.classList.add('show')});
-  installBtn?.addEventListener('click',async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();try{await deferredPrompt.userChoice}catch{}deferredPrompt=null;bar?.classList.remove('show')});
-  laterBtn?.addEventListener('click',()=>{localStorage.setItem('scr_install_later','1');bar?.classList.remove('show')});
-  window.addEventListener('appinstalled',()=>{deferredPrompt=null;bar?.classList.remove('show')});
-})();
-</script>
-
-</body>
+</script></body>
 </html>
