@@ -1035,17 +1035,18 @@ select:disabled{background-color:#f3f6f9 !important;color:#7a8794 !important;opa
 
 <div class="prepare-teach-box" style="margin-top:18px">
 <h3>Prepare Exam Questions</h3>
-<p>Choose the teacher category, class or level, subject and curriculum topic for the examination. You can also type your own topic. Salone Class Room will generate exactly <strong>5 theory questions</strong>. Multiple-choice options, answers and marking schemes will not be included.</p>
+<p>Choose the teacher category, class or level, subject and curriculum topic for the examination. You can also type your own topic. Choose the question type: <strong>Theory — 5 questions</strong> or <strong>Objective — 10 questions</strong>. Each time you tap Generate Questions, Salone Class Room will prepare a fresh set of questions for the selected class, subject and topic.</p>
 <div class="teacher-form-grid" style="margin-top:12px">
 <div><label for="teacherExamCategory">Teacher Category</label><select id="teacherExamCategory"><option value="">Select teacher category</option><option value="primary">Primary School Teacher</option><option value="jss">Junior Secondary School (JSS) Teacher</option><option value="sss">Senior Secondary School (SSS) Teacher</option></select></div>
 <div><label for="teacherExamClass">Class / Level</label><select id="teacherExamClass"><option value="">Select teacher category first</option></select></div>
 <div hidden id="teacherExamStreamWrap"><label for="teacherExamStream">SSS stream</label><select id="teacherExamStream"><option value="">Select stream</option></select></div>
 <div><label for="teacherExamSubject">Subject</label><select id="teacherExamSubject"><option value="">Select teacher category and class first</option></select></div>
 <div><label for="teacherExamTopic">Type or choose your topic</label><select id="teacherExamTopic"><option value="">Choose a subject first</option></select></div>
+<div><label for="teacherExamType">Question Type</label><select id="teacherExamType"><option value="">Select question type</option><option value="theory">Theory — 5 questions</option><option value="objective">Objective — 10 questions</option></select></div>
 </div>
 <input id="teacherExamTopicOther" placeholder="Or type your own topic" hidden/>
 <p class="topic-help">Select “Other / Type my own topic” if the topic you want is not listed.</p>
-<button class="btn btn-blue" id="prepareTeacherExamBtn" type="button">Prepare Exam Questions</button>
+<button class="btn btn-blue" id="prepareTeacherExamBtn" type="button">Generate Questions</button>
 </div>
 <div aria-live="polite" class="teacher-result-note" id="teacherOnlyMessage"></div>
 </div>
@@ -1834,6 +1835,7 @@ function preparePrimaryTeacherSupport(type){
   const examSubject=document.getElementById('teacherExamSubject');
   const examTopic=document.getElementById('teacherExamTopic');
   const examTopicOther=document.getElementById('teacherExamTopicOther');
+  const examType=document.getElementById('teacherExamType');
   const msg=document.getElementById('teacherOnlyMessage');
   if(!category)return;
 
@@ -1854,7 +1856,7 @@ function preparePrimaryTeacherSupport(type){
   const selectedExamTopic=()=>((examTopic.value==='__other__'?examTopicOther.value:examTopic.value)||'').trim();
   const baseValid=()=>category.value&&classSel.value&&subjectSel.value&&(category.value!=='sss'||streamSel.value);
   document.getElementById('prepareTeacherLessonBtn')?.addEventListener('click',async()=>{const topic=selectedTopic(),date=(document.getElementById('teacherPrepDate')?.value||'').trim(),duration=(document.getElementById('teacherPrepDuration')?.value||'').trim();if(!baseValid()||!topic||!date||!duration){msg.textContent='Please choose the teacher category, class, subject and topic, then add the date and duration.';return}const context=['Document: Lesson Notes','Date: '+date,'Duration: '+duration,'Prepare practical lesson notes for the selected class, subject and topic.'].join('\n');await callLearning({level:category.value,class_level:classSel.value,subject:subjectSel.value,topic,task:'teacher',context,tool_key:'teacher-lesson-note'},msg)});
-  document.getElementById('prepareTeacherExamBtn')?.addEventListener('click',async()=>{const subject=(examSubject.value||'').trim(),topic=selectedExamTopic();if(!examCategory.value||!examClass.value||(examCategory.value==='sss'&&!examStream.value)||!subject||!topic){msg.textContent='Please choose the teacher category, class or level, subject and topic for the exam questions.';return}await callLearning({level:examCategory.value,class_level:examClass.value,subject,topic,task:'teacher_exam',context:'Generate exactly five theory examination questions only. Number them 1 to 5. Do not include answers, marking schemes or multiple-choice options.',tool_key:'teacher-exam-questions'},msg)});
+  document.getElementById('prepareTeacherExamBtn')?.addEventListener('click',async()=>{const subject=(examSubject.value||'').trim(),topic=selectedExamTopic(),type=(examType?.value||'').trim();if(!examCategory.value||!examClass.value||(examCategory.value==='sss'&&!examStream.value)||!subject||!topic||!type){msg.textContent='Please choose the teacher category, class or level, subject, topic and question type.';return}const nonce=Date.now()+'-'+Math.random().toString(36).slice(2);if(type==='objective'){await callLearning({level:examCategory.value,class_level:examClass.value,subject,topic,task:'teacher_exam',exam_type:'objective',question_count:10,context:'Generate a NEW set of exactly ten objective (multiple-choice) examination questions. Number them 1 to 10. Give four options A-D for every question. Do not include answers or marking schemes. Fresh generation ID: '+nonce,tool_key:'teacher-exam-objective'},msg);return}await callLearning({level:examCategory.value,class_level:examClass.value,subject,topic,task:'teacher_exam',exam_type:'theory',question_count:5,context:'Generate a NEW set of exactly five theory examination questions only. Number them 1 to 5. Do not include answers, marking schemes or multiple-choice options. Fresh generation ID: '+nonce,tool_key:'teacher-exam-theory'},msg)});
 })();
 </script><script>
 (function(){
