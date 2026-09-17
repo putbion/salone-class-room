@@ -76,7 +76,7 @@ th{background:#f6f9fc;color:#3b5267}
 <section id="dashboard">
 <div class="toolbar">
 <div><strong>Dashboard</strong><div class="status" id="status">Ready</div></div>
-<div><a class="btn btn-light" href="index.html" style="display:inline-block;text-decoration:none">Open Salone Class Room — Free Admin Access</a> <button class="btn btn-light" onclick="manualRefreshDashboard(this)">Refresh</button> <button class="btn btn-primary" onclick="signOut()">Sign out</button></div>
+<div><a class="btn btn-light" href="index.html" style="display:inline-block;text-decoration:none">Open Salone Class Room — Free Admin Access</a> <button class="btn btn-light" onclick="refreshDashboard()">Refresh</button> <button class="btn btn-primary" onclick="signOut()">Sign out</button></div>
 </div>
 <nav class="tabs">
 <button class="tab active" onclick="showTab('overview',this)">Overview</button>
@@ -86,14 +86,15 @@ th{background:#f6f9fc;color:#3b5267}
 <button class="tab" onclick="showTab('teachers',this)">Teachers</button>
 <button class="tab" onclick="showTab('university',this)">University</button>
 <button class="tab" onclick="showTab('feedback',this)">Feedback</button>
-<button class="tab" onclick="showTab('system',this)">AI &amp; System</button><button class="tab" onclick="showTab('aiusage',this)">Individual AI Usage</button>
+<button class="tab" onclick="showTab('system',this)">AI &amp; System</button>
+<button class="tab" onclick="showTab('aiusage',this)">Individual AI Usage</button>
 <button class="tab" onclick="showTab('settings',this)">Settings</button>
 <button class="tab" onclick="showTab('features',this)">Feature Management</button>
 <button class="tab" onclick="showTab('accounts',this)">User Management</button><button class="tab" onclick="showTab('payments',this)">Payments</button><button class="tab" onclick="showTab('announcements',this)">Announcements</button><button class="tab" onclick="showTab('access',this)">Access &amp; Pricing</button></nav>
 <section class="panel active" id="panel-overview">
 <div class="kpis">
 <div class="kpi"><span>REGISTERED USERS</span><strong id="kUsers">—</strong></div>
-<div class="kpi"><span>NEW USERS • 30 DAYS</span><strong id="kNewUsers">—</strong></div><div class="kpi"><span>ONLINE / ACTIVE • 5 MIN</span><strong id="kOnline">—</strong></div><div class="kpi"><span>ACTIVE TODAY</span><strong id="kActiveToday">—</strong></div><div class="kpi"><span>ACTIVE USERS • 30 DAYS</span><strong id="kActive30">—</strong></div><div class="kpi"><span>INACTIVE USERS • 30+ DAYS</span><strong id="kInactive30">—</strong></div>
+<div class="kpi"><span>NEW USERS • 30 DAYS</span><strong id="kNewUsers">—</strong></div><div class="kpi"><span>ONLINE / ACTIVE • 5 MIN</span><strong id="kOnline">—</strong></div><div class="kpi"><span>ACTIVE TODAY</span><strong id="kActiveToday">—</strong></div>
 <div class="kpi"><span>LEARNING EVENTS • 30 DAYS</span><strong id="kEvents">—</strong></div>
 <div class="kpi"><span>NEW MESSAGES</span><strong id="kMessages">—</strong></div>
 <div class="kpi"><span>PRIMARY ACTIVITY</span><strong id="kPrimary">—</strong></div>
@@ -143,11 +144,8 @@ th{background:#f6f9fc;color:#3b5267}
 <div class="box"><h3>Deployment Safety</h3><p class="note">The Supabase service-role key must never be placed in index.html or admin.html. Keep it only in Netlify Environment Variables. Admin requests are validated server-side.</p></div>
 </div>
 </section>
-<section class="panel" id="panel-aiusage">
-<div class="kpis"><div class="kpi"><span>AI CALLS • TODAY</span><strong id="aiCallsToday">—</strong></div><div class="kpi"><span>AI CALLS • 7 DAYS</span><strong id="aiCalls7d">—</strong></div><div class="kpi"><span>AI CALLS • 30 DAYS</span><strong id="aiCalls30d">—</strong></div><div class="kpi"><span>USERS USING AI • 30 DAYS</span><strong id="aiRegisteredUsers">—</strong></div></div>
-<div class="box" style="margin-top:16px"><h3>Individual AI Usage</h3><p class="note">Shows each registered user's AI use for today, the last 7 days and the last 30 days.</p><label for="aiUsageUserFilter">Choose a user</label><select id="aiUsageUserFilter" onchange="renderAIUsage(currentData)"><option value="">All registered users</option></select></div>
-<div class="table-wrap" style="margin-top:16px"><table><thead><tr><th>Name</th><th>Phone / Email</th><th>Category</th><th>Today</th><th>7 Days</th><th>30 Days</th><th>Total</th><th>Last AI Use</th></tr></thead><tbody id="aiUsageByUserBody"></tbody></table></div>
-</section><section class="panel" id="panel-settings">
+<section class="panel" id="panel-aiusage"><div class="kpis"><div class="kpi"><span>TOTAL AI USE • TODAY</span><strong id="aiCallsToday">—</strong></div><div class="kpi"><span>TOTAL AI USE • 7 DAYS</span><strong id="aiCalls7d">—</strong></div><div class="kpi"><span>TOTAL AI USE • 30 DAYS</span><strong id="aiCalls30d">—</strong></div><div class="kpi"><span>USERS WITH AI ACTIVITY</span><strong id="usersWithUsage">—</strong></div></div><div class="grid2"><div class="box"><h3>Highest AI User(s)</h3><div id="highestUsageUsers" class="metric-list"></div></div><div class="box"><h3>Lowest AI User(s)</h3><div id="lowestUsageUsers" class="metric-list"></div></div></div><div class="box" style="margin-top:16px"><h3>Individual AI Usage</h3><p class="note">Every registered user is listed, including users with zero recorded AI requests.</p><select id="aiUsageUserFilter" onchange="renderAIUsage(currentData)"><option value="">All registered users</option></select></div><div class="table-wrap" style="margin-top:16px"><table><thead><tr><th>Name</th><th>Phone / Email</th><th>Category</th><th>Today</th><th>7 Days</th><th>30 Days</th><th>Total Logged</th><th>Last AI Use</th></tr></thead><tbody id="aiUsageByUserBody"></tbody></table></div><div class="box" style="margin-top:16px"><h3>Recent AI Requests</h3><div class="table-wrap"><table><thead><tr><th>Date</th><th>User</th><th>Tool</th><th>Provider</th><th>Model</th></tr></thead><tbody id="aiUsageRecentBody"></tbody></table></div></div></section>
+<section class="panel" id="panel-settings">
 <div class="box">
 <h3>Administration Settings</h3>
 <p class="note">Public pricing is not displayed on the classroom page. Prices and access periods are controlled here and shown only when payment is required.</p>
@@ -177,9 +175,7 @@ th{background:#f6f9fc;color:#3b5267}
 <div class="kpi"><span>JSS / SSS</span><strong id="profileSecondary">—</strong></div>
 <div class="kpi"><span>TEACHERS / UNIVERSITY</span><strong id="profileAdvanced">—</strong></div>
 </div>
-<div class="box" style="margin-top:16px"><h3>Search Current Users</h3><p class="note">Search your existing registered users by name, phone/email, category or town.</p><input id="userSearch" type="search" placeholder="Search current users" oninput="renderProfilesTable()"/></div>
-<div class="kpis" style="margin-top:16px"><div class="kpi"><span>TOTAL AI USE • TODAY</span><strong id="aiDay">—</strong></div><div class="kpi"><span>TOTAL AI USE • 7 DAYS</span><strong id="aiWeek">—</strong></div><div class="kpi"><span>TOTAL AI USE • 30 DAYS</span><strong id="aiMonth">—</strong></div></div>
-<div class="table-wrap" style="margin-top:16px"><table><thead><tr><th>Name</th><th>Phone / Email</th><th>Category</th><th>Town</th><th>Last seen</th><th>Status</th><th>AI Today</th><th>AI 7 Days</th><th>AI 30 Days</th><th>Access</th><th>Action</th></tr></thead><tbody id="profilesBody"></tbody></table></div>
+<div class="box" style="margin-top:16px"><h3>Individual User Access Control</h3><p class="note">Choose a registered user to grant access, block, unblock or open full settings.</p><select id="individualUserSelect"><option value="">Select a user</option></select><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><select id="individualAccessDays" style="max-width:150px"><option value="7">7 days</option><option value="30" selected>30 days</option><option value="90">90 days</option><option value="180">180 days</option><option value="365">365 days</option></select><button class="btn btn-primary" onclick="grantSelectedUserAccess()">Grant Access</button><button class="btn btn-light" onclick="setSelectedUserBlocked(true)">Block</button><button class="btn btn-light" onclick="setSelectedUserBlocked(false)">Unblock</button><button class="btn btn-light" onclick="manageSelectedUser()">Full Settings</button></div><div class="msg" id="individualUserStatus"></div></div><div class="box" style="margin-top:16px"><h3>Search Current Users</h3><p class="note">Search registered users by name, phone/email, category or town. Tap Search or press Enter.</p><div style="display:flex;gap:8px;flex-wrap:wrap"><input id="profileSearch" placeholder="Search current users" style="flex:1;min-width:210px"><button class="btn btn-primary" id="profileSearchBtn" type="button" onclick="searchProfiles()">Search</button><button class="btn btn-light" type="button" onclick="clearProfileSearch()">Show All</button></div><div class="note" id="profileSearchStatus" style="margin-top:8px"></div></div><div class="table-wrap" style="margin-top:16px"><table><thead><tr><th>Name</th><th>Phone / Email</th><th>Category</th><th>Town</th><th>Last seen</th><th>Status</th><th>Access</th><th>Action</th></tr></thead><tbody id="profilesBody"></tbody></table></div>
 </section><section class="panel" id="panel-payments">
 <div class="kpis">
 <div class="kpi"><span>PENDING</span><strong id="pendingPayments">—</strong></div>
@@ -194,10 +190,10 @@ th{background:#f6f9fc;color:#3b5267}
 <h3>Publish Announcement</h3>
 <label for="announcementMessage">Announcement</label><input id="announcementMessage" placeholder="Type the announcement users should see"/>
 <label for="announcementActive">Status</label><select id="announcementActive"><option value="true">Active</option><option value="false">Inactive</option></select>
-<input type="hidden" id="announcementId"/><button class="btn btn-primary" onclick="saveAnnouncement()" style="margin-top:12px">Save announcement</button> <button class="btn btn-light" onclick="clearAnnouncementEditor()" style="margin-top:12px">New announcement</button>
+<button class="btn btn-primary" onclick="saveAnnouncement()" style="margin-top:12px">Publish announcement</button>
 <div class="msg" id="announcementStatus"></div>
 </div>
-<div class="box"><h3>Current / Previous Announcements</h3><p class="note" id="currentAnnouncement">No announcement loaded.</p><div class="table-wrap" style="margin-top:12px"><table><thead><tr><th>Announcement</th><th>Status</th><th>Date</th><th>Action</th></tr></thead><tbody id="announcementsBody"></tbody></table></div></div>
+<div class="box"><h3>Current Announcement</h3><p class="note" id="currentAnnouncement">No announcement loaded.</p><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-light" type="button" onclick="editCurrentAnnouncement()">Edit</button><button class="btn btn-light" type="button" onclick="deleteCurrentAnnouncement()">Delete</button></div></div>
 </div>
 </section><section class="panel" id="panel-access">
 <div class="grid2">
@@ -283,15 +279,7 @@ async function signIn(){
 }
 function signOut(){sessionStorage.removeItem('salone_admin_token');localStorage.removeItem('salone_admin_token');location.reload()}
 function showTab(name,btn){document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));document.getElementById('panel-'+name).classList.add('active');document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));btn.classList.add('active')}
-async function manualRefreshDashboard(btn){
- const old=btn.textContent;btn.disabled=true;btn.textContent='Refreshing…';
- const st=document.getElementById('status');st.textContent='Refreshing dashboard data…';
- try{await refreshDashboard()}catch(e){console.error(e);st.textContent='Refresh failed: '+(e.message||'Unable to load dashboard data.')}
- finally{btn.disabled=false;btn.textContent=old}
-}
-async function refreshDashboard(){const t=adminToken();if(!t)return;document.getElementById('status').textContent='Refreshing…';const r=await fetch('/.netlify/functions/admin-api',{headers:{Authorization:'Bearer '+t},cache:'no-store'});
-let body={};const raw=await r.text();try{body=raw?JSON.parse(raw):{}}catch(e){throw new Error('Admin API returned an invalid response.')}
-if(!r.ok){if(r.status===401){sessionStorage.removeItem('salone_admin_token');localStorage.removeItem('salone_admin_token');location.reload();return}document.getElementById('status').textContent=body.error||'Unable to refresh';return}currentData=body;render(body)}
+async function refreshDashboard(){const t=adminToken();if(!t)return;document.getElementById('status').textContent='Refreshing…';const r=await fetch('/.netlify/functions/admin-api',{headers:{Authorization:'Bearer '+t}});const body=await r.json();if(!r.ok){if(r.status===401){sessionStorage.removeItem('salone_admin_token');localStorage.removeItem('salone_admin_token');location.reload();return}document.getElementById('status').textContent=body.error||'Unable to refresh';return}currentData=body;render(body)}
 function n(v){return Number(v||0).toLocaleString()}
 function date(v){if(!v)return '—';try{return new Date(v).toLocaleString()}catch{return v}}
 function esc(v){const d=document.createElement('div');d.textContent=v??'';return d.innerHTML}
@@ -300,7 +288,7 @@ function render(data){
   document.getElementById('kUsers').textContent=n(s.registered_users);
   document.getElementById('kNewUsers').textContent=n(s.new_users_30d);
   document.getElementById('kOnline').textContent=n(s.online_now);
-  document.getElementById('kActiveToday').textContent=n(s.active_today);document.getElementById('kActive30').textContent=n(s.active_users_30d);document.getElementById('kInactive30').textContent=n(s.inactive_users_30d);
+  document.getElementById('kActiveToday').textContent=n(s.active_today);
   document.getElementById('kEvents').textContent=n(s.events_30d);
   document.getElementById('kMessages').textContent=n(s.new_messages);
   document.getElementById('kPrimary').textContent=n(cats.primary);
@@ -316,7 +304,7 @@ function render(data){
     `<div class="metric-row"><span>Last refresh</span><strong>${new Date().toLocaleTimeString()}</strong></div>`;
 
   const users=data.users||[];
-  document.getElementById('usersBody').innerHTML=users.length?users.map(u=>`<tr><td>${esc(u.email)}</td><td>${date(u.created_at)}</td><td>${date(u.last_sign_in_at)}</td><td><span class="pill">${u.banned_until?'Restricted':'Active'}</span></td></tr>`).join(''):`<tr><td colspan="4" class="empty">No users found.</td></tr>`;
+  const legacyUsersBody=document.getElementById('usersBody'); if(legacyUsersBody) legacyUsersBody.innerHTML=users.length?users.map(u=>`<tr><td>${esc(u.email)}</td><td>${date(u.created_at)}</td><td>${date(u.last_sign_in_at)}</td><td><span class="pill">${u.banned_until?'Restricted':'Active'}</span></td></tr>`).join(''):`<tr><td colspan="4" class="empty">No users found.</td></tr>`;
 
   const events=data.events||[];
   document.getElementById('activityBody').innerHTML=events.length?events.map(e=>`<tr><td>${date(e.created_at)}</td><td>${esc(e.event_type)}</td><td>${esc(e.section)}</td><td>${esc(e.detail)}</td></tr>`).join(''):`<tr><td colspan="4" class="empty">No learning activity has been recorded yet.</td></tr>`;
@@ -332,80 +320,18 @@ function render(data){
     `<div class="metric-row"><span>Support messages table</span><strong>${data.system?.messages_table?'Ready':'Run SQL setup'}</strong></div>`+
     `<div class="metric-row"><span>Activity table</span><strong>${data.system?.events_table?'Ready':'Run SQL setup'}</strong></div>`;
 
-  renderPlatformAdmin(data);
-  try{renderAIUsage(data)}catch(e){console.warn('AI usage panel could not render',e)}
-  document.getElementById('status').textContent='Live data refreshed '+new Date().toLocaleTimeString();
+  renderAIUsage(data); document.getElementById('status').textContent='Live data refreshed '+new Date().toLocaleTimeString();renderPlatformAdmin(data);
 }
 
 (async()=>{if(adminToken()){document.getElementById('loginGate').style.display='none';document.getElementById('dashboard').style.display='block';try{await refreshDashboard()}catch(e){console.warn('Dashboard refresh failed',e);document.getElementById('status').textContent='Dashboard opened. Tap Refresh to reload data.'}}})();
 </script>
 <script>
 async function adminPost(payload){const t=adminToken();if(!t)throw Error('Administrator session expired.');const r=await fetch('/.netlify/functions/admin-api',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+t},body:JSON.stringify(payload)});const d=await r.json();if(!r.ok)throw Error(d.error||'Unable to save');return d}
-
-function renderAIUsage(data){
- const profiles=Array.isArray(data?.profiles)?data.profiles:[],logs=Array.isArray(data?.ai_usage)?data.ai_usage:[],now=Date.now(),D=86400000,pm=new Map(profiles.map(p=>[String(p.id),p]));
- const sel=document.getElementById('aiUsageUserFilter');if(!sel)return;const prev=sel.value;
- sel.innerHTML='<option value="">All registered users</option>'+profiles.map(p=>`<option value="${esc(p.id)}">${esc(p.full_name||'Unnamed user')} — ${esc(p.contact||p.email||p.phone||'No contact')}</option>`).join('');
- if(profiles.some(p=>String(p.id)===String(prev)))sel.value=prev;
- const reg=logs.filter(x=>x.profile_id&&pm.has(String(x.profile_id))), c=(arr,days)=>arr.filter(x=>x.created_at&&now-new Date(x.created_at).getTime()<=days*D).length;
- document.getElementById('aiCallsToday').textContent=n(c(logs,1));document.getElementById('aiCalls7d').textContent=n(c(logs,7));document.getElementById('aiCalls30d').textContent=n(c(logs,30));document.getElementById('aiRegisteredUsers').textContent=n(new Set(reg.filter(x=>x.created_at&&now-new Date(x.created_at).getTime()<=30*D).map(x=>String(x.profile_id))).size);
- const rows=profiles.map(p=>{const ls=reg.filter(x=>String(x.profile_id)===String(p.id)),last=ls.reduce((v,x)=>!v||new Date(x.created_at)>new Date(v)?x.created_at:v,null);return {p,d:c(ls,1),w:c(ls,7),m:c(ls,30),t:ls.length,last}}).filter(x=>!sel.value||String(x.p.id)===String(sel.value));
- document.getElementById('aiUsageByUserBody').innerHTML=rows.length?rows.map(x=>`<tr><td>${esc(x.p.full_name||'Unnamed user')}</td><td>${esc(x.p.contact||x.p.email||x.p.phone||'—')}</td><td>${esc(x.p.category||'—')}</td><td>${n(x.d)}</td><td>${n(x.w)}</td><td>${n(x.m)}</td><td>${n(x.t)}</td><td>${date(x.last)}</td></tr>`).join(''):'<tr><td colspan="8" class="empty">No registered users found.</td></tr>';
-}
-function renderProfilesTable(){
- const tbody=document.getElementById('profilesBody');
- if(!tbody)return;
- const profiles=Array.isArray(window._adminProfiles)?window._adminProfiles:[];
- const q=(document.getElementById('userSearch')?.value||'').trim().toLowerCase();
- const usage=window._aiUsageByProfile||{};
- const rows=profiles.filter(function(p){
-   if(!q)return true;
-   return [p.full_name,p.name,p.contact,p.email,p.phone,p.phone_number,p.category,p.town]
-     .some(function(v){return String(v||'').toLowerCase().includes(q)});
- });
- if(!rows.length){tbody.innerHTML='<tr><td colspan="11" class="empty">No registered users found.</td></tr>';return}
- tbody.innerHTML=rows.map(function(p){
-   try{
-     const id=String(p.id||p.user_id||'');
-     const name=p.full_name||p.name||p.first_name||'Unnamed user';
-     const contact=p.contact||p.email||p.phone||p.phone_number||'—';
-     const category=p.category||p.user_category||p.level||'—';
-     const town=p.town||p.location||'—';
-     const last=p.last_seen_at||p.last_seen||p.updated_at||null;
-     const now=Date.now(),lastMs=last?new Date(last).getTime():0;
-     const online=lastMs&&now-lastMs<=300000,active=lastMs&&now-lastMs<=2592000000;
-     const u=usage[id]||{day:0,week:0,month:0};
-     const paid=!!p.paid_active&&(!p.paid_access_end||new Date(p.paid_access_end)>=new Date());
-     const free=!!(p.free_access_start||p.free_access_end)&&(!p.free_access_end||new Date(p.free_access_end)>=new Date());
-     const blocked=p.account_status==='blocked';
-     const access=blocked?'BLOCKED':paid?'PAID ACTIVE':free?'FREE':'UNPAID / EXPIRED';
-     return '<tr>'+
-       '<td>'+esc(name)+'</td>'+
-       '<td>'+esc(contact)+'</td>'+
-       '<td>'+esc(category)+'</td>'+
-       '<td>'+esc(town)+'</td>'+
-       '<td>'+(online?'<span class="pill">Online</span> ':'')+date(last)+'</td>'+
-       '<td><span class="pill">'+(blocked?'BLOCKED':online?'ONLINE':active?'ACTIVE':'INACTIVE')+'</span></td>'+
-       '<td>'+n(u.day||0)+'</td><td>'+n(u.week||0)+'</td><td>'+n(u.month||0)+'</td>'+
-       '<td><span class="pill">'+access+'</span></td>'+
-       '<td>'+(id?'<button class="btn btn-light" onclick="openUserManager(decodeURIComponent(\''+encodeURIComponent(id)+'\'))">Manage</button>':'—')+'</td>'+
-       '</tr>';
-   }catch(e){
-     console.warn('Could not render one profile',e);
-     return '<tr><td colspan="11">A user record could not be displayed.</td></tr>';
-   }
- }).join('');
-}
-function renderAnnouncements(items){const b=document.getElementById('announcementsBody');if(!b)return;b.innerHTML=items.length?items.map(x=>`<tr><td>${esc(x.message)}</td><td>${x.active?'ACTIVE':'INACTIVE'}</td><td>${date(x.created_at)}</td><td><button class="btn btn-light" onclick="editAnnouncement('${encodeURIComponent(String(x.id))}')">Edit</button> <button class="btn btn-light" onclick="deleteAnnouncement('${encodeURIComponent(String(x.id))}')">Delete</button></td></tr>`).join(''):'<tr><td colspan="4" class="empty">No announcements yet.</td></tr>'}
-function editAnnouncement(id){const x=(currentData?.announcements||[]).find(a=>String(a.id)===decodeURIComponent(id));if(!x)return;announcementId.value=x.id;announcementMessage.value=x.message||'';announcementActive.value=String(!!x.active)}
-function clearAnnouncementEditor(){announcementId.value='';announcementMessage.value='';announcementActive.value='true'}
-async function deleteAnnouncement(id){if(!confirm('Delete this announcement?'))return;try{await adminPost({action:'delete_announcement',id:decodeURIComponent(id)});clearAnnouncementEditor();await refreshDashboard()}catch(e){announcementStatus.textContent=e.message;announcementStatus.classList.add('show')}}
-
 async function saveAnnouncement(){
  const s=document.getElementById('announcementStatus');s.classList.add('show');
  const message=document.getElementById('announcementMessage').value.trim(),active=document.getElementById('announcementActive').value==='true';
  if(!message){s.textContent='Please type the announcement first.';return}
- try{await adminPost({action:'save_announcement',id:announcementId.value||null,message,active});s.textContent='Announcement saved.';clearAnnouncementEditor();refreshDashboard()}catch(e){s.textContent=e.message}
+ try{const id=(currentData?.announcement&&document.getElementById('announcementMessage').value.trim()===String(currentData.announcement.message||'').trim())?currentData.announcement.id:null;await adminPost({action:id?'update_announcement':'save_announcement',id,message,active});s.textContent=id?'Announcement updated.':'Announcement saved.';await refreshDashboard();const b=document.querySelector('#panel-announcements .btn-primary');if(b)b.textContent='Publish announcement'}catch(e){s.textContent=e.message}
 }
 async function saveAccessSettings(){
  const st=document.getElementById('accessStatus');st.classList.add('show');
@@ -417,66 +343,36 @@ async function addAssistantAdmin(){const st=adminAccountStatus;st.classList.add(
 async function toggleAssistantAdmin(email,active){if(!confirm((active?'Enable ':'Disable ')+email+' as an administrator?'))return;try{await adminPost({action:'admin_toggle',email,active});refreshDashboard()}catch(e){alert(e.message)}}
 async function resolveResetRequest(id){try{await adminPost({action:'password_reset_resolve',id});refreshDashboard()}catch(e){alert(e.message)}}
 function renderPlatformAdmin(data){
- const $id=id=>document.getElementById(id);
- const adminsBody=$id('adminsBody');
- const aiEnabled=$id('aiEnabled');
- const aiModel=$id('aiModel');
- const announcementActive=$id('announcementActive');
- const announcementId=$id('announcementId');
- const announcementMessage=$id('announcementMessage');
- const currentAnnouncement=$id('currentAnnouncement');
- const defaultAccessDays=$id('defaultAccessDays');
- const featuresBody=$id('featuresBody');
- const freeAccessEnabled=$id('freeAccessEnabled');
- const freeAccessStart=$id('freeAccessStart');
- const freeAccessUntil=$id('freeAccessUntil');
- const jssFree=$id('jssFree');
- const orangeApiBaseUrl=$id('orangeApiBaseUrl');
- const orangeApiEnabled=$id('orangeApiEnabled');
- const orangeMerchantId=$id('orangeMerchantId');
- const orangeMoneyKpi=$id('orangeMoneyKpi');
- const orangeMoneyNumber=$id('orangeMoneyNumber');
- const orangePaymentMode=$id('orangePaymentMode');
- const orangeWebhookUrl=$id('orangeWebhookUrl');
- const paymentsBody=$id('paymentsBody');
- const pendingPayments=$id('pendingPayments');
- const priceJss=$id('priceJss');
- const pricePrimary=$id('pricePrimary');
- const priceSss=$id('priceSss');
- const priceTeacher=$id('priceTeacher');
- const priceUniversity=$id('priceUniversity');
- const primaryFree=$id('primaryFree');
- const profileAdvanced=$id('profileAdvanced');
- const profileCount=$id('profileCount');
- const profilePrimary=$id('profilePrimary');
- const profileSecondary=$id('profileSecondary');
- const rejectedPayments=$id('rejectedPayments');
- const resetRequestsBody=$id('resetRequestsBody');
- const settingAdminEmail=$id('settingAdminEmail');
- const sssFree=$id('sssFree');
- const teacherFree=$id('teacherFree');
- const universityFree=$id('universityFree');
- const verifiedPayments=$id('verifiedPayments');
-
- const profiles=data.profiles||[],pays=data.payments||[],cfg=data.platform_settings||{},ann=data.announcement||null,ais=data.ai_usage_summary||{};
-const aid=document.getElementById('aiDay'),aiw=document.getElementById('aiWeek'),aim=document.getElementById('aiMonth');
-if(aid)aid.textContent=n(ais.day??0);if(aiw)aiw.textContent=n(ais.week??0);if(aim)aim.textContent=n(ais.month??0);
+ const profiles=data.profiles||[],pays=data.payments||[],cfg=data.platform_settings||{},ann=data.announcement||null;
  const admins=data.admins||[],resetRequests=data.reset_requests||[],features=data.features||[],identity=data.admin_identity||{};settingAdminEmail.value=identity.email||settingAdminEmail.value||'';adminsBody.innerHTML=[{email:identity.role==='owner'?identity.email:'',role:'owner',active:true,added_by:'Main administrator'},...admins.filter(a=>a.email!==identity.email)].filter(a=>a.email).map(a=>`<tr><td>${esc(a.email)}</td><td>${esc((a.role||'assistant').toUpperCase())}</td><td><span class="pill">${a.active===false?'DISABLED':'ACTIVE'}</span></td><td>${esc(a.added_by||'—')}</td><td>${(a.role||'')==='owner'?'Main admin':`<button class="btn btn-light" onclick="toggleAssistantAdmin(decodeURIComponent('${encodeURIComponent(String(a.email||''))}'),${a.active===false})">${a.active===false?'Enable':'Disable'}</button>`}</td></tr>`).join('')||'<tr><td colspan="5" class="empty">No administrator accounts found.</td></tr>';resetRequestsBody.innerHTML=resetRequests.length?resetRequests.map(r=>`<tr><td>${date(r.created_at)}</td><td>${esc(r.user_profiles?.full_name||'—')}</td><td>${esc(r.contact||r.user_profiles?.contact||r.user_profiles?.email||r.user_profiles?.phone||'—')}</td><td><span class="pill">${esc(r.status||'pending')}</span></td><td>${r.status==='pending'?`<button class="btn btn-light" onclick="resolveResetRequest(decodeURIComponent('${encodeURIComponent(String(r.id||''))}'))">Mark resolved</button>`:'—'}</td></tr>`).join(''):'<tr><td colspan="5" class="empty">No password reset requests.</td></tr>';featuresBody.innerHTML=features.length?features.map(f=>`<tr><td><strong>${esc(f.feature_name)}</strong><br><small>${esc(f.feature_key)}</small></td><td>${esc(f.section)}</td><td>${esc(f.target_category)}</td><td><span class="pill">${f.enabled?'ENABLED':'DISABLED'}</span></td><td>Le ${Number(f.price||0).toLocaleString()}</td><td>${Number(f.display_order||100)}</td><td><button class="btn btn-light" onclick="editFeature(decodeURIComponent('${encodeURIComponent(String(f.id||''))}'))">Edit</button> <button class="btn btn-light" onclick="toggleFeature(decodeURIComponent('${encodeURIComponent(String(f.id||''))}'),${!f.enabled})">${f.enabled?'Disable':'Enable'}</button></td></tr>`).join(''):'<tr><td colspan="7" class="empty">No features registered yet.</td></tr>';window._featureRows=features;
  const cat=c=>({primary:'Primary',jss:'JSS',sss:'SSS',teacher:'Teacher',university:'University'})[c]||c;
  const contact=p=>p.email||p.phone||'—';
  profileCount.textContent=n(profiles.length);profilePrimary.textContent=n(profiles.filter(p=>p.category==='primary').length);profileSecondary.textContent=n(profiles.filter(p=>['jss','sss'].includes(p.category)).length);profileAdvanced.textContent=n(profiles.filter(p=>['teacher','university'].includes(p.category)).length);
- window._adminProfiles=profiles;window._aiUsageByProfile=data.ai_usage_by_profile||{};renderProfilesTable();
+ renderProfilesTable(profiles);const sel=document.getElementById('individualUserSelect');if(sel){const prev=sel.value;sel.innerHTML='<option value="">Select a user</option>'+profiles.map(p=>`<option value="${esc(p.id)}">${esc(p.full_name||'Unnamed user')} — ${esc(p.contact||p.email||p.phone||'—')}</option>`).join('');if(profiles.some(p=>String(p.id)===String(prev)))sel.value=prev;}
  pendingPayments.textContent=n(pays.filter(p=>p.status==='pending').length);verifiedPayments.textContent=n(pays.filter(p=>p.status==='verified').length);rejectedPayments.textContent=n(pays.filter(p=>p.status==='rejected').length);orangeMoneyKpi.textContent=cfg.orange_money_number||'Not set';
  paymentsBody.innerHTML=pays.length?pays.map(p=>`<tr><td>${date(p.created_at)}</td><td>${esc(p.full_name||'—')}</td><td>${esc(cat(p.category))}</td><td>Le ${Number(p.amount||0).toLocaleString()}</td><td>${esc(p.sender_number)}</td><td>${esc(p.transaction_reference)}</td><td><span class="pill">${esc(p.status)}</span></td><td>${p.status==='pending'?`<button class="btn btn-light" onclick="setPaymentStatus(decodeURIComponent('${encodeURIComponent(String(p.id||''))}'),'verified')">Verify</button> <button class="btn btn-light" onclick="setPaymentStatus(decodeURIComponent('${encodeURIComponent(String(p.id||''))}'),'rejected')">Reject</button>`:'—'}</td></tr>`).join(''):`<tr><td colspan="8" class="empty">No payment requests yet.</td></tr>`;
  freeAccessEnabled.value=String(!!cfg.free_access_enabled);freeAccessStart.value=(cfg.free_access_start||'').slice(0,10);freeAccessUntil.value=(cfg.free_access_until||'').slice(0,10);defaultAccessDays.value=cfg.default_access_days||30;orangeMoneyNumber.value=cfg.orange_money_number||'';pricePrimary.value=cfg.price_primary||0;priceJss.value=cfg.price_jss||0;priceSss.value=cfg.price_sss||0;priceTeacher.value=cfg.price_teacher||0;priceUniversity.value=cfg.price_university||0;aiEnabled.value=String(cfg.ai_enabled!==false);aiModel.value=cfg.ai_model||'gemini-3.6-flash';primaryFree.checked=!!cfg.primary_free;jssFree.checked=!!cfg.jss_free;sssFree.checked=!!cfg.sss_free;teacherFree.checked=!!cfg.teacher_free;universityFree.checked=!!cfg.university_free;
- currentAnnouncement.textContent=ann?.message||'No active announcement.';renderAnnouncements(data.announcements||[]);
+ currentAnnouncement.textContent=ann?.message||'No active announcement.';
  orangePaymentMode.value=cfg.orange_payment_mode||'manual';
  orangeApiBaseUrl.value=cfg.orange_api_base_url||'';
  orangeMerchantId.value=cfg.orange_merchant_id||'';
  orangeWebhookUrl.value=cfg.orange_webhook_url||'';
  orangeApiEnabled.value=String(!!cfg.orange_api_enabled);
-if(ann&&!announcementId.value){announcementMessage.value=ann.message||'';announcementActive.value=String(!!ann.active)}
+if(ann){announcementMessage.value=ann.message||'';announcementActive.value=String(!!ann.active)}
 }
+function profileRowHtml(p){const now=Date.now(),online=p.last_seen_at&&now-new Date(p.last_seen_at).getTime()<=300000;const paid=p.paid_active&&(!p.paid_access_end||new Date(p.paid_access_end)>=new Date());const free=(p.free_access_start||p.free_access_end)&&(!p.free_access_end||new Date(p.free_access_end)>=new Date());const access=p.account_status==='blocked'?'BLOCKED':paid?'PAID ACTIVE':free?'FREE':'UNPAID / EXPIRED';const catName=({primary:'Primary',jss:'JSS',sss:'SSS',teacher:'Teacher',university:'University'})[p.category]||p.category||'—';return `<tr><td>${esc(p.full_name||'Unnamed user')}</td><td>${esc(p.contact||p.email||p.phone||'—')}</td><td>${esc(catName)}</td><td>${esc(p.town||'—')}</td><td>${online?'<span class="pill">Online now</span> ':''}${date(p.last_seen_at)}</td><td><span class="pill">${esc((p.account_status||'active').toUpperCase())}</span></td><td><span class="pill">${access}</span></td><td><button class="btn btn-light" onclick="openUserManager(decodeURIComponent('${encodeURIComponent(String(p.id||''))}'))">Manage</button></td></tr>`}
+function renderProfilesTable(profiles){const body=document.getElementById('profilesBody');if(!body)return;body.innerHTML=profiles.length?profiles.map(profileRowHtml).join(''):'<tr><td colspan="8" class="empty">No registered profiles found.</td></tr>';const st=document.getElementById('profileSearchStatus');if(st)st.textContent=`Showing ${profiles.length} registered user${profiles.length===1?'':'s'}.`}
+function searchProfiles(){const q=(document.getElementById('profileSearch')?.value||'').trim().toLowerCase(),all=currentData?.profiles||[];if(!q){renderProfilesTable(all);return}const rows=all.filter(p=>[p.full_name,p.contact,p.email,p.phone,p.category,p.town].some(v=>String(v||'').toLowerCase().includes(q)));renderProfilesTable(rows)}
+function clearProfileSearch(){const el=document.getElementById('profileSearch');if(el)el.value='';renderProfilesTable(currentData?.profiles||[])}
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.activeElement?.id==='profileSearch'){e.preventDefault();searchProfiles()}});
+async function deleteCurrentAnnouncement(){const a=currentData?.announcement;if(!a?.id){alert('There is no announcement to delete.');return}if(!confirm('Delete the current announcement?'))return;try{await adminPost({action:'delete_announcement',id:a.id});announcementMessage.value='';await refreshDashboard()}catch(e){alert(e.message)}}
+function editCurrentAnnouncement(){const a=currentData?.announcement;if(!a){alert('There is no announcement to edit.');return}announcementMessage.value=a.message||'';announcementActive.value=String(!!a.active);announcementMessage.focus();announcementStatus.classList.add('show');announcementStatus.textContent='Edit the text above, then tap Update announcement.';document.querySelector('#panel-announcements .btn-primary').textContent='Update announcement';}
+function selectedProfile(){const id=document.getElementById('individualUserSelect')?.value;return (currentData?.profiles||[]).find(p=>String(p.id)===String(id))||null}
+function userActionStatus(t){const e=document.getElementById('individualUserStatus');if(e){e.classList.add('show');e.textContent=t}}
+async function grantSelectedUserAccess(){const p=selectedProfile();if(!p){userActionStatus('Select a user first.');return}const days=Number(document.getElementById('individualAccessDays').value)||30,start=new Date(),end=new Date(start.getTime()+days*86400000);try{await adminPost({action:'profile_access',id:p.id,account_status:'active',free_access_start:start.toISOString(),free_access_end:end.toISOString(),paid_access_start:p.paid_access_start||null,paid_access_end:p.paid_access_end||null,paid_active:!!p.paid_active,admin_note:p.admin_note||''});userActionStatus(`Access granted for ${days} days.`);await refreshDashboard()}catch(e){userActionStatus(e.message)}}
+async function setSelectedUserBlocked(blocked){const p=selectedProfile();if(!p){userActionStatus('Select a user first.');return}try{await adminPost({action:'profile_access',id:p.id,account_status:blocked?'blocked':'active',free_access_start:p.free_access_start||null,free_access_end:p.free_access_end||null,paid_access_start:p.paid_access_start||null,paid_access_end:p.paid_access_end||null,paid_active:!!p.paid_active,admin_note:p.admin_note||''});userActionStatus(blocked?'User blocked.':'User unblocked.');await refreshDashboard()}catch(e){userActionStatus(e.message)}}
+function manageSelectedUser(){const p=selectedProfile();if(!p){userActionStatus('Select a user first.');return}openUserManager(p.id)}
+function renderAIUsage(data){const logs=Array.isArray(data?.ai_usage)?data.ai_usage:[],profiles=Array.isArray(data?.profiles)?data.profiles:[],now=Date.now(),day=86400000;const map=new Map(profiles.map(p=>[String(p.id),p]));const select=document.getElementById('aiUsageUserFilter');if(!select)return;const prev=select.value;select.innerHTML='<option value="">All registered users</option>'+profiles.map(p=>`<option value="${esc(p.id)}">${esc(p.full_name||'Unnamed user')} — ${esc(p.contact||p.email||p.phone||'—')}</option>`).join('');if(profiles.some(p=>String(p.id)===String(prev)))select.value=prev;const selected=select.value;const registered=logs.filter(l=>l.profile_id&&map.has(String(l.profile_id)));const all=profiles.map(p=>{const ul=registered.filter(l=>String(l.profile_id)===String(p.id));const countSince=ms=>ul.filter(l=>l.created_at&&now-new Date(l.created_at).getTime()<=ms).length;return {p,total:ul.length,today:countSince(day),d7:countSince(7*day),d30:countSince(30*day),last:ul[0]?.created_at||null}});document.getElementById('aiCallsToday').textContent=n(logs.filter(l=>l.created_at&&now-new Date(l.created_at).getTime()<=day).length);document.getElementById('aiCalls7d').textContent=n(logs.filter(l=>l.created_at&&now-new Date(l.created_at).getTime()<=7*day).length);document.getElementById('aiCalls30d').textContent=n(logs.filter(l=>l.created_at&&now-new Date(l.created_at).getTime()<=30*day).length);document.getElementById('usersWithUsage').textContent=n(all.filter(x=>x.total>0).length);const max=all.length?Math.max(...all.map(x=>x.total)):0,min=all.length?Math.min(...all.map(x=>x.total)):0,row=x=>`<div class="metric-row"><span>${esc(x.p.full_name||'Unnamed user')}</span><strong>${n(x.total)}</strong></div>`;highestUsageUsers.innerHTML=all.filter(x=>x.total===max).map(row).join('')||'<div class="empty">No users.</div>';lowestUsageUsers.innerHTML=all.filter(x=>x.total===min).map(row).join('')||'<div class="empty">No users.</div>';const shown=selected?all.filter(x=>String(x.p.id)===String(selected)):all;aiUsageByUserBody.innerHTML=shown.map(x=>`<tr><td>${esc(x.p.full_name||'Unnamed user')}</td><td>${esc(x.p.contact||x.p.email||x.p.phone||'—')}</td><td>${esc(x.p.category||'—')}</td><td>${n(x.today)}</td><td>${n(x.d7)}</td><td>${n(x.d30)}</td><td><strong>${n(x.total)}</strong></td><td>${date(x.last)}</td></tr>`).join('')||'<tr><td colspan="8" class="empty">No registered users.</td></tr>';const recent=(selected?registered.filter(l=>String(l.profile_id)===String(selected)):logs).slice(0,100);aiUsageRecentBody.innerHTML=recent.map(l=>{const p=l.profile_id?map.get(String(l.profile_id)):null;return `<tr><td>${date(l.created_at)}</td><td>${esc(p?.full_name||(l.profile_id?'Unknown user':'Anonymous / device'))}</td><td>${esc(l.tool_key||'—')}</td><td>${esc(l.source||'—')}</td><td>${esc(l.model||'—')}</td></tr>`}).join('')||'<tr><td colspan="5" class="empty">No AI requests recorded yet.</td></tr>'}
 function toLocalInput(v){if(!v)return '';const d=new Date(v);return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,16)}
 function openUserManager(id){const p=(currentData?.profiles||[]).find(x=>x.id===id);if(!p)return;manageUserId.value=p.id;manageUserName.textContent=(p.full_name||'')+' • '+(p.contact||p.email||p.phone||'')+' • '+(p.category||'');manageStatus.value=p.account_status||'active';manageFreeStart.value=toLocalInput(p.free_access_start);manageFreeEnd.value=toLocalInput(p.free_access_end);managePaidStart.value=toLocalInput(p.paid_access_start);managePaidEnd.value=toLocalInput(p.paid_access_end);managePaidActive.checked=!!p.paid_active;manageNote.value=p.admin_note||'';manageUserStatus.textContent='';userManageModal.style.display='block'}
 function closeUserManager(){userManageModal.style.display='none'}
