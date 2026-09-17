@@ -814,6 +814,8 @@ select:disabled{background-color:#f3f6f9 !important;color:#7a8794 !important;opa
 .no-download-note p{max-width:900px;margin-left:auto;margin-right:auto}
 .mark{font-size:.92rem;letter-spacing:.02em}
 </style>
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#0b4f9c">
 </head>
 <body>
 <div class="topbar">Built for Sierra Leonean learners and teachers • Text-first • Mobile-friendly</div>
@@ -1973,7 +1975,12 @@ async function findResearchTopics(){
 <p class="field-help">The administrator can reset it to a temporary password. Existing passwords are never displayed or stored in readable form.</p>
 <div class="modal-status" id="loginStatus"></div></div>
 </div>
-<div id="accountSignedIn" hidden><h2>My Account</h2><div class="payment-summary"><div><span>Name</span><strong id="acctName"></strong></div><div><span>Category</span><strong id="acctCategory"></strong></div><div><span>Access</span><strong id="acctAccess"></strong></div></div><p id="acctExpiry" class="field-help"></p><p class="field-help">After login, you can use all learning sections unless an administrator has applied a category restriction to your account.</p><button class="btn btn-light" onclick="logoutPlatform()" type="button">Logout</button></div>
+<div id="accountSignedIn" hidden><h2>My Account</h2><div class="payment-summary"><div><span>Name</span><strong id="acctName"></strong></div><div><span>Category</span><strong id="acctCategory"></strong></div><div><span>Access</span><strong id="acctAccess"></strong></div></div><p id="acctExpiry" class="field-help"></p><p class="field-help">After login, you can use all learning sections unless an administrator has applied a category restriction to your account.</p><div id="pwaInstallBox" style="margin:14px 0;padding:14px;border:1px solid #cbd6e4;border-radius:14px;background:#f4f8fd">
+<p style="margin:0 0 10px"><strong>Install Salone Class Room</strong><br><span class="field-help">Put Salone Class Room on your phone home screen for easier access. You do not need the Play Store.</span></p>
+<button id="installAppBtn" class="btn btn-blue" type="button" onclick="installSaloneApp()">Install App</button>
+<div id="installAppStatus" class="field-help" style="margin-top:8px"></div>
+</div>
+<button class="btn btn-light" onclick="logoutPlatform()" type="button">Logout</button></div>
 </div></div>
 <div aria-hidden="true" class="platform-modal" id="paymentModal"><div class="platform-modal-card"><button class="modal-close" onclick="closePaymentModal()" type="button">×</button><h2>Platform Usage Payment</h2><p id="paymentIntro">Your free platform access has ended. Make the required Platform Usage Payment through Orange Money and submit the details below for verification.</p><div class="payment-summary"><div><span>Category</span><strong id="paymentCategory"></strong></div><div><span>Amount</span><strong id="paymentAmount"></strong></div><div><span>Orange Money</span><strong id="paymentNumber"></strong></div></div><label for="paymentSender">Orange Money sender number</label><input id="paymentSender" maxlength="25" autocomplete="tel" placeholder="Number used to make payment" type="tel"/><div class="field-error" id="errPaymentSender"></div><label for="paymentReference">Transaction reference / ID</label><input id="paymentReference" maxlength="120" placeholder="Type transaction reference"/><div class="field-error" id="errPaymentReference"></div><button class="btn btn-blue platform-submit" onclick="submitPaymentRequest()" type="button">Submit payment for verification</button><div class="modal-status" id="paymentStatus"></div></div></div>
 <script>
@@ -2048,7 +2055,7 @@ function requestLoadingText(payload){const t=(payload?.task||'').toLowerCase();i
 async function callLearning(payload,box){const n=firstName(),msg=requestLoadingText(payload);showOutput(box,n?msg.replace('…',`, ${n}…`):msg);try{const d=await learningRequest(payload);renderLearningAnswer(box,personalisedText(payload,d.answer||'No response was returned. Please try again.'),payload)}catch(e){handleLearningError(e,box)}}
 function openAccountModal(){accountModal.classList.add('open');document.body.style.overflow='hidden';renderAccount()}function closeAccountModal(){accountModal.classList.remove('open');document.body.style.overflow=''}
 function showAccountTab(which){registerPane.hidden=which!=='register';loginPane.hidden=which!=='login';registerTabBtn.classList.toggle('active',which==='register');loginTabBtn.classList.toggle('active',which==='login')}
-function renderAccount(){const signed=!!currentProfile;accountSignedOut.hidden=signed;accountSignedIn.hidden=!signed;if(signed){acctName.textContent=currentProfile.full_name;acctCategory.textContent=cat(currentProfile.category);acctAccess.textContent=currentAccess?.status||'Checking';acctExpiry.textContent=currentProfile.paid_access_end?'Paid access until '+new Date(currentProfile.paid_access_end).toLocaleDateString():currentProfile.free_access_end?'Free access until '+new Date(currentProfile.free_access_end).toLocaleDateString():''}accountBtn.textContent=signed?'My Account':'Login';loadLearningProgress().catch(()=>{})}
+function renderAccount(){const signed=!!currentProfile;accountSignedOut.hidden=signed;accountSignedIn.hidden=!signed;if(signed){acctName.textContent=currentProfile.full_name;acctCategory.textContent=cat(currentProfile.category);acctAccess.textContent=currentAccess?.status||'Checking';acctExpiry.textContent=currentProfile.paid_access_end?'Paid access until '+new Date(currentProfile.paid_access_end).toLocaleDateString():currentProfile.free_access_end?'Free access until '+new Date(currentProfile.free_access_end).toLocaleDateString():''}accountBtn.textContent=signed?'My Account':'Login';loadLearningProgress().catch(()=>{});setTimeout(()=>{if(typeof updateInstallAppUI==='function')updateInstallAppUI()},0)}
 function validContact(v){return v.includes('@')?/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v):/^\+?[0-9\s()-]{7,20}$/.test(v)}
 async function submitPlatformRegistration(){['errFullName','errContact','errPassword','errCategory','errTown'].forEach(i=>document.getElementById(i).textContent='');const d={full_name:regFullName.value.trim(),contact:regContact.value.trim(),password:regPassword.value,category:regCategory.value,town:regTown.value.trim()};let ok=true;if(d.full_name.length<3){errFullName.textContent='Please type your full name.';ok=false}if(!validContact(d.contact)){errContact.textContent='Type a valid phone number or email.';ok=false}if(d.password.length<12){errPassword.textContent='Use at least 12 characters.';ok=false}if(!d.category){errCategory.textContent='Please select your category.';ok=false}if(d.town.length<2){errTown.textContent='Please type your town or city.';ok=false}if(!ok)return;registrationStatus.textContent='Creating your account…';registrationStatus.classList.add('show');try{const j=await platformPost({action:'register',device_id:deviceId(),...d},45000);saveSession(j.session);currentProfile=j.profile;currentAccess=j.access;registrationStatus.textContent='Account created successfully.';renderAccount();setTimeout(closeAccountModal,500)}catch(e){registrationStatus.textContent=e.message}}
 async function submitLogin(){loginStatus.textContent='Logging in…';loginStatus.classList.add('show');try{const j=await platformPost({action:'login',device_id:deviceId(),contact:loginContact.value.trim(),password:loginPassword.value},45000);saveSession(j.session);currentProfile=j.profile;currentAccess=j.access;loginStatus.textContent=firstName()?`Login successful. Welcome, ${firstName()}.`:'Login successful.';renderAccount();setTimeout(closeAccountModal,400)}catch(e){loginStatus.textContent=e.name==='AbortError'?'Login is taking longer than expected. Please try again.':(e.message||'We could not log you in. Please try again.')}}
@@ -2073,5 +2080,85 @@ document.addEventListener('visibilitychange',()=>{if(document.visibilityState===
 window.addEventListener('focus',sendPresenceHeartbeat);
 setTimeout(sendPresenceHeartbeat,1200);
 refreshPlatform();
-</script></body>
+</script>
+<script>
+let saloneInstallPrompt = null;
+
+function isSaloneInstalled(){
+  return window.matchMedia('(display-mode: standalone)').matches ||
+         window.navigator.standalone === true;
+}
+
+function updateInstallAppUI(){
+  const box = document.getElementById('pwaInstallBox');
+  const btn = document.getElementById('installAppBtn');
+  const status = document.getElementById('installAppStatus');
+  if(!box || !btn) return;
+
+  // Only show after a Salone Class Room user is signed in.
+  const signedIn = !!(typeof currentProfile !== 'undefined' && currentProfile);
+  box.style.display = signedIn ? 'block' : 'none';
+  if(!signedIn) return;
+
+  if(isSaloneInstalled()){
+    btn.style.display = 'none';
+    if(status) status.textContent = 'Salone Class Room is already installed on this device.';
+  } else {
+    btn.style.display = '';
+    btn.disabled = false;
+    btn.textContent = 'Install App';
+    if(status) status.textContent = saloneInstallPrompt
+      ? 'Tap Install App to add it to your phone.'
+      : 'Tap Install App. If your browser does not show the install window, use the browser menu and choose “Install app” or “Add to Home screen”.';
+  }
+}
+
+window.addEventListener('beforeinstallprompt', (event) => {
+  event.preventDefault();
+  saloneInstallPrompt = event;
+  updateInstallAppUI();
+});
+
+window.addEventListener('appinstalled', () => {
+  saloneInstallPrompt = null;
+  updateInstallAppUI();
+});
+
+async function installSaloneApp(){
+  const status = document.getElementById('installAppStatus');
+  if(isSaloneInstalled()){
+    if(status) status.textContent = 'Salone Class Room is already installed on this device.';
+    updateInstallAppUI();
+    return;
+  }
+
+  if(saloneInstallPrompt){
+    const promptEvent = saloneInstallPrompt;
+    saloneInstallPrompt = null;
+    await promptEvent.prompt();
+    const choice = await promptEvent.userChoice.catch(() => null);
+    if(status){
+      status.textContent = choice && choice.outcome === 'accepted'
+        ? 'Installation started.'
+        : 'Installation was not completed. You can tap Install App again later.';
+    }
+    updateInstallAppUI();
+    return;
+  }
+
+  if(status){
+    status.textContent = 'Your browser has not made the install window available yet. Open the browser menu (⋮) and tap “Install app” or “Add to Home screen”.';
+  }
+}
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {
+      navigator.serviceWorker.register('/service-worker.js').catch(() => {});
+    });
+  });
+}
+</script>
+
+</body>
 </html>
