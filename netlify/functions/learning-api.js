@@ -93,14 +93,11 @@ exports.handler=async(event)=>{
   let result;
   try{result=await callGroq()}catch(gErr){console.error('[learning-api][fallback]',gErr.message);try{result=await callDeepSeek()}catch(dErr){console.error('[learning-api][all-ai-failed]',dErr.message);return json(502,{error:'The AI service could not answer right now. Please try again.'})}}
   const text=result.text,usage=result.usage||{},inputTokens=Number(usage.prompt_tokens||usage.input_tokens||0),outputTokens=Number(usage.completion_tokens||usage.output_tokens||0);
-  // Keep compatibility with the existing ai_usage_log schema. Provider is stored in source and the exact model in model.
-  try{
-   const lr=await sf('/rest/v1/ai_usage_log',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({profile_id:p?.id||null,device_id:deviceId,tool_key:toolKey,model:result.model,source:result.provider,input_chars:prompt.length,output_chars:text.length})});
-   if(!lr.ok)throw new Error('ai_usage_log insert failed');
-  }catch{
-   // Compatibility fallback: app_events already exists in older Salone Class Room deployments.
-   await sf('/rest/v1/app_events',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({event_type:'ai_usage',section:String(p?.id||deviceId||'anonymous').slice(0,80),detail:JSON.stringify({tool_key:toolKey,source:result.provider,model:result.model}).slice(0,300)})}).catch(()=>{});
-  }
+  // Always record every successful AI answer in app_events (known existing table).
+  // This gives the admin dashboard a reliable per-user usage ledger.
+  await sf('/rest/v1/app_events',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({event_type:'ai_usage',section:String(p?.id||deviceId||'anonymous').slice(0,80),detail:JSON.stringify({tool_key:toolKey,source:result.provider,model:result.model}).slice(0,300)})}).catch(()=>{});
+  // Also populate the dedicated usage table where its deployed schema accepts these fields.
+  try{await sf('/rest/v1/ai_usage_log',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({profile_id:p?.id||null,device_id:deviceId,tool_key:toolKey,model:result.model,source:result.provider,input_chars:prompt.length,output_chars:text.length})})}catch{}
   if(task==='teacher_exam_objective'){
    let parsed;try{parsed=JSON.parse(text.replace(/^```json\s*|\s*```$/g,''))}catch{return json(502,{error:'The objective question service returned an invalid format. Please tap Generate Questions again.'})}
    let questions=Array.isArray(parsed)?parsed:Array.isArray(parsed?.questions)?parsed.questions:[];

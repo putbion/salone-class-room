@@ -86,7 +86,8 @@ exports.handler=async(event)=>{
  const active5=profiles.filter(p=>p.last_seen_at&&now-new Date(p.last_seen_at).getTime()<=300000).length,activeToday=profiles.filter(p=>p.last_seen_at&&now-new Date(p.last_seen_at).getTime()<=86400000).length;
  const pays=payments.map(p=>({...p,full_name:p.user_profiles?.full_name,category:p.user_profiles?.category}));
  const fallbackAI=events.filter(e=>e.event_type==='ai_usage').map(e=>{let d={};try{d=JSON.parse(e.detail||'{}')}catch{};const section=String(e.section||'');const matched=profiles.find(p=>String(p.id)===section);return {id:'event_'+e.id,profile_id:matched?matched.id:null,device_id:matched?matched.device_id:section,tool_key:d.tool_key||'learning-tool',model:d.model||'',source:d.source||'ai',created_at:e.created_at};});
- const mergedAI=aiUsage.length?aiUsage:fallbackAI;
+ const dedicatedKeys=new Set(aiUsage.map(x=>[String(x.profile_id||''),String(x.tool_key||''),String(x.created_at||'').slice(0,16)].join('|')));
+ const mergedAI=[...aiUsage,...fallbackAI.filter(x=>!dedicatedKeys.has([String(x.profile_id||''),String(x.tool_key||''),String(x.created_at||'').slice(0,16)].join('|')))];
  return json(200,{features,admin_identity:{email:(au.email||'').toLowerCase(),role:access.role},admins,reset_requests:resetRequests,summary:{registered_users:profiles.length,new_users_30d:profiles.filter(u=>new Date(u.created_at).getTime()>=now-d30).length,events_30d:e30.length,new_messages:messages.filter(x=>(x.status||'new')==='new').length,online_now:active5,active_today:activeToday,ai_calls_30d:mergedAI.filter(x=>new Date(x.created_at).getTime()>=now-d30).length},categories:c,metrics:m,users,events,messages,profiles,payments:pays,ai_usage:mergedAI,platform_settings:settings[0]||{},announcement:anns[0]||null,system:{supabase:true,events_table:true,messages_table:true}});
 }
 ;
