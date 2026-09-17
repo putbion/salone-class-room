@@ -1967,7 +1967,7 @@ async function findResearchTopics(){
     body:JSON.stringify({event_type:'page_view',section:'site',detail:'Salone Class Room'})
   }).catch(()=>{});
 })();
-</script><div id="pwaInstallPrompt" hidden style="position:fixed;left:12px;right:12px;bottom:14px;z-index:1400;max-width:560px;margin:auto;background:#fff;border:1px solid #cbd6e4;border-radius:16px;padding:16px;box-shadow:0 10px 35px rgba(0,0,0,.22)"><strong>Install Salone Class Room</strong><p style="margin:7px 0 12px">Install it on this device for faster, easier access from your home screen.</p><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-blue" type="button" id="pwaInstallBtn">Install</button><button class="btn btn-light" type="button" id="pwaLaterBtn">Later</button></div><p id="pwaInstallHelp" hidden style="margin:10px 0 0;font-size:.9rem;color:#5f6b7a"></p></div><div aria-hidden="true" class="platform-modal" id="accountModal">
+</script><div id="pwaInstallPrompt" hidden style="position:fixed;left:12px;right:12px;bottom:14px;z-index:1400;max-width:560px;margin:auto;background:#fff;border:1px solid #cbd6e4;border-radius:16px;padding:16px;box-shadow:0 10px 35px rgba(0,0,0,.22)"><strong>Install Salone Class Room</strong><p style="margin:7px 0 12px">Install it on this device for faster, easier access from your home screen.</p><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-blue" type="button" id="pwaInstallBtn">Install</button><button class="btn btn-light" type="button" id="pwaLaterBtn">Later</button></div></div><div aria-hidden="true" class="platform-modal" id="accountModal">
 <div class="platform-modal-card">
 <button class="modal-close" onclick="closeAccountModal()" type="button">×</button>
 <div id="accountSignedOut">
@@ -2066,7 +2066,33 @@ function openAccountModal(){accountModal.classList.add('open');document.body.sty
 function showAccountTab(which){registerPane.hidden=which!=='register';loginPane.hidden=which!=='login';registerTabBtn.classList.toggle('active',which==='register');loginTabBtn.classList.toggle('active',which==='login')}
 function renderAccount(){const signed=!!currentProfile;accountSignedOut.hidden=signed;accountSignedIn.hidden=!signed;if(signed){acctName.textContent=currentProfile.full_name;acctCategory.textContent=cat(currentProfile.category);acctAccess.textContent=currentAccess?.status||'Checking';acctExpiry.textContent=currentProfile.paid_access_end?'Paid access until '+new Date(currentProfile.paid_access_end).toLocaleDateString():currentProfile.free_access_end?'Free access until '+new Date(currentProfile.free_access_end).toLocaleDateString():''}accountBtn.textContent=signed?'My Account':'Login';loadLearningProgress().catch(()=>{})}
 function validContact(v){return v.includes('@')?/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v):/^\+?[0-9\s()-]{7,20}$/.test(v)}
-let deferredInstallPrompt=null;function isStandalone(){return window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true}function isIOS(){return /iphone|ipad|ipod/i.test(navigator.userAgent)}function installBox(){return document.getElementById('pwaInstallPrompt')}function installHelp(){return document.getElementById('pwaInstallHelp')}window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferredInstallPrompt=e;if(currentProfile&&!isStandalone())offerPwaInstall()});window.addEventListener('appinstalled',function(){deferredInstallPrompt=null;var b=installBox();if(b)b.hidden=true});var installBtn=document.getElementById('pwaInstallBtn');if(installBtn)installBtn.addEventListener('click',async function(){var h=installHelp();if(deferredInstallPrompt){deferredInstallPrompt.prompt();await deferredInstallPrompt.userChoice;deferredInstallPrompt=null;var b=installBox();if(b)b.hidden=true;return}if(h){h.hidden=false;h.textContent=isIOS()?'On iPhone/iPad: open this page in Safari, tap Share, then choose Add to Home Screen.':'Use your browser menu and choose Install app or Add to Home screen. If that option is not shown, keep using Salone Class Room in the browser.'}});var laterBtn=document.getElementById('pwaLaterBtn');if(laterBtn)laterBtn.addEventListener('click',function(){var b=installBox();if(b)b.hidden=true});function offerPwaInstall(){if(isStandalone())return;var b=installBox(),h=installHelp();if(!b)return;if(deferredInstallPrompt){if(h)h.hidden=true;b.hidden=false;return}if(isIOS()){if(h){h.hidden=false;h.textContent='On iPhone/iPad: tap Install below for instructions to add Salone Class Room to your Home Screen.'}b.hidden=false;return}if(h){h.hidden=false;h.textContent='If your browser supports app installation, use its menu and choose Install app or Add to Home screen.'}b.hidden=false}if('serviceWorker' in navigator)window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){})});
+let deferredInstallPrompt=null;
+function isStandalone(){return window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true}
+function installBox(){return document.getElementById('pwaInstallPrompt')}
+window.addEventListener('beforeinstallprompt',function(e){
+  e.preventDefault();
+  deferredInstallPrompt=e;
+  if(currentProfile&&!isStandalone())offerPwaInstall();
+});
+window.addEventListener('appinstalled',function(){
+  deferredInstallPrompt=null;
+  var b=installBox();if(b)b.hidden=true;
+});
+var installBtn=document.getElementById('pwaInstallBtn');
+if(installBtn)installBtn.addEventListener('click',async function(){
+  if(!deferredInstallPrompt){var b=installBox();if(b)b.hidden=true;return}
+  deferredInstallPrompt.prompt();
+  await deferredInstallPrompt.userChoice;
+  deferredInstallPrompt=null;
+  var b=installBox();if(b)b.hidden=true;
+});
+var laterBtn=document.getElementById('pwaLaterBtn');
+if(laterBtn)laterBtn.addEventListener('click',function(){var b=installBox();if(b)b.hidden=true});
+function offerPwaInstall(){
+  if(isStandalone()||!deferredInstallPrompt)return;
+  var b=installBox();if(b)b.hidden=false;
+}
+if('serviceWorker' in navigator)window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){})});
 async function submitPlatformRegistration(){['errFullName','errContact','errPassword','errCategory','errTown'].forEach(i=>document.getElementById(i).textContent='');const d={full_name:regFullName.value.trim(),contact:regContact.value.trim(),password:regPassword.value,category:regCategory.value,town:regTown.value.trim()};let ok=true;if(d.full_name.length<3){errFullName.textContent='Please type your full name.';ok=false}if(!validContact(d.contact)){errContact.textContent='Type a valid phone number or email.';ok=false}if(d.password.length<12){errPassword.textContent='Use at least 12 characters.';ok=false}if(!d.category){errCategory.textContent='Please select your category.';ok=false}if(d.town.length<2){errTown.textContent='Please type your town or city.';ok=false}if(!ok)return;registrationStatus.textContent='Creating your account…';registrationStatus.classList.add('show');try{const j=await platformPost({action:'register',device_id:deviceId(),...d},45000);saveSession(j.session);currentProfile=j.profile;currentAccess=j.access;registrationStatus.textContent='Account created successfully.';renderAccount();offerPwaInstall();setTimeout(closeAccountModal,500)}catch(e){registrationStatus.textContent=e.message}}
 async function submitLogin(){loginStatus.textContent='Logging in…';loginStatus.classList.add('show');try{const j=await platformPost({action:'login',device_id:deviceId(),contact:loginContact.value.trim(),password:loginPassword.value},45000);saveSession(j.session);currentProfile=j.profile;currentAccess=j.access;loginStatus.textContent=firstName()?`Login successful. Welcome, ${firstName()}.`:'Login successful.';renderAccount();offerPwaInstall();setTimeout(closeAccountModal,400)}catch(e){loginStatus.textContent=e.name==='AbortError'?'Login is taking longer than expected. Please try again.':(e.message||'We could not log you in. Please try again.')}}
 async function logoutPlatform(){try{await fetch(PLATFORM_API,{method:'POST',headers:{'Content-Type':'application/json',...authHeaders()},body:JSON.stringify({action:'logout'})})}catch{}clearSession();renderAccount();showAccountTab('login')}
