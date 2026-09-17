@@ -1079,16 +1079,8 @@ pre,.output{max-width:100%;overflow-wrap:anywhere;word-break:break-word}
   </div>
 <div class="grid">
 <article class="card">
-<h3>Lecture Yourself</h3>
-<p class="guide">Choose your year of study, enter the module, then enter the topic, concept or question you want to learn.</p>
-<label for="universityLectureYear">Year of Study</label>
-<select id="universityLectureYear">
-<option value="">Choose year</option>
-<option value="Year 1">Year 1</option>
-<option value="Year 2">Year 2</option>
-<option value="Year 3">Year 3</option>
-<option value="Year 4">Year 4</option>
-</select>
+<h3>Study Yourself</h3>
+<p class="guide">Enter the module, then enter the topic, concept or question you want to learn.</p>
 <label for="universityLectureModule">Module</label>
 <input id="universityLectureModule" placeholder="Example: Public Finance, Strategic Management, Sociology"/>
 <label for="universityLecturerFocus">Topic</label>
@@ -1611,7 +1603,7 @@ function renderNPSE(qs){const area=document.getElementById('npseQuizArea');if(!A
 function answerNPSE(btn,i,j){if(btn.closest('.quiz-question').dataset.done)return;btn.closest('.quiz-question').dataset.done='1';const q=npseState.qs[i],ok=Number(q.answer)===j;npseState.answered++;if(ok)npseState.correct++;const subject=npseSubject?.value||'',ts=npseTopicSelect,tm=npseTopic,topic=(((tm?.value||'').trim()) || (ts?.value==='__other__'?'':ts?.value||'')).trim();recordPracticeAttempt('primary',subject,topic,q,j,ok).catch(()=>{});document.getElementById('npseFb'+i).innerHTML='<strong>'+(ok?'Correct':'Wrong')+'.</strong> '+safe(q.explanation||'');if(npseState.answered===npseState.qs.length){document.getElementById('npseSummary').innerHTML='<div class="notice"><strong>Result: '+npseState.correct+'/'+npseState.qs.length+' correct.</strong> Review the explanations above and practise weak areas again.</div>';loadLearningProgress().catch(()=>{})}}
 async function schoolAssignmentGuide(level){const subject=document.getElementById(level+'AssignmentSubject')?.value||'',topic=document.getElementById(level+'Assignment')?.value.trim()||'',box=document.getElementById(level+'Guide');if(!subject||!topic){showOutput(box,'Please choose a subject and type the assignment first.');return}await callLearning({level,subject,topic,task:'assignment',tool_key:level+'-assignment-guide'},box)}
 async function universityAssignmentGuide(){const module=universityAssignmentModule.value.trim(),year=universityAssignmentYear.value,topic=universityAssignmentText.value.trim(),box=universityAssignmentOutput;if(!module||!year||!topic){showOutput(box,'Please enter the module name, year of study and assignment.');return}await callLearning({level:'university',class_level:year,subject:module,topic,task:'assignment',context:'Answer at '+year+' university standard for the module '+module+'. Use Sierra Leone context or official frameworks where applicable, but do not invent laws, policies, citations or institutional requirements.',tool_key:'university-assignment'},box)}
-async function universityLectureYourself(){const year=document.getElementById('universityLectureYear')?.value||'',module=document.getElementById('universityLectureModule')?.value.trim()||'',topic=document.getElementById('universityLecturerFocus')?.value.trim()||'',box=document.getElementById('tertiaryTutor');if(!year||!module||!topic){showOutput(box,'Please choose your year of study, enter the module and enter the topic.');return}await callLearning({level:'university',subject:module,topic,task:'lecturer',context:'Teach or answer this at '+year+' university standard for the module '+module+'. Explain clearly, accurately and at the appropriate depth for the student’s year of study, with examples or application where useful.',tool_key:'lecture-yourself'},box)}
+async function universityLectureYourself(){const module=document.getElementById('universityLectureModule')?.value.trim()||'',topic=document.getElementById('universityLecturerFocus')?.value.trim()||'',box=document.getElementById('tertiaryTutor');if(!module||!topic){showOutput(box,'Please enter the module and topic.');return}await callLearning({level:'university',subject:module,topic,task:'lecturer',context:'Teach or answer this at an appropriate university standard for the module '+module+'. Explain clearly, accurately and with examples or application where useful.',tool_key:'lecture-yourself'},box)}
 async function primaryAssignmentGuide(){const subject=primaryAssignmentSubject.value,topic=primaryAssignment.value.trim(),box=primaryAssignmentOutput;if(!subject||!topic){showOutput(box,'Please choose a subject and type the assignment first.');return}await callLearning({level:'primary',subject,topic,task:'assignment',tool_key:'primary-assignment-guide'},box)}
 </script><script>
 // V3.3: removed obsolete broad subject-population script that could overwrite topic dropdowns.
