@@ -1962,7 +1962,7 @@ async function findResearchTopics(){
 <h2>Create your Salone Class Room account</h2><p>Register once. Your account can be used again on this device or another device.</p>
 <label for="regFullName">Full name</label><input id="regFullName" maxlength="100" autocomplete="name" placeholder="Type your full name"/><div class="field-error" id="errFullName"></div>
 <label for="regContact">Phone number or email</label><input id="regContact" maxlength="254" autocomplete="username" placeholder="Example: +23276123456 or name@email.com"/><div class="field-error" id="errContact"></div>
-<label for="regPassword">Password</label><input id="regPassword" type="password" minlength="12" maxlength="128" autocomplete="new-password" placeholder="At least 12 characters"/><div class="field-error" id="errPassword"></div>
+<label for="regPassword">Password</label><input id="regPassword" type="password" minlength="6" maxlength="128" autocomplete="new-password" placeholder="At least 12 characters"/><div class="field-error" id="errPassword"></div>
 <label for="regCategory">Category</label><select id="regCategory"><option value="">Select your category</option><option value="primary">Primary School Pupil</option><option value="jss">JSS Student</option><option value="sss">SSS Student</option><option value="teacher">Teacher</option><option value="university">University Student</option></select><div class="field-error" id="errCategory"></div>
 <label for="regTown">Town / City</label><input id="regTown" maxlength="100" autocomplete="address-level2" placeholder="Type your town or city"/><div class="field-error" id="errTown"></div>
 <button class="btn btn-blue platform-submit" onclick="submitPlatformRegistration()" type="button">Create account and continue</button>
@@ -2057,8 +2057,8 @@ function openAccountModal(){accountModal.classList.add('open');document.body.sty
 function showAccountTab(which){registerPane.hidden=which!=='register';loginPane.hidden=which!=='login';registerTabBtn.classList.toggle('active',which==='register');loginTabBtn.classList.toggle('active',which==='login')}
 function renderAccount(){const signed=!!currentProfile;accountSignedOut.hidden=signed;accountSignedIn.hidden=!signed;if(signed){acctName.textContent=currentProfile.full_name;acctCategory.textContent=cat(currentProfile.category);acctAccess.textContent=currentAccess?.status||'Checking';acctExpiry.textContent=currentProfile.paid_access_end?'Paid access until '+new Date(currentProfile.paid_access_end).toLocaleDateString():currentProfile.free_access_end?'Free access until '+new Date(currentProfile.free_access_end).toLocaleDateString():''}accountBtn.textContent=signed?'My Account':'Login';loadLearningProgress().catch(()=>{});setTimeout(()=>{if(typeof updateInstallAppUI==='function')updateInstallAppUI()},0)}
 function validContact(v){return v.includes('@')?/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v):/^\+?[0-9\s()-]{7,20}$/.test(v)}
-async function submitPlatformRegistration(){['errFullName','errContact','errPassword','errCategory','errTown'].forEach(i=>document.getElementById(i).textContent='');const d={full_name:regFullName.value.trim(),contact:regContact.value.trim(),password:regPassword.value,category:regCategory.value,town:regTown.value.trim()};let ok=true;if(d.full_name.length<3){errFullName.textContent='Please type your full name.';ok=false}if(!validContact(d.contact)){errContact.textContent='Type a valid phone number or email.';ok=false}if(d.password.length<12){errPassword.textContent='Use at least 12 characters.';ok=false}if(!d.category){errCategory.textContent='Please select your category.';ok=false}if(d.town.length<2){errTown.textContent='Please type your town or city.';ok=false}if(!ok)return;registrationStatus.textContent='Creating your account…';registrationStatus.classList.add('show');try{const j=await platformPost({action:'register',device_id:deviceId(),...d},45000);saveSession(j.session);currentProfile=j.profile;currentAccess=j.access;registrationStatus.textContent='Account created successfully.';renderAccount();setTimeout(closeAccountModal,500)}catch(e){registrationStatus.textContent=e.message}}
-async function submitLogin(){loginStatus.textContent='Logging in…';loginStatus.classList.add('show');try{const j=await platformPost({action:'login',device_id:deviceId(),contact:loginContact.value.trim(),password:loginPassword.value},45000);saveSession(j.session);currentProfile=j.profile;currentAccess=j.access;loginStatus.textContent=firstName()?`Login successful. Welcome, ${firstName()}.`:'Login successful.';renderAccount();setTimeout(closeAccountModal,400)}catch(e){loginStatus.textContent=e.name==='AbortError'?'Login is taking longer than expected. Please try again.':(e.message||'We could not log you in. Please try again.')}}
+async function submitPlatformRegistration(){['errFullName','errContact','errPassword','errCategory','errTown'].forEach(i=>document.getElementById(i).textContent='');const d={full_name:regFullName.value.trim(),contact:regContact.value.trim(),password:regPassword.value,category:regCategory.value,town:regTown.value.trim()};let ok=true;if(d.full_name.length<3){errFullName.textContent='Please type your full name.';ok=false}if(!validContact(d.contact)){errContact.textContent='Type a valid phone number or email.';ok=false}if(d.password.length<6){errPassword.textContent='Use at least 6 characters.';ok=false}if(!d.category){errCategory.textContent='Please select your category.';ok=false}if(d.town.length<2){errTown.textContent='Please type your town or city.';ok=false}if(!ok)return;registrationStatus.textContent='Creating your account…';registrationStatus.classList.add('show');try{const j=await platformPost({action:'register',device_id:deviceId(),...d},45000);saveSession(j.session);currentProfile=j.profile;currentAccess=j.access;registrationStatus.textContent='Account created successfully.';renderAccount();setTimeout(closeAccountModal,500)}catch(e){registrationStatus.textContent=e.message}}
+async function submitLogin(){loginStatus.textContent='Logging in…';loginStatus.classList.add('show');try{const j=await platformPost({action:'login',device_id:deviceId(),contact:loginContact.value.trim(),password:loginPassword.value},45000);saveSession(j.session);currentProfile=j.profile;currentAccess=j.access;loginStatus.textContent=firstName()?`Login successful. Welcome, ${firstName()}.`:'Login successful.';renderAccount();sessionStorage.removeItem('salone_install_banner_dismissed');setTimeout(()=>{closeAccountModal();updateInstallAppUI()},400)}catch(e){loginStatus.textContent=e.name==='AbortError'?'Login is taking longer than expected. Please try again.':(e.message||'We could not log you in. Please try again.')}}
 async function logoutPlatform(){try{await fetch(PLATFORM_API,{method:'POST',headers:{'Content-Type':'application/json',...authHeaders()},body:JSON.stringify({action:'logout'})})}catch{}clearSession();renderAccount();showAccountTab('login')}
 function price(c){return Number(platformConfig?.prices?.[c]||0)}function openPaymentModal(p){if(!p){openAccountModal();showAccountTab('login');return}paymentCategory.textContent=cat(p.category);paymentAmount.textContent=money(price(p.category));paymentNumber.textContent=platformConfig?.orange_money_number||'Contact administrator';paymentModal.classList.add('open');document.body.style.overflow='hidden'}function closePaymentModal(){paymentModal.classList.remove('open');document.body.style.overflow=''}
 async function submitPaymentRequest(){const s=paymentSender.value.trim(),ref=paymentReference.value.trim();errPaymentSender.textContent='';errPaymentReference.textContent='';if(s.replace(/\D/g,'').length<7){errPaymentSender.textContent='Please type the number used for payment.';return}if(ref.length<3){errPaymentReference.textContent='Please type the transaction reference.';return}paymentStatus.textContent='Submitting…';try{const r=await fetch(PLATFORM_API,{method:'POST',headers:{'Content-Type':'application/json',...authHeaders()},body:JSON.stringify({action:'payment_request',sender_number:s,transaction_reference:ref})}),j=await r.json();if(!r.ok)throw Error(j.error||'Unable to submit');paymentStatus.textContent='Payment submitted. The administrator will activate your access after verification.'}catch(e){paymentStatus.textContent=e.message}}
@@ -2089,6 +2089,10 @@ function isSaloneInstalled(){
          window.navigator.standalone === true;
 }
 
+function dismissInstallBanner(){
+  sessionStorage.setItem('salone_install_banner_dismissed','1');
+  const b=document.getElementById('pwaInstallBanner');if(b)b.hidden=true;
+}
 function updateInstallAppUI(){
   const box = document.getElementById('pwaInstallBox');
   const btn = document.getElementById('installAppBtn');
@@ -2110,6 +2114,17 @@ function updateInstallAppUI(){
     if(status) status.textContent = saloneInstallPrompt
       ? 'Tap Install App to add it to your phone.'
       : 'Tap Install App. If your browser does not show the install window, use the browser menu and choose “Install app” or “Add to Home screen”.';
+  }
+  const banner=document.getElementById('pwaInstallBanner');
+  const bannerBtn=document.getElementById('pwaBannerInstallBtn');
+  const bannerText=document.getElementById('pwaBannerText');
+  if(banner){
+    const dismissed=sessionStorage.getItem('salone_install_banner_dismissed')==='1';
+    banner.hidden=!signedIn||isSaloneInstalled()||dismissed;
+    if(bannerBtn)bannerBtn.disabled=false;
+    if(bannerText)bannerText.textContent=saloneInstallPrompt
+      ? 'Tap Install App to add Salone Class Room directly to this phone. No Play Store is required.'
+      : 'Tap Install App. If your browser does not open the installer, use the browser menu (⋮) and choose Install app or Add to Home screen.';
   }
 }
 
@@ -2160,5 +2175,12 @@ if('serviceWorker' in navigator){
 }
 </script>
 
+<div id="pwaInstallBanner" hidden style="position:fixed;left:12px;right:12px;bottom:14px;z-index:9999;max-width:620px;margin:auto;background:#fff;border:2px solid #0b57c8;border-radius:16px;padding:14px;box-shadow:0 10px 35px rgba(0,0,0,.22)">
+  <div style="display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap">
+    <div style="flex:1;min-width:210px"><strong style="color:#073b8c">Install Salone Class Room</strong><div id="pwaBannerText" class="field-help">Add the app to your phone for faster access. No Play Store is required.</div></div>
+    <button id="pwaBannerInstallBtn" class="btn btn-blue" type="button" onclick="installSaloneApp()">Install App</button>
+    <button class="btn btn-light" type="button" onclick="dismissInstallBanner()">Not now</button>
+  </div>
+</div>
 </body>
 </html>
