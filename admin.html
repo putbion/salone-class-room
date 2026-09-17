@@ -417,6 +417,47 @@ async function addAssistantAdmin(){const st=adminAccountStatus;st.classList.add(
 async function toggleAssistantAdmin(email,active){if(!confirm((active?'Enable ':'Disable ')+email+' as an administrator?'))return;try{await adminPost({action:'admin_toggle',email,active});refreshDashboard()}catch(e){alert(e.message)}}
 async function resolveResetRequest(id){try{await adminPost({action:'password_reset_resolve',id});refreshDashboard()}catch(e){alert(e.message)}}
 function renderPlatformAdmin(data){
+ const $id=id=>document.getElementById(id);
+ const adminsBody=$id('adminsBody');
+ const aiEnabled=$id('aiEnabled');
+ const aiModel=$id('aiModel');
+ const announcementActive=$id('announcementActive');
+ const announcementId=$id('announcementId');
+ const announcementMessage=$id('announcementMessage');
+ const currentAnnouncement=$id('currentAnnouncement');
+ const defaultAccessDays=$id('defaultAccessDays');
+ const featuresBody=$id('featuresBody');
+ const freeAccessEnabled=$id('freeAccessEnabled');
+ const freeAccessStart=$id('freeAccessStart');
+ const freeAccessUntil=$id('freeAccessUntil');
+ const jssFree=$id('jssFree');
+ const orangeApiBaseUrl=$id('orangeApiBaseUrl');
+ const orangeApiEnabled=$id('orangeApiEnabled');
+ const orangeMerchantId=$id('orangeMerchantId');
+ const orangeMoneyKpi=$id('orangeMoneyKpi');
+ const orangeMoneyNumber=$id('orangeMoneyNumber');
+ const orangePaymentMode=$id('orangePaymentMode');
+ const orangeWebhookUrl=$id('orangeWebhookUrl');
+ const paymentsBody=$id('paymentsBody');
+ const pendingPayments=$id('pendingPayments');
+ const priceJss=$id('priceJss');
+ const pricePrimary=$id('pricePrimary');
+ const priceSss=$id('priceSss');
+ const priceTeacher=$id('priceTeacher');
+ const priceUniversity=$id('priceUniversity');
+ const primaryFree=$id('primaryFree');
+ const profileAdvanced=$id('profileAdvanced');
+ const profileCount=$id('profileCount');
+ const profilePrimary=$id('profilePrimary');
+ const profileSecondary=$id('profileSecondary');
+ const rejectedPayments=$id('rejectedPayments');
+ const resetRequestsBody=$id('resetRequestsBody');
+ const settingAdminEmail=$id('settingAdminEmail');
+ const sssFree=$id('sssFree');
+ const teacherFree=$id('teacherFree');
+ const universityFree=$id('universityFree');
+ const verifiedPayments=$id('verifiedPayments');
+
  const profiles=data.profiles||[],pays=data.payments||[],cfg=data.platform_settings||{},ann=data.announcement||null,ais=data.ai_usage_summary||{};
 const aid=document.getElementById('aiDay'),aiw=document.getElementById('aiWeek'),aim=document.getElementById('aiMonth');
 if(aid)aid.textContent=n(ais.day??0);if(aiw)aiw.textContent=n(ais.week??0);if(aim)aim.textContent=n(ais.month??0);
