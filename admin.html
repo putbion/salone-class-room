@@ -86,7 +86,7 @@ th{background:#f6f9fc;color:#3b5267}
 <button class="tab" onclick="showTab('teachers',this)">Teachers</button>
 <button class="tab" onclick="showTab('university',this)">University</button>
 <button class="tab" onclick="showTab('feedback',this)">Feedback</button>
-<button class="tab" onclick="showTab('system',this)">AI &amp; System</button>
+<button class="tab" onclick="showTab('system',this)">AI &amp; System</button><button class="tab" onclick="showTab('aiusage',this)">Individual AI Usage</button>
 <button class="tab" onclick="showTab('settings',this)">Settings</button>
 <button class="tab" onclick="showTab('features',this)">Feature Management</button>
 <button class="tab" onclick="showTab('accounts',this)">User Management</button><button class="tab" onclick="showTab('payments',this)">Payments</button><button class="tab" onclick="showTab('announcements',this)">Announcements</button><button class="tab" onclick="showTab('access',this)">Access &amp; Pricing</button></nav>
@@ -143,7 +143,11 @@ th{background:#f6f9fc;color:#3b5267}
 <div class="box"><h3>Deployment Safety</h3><p class="note">The Supabase service-role key must never be placed in index.html or admin.html. Keep it only in Netlify Environment Variables. Admin requests are validated server-side.</p></div>
 </div>
 </section>
-<section class="panel" id="panel-settings">
+<section class="panel" id="panel-aiusage">
+<div class="kpis"><div class="kpi"><span>AI CALLS • TODAY</span><strong id="aiCallsToday">—</strong></div><div class="kpi"><span>AI CALLS • 7 DAYS</span><strong id="aiCalls7d">—</strong></div><div class="kpi"><span>AI CALLS • 30 DAYS</span><strong id="aiCalls30d">—</strong></div><div class="kpi"><span>REGISTERED AI USERS</span><strong id="aiRegisteredUsers">—</strong></div></div>
+<div class="box" style="margin-top:16px"><h3>Individual AI Usage</h3><p class="note">Daily, weekly and monthly AI requests for every registered user, including users with zero recorded AI use.</p><label for="aiUsageUserFilter">Filter by registered user</label><select id="aiUsageUserFilter" onchange="renderAIUsage(currentData)"><option value="">All registered users</option></select></div>
+<div class="table-wrap" style="margin-top:16px"><table><thead><tr><th>Name</th><th>Contact</th><th>Category</th><th>Today</th><th>7 Days</th><th>30 Days</th><th>Total</th><th>Last AI Use</th></tr></thead><tbody id="aiUsageByUserBody"></tbody></table></div>
+</section><section class="panel" id="panel-settings">
 <div class="box">
 <h3>Administration Settings</h3>
 <p class="note">Public pricing is not displayed on the classroom page. Prices and access periods are controlled here and shown only when payment is required.</p>
@@ -173,9 +177,9 @@ th{background:#f6f9fc;color:#3b5267}
 <div class="kpi"><span>JSS / SSS</span><strong id="profileSecondary">—</strong></div>
 <div class="kpi"><span>TEACHERS / UNIVERSITY</span><strong id="profileAdvanced">—</strong></div>
 </div>
-<div class="box" style="margin-top:16px"><h3>Find a User</h3><label for="userSearch">Search listed users</label><input id="userSearch" type="search" placeholder="Name, phone/email, category or town" oninput="renderProfilesTable()"/></div>
-<div class="kpis" style="margin-top:16px"><div class="kpi"><span>AI USAGE • TODAY</span><strong id="aiDay">—</strong></div><div class="kpi"><span>AI USAGE • 7 DAYS</span><strong id="aiWeek">—</strong></div><div class="kpi"><span>AI USAGE • 30 DAYS</span><strong id="aiMonth">—</strong></div></div>
-<div class="table-wrap" style="margin-top:16px"><table><thead><tr><th>Name</th><th>Contact</th><th>Category</th><th>Town</th><th>Last seen</th><th>Status</th><th>AI Today</th><th>AI Week</th><th>AI Month</th><th>Access</th><th>Action</th></tr></thead><tbody id="profilesBody"></tbody></table></div>
+<div class="box" style="margin-top:16px"><h3>Individual User Access Control</h3><p class="note">The existing registered users remain here. Search for a particular person, then use Manage to grant access, block, unblock, reset password or remove that account.</p><label for="userSearch">Search registered users</label><input id="userSearch" type="search" placeholder="Name, phone/email, category or town" oninput="renderProfilesTable()"/></div>
+<div class="kpis" style="margin-top:16px"><div class="kpi"><span>TOTAL AI USE • TODAY</span><strong id="aiDay">—</strong></div><div class="kpi"><span>TOTAL AI USE • 7 DAYS</span><strong id="aiWeek">—</strong></div><div class="kpi"><span>TOTAL AI USE • 30 DAYS</span><strong id="aiMonth">—</strong></div></div>
+<div class="table-wrap" style="margin-top:16px"><table><thead><tr><th>Name</th><th>Contact</th><th>Category</th><th>Town</th><th>Last seen</th><th>Status</th><th>AI Today</th><th>AI 7 Days</th><th>AI 30 Days</th><th>Access</th><th>Action</th></tr></thead><tbody id="profilesBody"></tbody></table></div>
 </section><section class="panel" id="panel-payments">
 <div class="kpis">
 <div class="kpi"><span>PENDING</span><strong id="pendingPayments">—</strong></div>
@@ -320,23 +324,33 @@ function render(data){
     `<div class="metric-row"><span>Support messages table</span><strong>${data.system?.messages_table?'Ready':'Run SQL setup'}</strong></div>`+
     `<div class="metric-row"><span>Activity table</span><strong>${data.system?.events_table?'Ready':'Run SQL setup'}</strong></div>`;
 
-  document.getElementById('status').textContent='Live data refreshed '+new Date().toLocaleTimeString();renderPlatformAdmin(data);
+  renderAIUsage(data);document.getElementById('status').textContent='Live data refreshed '+new Date().toLocaleTimeString();renderPlatformAdmin(data);
 }
 
 (async()=>{if(adminToken()){document.getElementById('loginGate').style.display='none';document.getElementById('dashboard').style.display='block';try{await refreshDashboard()}catch(e){console.warn('Dashboard refresh failed',e);document.getElementById('status').textContent='Dashboard opened. Tap Refresh to reload data.'}}})();
 </script>
 <script>
 async function adminPost(payload){const t=adminToken();if(!t)throw Error('Administrator session expired.');const r=await fetch('/.netlify/functions/admin-api',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+t},body:JSON.stringify(payload)});const d=await r.json();if(!r.ok)throw Error(d.error||'Unable to save');return d}
-function renderProfilesTable(){const profiles=window._adminProfiles||[],q=(document.getElementById('userSearch')?.value||'').trim().toLowerCase(),usage=currentData?.ai_usage_by_profile||{};const cat=c=>({primary:'Primary',jss:'JSS',sss:'SSS',teacher:'Teacher',university:'University'})[c]||c;const rows=profiles.filter(p=>!q||[p.full_name,p.contact,p.email,p.phone,p.category,p.town].some(v=>String(v||'').toLowerCase().includes(q)));profilesBody.innerHTML=rows.length?rows.map(p=>{const now=Date.now(),online=p.last_seen_at&&now-new Date(p.last_seen_at).getTime()<=300000,active30=p.last_seen_at&&now-new Date(p.last_seen_at).getTime()<=2592000000;const paid=p.paid_active&&(!p.paid_access_end||new Date(p.paid_access_end)>=new Date());const free=(p.free_access_start||p.free_access_end)&&(!p.free_access_end||new Date(p.free_access_end)>=new Date());const access=p.account_status==='blocked'?'BLOCKED':paid?'PAID ACTIVE':free?'FREE':'UNPAID / EXPIRED',u=usage[p.id]||{day:0,week:0,month:0};return `<tr><td>${esc(p.full_name)}</td><td>${esc(p.contact||p.email||p.phone||'—')}</td><td>${esc(cat(p.category))}</td><td>${esc(p.town)}</td><td>${online?'<span class="pill">Online</span> ':''}${date(p.last_seen_at)}</td><td><span class="pill">${p.account_status==='blocked'?'BLOCKED':online?'ONLINE':active30?'ACTIVE':'INACTIVE'}</span></td><td>${n(u.day)}</td><td>${n(u.week)}</td><td>${n(u.month)}</td><td><span class="pill">${access}</span></td><td><button class="btn btn-light" onclick="openUserManager(decodeURIComponent('${encodeURIComponent(String(p.id||''))}'))">Manage</button></td></tr>`}).join(''):`<tr><td colspan="11" class="empty">No matching users found.</td></tr>`;}
-function renderAnnouncements(items){const body=document.getElementById('announcementsBody');if(!body)return;body.innerHTML=items.length?items.map(a=>`<tr><td>${esc(a.message)}</td><td><span class="pill">${a.active?'ACTIVE':'INACTIVE'}</span></td><td>${date(a.created_at)}</td><td><button class="btn btn-light" onclick="editAnnouncement('${encodeURIComponent(String(a.id))}')">Edit</button> <button class="btn btn-light" onclick="deleteAnnouncement('${encodeURIComponent(String(a.id))}')">Delete</button></td></tr>`).join(''):'<tr><td colspan="4" class="empty">No announcements yet.</td></tr>';}
-function editAnnouncement(id){const a=(currentData?.announcements||[]).find(x=>String(x.id)===decodeURIComponent(id));if(!a)return;announcementId.value=a.id;announcementMessage.value=a.message||'';announcementActive.value=String(!!a.active);announcementMessage.focus()}
+
+function renderAIUsage(data){
+ const profiles=Array.isArray(data?.profiles)?data.profiles:[],logs=Array.isArray(data?.ai_usage)?data.ai_usage:[],now=Date.now(),day=86400000,week=7*day,month=30*day,pm=new Map(profiles.map(p=>[String(p.id),p]));
+ const sel=document.getElementById('aiUsageUserFilter');if(!sel)return;const prev=sel.value;sel.innerHTML='<option value="">All registered users</option>'+profiles.map(p=>`<option value="${esc(p.id)}">${esc(p.full_name||'Unnamed user')} — ${esc(p.contact||p.email||p.phone||'No contact')}</option>`).join('');if(profiles.some(p=>String(p.id)===String(prev)))sel.value=prev;
+ const registered=logs.filter(x=>x.profile_id&&pm.has(String(x.profile_id))),count=d=>logs.filter(x=>x.created_at&&now-new Date(x.created_at).getTime()<=d).length;
+ aiCallsToday.textContent=n(count(day));aiCalls7d.textContent=n(count(week));aiCalls30d.textContent=n(count(month));aiRegisteredUsers.textContent=n(new Set(registered.map(x=>String(x.profile_id))).size);
+ const rows=profiles.map(p=>{const ls=registered.filter(x=>String(x.profile_id)===String(p.id)),c=d=>ls.filter(x=>x.created_at&&now-new Date(x.created_at).getTime()<=d).length,last=ls.reduce((v,x)=>!v||new Date(x.created_at)>new Date(v)?x.created_at:v,null);return {p,day:c(day),week:c(week),month:c(month),total:ls.length,last}}).filter(x=>!sel.value||String(x.p.id)===String(sel.value));
+ aiUsageByUserBody.innerHTML=rows.length?rows.map(x=>`<tr><td>${esc(x.p.full_name||'Unnamed user')}</td><td>${esc(x.p.contact||x.p.email||x.p.phone||'—')}</td><td>${esc((x.p.category||'—').toUpperCase())}</td><td>${n(x.day)}</td><td>${n(x.week)}</td><td>${n(x.month)}</td><td>${n(x.total)}</td><td>${date(x.last)}</td></tr>`).join(''):'<tr><td colspan="8" class="empty">No registered users found.</td></tr>';
+}
+function renderProfilesTable(){const profiles=window._adminProfiles||[],q=(userSearch?.value||'').trim().toLowerCase(),usage=currentData?.ai_usage_by_profile||{},cat=c=>({primary:'Primary',jss:'JSS',sss:'SSS',teacher:'Teacher',university:'University'})[c]||c;const rows=profiles.filter(p=>!q||[p.full_name,p.contact,p.email,p.phone,p.category,p.town].some(v=>String(v||'').toLowerCase().includes(q)));profilesBody.innerHTML=rows.length?rows.map(p=>{const now=Date.now(),online=p.last_seen_at&&now-new Date(p.last_seen_at).getTime()<=300000,active=p.last_seen_at&&now-new Date(p.last_seen_at).getTime()<=2592000000,paid=p.paid_active&&(!p.paid_access_end||new Date(p.paid_access_end)>=new Date()),free=(p.free_access_start||p.free_access_end)&&(!p.free_access_end||new Date(p.free_access_end)>=new Date()),access=p.account_status==='blocked'?'BLOCKED':paid?'PAID ACTIVE':free?'FREE':'UNPAID / EXPIRED',u=usage[p.id]||{day:0,week:0,month:0};return `<tr><td>${esc(p.full_name)}</td><td>${esc(p.contact||p.email||p.phone||'—')}</td><td>${esc(cat(p.category))}</td><td>${esc(p.town)}</td><td>${online?'<span class="pill">Online</span> ':''}${date(p.last_seen_at)}</td><td><span class="pill">${p.account_status==='blocked'?'BLOCKED':online?'ONLINE':active?'ACTIVE':'INACTIVE'}</span></td><td>${n(u.day)}</td><td>${n(u.week)}</td><td>${n(u.month)}</td><td><span class="pill">${access}</span></td><td><button class="btn btn-light" onclick="openUserManager(decodeURIComponent('${encodeURIComponent(String(p.id||''))}'))">Manage</button></td></tr>`}).join(''):'<tr><td colspan="11" class="empty">No matching registered users found.</td></tr>'}
+function renderAnnouncements(items){announcementsBody.innerHTML=items.length?items.map(x=>`<tr><td>${esc(x.message)}</td><td><span class="pill">${x.active?'ACTIVE':'INACTIVE'}</span></td><td>${date(x.created_at)}</td><td><button class="btn btn-light" onclick="editAnnouncement('${encodeURIComponent(String(x.id))}')">Edit</button> <button class="btn btn-light" onclick="deleteAnnouncement('${encodeURIComponent(String(x.id))}')">Delete</button></td></tr>`).join(''):'<tr><td colspan="4" class="empty">No announcements yet.</td></tr>'}
+function editAnnouncement(id){const x=(currentData?.announcements||[]).find(a=>String(a.id)===decodeURIComponent(id));if(!x)return;announcementId.value=x.id;announcementMessage.value=x.message||'';announcementActive.value=String(!!x.active)}
 function clearAnnouncementEditor(){announcementId.value='';announcementMessage.value='';announcementActive.value='true'}
 async function deleteAnnouncement(id){if(!confirm('Delete this announcement?'))return;try{await adminPost({action:'delete_announcement',id:decodeURIComponent(id)});clearAnnouncementEditor();await refreshDashboard()}catch(e){announcementStatus.textContent=e.message;announcementStatus.classList.add('show')}}
+
 async function saveAnnouncement(){
  const s=document.getElementById('announcementStatus');s.classList.add('show');
  const message=document.getElementById('announcementMessage').value.trim(),active=document.getElementById('announcementActive').value==='true';
  if(!message){s.textContent='Please type the announcement first.';return}
- try{await adminPost({action:'save_announcement',id:document.getElementById('announcementId').value||null,message,active});s.textContent='Announcement saved.';clearAnnouncementEditor();refreshDashboard()}catch(e){s.textContent=e.message}
+ try{await adminPost({action:'save_announcement',id:announcementId.value||null,message,active});s.textContent='Announcement saved.';clearAnnouncementEditor();refreshDashboard()}catch(e){s.textContent=e.message}
 }
 async function saveAccessSettings(){
  const st=document.getElementById('accessStatus');st.classList.add('show');
