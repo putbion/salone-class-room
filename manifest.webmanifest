@@ -1,16 +1,14 @@
 {
   "name": "Salone Class Room",
-  "short_name": "Salone Class Room",
-  "id": "/",
+  "short_name": "Salone Class",
+  "description": "AI-assisted learning for Sierra Leone students, teachers and university students.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "display_override": ["standalone", "minimal-ui"],
   "background_color": "#ffffff",
-  "theme_color": "#0b5ed7",
-  "description": "AI-powered learning support for Sierra Leone students, teachers and university learners.",
+  "theme_color": "#073b8c",
   "icons": [
-    {"src":"/icon-192.png","sizes":"192x192","type":"image/png","purpose":"any"},
-    {"src":"/icon-512.png","sizes":"512x512","type":"image/png","purpose":"any"}
+    {"src":"/icons/icon-192.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},
+    {"src":"/icons/icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}
   ]
 }
