@@ -91,7 +91,7 @@ exports.handler=async(event)=>{
    return {provider:'deepseek',model:d.model||deepseekModel,text,usage:d.usage||{}};
   };
   let result;
-  try{result=await callGroq()}catch(gErr){console.error('[learning-api][fallback]',gErr.message);try{result=await callDeepSeek()}catch(dErr){console.error('[learning-api][all-ai-failed]',dErr.message);return json(502,{error:'The AI service could not answer right now. Please try again.'})}}
+  try{result=await callDeepSeek()}catch(dErr){console.error('[learning-api][fallback-to-groq]',dErr.message);try{result=await callGroq()}catch(gErr){console.error('[learning-api][all-ai-failed]',gErr.message);return json(502,{error:'The AI service could not answer right now. Please try again.'})}}
   const text=result.text,usage=result.usage||{},inputTokens=Number(usage.prompt_tokens||usage.input_tokens||0),outputTokens=Number(usage.completion_tokens||usage.output_tokens||0);
   // Always record every successful AI answer in app_events (known existing table).
   // This gives the admin dashboard a reliable per-user usage ledger.
