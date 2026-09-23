@@ -12,7 +12,7 @@
 <meta content="yes" name="apple-mobile-web-app-capable"/>
 <meta content="default" name="apple-mobile-web-app-status-bar-style"/>
 <meta content="Salone Class Room" name="apple-mobile-web-app-title"/>
-<link href="/icons/icon-192.png" rel="apple-touch-icon"/>
+<link href="/icon-192.png" rel="apple-touch-icon"/>
 <!-- Salone Class Room V3.10: verified administrators receive free access to all learning sections -->
 <title>Salone Class Room | Learn, Teach, Grow</title>
 <style>
@@ -2214,7 +2214,7 @@ async function installSaloneApp(){
     return;
   }
 
-  if(status){status.textContent=isIOSDevice()?'On iPhone/iPad, tap the Share button in Safari, choose “Add to Home Screen”, then tap “Add”. Apple requires this confirmation step.':'Your browser has not made the install window available yet. Open the browser menu (⋮) and tap “Install app” or “Add to Home screen”.';}
+  if(status){status.textContent=isIOSDevice()?'On iPhone/iPad: open Salone Class Room in Safari, tap Share, choose “Add to Home Screen”, turn on “Open as Web App” if shown, then tap Add.':'Your browser has not made the install window available yet. Open the browser menu (⋮) and tap “Install app” or “Add to Home screen”.';}
 }
 
 if('serviceWorker' in navigator){
