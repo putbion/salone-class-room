@@ -1367,7 +1367,45 @@ function updateDissertationTopics(){
 <div class="result" id="supportSubmitStatus"></div></form>
 </div>
 </section>
-<div style="margin:16px 0 18px;text-align:center"><button class="btn" onclick="shareSaloneClassRoom()" type="button" style="font-size:16px;padding:11px 18px;background:#000;color:#fff;border:2px solid #000;font-weight:700">📤 Click here to share Salone Class Room to others</button><div class="field-help" style="margin-top:6px">Share with friends, students, teachers and others.</div></div>
+<div style="margin:16px 0 18px;text-align:center">
+<div id="personalizedSharePrompt" style="text-align:center; margin:14px 0 8px; font-weight:600;">
+  Have you shared Salone Class Room to others?
+</div>
+<script>
+(function () {
+  function setSharePrompt() {
+    var el = document.getElementById('personalizedSharePrompt');
+    if (!el) return;
+    var name = '';
+    try {
+      var candidates = ['userName','username','fullName','name','studentName','displayName'];
+      for (var i=0; i<candidates.length && !name; i++) {
+        var v = localStorage.getItem(candidates[i]) || sessionStorage.getItem(candidates[i]);
+        if (v) {
+          try {
+            var parsed = JSON.parse(v);
+            name = (parsed && (parsed.name || parsed.full_name || parsed.fullName || parsed.displayName)) || (typeof parsed === 'string' ? parsed : '');
+          } catch(e) { name = v; }
+        }
+      }
+      var userRaw = localStorage.getItem('user') || localStorage.getItem('currentUser') || localStorage.getItem('profile');
+      if (!name && userRaw) {
+        try {
+          var u = JSON.parse(userRaw);
+          name = u.name || u.full_name || u.fullName || u.display_name || u.displayName || '';
+        } catch(e) {}
+      }
+    } catch(e) {}
+    if (name) {
+      name = String(name).trim().split(/\s+/)[0];
+      el.textContent = name + ', have you shared Salone Class Room to others?';
+    }
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', setSharePrompt);
+  else setSharePrompt();
+})();
+</script>
+<button class="btn" onclick="shareSaloneClassRoom()" type="button" style="font-size:16px;padding:11px 18px;background:#000;color:#fff;border:2px solid #000;font-weight:700">📤 Click here to share</button><div class="field-help" style="margin-top:6px">Share with friends, students, teachers and others.</div></div>
 <div class="bottom-admin-access admin-after-comments">
 
 </div>
