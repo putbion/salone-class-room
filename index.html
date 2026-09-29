@@ -953,7 +953,7 @@ select:disabled{background-color:#f3f6f9 !important;color:#7a8794 !important;opa
 <option>Science (including Basic Technology &amp; How Things Work)</option>
 <option>ICT Literacy</option>
 </select>
-<label for="primaryTopicSelect">Type or choose your topic</label><select data-class-id="primaryClass" data-subject-id="primarySubject" data-topic-level="primary" id="primaryTopicSelect"><option value="">Choose class and subject first</option></select><p class="topic-help">Choose a curriculum topic from the list or type your own topic below.</p><textarea id="primaryQuestion" placeholder="Or type your own topic or question" rows="3"></textarea>
+<label for="primaryTopicSelect">Type or choose your topic</label><select data-class-id="primaryClass" data-manual-id="primaryQuestion" data-subject-id="primarySubject" data-topic-level="primary" id="primaryTopicSelect"><option value="">Choose class and subject first</option></select><p class="topic-help">Choose a curriculum topic from the list or type your own topic below.</p><textarea id="primaryQuestion" placeholder="Or type your own topic or question" rows="3"></textarea>
 <button class="btn btn-blue" onclick="curriculumExplain('primary','primaryClass','primarySubject','primaryTopicSelect','primaryTutorOutput','primaryQuestion')" type="button">Click here for your explanation</button><div class="output" id="primaryTutorOutput"></div>
 </article>
 <article class="card tool-card primary-card npse-card">
@@ -1478,15 +1478,137 @@ function updateDissertationTopics(){
     }
     document.querySelectorAll('[data-jss-subject]').forEach(select=>fillSelect(select,jssSubjects,'Choose subject'));
     const allSssSubjects=[...new Set(Object.values(sssSubjects).flat())].sort();
-    function updateSSSSubjects(streamSelect){const target=document.getElementById(streamSelect.dataset.target);fillSelect(target,streamSelect.value?sssSubjects[streamSelect.value]:allSssSubjects,'Choose subject')}
+    function updateSSSSubjects(streamSelect){
+      const target=document.getElementById(streamSelect.dataset.target);
+      fillSelect(target,streamSelect.value?sssSubjects[streamSelect.value]:allSssSubjects,'Choose subject');
+      const card=streamSelect.closest('article, .card');
+      const manual=card?.querySelector('#sssTopic, #sssQuizTopic');
+      if(manual)manual.value='';
+      const out=card?.querySelector('.output');
+      if(out&&out.id){out.innerHTML='';out.classList.remove('show');delete lastLearningAnswers[out.id];delete lastLearningPayload[out.id];}
+    }
     document.querySelectorAll('[data-sss-stream]').forEach(select=>{fillSelect(select,Object.keys(sssSubjects),'All streams');fillSelect(document.getElementById(select.dataset.target),allSssSubjects,'Choose subject');select.addEventListener('change',()=>{updateSSSSubjects(select);setTimeout(()=>document.querySelectorAll('[data-topic-level]').forEach(t=>{if(t.dataset.subjectId===select.dataset.target)loadTopicPicker(t)}),0)})});
     setTimeout(wireTopicPickers,0);
-    async function loadTopicPicker(select){const level=select.dataset.topicLevel,subject=document.getElementById(select.dataset.subjectId)?.value||'',classLevel=select.dataset.classFixed||document.getElementById(select.dataset.classId)?.value||'';const manualId=select.id.replace('Select','');const manual=document.getElementById(manualId);if(!subject){fillSelect(select,[],'Choose a subject first');if(manual)manual.hidden=false;return}const fallback=localTopicsFor(level,classLevel,subject);fillSelect(select,fallback,fallback.length?'Choose curriculum topic':'Loading curriculum topics…');if(!select.querySelector('option[value="__other__"]'))select.add(new Option('Other / Type my own topic','__other__'));try{const d=await platformPost({action:'curriculum_topics',level,class_level:classLevel,subject},8000);const remote=(d.topics||[]).filter(Boolean);const items=[...new Set([...remote,...fallback])];fillSelect(select,items,items.length?'Choose curriculum topic':'Choose or type a topic');select.add(new Option('Other / Type my own topic','__other__'))}catch{/* Keep the local fallback already displayed. */}if(manual)manual.hidden=false}
-    function wireTopicPickers(){document.querySelectorAll('[data-topic-level]').forEach(sel=>{const subject=document.getElementById(sel.dataset.subjectId),cls=sel.dataset.classId?document.getElementById(sel.dataset.classId):null;subject?.addEventListener('change',()=>loadTopicPicker(sel));cls?.addEventListener('change',()=>loadTopicPicker(sel));sel.addEventListener('change',()=>{const manual=document.getElementById(sel.id.replace('Select',''));if(manual){manual.hidden=false;if(sel.value==='__other__')manual.focus()}});const manual=document.getElementById(sel.id.replace('Select',''));if(manual)manual.hidden=false})}
+    async function loadTopicPicker(select){
+      const level=select.dataset.topicLevel,
+            subject=document.getElementById(select.dataset.subjectId)?.value||'',
+            classLevel=select.dataset.classFixed||document.getElementById(select.dataset.classId)?.value||'';
+      const manualId=select.dataset.manualId || select.id.replace('Select','') || (select.id==='primaryTopicSelect'?'primaryQuestion':'');
+      const manual=document.getElementById(manualId);
+      if(!subject){fillSelect(select,[],'Choose a subject first');if(manual)manual.hidden=false;return}
+      const fallback=localTopicsFor(level,classLevel,subject);
+      fillSelect(select,fallback,fallback.length?'Choose curriculum topic':'Loading curriculum topics…');
+      if(!select.querySelector('option[value="__other__"]'))select.add(new Option('Other / Type my own topic','__other__'));
+      try{
+        const d=await platformPost({action:'curriculum_topics',level,class_level:classLevel,subject},8000);
+        const remote=(d.topics||[]).filter(Boolean);
+        const items=[...new Set([...remote,...fallback])];
+        fillSelect(select,items,items.length?'Choose curriculum topic':'Choose or type a topic');
+        select.add(new Option('Other / Type my own topic','__other__'));
+      }catch{/* Keep the local fallback already displayed. */}
+      if(manual)manual.hidden=false;
+    }
+    function wireTopicPickers(){
+      document.querySelectorAll('[data-topic-level]').forEach(sel=>{
+        const subject=document.getElementById(sel.dataset.subjectId),
+              cls=sel.dataset.classId?document.getElementById(sel.dataset.classId):null;
+        const manualId=sel.dataset.manualId || sel.id.replace('Select','') || (sel.id==='primaryTopicSelect'?'primaryQuestion':'');
+        const manual=document.getElementById(manualId);
+
+        const onSubjectOrClassChange=()=>{
+          if(manual){
+            manual.value='';
+          }
+          const card=sel.closest('article, .card');
+          const output=card?.querySelector('.output, .quiz-area');
+          if(output&&output.id){
+            output.innerHTML='';
+            output.classList.remove('show');
+            delete lastLearningAnswers[output.id];
+            delete lastLearningPayload[output.id];
+          }
+          loadTopicPicker(sel);
+        };
+
+        subject?.addEventListener('change',onSubjectOrClassChange);
+        cls?.addEventListener('change',onSubjectOrClassChange);
+
+        sel.addEventListener('change',()=>{
+          if(manual){
+            manual.hidden=false;
+            if(sel.value==='__other__'){
+              manual.value='';
+              manual.focus();
+            } else if(sel.value && sel.dataset.topicLevel!=='primary'){
+              manual.value='';
+            }
+          }
+        });
+
+        if(manual){
+          manual.hidden=false;
+          manual.addEventListener('input',()=>{
+            if((manual.value||'').trim() && sel.querySelector('option[value="__other__"]')){
+              sel.value='__other__';
+            }
+          });
+        }
+      });
+    }
     async function curriculumExplain(level,classId,subjectId,topicSelectId,outputId,manualId){
-      const schoolClass=document.getElementById(classId)?.value||'',subject=document.getElementById(subjectId)?.value||'',sel=document.getElementById(topicSelectId),manual=manualId?document.getElementById(manualId):null,topic=((manual?.value||'').trim() || (sel?.value==='__other__'?'':sel?.value||'')).trim(),box=document.getElementById(outputId);
-      if(!subject){flagRequired(document.getElementById(subjectId),'Please select your subject.');showOutput(box,'Please select your subject.');return}if(!topic){const target=(sel?.value==='__other__'||!sel?.value)?(manual||sel):sel;flagRequired(target,'Please select or type your topic.');showOutput(box,'Please select or type your topic.');return}
-      await callLearning({level,class_level:schoolClass,subject,topic,task:'tutor',tool_key:(level+'-'+subject+'-tutor').toLowerCase().replace(/[^a-z0-9]+/g,'-')},box);
+      const schoolClass=document.getElementById(classId)?.value||'',
+            subject=document.getElementById(subjectId)?.value||'',
+            sel=document.getElementById(topicSelectId),
+            manual=manualId?document.getElementById(manualId):null,
+            box=document.getElementById(outputId);
+      if(!subject){flagRequired(document.getElementById(subjectId),'Please select your subject.');showOutput(box,'Please select your subject.');return}
+      const manualVal=(manual?.value||'').trim();
+      const selVal=(sel?.value==='__other__'?'':sel?.value||'').trim();
+      let topic='', question='';
+
+      if(level==='primary'){
+        if(selVal && manualVal){
+          topic=selVal;
+          question=manualVal;
+        } else if(selVal){
+          topic=selVal;
+        } else if(manualVal){
+          topic=manualVal;
+        }
+      } else {
+        if(sel?.value==='__other__'){
+          topic=manualVal;
+        } else if(selVal){
+          topic=selVal;
+        } else {
+          topic=manualVal;
+        }
+      }
+
+      if(!topic){
+        const target=(sel?.value==='__other__'||!sel?.value)?(manual||sel):sel;
+        flagRequired(target,'Please select or type your topic.');
+        showOutput(box,'Please select or type your topic.');
+        return;
+      }
+
+      if(box?.id){
+        delete lastLearningAnswers[box.id];
+        delete lastLearningPayload[box.id];
+      }
+
+      const payload={
+        level,
+        class_level:schoolClass,
+        subject,
+        topic: question ? (topic + (question.toLowerCase().includes(topic.toLowerCase()) ? '' : ' - Question: ' + question)) : topic,
+        task:'tutor',
+        tool_key:(level+'-'+subject+'-tutor').toLowerCase().replace(/[^a-z0-9]+/g,'-')
+      };
+      if(question){
+        payload.context='Learner specific question: ' + question;
+      }
+      await callLearning(payload,box);
     }
     function toggleMenu(){document.getElementById('navLinks').classList.toggle('open')}
     document.querySelectorAll('.links a').forEach(a=>a.addEventListener('click',()=>document.getElementById('navLinks').classList.remove('open')));
@@ -1540,7 +1662,8 @@ function updateDissertationTopics(){
 
     async function startQuiz(level){
       const subject=document.getElementById(level+'QuizSubject').value;
-      const topicSel=document.getElementById(level+'QuizTopicSelect'),manual=document.getElementById(level+'QuizTopic');let topic=(((manual?.value||'').trim()) || (topicSel?.value==='__other__'?'':topicSel?.value||'')).trim();
+      const topicSel=document.getElementById(level+'QuizTopicSelect'),manual=document.getElementById(level+'QuizTopic');
+      let topic=(topicSel?.value==='__other__'?((manual?.value||'').trim()):(topicSel?.value||(manual?.value||'').trim())).trim();
       const box=document.getElementById(level+'Quiz');
       const exam=level==='jss'?'BECE':'WASSCE';
       if(!subject){showOutput(box,'Please choose a subject first.');return}
@@ -1561,7 +1684,7 @@ function updateDissertationTopics(){
       if(!questions.length){box.innerHTML='<strong>No questions were returned. Please try again.</strong>';box.classList.add('show');return}
 
       quizState[level]={questions,answered:0,correct:0,wrong:0,weakAreas:{},responses:[]};
-      const qSubject=document.getElementById(level+'QuizSubject')?.value||'',qSel=document.getElementById(level+'QuizTopicSelect'),qManual=document.getElementById(level+'QuizTopic'),qTopic=(((qManual?.value||'').trim()) || (qSel?.value==='__other__'?'':qSel?.value||'')).trim();rememberSeenQuestions(level,qSubject,qTopic,questions);
+      const qSubject=document.getElementById(level+'QuizSubject')?.value||'',qSel=document.getElementById(level+'QuizTopicSelect'),qManual=document.getElementById(level+'QuizTopic'),qTopic=(qSel?.value==='__other__'?((qManual?.value||'').trim()):(qSel?.value||(qManual?.value||'').trim())).trim();rememberSeenQuestions(level,qSubject,qTopic,questions);
 
       box.innerHTML='<div class="quiz-head"><strong>'+exam+' Objective Practice</strong><br><span>Answer all '+questions.length+' questions. Your result and weak areas will appear at the end.</span></div>'+
         questions.map((q,i)=>{
