@@ -3,7 +3,7 @@
 -- Execute this script in the Supabase Dashboard SQL Editor (Project -> SQL Editor)
 -- ==============================================================================
 
--- 1. ENABLE ROW LEVEL SECURITY (RLS) ON ALL PLATFORM TABLES
+-- 1. ENABLE ROW LEVEL SECURITY (RLS) ON ALL 15 PLATFORM TABLES
 -- ------------------------------------------------------------------------------
 ALTER TABLE IF EXISTS public.user_profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE IF EXISTS public.user_sessions ENABLE ROW LEVEL SECURITY;
@@ -22,7 +22,7 @@ ALTER TABLE IF EXISTS public.tool_usage ENABLE ROW LEVEL SECURITY;
 ALTER TABLE IF EXISTS public.announcements ENABLE ROW LEVEL SECURITY;
 
 -- 2. REVOKE ALL DEFAULT PERMISSIONS FROM UNTRUSTED ROLES (anon, authenticated)
--- All frontend access routes strictly through Netlify Serverless Functions using service_role.
+-- All client traffic is mediated strictly by Netlify Serverless Functions using the service_role key.
 -- Direct queries using anon key will be blocked by default.
 -- ------------------------------------------------------------------------------
 REVOKE ALL ON TABLE public.user_profiles FROM anon, authenticated;
@@ -78,7 +78,6 @@ CREATE POLICY "service_role_all_tool_usage" ON public.tool_usage FOR ALL TO serv
 CREATE POLICY "service_role_all_announcements" ON public.announcements FOR ALL TO service_role USING (true) WITH CHECK (true);
 
 -- 6. PUBLIC READ POLICIES (FOR NON-SENSITIVE CURRICULUM AND ACTIVE ANNOUNCEMENTS ONLY)
--- In case public clients read curriculum or announcements directly
 -- ------------------------------------------------------------------------------
 GRANT SELECT ON public.curriculum_topics TO anon, authenticated;
 GRANT SELECT ON public.learning_content TO anon, authenticated;
