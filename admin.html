@@ -277,7 +277,24 @@ async function signIn(){
   msg('Checking administrator access…');
   try{const r=await fetch('/.netlify/functions/admin-api',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'admin_login',email,password})});const d=await r.json();if(!r.ok)throw Error(d.error||'Administrator access denied');sessionStorage.setItem('salone_admin_token',d.access_token);localStorage.removeItem('salone_admin_token');document.getElementById('settingAdminEmail').value=email;document.getElementById('loginGate').style.display='none';document.getElementById('dashboard').style.display='block';msg('');try{await refreshDashboard()}catch(refreshErr){console.warn('Dashboard refresh failed',refreshErr);document.getElementById('status').textContent='Dashboard opened. Some data could not refresh yet; tap Refresh to try again.'}}catch(e){msg(e.message)}
 }
-function signOut(){sessionStorage.removeItem('salone_admin_token');localStorage.removeItem('salone_admin_token');location.reload()}
+let adminInactivityTimer = null;
+function resetAdminInactivityTimer(){
+  clearTimeout(adminInactivityTimer);
+  if(adminToken()){
+    adminInactivityTimer = setTimeout(()=>{
+      signOut();
+    }, 30 * 60 * 1000);
+  }
+}
+['click','keydown','scroll','mousemove'].forEach(evt => window.addEventListener(evt, resetAdminInactivityTimer, {passive: true}));
+resetAdminInactivityTimer();
+
+function signOut(){
+  clearTimeout(adminInactivityTimer);
+  sessionStorage.removeItem('salone_admin_token');
+  localStorage.removeItem('salone_admin_token');
+  location.reload();
+}
 function showTab(name,btn){document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));document.getElementById('panel-'+name).classList.add('active');document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));btn.classList.add('active')}
 async function refreshDashboard(){const t=adminToken();if(!t)return;document.getElementById('status').textContent='Refreshing…';const r=await fetch('/.netlify/functions/admin-api',{headers:{Authorization:'Bearer '+t}});const body=await r.json();if(!r.ok){if(r.status===401){sessionStorage.removeItem('salone_admin_token');localStorage.removeItem('salone_admin_token');location.reload();return}document.getElementById('status').textContent=body.error||'Unable to refresh';return}currentData=body;render(body)}
 function n(v){return Number(v||0).toLocaleString()}
