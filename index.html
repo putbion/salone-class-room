@@ -1108,14 +1108,14 @@ select:disabled{background-color:#f3f6f9 !important;color:#7a8794 !important;opa
 </div>
 <div class="prepare-teach-box" style="margin-top:18px">
 <h3>Prepare Exam Questions</h3>
-<p>Choose the teacher category, class or level, subject and curriculum topic for the examination. You can also type your own topic. Choose the question type: <strong>Objective — 5 questions</strong> or <strong>Theory — 3 questions</strong>. Each time you tap Generate Questions, Salone Class Room will prepare a fresh set of questions for the selected class, subject and topic.</p>
+<p>Choose the teacher category, class or level, subject and curriculum topic for the examination. You can also type your own topic. Choose the question type: <strong>Objective — 10 questions</strong> or <strong>Theory — 5 questions</strong>. Each time you tap Generate Questions, Salone Class Room will prepare a fresh set of questions for the selected class, subject and topic.</p>
 <div class="teacher-form-grid" style="margin-top:12px">
 <div><label for="teacherExamCategory">Teacher Category</label><select id="teacherExamCategory"><option value="">Select teacher category</option><option value="primary">Primary School Teacher</option><option value="jss">Junior Secondary School (JSS) Teacher</option><option value="sss">Senior Secondary School (SSS) Teacher</option></select></div>
 <div><label for="teacherExamClass">Class / Level</label><select id="teacherExamClass"><option value="">Select teacher category first</option></select></div>
 <div hidden="" id="teacherExamStreamWrap"><label for="teacherExamStream">SSS stream</label><select id="teacherExamStream"><option value="">Select stream</option></select></div>
 <div><label for="teacherExamSubject">Subject</label><select id="teacherExamSubject"><option value="">Select teacher category and class first</option></select></div>
 <div><label for="teacherExamTopic">Type or choose your topic</label><select id="teacherExamTopic"><option value="">Choose a subject first</option></select></div>
-<div><label for="teacherExamType">Question Type</label><select id="teacherExamType"><option value="">Select question type</option><option value="objective">Objective — 5 questions</option><option value="theory">Theory — 3 questions</option></select></div>
+<div><label for="teacherExamType">Question Type</label><select id="teacherExamType"><option value="">Select question type</option><option value="objective">Objective — 10 questions</option><option value="theory">Theory — 5 questions</option></select></div>
 </div>
 <input hidden="" id="teacherExamTopicOther" placeholder="Or type your own topic"/>
 <p class="topic-help">Select “Other / Type my own topic” if the topic you want is not listed.</p>
@@ -1580,7 +1580,7 @@ function updateDissertationTopics(){
     function rememberSeenQuestions(level,subject,topic,questions){const all=[...getSeenQuestions(level,subject,topic),...questions.map(q=>q.question).filter(Boolean)];sessionStorage.setItem(seenKey(level,subject,topic),JSON.stringify([...new Set(all)].slice(-50)))}
 
     function normalizedQuestionText(text){return String(text||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim()}
-    async function fetchFreshQuestions({level,subject,topic,exam,count,toolKey}){
+    async function fetchFreshQuestions({level,class_level,subject,topic,exam,count,toolKey}){
       const previous=getSeenQuestions(level,subject,topic);
       const blocked=new Set(previous.map(normalizedQuestionText));
       const collected=[];
@@ -1588,7 +1588,7 @@ function updateDissertationTopics(){
         const nonce=Date.now()+'-'+attempt+'-'+Math.random().toString(36).slice(2,8);
         const requestTopic=topic+'\n\nFresh practice set ID: '+nonce+'. Generate different questions from earlier practice sets.';
         const data=await learningRequest({
-          level,subject,topic:requestTopic,exam,task:'quiz',
+          level,class_level,subject,topic:requestTopic,exam,task:'quiz',
           question_count:count-collected.length,
           tool_key:toolKey,
           excluded_questions:[...previous,...collected.map(q=>q.question)],
@@ -1606,9 +1606,10 @@ function updateDissertationTopics(){
     }
 
     function getPracticeConfig(level, repeatSameTopic){
-      let subject='', topic='', box=null, exam='', type='objective';
+      let subject='', topic='', box=null, exam='', type='objective', classLevel='';
       if(level === 'primary'){
         exam = 'NPSE';
+        classLevel = (document.getElementById('primaryClass')?.value || 'Class 6').trim();
         subject = (document.getElementById('npseSubject')?.value || '').trim();
         const ts = document.getElementById('npseTopicSelect'), tm = document.getElementById('npseTopic');
         topic = (((tm?.value||'').trim()) || (ts?.value==='__other__'?'':ts?.value||'')).trim();
@@ -1616,6 +1617,7 @@ function updateDissertationTopics(){
         type = document.getElementById('npseQuizType')?.value || 'objective';
       } else if(level === 'jss'){
         exam = 'BECE';
+        classLevel = (document.getElementById('jssClass')?.value || 'JSS 3').trim();
         subject = (document.getElementById('jssQuizSubject')?.value || '').trim();
         const ts = document.getElementById('jssQuizTopicSelect'), tm = document.getElementById('jssQuizTopic');
         topic = (((tm?.value||'').trim()) || (ts?.value==='__other__'?'':ts?.value||'')).trim();
@@ -1623,6 +1625,7 @@ function updateDissertationTopics(){
         type = document.getElementById('jssQuizType')?.value || 'objective';
       } else if(level === 'sss'){
         exam = 'WASSCE';
+        classLevel = (document.getElementById('sssClass')?.value || 'SSS 3').trim();
         subject = (document.getElementById('sssQuizSubject')?.value || '').trim();
         const ts = document.getElementById('sssQuizTopicSelect'), tm = document.getElementById('sssQuizTopic');
         topic = (((tm?.value||'').trim()) || (ts?.value==='__other__'?'':ts?.value||'')).trim();
@@ -1633,7 +1636,7 @@ function updateDissertationTopics(){
         topic = lastPracticeTopic[level];
         if(lastPracticeSubject[level]) subject = lastPracticeSubject[level];
       }
-      return { level, exam, subject, topic, box, type };
+      return { level, exam, classLevel, subject, topic, box, type };
     }
 
     async function startPractice(level, repeatSameTopic=false){
@@ -1660,6 +1663,7 @@ function updateDissertationTopics(){
       try{
         const questions = await fetchFreshQuestions({
           level: cfg.level === 'primary' ? 'primary' : cfg.level,
+          class_level: cfg.classLevel,
           subject: cfg.subject,
           topic: cfg.topic,
           exam: cfg.exam,
@@ -1686,6 +1690,7 @@ function updateDissertationTopics(){
       practiceState[cfg.level] = {
         level: cfg.level,
         exam: cfg.exam,
+        classLevel: cfg.classLevel,
         subject: cfg.subject,
         topic: cfg.topic,
         questions: questions.slice(0, QUIZ_ROUND_SIZE),
@@ -1869,6 +1874,7 @@ function updateDissertationTopics(){
       try{
         const res = await learningRequest({
           level: state.level === 'primary' ? 'primary' : state.level,
+          class_level: state.classLevel,
           subject: state.subject,
           topic: state.topic,
           task: 'explain_wrong_answer',
@@ -1896,13 +1902,14 @@ function updateDissertationTopics(){
       try{
         const res = await learningRequest({
           level: cfg.level === 'primary' ? 'primary' : cfg.level,
+          class_level: cfg.classLevel,
           subject: cfg.subject,
           topic: cfg.topic,
           exam: cfg.exam,
           task: 'theory_quiz',
           question_count: wanted,
           tool_key: `${cfg.level}-${cfg.exam.toLowerCase()}-theory-practice`,
-          context: `Generate exactly 3 theory examination questions for ${cfg.exam} ${cfg.subject} on ${cfg.topic}. Include model answers and key marking points.`
+          context: `Generate exactly 3 theory examination questions for ${cfg.exam} ${cfg.classLevel ? '(' + cfg.classLevel + ') ' : ''}${cfg.subject} on ${cfg.topic}. Questions must strictly match the selected class, subject and topic. Include model answers and key marking points.`
         });
         const questions = Array.isArray(res.questions) ? res.questions.slice(0, wanted) : [];
         if(questions.length === wanted){
@@ -1920,6 +1927,7 @@ function updateDissertationTopics(){
       theoryPracticeState[cfg.level] = {
         level: cfg.level,
         exam: cfg.exam,
+        classLevel: cfg.classLevel,
         subject: cfg.subject,
         topic: cfg.topic,
         questions,
@@ -1976,6 +1984,7 @@ function updateDissertationTopics(){
       try{
         const markRes = await learningRequest({
           level: state.level === 'primary' ? 'primary' : state.level,
+          class_level: state.classLevel,
           subject: state.subject,
           topic: state.topic,
           exam: state.exam,
@@ -1983,6 +1992,7 @@ function updateDissertationTopics(){
           tool_key: `${level}-${state.exam.toLowerCase()}-theory-marking`,
           context: JSON.stringify({
             exam: state.exam,
+            class_level: state.classLevel,
             subject: state.subject,
             topic: state.topic,
             submissions: state.questions.map((q, idx) => ({
@@ -2067,250 +2077,11 @@ function updateDissertationTopics(){
     async function copyCV(){const text=document.getElementById('cvPreview').innerText;try{await navigator.clipboard.writeText(text);alert('Your CV text has been copied.')}catch(e){alert('Please press and hold the CV text, then select Copy.')}}
 </script>
 <script>
-let npseState=null;
-async function startNPSEQuiz(){
-  await startPractice('primary');
-}
 async function jssAssignmentGuide(){const subject=document.getElementById('jssAssignmentSubject')?.value||'',topic=document.getElementById('jssAssignment')?.value.trim()||'',box=document.getElementById('jssGuide');if(!subject){flagRequired(document.getElementById('jssAssignmentSubject'),'Please select your subject.');showOutput(box,'Please select your subject.');return}if(!topic){flagRequired(document.getElementById('jssAssignment'),'Please type the assignment given to you.');showOutput(box,'Please type the assignment given to you.');return}await callLearning({level:'jss',subject,topic,task:'assignment',tool_key:'jss-assignment-guide'},box)}
 async function sssAssignmentGuide(){const subject=document.getElementById('sssAssignmentSubject')?.value||'',topic=document.getElementById('sssAssignment')?.value.trim()||'',box=document.getElementById('sssGuide');if(!subject){flagRequired(document.getElementById('sssAssignmentSubject'),'Please select your subject.');showOutput(box,'Please select your subject.');return}if(!topic){flagRequired(document.getElementById('sssAssignment'),'Please type the assignment given to you.');showOutput(box,'Please type the assignment given to you.');return}await callLearning({level:'sss',subject,topic,task:'assignment',tool_key:'sss-assignment-guide'},box)}
 async function primaryAssignmentGuide(){const subject=primaryAssignmentSubject.value,topic=primaryAssignment.value.trim(),box=primaryAssignmentOutput;if(!subject){flagRequired(primaryAssignmentSubject,'Please select your subject.');showOutput(box,'Please select your subject.');return}if(!topic){flagRequired(primaryAssignment,'Please type the assignment given to you.');showOutput(box,'Please type the assignment given to you.');return}await callLearning({level:'primary',subject,topic,task:'assignment',tool_key:'primary-assignment-guide'},box)}
-</script><script>
-// V3.3: removed obsolete broad subject-population script that could overwrite topic dropdowns.
-</script><script>
-(function(){
-  const category = document.getElementById('teacherCategory');
-  const dynamicArea = document.getElementById('teacherDynamicArea');
-  const classSel = document.getElementById('teacherClassDynamic');
-  const streamWrap = document.getElementById('teacherStreamWrap');
-  const streamSel = document.getElementById('teacherStreamDynamic');
-  const subjectSel = document.getElementById('teacherSubjectDynamic');
-  const guide = document.getElementById('teacherLevelGuide');
-  const topic = document.getElementById('teacherTopicDynamic');
-  const button = document.getElementById('teacherGenerateDynamic');
-  const message = document.getElementById('teacherDynamicMessage');
-
-  if(!category || !dynamicArea || !classSel || !subjectSel) return;
-
-  const primarySubjects = ["English Language", "Mathematics (including Financial Literacy)", "Civic Education (Civics)", "Social Studies (including Environmental Studies)", "Physical & Health Education", "Music & Expressive Arts", "French Appreciation", "Science (including Basic Technology & How Things Work)", "ICT Literacy"];
-  const jssSubjects = ["English Language", "Mathematics", "Integrated Science", "Social Studies", "Civic Education", "Agricultural Science", "Business Studies", "Religious and Moral Education", "Physical and Health Education", "Creative Practical Arts", "Information and Communication Technology (ICT)", "French", "Krio"];
-  const sssStreams = {"Sciences & Technologies": ["Integrated Science", "Biology", "Chemistry", "Computer Science", "Agricultural Science", "ICT", "Robotics", "Physics", "Environmental Science", "Health Sciences", "Food Security", "Engineering Science", "Physical Health Education", "Climate Change Awareness, Preparedness and Resilience", "Adolescent Health and Life Skills", "Computer Literacy", "Popular Science"], "Mathematics & Numeracy": ["Fundamentals of Mathematics", "Further Mathematics", "Statistics and Probability", "Calculus", "Mathematics for Business and Enterprise", "Applications of Mathematics for Coding", "Mathematics for STEAMM", "Computer Mathematics", "Mathematics in Other Disciplines", "Introductory Statistics and Probability", "Functional Mathematics"], "Economics, Business & Entrepreneurial Studies": ["Principles of Economics", "Entrepreneurship", "Principles of Accounting", "Business Management Studies", "Principles of Commerce", "Principles of Marketing", "Business Accounting", "Clerical Office Studies", "Insurance Management", "Business Economics", "Business and Society", "Customer Relationship Management", "Micro Small and Medium Enterprise Management", "Business Ethics"], "Languages & Literatures": ["English Language", "African Literature", "English Literature", "French as a Foreign Language", "Sierra Leonean Literature", "Mende Language", "Kathemne Language", "Hulimba Language", "Krio Language", "Creative Writing", "Business English", "French for Tourism", "Technical Writing", "English for STEAMM", "French for Business and Marketing", "Everyday Basic French", "Popular Literature Appreciation", "Arabic Language", "Fula"], "Social & Cultural Studies": ["Sierra Leone History", "African History", "Geography", "Music", "Dance and Drama Studies", "Politics and Governance", "Social Studies and Civics", "Religious and Moral Education", "Geography and the Environment", "Music as an Applied Subject", "Entertainment Industry", "Derivatives of Religious and Moral Education", "Dance Performance and Appreciation", "Mining Industry and the Environment", "Fishing Industry and the Environment", "Tourism and Conservation", "Living with Religious and Moral Education"]};
-
-  function fillSelect(select, items, placeholder){
-    select.innerHTML = '';
-    const first = document.createElement('option');
-    first.value = '';
-    first.textContent = placeholder;
-    select.appendChild(first);
-    items.forEach(item => {
-      const opt = document.createElement('option');
-      opt.value = item;
-      opt.textContent = item;
-      select.appendChild(opt);
-    });
-  }
-
-  function setLevel(level){
-    dynamicArea.hidden = !level;
-    message.textContent = '';
-    if(!level) return;
-
-    if(level === 'primary'){
-      fillSelect(classSel, ['Class 1','Class 2','Class 3','Class 4','Class 5','Class 6'], 'Select class');
-      fillSelect(subjectSel, primarySubjects, 'Select subject');
-      streamWrap.hidden = true;
-      streamSel.innerHTML = '<option value="">Select stream</option>';
-      guide.textContent = 'Choose the primary class and subject you teach.';
-    } else if(level === 'jss'){
-      fillSelect(classSel, ['JSS 1','JSS 2','JSS 3'], 'Select class');
-      fillSelect(subjectSel, jssSubjects, 'Select subject');
-      streamWrap.hidden = true;
-      streamSel.innerHTML = '<option value="">Select stream</option>';
-      guide.textContent = 'Choose your JSS class and subject.';
-    } else if(level === 'sss'){
-      fillSelect(classSel, ['SSS 1','SSS 2','SSS 3'], 'Select class');
-      fillSelect(streamSel, Object.keys(sssStreams), 'Select stream');
-      fillSelect(subjectSel, [], 'Select a stream first');
-      streamWrap.hidden = false;
-      guide.textContent = 'Choose your SSS class and stream. The subjects for that stream will then appear.';
-    }
-  }
-
-  category.addEventListener('change', () => setLevel(category.value));
-
-  streamSel.addEventListener('change', () => {
-    if(category.value !== 'sss') return;
-    const subjects = sssStreams[streamSel.value] || [];
-    fillSelect(subjectSel, subjects, subjects.length ? 'Select subject' : 'Select a stream first');
-  });
-
-  button.addEventListener('click', () => {
-    const level = category.value;
-    const cls = classSel.value;
-    const subject = subjectSel.value;
-    const tool = document.querySelector('input[name="teacherToolChoice"]:checked')?.value || '';
-    const enteredTopic = (topic.value || '').trim();
-
-    if(!level || !cls || !subject || !tool || !enteredTopic){
-      message.textContent = 'Please choose your teacher category, class, subject, teaching support and enter a topic.';
-      return;
-    }
-
-    const toolNames = {
-      'curriculum':'Curriculum Guidance',
-      'lesson-note':'Lesson Note Preparation',
-      'lesson-explanation':'Lesson Explanation',
-      'assessment':'Assessment Creator'
-    };
-
-    message.innerHTML = '<strong>' + toolNames[tool] + '</strong> is ready for <strong>' +
-      safe(cls) + ' – ' + safe(subject) + '</strong>, topic: <strong>' +
-      safe(enteredTopic) + '</strong>. This selection can now be sent to the secure AI teaching endpoint.';
-  });
-})();
-</script><script>
-function preparePrimaryTeacherSupport(type){
-  const result = document.getElementById('primaryTeacherResult');
-  if(!result) return;
-
-  const config = {
-    'curriculum': {
-      cls:'primaryTeacherClass',
-      subject:'primaryTeacherSubject',
-      topic:'primaryTeacherCurriculumTopic',
-      title:'Primary Curriculum Guidance'
-    },
-    'lesson-note': {
-      cls:'primaryLessonClass',
-      subject:'primaryLessonSubject',
-      topic:'primaryLessonTopic',
-      extra:'primaryLessonDuration',
-      title:'Primary Lesson Note'
-    },
-    'explanation': {
-      cls:'primaryExplainClass',
-      subject:'primaryExplainSubject',
-      topic:'primaryExplainTopic',
-      title:'Primary Lesson Explanation'
-    },
-    'assessment': {
-      cls:'primaryAssessClass',
-      subject:'primaryAssessSubject',
-      topic:'primaryAssessTopic',
-      extra:'primaryAssessType',
-      title:'Primary Assessment'
-    }
-  };
-
-  const c = config[type];
-  if(!c) return;
-
-  const cls = document.getElementById(c.cls)?.value || '';
-  const subject = document.getElementById(c.subject)?.value || '';
-  const topic = (document.getElementById(c.topic)?.value || '').trim();
-  const extra = c.extra ? (document.getElementById(c.extra)?.value || '') : '';
-
-  if(!cls || !subject || !topic || (c.extra && !extra)){
-    result.textContent = 'Please complete the class, subject and topic fields before continuing.';
-    return;
-  }
-
-  result.innerHTML =
-    '<strong>' + c.title + '</strong> is ready for <strong>' +
-    safe(cls) + ' – ' + safe(subject) + '</strong>, topic: <strong>' +
-    safe(topic) + '</strong>' +
-    (extra ? ', ' + safe(extra) : '') +
-    '. This can now be sent to the secure AI teaching endpoint.';
-}
-</script><script>
-(function(){
-  const category = document.getElementById('teacherCategoryOnly');
-  const panel = document.getElementById('teacherChoicePanel');
-  const classSel = document.getElementById('teacherClassOnly');
-  const streamWrap = document.getElementById('teacherStreamOnlyWrap');
-  const streamSel = document.getElementById('teacherStreamOnly');
-  const subjectSel = document.getElementById('teacherSubjectOnly');
-  const topicSel = document.getElementById('teacherTopicOnly');
-  const topicOther = document.getElementById('teacherTopicOther');
-  const msg = document.getElementById('teacherOnlyMessage');
-
-  if(!category) return;
-
-  const primarySubjects = ["English Language", "Mathematics (including Financial Literacy)", "Civic Education (Civics)", "Social Studies (including Environmental Studies)", "Physical & Health Education", "Music & Expressive Arts", "French Appreciation", "Science (including Basic Technology & How Things Work)", "ICT Literacy"];
-  const jssSubjects = ["English Language", "Mathematics", "Integrated Science", "Social Studies", "Civic Education", "Agricultural Science", "Business Studies", "Religious and Moral Education", "Physical and Health Education", "Creative Practical Arts", "Information and Communication Technology (ICT)", "French", "Krio"];
-  const sssStreams = {"Sciences & Technologies": ["Integrated Science", "Biology", "Chemistry", "Computer Science", "Agricultural Science", "ICT", "Robotics", "Physics", "Environmental Science", "Health Sciences", "Food Security", "Engineering Science", "Physical Health Education", "Climate Change Awareness, Preparedness and Resilience", "Adolescent Health and Life Skills", "Computer Literacy", "Popular Science"], "Mathematics & Numeracy": ["Fundamentals of Mathematics", "Further Mathematics", "Statistics and Probability", "Calculus", "Mathematics for Business and Enterprise", "Applications of Mathematics for Coding", "Mathematics for STEAMM", "Computer Mathematics", "Mathematics in Other Disciplines", "Introductory Statistics and Probability", "Functional Mathematics"], "Economics, Business & Entrepreneurial Studies": ["Principles of Economics", "Entrepreneurship", "Principles of Accounting", "Business Management Studies", "Principles of Commerce", "Principles of Marketing", "Business Accounting", "Clerical Office Studies", "Insurance Management", "Business Economics", "Business and Society", "Customer Relationship Management", "Micro Small and Medium Enterprise Management", "Business Ethics"], "Languages & Literatures": ["English Language", "African Literature", "English Literature", "French as a Foreign Language", "Sierra Leonean Literature", "Mende Language", "Kathemne Language", "Hulimba Language", "Krio Language", "Creative Writing", "Business English", "French for Tourism", "Technical Writing", "English for STEAMM", "French for Business and Marketing", "Everyday Basic French", "Popular Literature Appreciation", "Arabic Language", "Fula"], "Social & Cultural Studies": ["Sierra Leone History", "African History", "Geography", "Music", "Dance and Drama Studies", "Politics and Governance", "Social Studies and Civics", "Religious and Moral Education", "Geography and the Environment", "Music as an Applied Subject", "Entertainment Industry", "Derivatives of Religious and Moral Education", "Dance Performance and Appreciation", "Mining Industry and the Environment", "Fishing Industry and the Environment", "Tourism and Conservation", "Living with Religious and Moral Education"]};
-
-  function fill(sel, items, placeholder){
-    sel.innerHTML = '';
-    const p = document.createElement('option');
-    p.value = '';
-    p.textContent = placeholder;
-    sel.appendChild(p);
-    items.forEach(item => {
-      const o = document.createElement('option');
-      o.value = item;
-      o.textContent = item;
-      sel.appendChild(o);
-    });
-  }
-
-  category.addEventListener('change', function(){
-    const level = category.value;
-    panel.hidden = !level;
-    msg.textContent = '';
-
-    if(level === 'primary'){
-      fill(classSel, ['Class 1','Class 2','Class 3','Class 4','Class 5','Class 6'], 'Select class');
-      fill(subjectSel, primarySubjects, 'Select subject');
-      fill(streamSel, [], 'Select stream');
-      streamWrap.hidden = true;
-    } else if(level === 'jss'){
-      fill(classSel, ['JSS 1','JSS 2','JSS 3'], 'Select class');
-      fill(subjectSel, jssSubjects, 'Select subject');
-      fill(streamSel, [], 'Select stream');
-      streamWrap.hidden = true;
-    } else if(level === 'sss'){
-      fill(classSel, ['SSS 1','SSS 2','SSS 3'], 'Select class');
-      fill(streamSel, Object.keys(sssStreams), 'Select stream');
-      fill(subjectSel, [], 'Select a stream first');
-      streamWrap.hidden = false;
-    }
-  });
-
-  streamSel.addEventListener('change', function(){
-    const list = sssStreams[streamSel.value] || [];
-    fill(subjectSel, list, list.length ? 'Select subject' : 'Select a stream first');
-  });
-
-  document.querySelectorAll('[data-teacher-tool]').forEach(btn => {
-    btn.addEventListener('click', function(){
-      const cls = classSel.value;
-      const subject = subjectSel.value;
-      const type = btn.getAttribute('data-teacher-tool');
-
-      let topic = '';
-      let extra = '';
-      if(type === 'curriculum'){
-        topic = (document.getElementById('teacherCurriculumTopicOnly').value || '').trim();
-      } else {
-        topic = (document.getElementById('teacherLessonTopicOnly').value || '').trim();
-        extra = document.getElementById('teacherLessonDurationOnly').value || '';
-      }
-
-      if(!category.value || !cls || !subject || !topic || (type === 'lesson-note' && !extra)){
-        msg.textContent = 'Please complete the teacher category, class, subject and topic before continuing.';
-        return;
-      }
-
-      const title = type === 'curriculum' ? 'Curriculum Guidance' : 'Lesson Note Preparation';
-      msg.innerHTML = '<strong>' + title + '</strong> is ready for <strong>' +
-        safe(cls) + ' – ' + safe(subject) + '</strong>, topic: <strong>' +
-        safe(topic) + '</strong>' +
-        (extra ? ', ' + safe(extra) : '') +
-        '. This selection can now be sent to the secure AI teaching endpoint.';
-    });
-  });
-})();
-</script><script>
+</script>
+<script>
 (function(){
   const category=document.getElementById('teacherCategoryOnly');
   const panel=document.getElementById('teacherChoicePanel');
@@ -2348,7 +2119,7 @@ function preparePrimaryTeacherSupport(type){
   const selectedExamTopic=()=>((examTopic.value==='__other__'?examTopicOther.value:examTopic.value)||'').trim();
   const baseValid=()=>category.value&&classSel.value&&subjectSel.value&&(category.value!=='sss'||streamSel.value);
   document.getElementById('prepareTeacherLessonBtn')?.addEventListener('click',async()=>{const topic=selectedTopic(),date=(document.getElementById('teacherPrepDate')?.value||'').trim(),duration=(document.getElementById('teacherPrepDuration')?.value||'').trim();if(!baseValid()||!topic||!date||!duration){msg.textContent='Please choose the teacher category, class, subject and topic, then add the date and duration.';return}const context=['Document: Lesson Notes','Date: '+date,'Duration: '+duration,'Prepare practical lesson notes for the selected class, subject and topic.'].join('\n');await callLearning({level:category.value,class_level:classSel.value,subject:subjectSel.value,topic,task:'teacher',context,tool_key:'teacher-lesson-note'},msg)});
-  document.getElementById('prepareTeacherExamBtn')?.addEventListener('click',async()=>{const subject=(examSubject.value||'').trim(),topic=selectedExamTopic(),type=(examType?.value||'').trim();if(!examCategory.value||!examClass.value||(examCategory.value==='sss'&&!examStream.value)||!subject||!topic||!type){msg.textContent='Please choose the teacher category, class or level, subject, topic and question type.';return}const nonce=Date.now()+'-'+Math.random().toString(36).slice(2);if(type==='objective'){await callLearning({level:examCategory.value,class_level:examClass.value,subject,topic,task:'teacher_exam_objective',exam_type:'objective',question_count:5,context:'Generate a NEW set of exactly five objective multiple-choice examination questions. Number them 1 to 5. Each question must have exactly four options labelled A, B, C and D. Do not include answers or marking schemes. Fresh generation ID: '+nonce,tool_key:'teacher-exam-objective'},msg);return}await callLearning({level:examCategory.value,class_level:examClass.value,subject,topic,task:'teacher_exam_theory',exam_type:'theory',question_count:3,context:'Generate a NEW set of exactly three theory examination questions only. Number them 1 to 3. Do not include answers, marking schemes or multiple-choice options. Fresh generation ID: '+nonce,tool_key:'teacher-exam-theory'},msg)});
+  document.getElementById('prepareTeacherExamBtn')?.addEventListener('click',async()=>{const subject=(examSubject.value||'').trim(),topic=selectedExamTopic(),type=(examType?.value||'').trim();if(!examCategory.value||!examClass.value||(examCategory.value==='sss'&&!examStream.value)||!subject||!topic||!type){msg.textContent='Please choose the teacher category, class or level, subject, topic and question type.';return}const nonce=Date.now()+'-'+Math.random().toString(36).slice(2);if(type==='objective'){await callLearning({level:examCategory.value,class_level:examClass.value,subject,topic,task:'teacher_exam_objective',exam_type:'objective',question_count:10,context:'Generate a NEW set of exactly ten objective multiple-choice examination questions. Number them 1 to 10. Each question must have exactly four options labelled A, B, C and D. Do not mix theory questions with objective questions. Do not include answers or marking schemes. Fresh generation ID: '+nonce,tool_key:'teacher-exam-objective'},msg);return}await callLearning({level:examCategory.value,class_level:examClass.value,subject,topic,task:'teacher_exam_theory',exam_type:'theory',question_count:5,context:'Generate a NEW set of exactly five theory examination questions only. Number them 1 to 5. Do not mix objective questions or multiple-choice options with theory questions. Do not include answers or marking schemes. Fresh generation ID: '+nonce,tool_key:'teacher-exam-theory'},msg)});
   document.getElementById('teacherOwnQuestionBtn')?.addEventListener('click',async()=>{
     const level=(document.getElementById('teacherOwnExamLevel')?.value||'wassce').trim();
     const subject=(document.getElementById('teacherOwnSubject')?.value||'').trim()||'General';
@@ -2373,53 +2144,8 @@ function preparePrimaryTeacherSupport(type){
 })();
 </script><script>
 (function(){
-  const btn = document.getElementById('reviewEssayAnswerBtn');
-  if(!btn) return;
-
-  btn.addEventListener('click', function(){
-    const question = (document.getElementById('essayQuestionInput')?.value || '').trim();
-    const answer = (document.getElementById('essayAnswerInput')?.value || '').trim();
-    const msg = document.getElementById('essayReviewMessage');
-
-    if(!question || !answer){
-      msg.textContent = 'Please type both the essay question and your answer before requesting a review.';
-      return;
-    }
-
-    msg.innerHTML =
-      '<strong>Your essay is ready for review.</strong> The reviewer will assess whether your answer addresses the question, ' +
-      'then guide you on relevance, organisation, explanation, grammar, examples, introduction, body and conclusion. ' +
-      'This can now be sent to the secure AI review endpoint.';
-  });
-})();
-</script><script>
-(function(){
-  const btn = document.getElementById('reviewEssayAnswerBtn');
-  if(!btn) return;
-
-  btn.addEventListener('click', function(e){
-    e.stopImmediatePropagation();
-
-    const passage = (document.getElementById('essayPassageInput')?.value || '').trim();
-    const question = (document.getElementById('essayQuestionInput')?.value || '').trim();
-    const answer = (document.getElementById('essayAnswerInput')?.value || '').trim();
-    const msg = document.getElementById('essayReviewMessage');
-
-    if(!passage || !question || !answer){
-      msg.textContent = 'Please complete the essay or passage, the question, and your answer before requesting a review.';
-      return;
-    }
-
-    msg.innerHTML =
-      '<strong>Your work is ready for review.</strong> The reviewer will compare the essay or passage, the question, and your answer, ' +
-      'then provide guidance on accuracy, relevance, organisation, explanation, grammar and overall quality. ' +
-      'This can now be sent to the secure AI review endpoint.';
-  }, true);
-})();
-</script><script>
-(function(){
   const btn=document.getElementById('reviewEssayAnswerBtn');if(!btn)return;
-  btn.addEventListener('click',async function(e){e.stopImmediatePropagation();const subject=(document.getElementById('wassceEssaySubject')?.value||'').trim(),passage=(document.getElementById('essayPassageInput')?.value||'').trim(),question=(document.getElementById('essayQuestionInput')?.value||'').trim(),answer=(document.getElementById('essayAnswerInput')?.value||'').trim(),msg=document.getElementById('essayReviewMessage');if(!subject||!question||!answer){msg.textContent='Please select the subject, type the question, and enter the student’s answer.';return}await callLearning({level:'sss',subject,topic:question,task:'review',context:'Source/passage: '+passage+'\nStudent answer: '+answer,tool_key:'wassce-answer-reviewer'},msg)},true);
+  btn.addEventListener('click',async function(){const subject=(document.getElementById('wassceEssaySubject')?.value||'').trim(),passage=(document.getElementById('essayPassageInput')?.value||'').trim(),question=(document.getElementById('essayQuestionInput')?.value||'').trim(),answer=(document.getElementById('essayAnswerInput')?.value||'').trim(),msg=document.getElementById('essayReviewMessage');if(!subject||!question||!answer){msg.textContent='Please select the subject, type the question, and enter the student’s answer.';return}await callLearning({level:'sss',subject,topic:question,task:'review',context:'Source/passage: '+passage+'\nStudent answer: '+answer,tool_key:'wassce-answer-reviewer'},msg)});
 })();
 </script><script>
 async function findResearchTopics(){
@@ -2569,7 +2295,7 @@ function requireValue(el,message){clearFieldError(el);return String(el?.value||'
 document.addEventListener('input',e=>{if(e.target.matches('input,textarea,select'))clearFieldError(e.target)});document.addEventListener('change',e=>{if(e.target.matches('input,textarea,select'))clearFieldError(e.target)});
 function personalLead(payload){const n=firstName();if(!n)return '';const t=(payload?.task||'').toLowerCase();if(t==='assignment')return `Thank you, ${n}. Here is your assignment guide.`;if(t==='review')return `Thank you, ${n}. Here is feedback on your answer.`;if(t==='topics')return `${n}, here are research topic suggestions for you.`;if(t==='proposal')return `${n}, here is your proposal framework.`;if(t==='dissertation')return `${n}, here is your dissertation guidance.`;if(t==='defense')return `${n}, here is your dissertation defence preparation guide.`;if(t==='teacher')return `Thank you, ${n}. Here is the teaching support you requested.`;if(t==='teacher_marking_guide')return `Thank you, ${n}. Here is your model answer and marking guide.`;if(t==='mark_theory')return `Thank you, ${n}. Here is your theory assessment and feedback.`;if(t==='teacher_exam'||t==='teacher_exam_objective'||t==='teacher_exam_theory')return `Thank you, ${n}. Here are your examination questions.`;if((payload?.level||'').toLowerCase()==='university'||t==='lecturer')return `Thank you, ${n}. Here is your lecturer-style explanation.`;return `Thank you, ${n}. Here is your lesson explanation.`}
 function personalisedText(payload,text){const lead=personalLead(payload);return lead?lead+'\n\n'+text:text}
-function requestLoadingText(payload){const t=(payload?.task||'').toLowerCase();if(t==='teacher')return 'Preparing your lesson notes…';if(t==='teacher_exam_objective')return 'Generating 5 objective questions…';if(t==='teacher_exam_theory')return 'Generating 3 theory questions…';if(t==='teacher_exam')return (payload?.exam_type||'').toLowerCase()==='objective'?'Generating 5 objective questions…':'Generating 3 theory questions…';if(t==='teacher_marking_guide')return 'Preparing model answer & marking guide…';if(t==='theory_quiz')return 'Generating 3 theory questions…';if(t==='mark_theory')return 'AI is marking your theory answers…';if(t==='explain_wrong_answer')return 'Explaining why this answer is incorrect…';if(t==='topics')return 'Finding suitable research topics…';if(t==='proposal')return 'Preparing your proposal framework…';if(t==='dissertation')return 'Preparing your dissertation guidance…';if(t==='defense')return 'Preparing your dissertation defence guide…';if(t==='review')return 'Reviewing your work…';if(t==='assignment')return 'Preparing your step-by-step assignment guide…';if(t==='lecturer'||(payload?.level||'').toLowerCase()==='university')return 'Preparing your Salone Class Room Lecturer explanation…';return 'Preparing your lesson explanation…'}
+function requestLoadingText(payload){const t=(payload?.task||'').toLowerCase();if(t==='teacher')return 'Preparing your lesson notes…';if(t==='teacher_exam_objective')return 'Generating 10 objective questions…';if(t==='teacher_exam_theory')return 'Generating 5 theory questions…';if(t==='teacher_exam')return (payload?.exam_type||'').toLowerCase()==='objective'?'Generating 10 objective questions…':'Generating 5 theory questions…';if(t==='teacher_marking_guide')return 'Preparing model answer & marking guide…';if(t==='theory_quiz')return 'Generating 3 theory questions…';if(t==='mark_theory')return 'AI is marking your theory answers…';if(t==='explain_wrong_answer')return 'Explaining why this answer is incorrect…';if(t==='topics')return 'Finding suitable research topics…';if(t==='proposal')return 'Preparing your proposal framework…';if(t==='dissertation')return 'Preparing your dissertation guidance…';if(t==='defense')return 'Preparing your dissertation defence guide…';if(t==='review')return 'Reviewing your work…';if(t==='assignment')return 'Preparing your step-by-step assignment guide…';if(t==='lecturer'||(payload?.level||'').toLowerCase()==='university')return 'Preparing your Salone Class Room Lecturer explanation…';return 'Preparing your lesson explanation…'}
 function needsEducationalVisual(payload){const task=(payload.task||'tutor').toLowerCase(),level=(payload.level||'').toLowerCase(),request=[payload.topic,payload.context].filter(Boolean).join(' ');return ['tutor','lecturer'].includes(task)&&['primary','jss','sss','university'].includes(level)&&/\b(map|diagram|draw|drawing|illustrat(?:e|ion)|labelled|labeled|graph|chart|visual|anatomy|life cycle|water cycle|food chain|circuit)\b/i.test(request)}
 async function addEducationalVisual(box,payload,token){if(!needsEducationalVisual(payload)||!token)return;const status=document.createElement('p');status.className='visual-status';status.textContent='Generating the educational visual…';box.appendChild(status);try{const r=await fetch('/.netlify/functions/diagram',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({level:payload.level,subject:payload.subject,topic:payload.topic,token})}),d=await r.json();if(!r.ok)throw Error(d.error||'Unable to generate visual.');const img=document.createElement('img');img.className='answer-visual';img.src=d.image;img.alt=d.alt||'Educational visual';img.loading='lazy';status.replaceWith(img)}catch(e){status.textContent='The explanation is ready, but the requested visual could not be generated right now.'}}
 async function callLearning(payload,box){const n=firstName(),msg=requestLoadingText(payload),previous=box.id?lastLearningAnswers[box.id]:'';showOutput(box,n?msg.replace('…',`, ${n}…`):msg);try{const requestPayload={...payload,...(previous?{previous_response:previous}:{})};const d=await learningRequest(requestPayload),answer=personalisedText(payload,d.answer||'No response was returned. Please try again.');renderLearningAnswer(box,answer,payload);await addEducationalVisual(box,payload,d.diagram_token)}catch(e){handleLearningError(e,box)}}
@@ -2711,8 +2437,12 @@ async function shareSaloneClassRoom(){
 
 if('serviceWorker' in navigator){
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch(() => {
-      navigator.serviceWorker.register('/service-worker.js').catch(() => {});
+    navigator.serviceWorker.register('/sw.js').then(reg => {
+      reg.update().catch(()=>{});
+    }).catch(() => {
+      navigator.serviceWorker.register('/service-worker.js').then(reg => {
+        reg.update().catch(()=>{});
+      }).catch(() => {});
     });
   });
 }
