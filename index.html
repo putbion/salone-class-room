@@ -873,6 +873,15 @@ select:disabled{background-color:#f3f6f9 !important;color:#7a8794 !important;opa
   .ribbon-section{margin-top:14px;margin-bottom:14px;}
   .section-personal-welcome{margin-top:8px;margin-bottom:12px;}
 }
+/* Practice Objective & Theory styling */
+.quiz-option-btn{display:block;width:100%;text-align:left;justify-content:flex-start;margin:8px 0;padding:11px 14px;background:#f4f8fd!important;color:#17324d!important;border:1.5px solid #cbd6e4!important;border-radius:10px;cursor:pointer;font-size:0.98rem;line-height:1.4;transition:all .15s ease}
+.quiz-option-btn:hover:not(:disabled){background:#e8f1fc!important;border-color:#93c5fd!important}
+.quiz-option-btn.selected{background:#dbeafe!important;border-color:#2563eb!important;color:#1e40af!important;font-weight:700}
+.quiz-option-btn.correct-choice{background:#dff5e8!important;border-color:#16a34a!important;color:#14532d!important;font-weight:700}
+.quiz-option-btn.wrong-choice{background:#fee2e2!important;border-color:#dc2626!important;color:#7f1d1d!important;font-weight:700}
+.theory-answer-box{width:100%;box-sizing:border-box;margin-top:8px;border:1.5px solid #cbd6e4;border-radius:10px;padding:12px;font-family:inherit;font-size:0.98rem;line-height:1.5;background:#ffffff;color:#1e293b;resize:vertical}
+.theory-answer-box:focus{outline:none;border-color:#0a5acb;box-shadow:0 0 0 3px rgba(10,90,203,0.15)}
+.theory-answer-box:disabled{background:#f8fafc;color:#475467}
 </style>
 <link href="/manifest.webmanifest" rel="manifest"/>
 <meta content="#0b4f9c" name="theme-color"/>
@@ -960,9 +969,14 @@ select:disabled{background-color:#f3f6f9 !important;color:#7a8794 !important;opa
 <span class="tool-badge">Class 6 • NPSE</span>
 <h3>NPSE Practice</h3>
 <p>
-        Let’s practise some NPSE questions. Choose a paper and, if you wish, a topic. Questions will only be generated after you click the button below. You may also choose or type a topic if you want questions from a particular area.
-        Answer carefully and use your mistakes to identify the areas you need to revise.
+        Let’s practise some NPSE questions. Choose question type (Objective or Theory), select a paper and, if you wish, a topic. Questions will only be generated after you click the button below.
+        Answer carefully and use your feedback to identify areas to revise.
       </p>
+<label for="npseQuizType">Choose Question Type</label>
+<select id="npseQuizType" onchange="updatePracticeBtnText('primary')">
+<option value="objective">Objective</option>
+<option value="theory">Theory</option>
+</select>
 <label for="npseSubject">Choose your NPSE paper</label>
 <select id="npseSubject">
 <option value="">Select NPSE paper</option>
@@ -973,7 +987,7 @@ select:disabled{background-color:#f3f6f9 !important;color:#7a8794 !important;opa
 <option>General Paper</option>
 </select>
 <label for="npseTopicSelect">Type or choose your topic (optional)</label><select data-class-fixed="Class 6" data-subject-id="npseSubject" data-topic-level="primary" id="npseTopicSelect"><option value="">Choose a paper first</option></select><input id="npseTopic" placeholder="Or type your own topic" type="text"/><p class="topic-help">Choose a listed topic or type your own topic below. Topic is optional for exam practice.</p>
-<button class="btn btn-blue" onclick="startNPSEQuiz()" type="button">Generate 5 NPSE Questions</button>
+<button class="btn btn-blue" id="npsePracticeBtn" onclick="startPractice('primary')" type="button">Generate 5 NPSE Questions</button>
 <div aria-live="polite" class="quiz-area" id="npseQuizArea"></div>
 </article>
 <article class="card tool-card primary-card">
@@ -1009,10 +1023,15 @@ select:disabled{background-color:#f3f6f9 !important;color:#7a8794 !important;opa
 <div class="level-block" id="student-jss"><div class="grid">
 <article class="card"><span class="step">1</span><h3>JSS Text Tutor</h3><p class="guide">Choose your class and subject, type the word or topic you do not understand, then click the blue button for a simple explanation.</p><div class="row"><div><label>Class</label><select id="jssClass"><option>JSS 1</option><option>JSS 2</option><option>JSS 3</option></select></div><div><label>Subject</label><select data-jss-subject="" id="jssSubject"><option value="">Select subject</option><option value="English Language">English Language</option><option value="Mathematics">Mathematics</option><option value="Integrated Science">Integrated Science</option><option value="Social Studies">Social Studies</option><option value="Civic Education">Civic Education</option><option value="Agricultural Science">Agricultural Science</option><option value="Business Studies">Business Studies</option><option value="Religious and Moral Education">Religious and Moral Education</option><option value="Physical and Health Education">Physical and Health Education</option><option value="Creative Practical Arts">Creative Practical Arts</option><option value="Information and Communication Technology (ICT)">Information and Communication Technology (ICT)</option><option value="French">French</option><option value="Krio">Krio</option></select></div></div><label>Type or choose your topic</label><select data-class-id="jssClass" data-subject-id="jssSubject" data-topic-level="jss" id="jssTopicSelect"><option value="">Choose class and subject first</option></select><input id="jssTopic" placeholder="Or type your own topic"/><p class="topic-help">Choose the prescribed topic you want explained, or select Other.</p><button class="btn btn-blue" onclick="curriculumExplain('jss','jssClass','jssSubject','jssTopicSelect','jssTutor','jssTopic')">Click here for your explanation</button><div class="output" id="jssTutor"></div></article>
 <article class="card"><span class="step">2</span><h3>BECE Practice</h3>
-<p class="guide"><strong>Let’s practise some objective questions.</strong> Choose your subject and, if you wish, a topic. Questions will only be generated after you click the button below. Choosing or typing a topic is optional if you want to focus on a particular area. You will receive 5 questions at a time. Select one answer for each question. You will immediately see whether your answer is correct or wrong. At the end, you will see your total correct answers, total wrong answers and the areas you need to revise.</p>
+<p class="guide"><strong>Let’s practise questions.</strong> Choose question type (Objective or Theory), select your subject and, if you wish, a topic. Questions will only be generated after you click the button below. Choosing or typing a topic is optional if you want to focus on a particular area.</p>
+<label for="jssQuizType">Choose Question Type</label>
+<select id="jssQuizType" onchange="updatePracticeBtnText('jss')">
+<option value="objective">Objective</option>
+<option value="theory">Theory</option>
+</select>
 <label>Subject</label><select data-jss-subject="" id="jssQuizSubject"><option value="">Select subject</option><option value="English Language">English Language</option><option value="Mathematics">Mathematics</option><option value="Integrated Science">Integrated Science</option><option value="Social Studies">Social Studies</option><option value="Civic Education">Civic Education</option><option value="Agricultural Science">Agricultural Science</option><option value="Business Studies">Business Studies</option><option value="Religious and Moral Education">Religious and Moral Education</option><option value="Physical and Health Education">Physical and Health Education</option><option value="Creative Practical Arts">Creative Practical Arts</option><option value="Information and Communication Technology (ICT)">Information and Communication Technology (ICT)</option><option value="French">French</option><option value="Krio">Krio</option></select>
 <label>Type or choose your topic (optional)</label><select data-subject-id="jssQuizSubject" data-topic-level="jss" id="jssQuizTopicSelect"><option value="">Choose a subject first</option></select><input id="jssQuizTopic" placeholder="Or type your own topic"/><p class="topic-help">Choose a listed topic or type your own topic. If you leave it blank, questions will be mixed from the selected subject.</p>
-<button class="btn btn-blue" onclick="startQuiz('jss')" type="button">Generate 5 BECE Questions</button>
+<button class="btn btn-blue" id="jssPracticeBtn" onclick="startPractice('jss')" type="button">Generate 5 BECE Questions</button>
 <div class="output" id="jssQuiz"></div>
 </article>
 <article class="card"><span class="step">3</span><h3>JSS Assignment Learning Guide</h3><p class="guide assignment-personal-question"><span class="assignment-user-name">Student</span>, were you given an assignment today? Choose your subject and type the assignment.</p><label for="jssAssignmentSubject">Choose your subject</label><select id="jssAssignmentSubject"><option value="">Select subject</option><option value="English Language">English Language</option><option value="Mathematics">Mathematics</option><option value="Integrated Science">Integrated Science</option><option value="Social Studies">Social Studies</option><option value="Civic Education">Civic Education</option><option value="Agricultural Science">Agricultural Science</option><option value="Business Studies">Business Studies</option><option value="Religious and Moral Education">Religious and Moral Education</option><option value="Physical and Health Education">Physical and Health Education</option><option value="Creative Practical Arts">Creative Practical Arts</option><option value="Information and Communication Technology (ICT)">Information and Communication Technology (ICT)</option><option value="French">French</option><option value="Krio">Krio</option></select><label>Type the assignment given to you</label><textarea id="jssAssignment" placeholder="Type the assignment given to you here"></textarea><button class="btn btn-blue" onclick="jssAssignmentGuide()">Click here for your step-by-step guide</button><div class="output" id="jssGuide"></div></article>
@@ -1020,11 +1039,16 @@ select:disabled{background-color:#f3f6f9 !important;color:#7a8794 !important;opa
 <div class="level-block" id="student-sss" style="margin-top:42px"><div class="section-personal-welcome" data-welcome-section="sss"><h2>Welcome to the Senior Secondary School Section<span class="section-user-name"></span></h2><p class="section-feature-label">In this section, we have:</p><ul><li>Text Tutor</li><li>WASSCE Practice</li><li>Assignment Learning Guide</li><li>WASSCE Essay Question &amp; Answer Reviewer</li></ul><p class="section-ribbon-description section-summary-under-welcome">Support for SSS students to understand difficult topics, practise WASSCE questions and improve examination readiness.</p></div><div class="grid">
 <article class="card"><span class="step">1</span><h3>SSS Text Tutor</h3><p class="guide">Choose your class and subject, type the word or topic you do not understand, then click the blue button for an explanation based on that subject.</p><div class="row"><div><label>Class</label><select id="sssClass"><option>SSS 1</option><option>SSS 2</option><option>SSS 3</option></select></div><div><label>Stream (optional)</label><select data-sss-stream="" data-target="sssSubject" id="sssStream"><option value="">Select stream</option><option value="Sciences &amp; Technologies">Sciences &amp; Technologies</option><option value="Mathematics &amp; Numeracy">Mathematics &amp; Numeracy</option><option value="Economics, Business &amp; Entrepreneurial Studies">Economics, Business &amp; Entrepreneurial Studies</option><option value="Languages &amp; Literatures">Languages &amp; Literatures</option><option value="Social &amp; Cultural Studies">Social &amp; Cultural Studies</option></select></div></div><label>Subject</label><select id="sssSubject"><option value="">Select subject</option><option value="Integrated Science">Integrated Science</option><option value="Biology">Biology</option><option value="Chemistry">Chemistry</option><option value="Computer Science">Computer Science</option><option value="Agricultural Science">Agricultural Science</option><option value="ICT">ICT</option><option value="Robotics">Robotics</option><option value="Physics">Physics</option><option value="Environmental Science">Environmental Science</option><option value="Health Sciences">Health Sciences</option><option value="Food Security">Food Security</option><option value="Engineering Science">Engineering Science</option><option value="Physical Health Education">Physical Health Education</option><option value="Climate Change Awareness, Preparedness and Resilience">Climate Change Awareness, Preparedness and Resilience</option><option value="Adolescent Health and Life Skills">Adolescent Health and Life Skills</option><option value="Computer Literacy">Computer Literacy</option><option value="Popular Science">Popular Science</option><option value="Fundamentals of Mathematics">Fundamentals of Mathematics</option><option value="Further Mathematics">Further Mathematics</option><option value="Statistics and Probability">Statistics and Probability</option><option value="Calculus">Calculus</option><option value="Mathematics for Business and Enterprise">Mathematics for Business and Enterprise</option><option value="Applications of Mathematics for Coding">Applications of Mathematics for Coding</option><option value="Mathematics for STEAMM">Mathematics for STEAMM</option><option value="Computer Mathematics">Computer Mathematics</option><option value="Mathematics in Other Disciplines">Mathematics in Other Disciplines</option><option value="Introductory Statistics and Probability">Introductory Statistics and Probability</option><option value="Functional Mathematics">Functional Mathematics</option><option value="Principles of Economics">Principles of Economics</option><option value="Entrepreneurship">Entrepreneurship</option><option value="Principles of Accounting">Principles of Accounting</option><option value="Business Management Studies">Business Management Studies</option><option value="Principles of Commerce">Principles of Commerce</option><option value="Principles of Marketing">Principles of Marketing</option><option value="Business Accounting">Business Accounting</option><option value="Clerical Office Studies">Clerical Office Studies</option><option value="Insurance Management">Insurance Management</option><option value="Business Economics">Business Economics</option><option value="Business and Society">Business and Society</option><option value="Customer Relationship Management">Customer Relationship Management</option><option value="Micro Small and Medium Enterprise Management">Micro Small and Medium Enterprise Management</option><option value="Business Ethics">Business Ethics</option><option value="English Language">English Language</option><option value="African Literature">African Literature</option><option value="English Literature">English Literature</option><option value="French as a Foreign Language">French as a Foreign Language</option><option value="Sierra Leonean Literature">Sierra Leonean Literature</option><option value="Mende Language">Mende Language</option><option value="Kathemne Language">Kathemne Language</option><option value="Hulimba Language">Hulimba Language</option><option value="Krio Language">Krio Language</option><option value="Creative Writing">Creative Writing</option><option value="Business English">Business English</option><option value="French for Tourism">French for Tourism</option><option value="Technical Writing">Technical Writing</option><option value="English for STEAMM">English for STEAMM</option><option value="French for Business and Marketing">French for Business and Marketing</option><option value="Everyday Basic French">Everyday Basic French</option><option value="Popular Literature Appreciation">Popular Literature Appreciation</option><option value="Arabic Language">Arabic Language</option><option value="Fula">Fula</option><option value="Sierra Leone History">Sierra Leone History</option><option value="African History">African History</option><option value="Geography">Geography</option><option value="Music">Music</option><option value="Dance and Drama Studies">Dance and Drama Studies</option><option value="Politics and Governance">Politics and Governance</option><option value="Social Studies and Civics">Social Studies and Civics</option><option value="Religious and Moral Education">Religious and Moral Education</option><option value="Geography and the Environment">Geography and the Environment</option><option value="Music as an Applied Subject">Music as an Applied Subject</option><option value="Entertainment Industry">Entertainment Industry</option><option value="Derivatives of Religious and Moral Education">Derivatives of Religious and Moral Education</option><option value="Dance Performance and Appreciation">Dance Performance and Appreciation</option><option value="Mining Industry and the Environment">Mining Industry and the Environment</option><option value="Fishing Industry and the Environment">Fishing Industry and the Environment</option><option value="Tourism and Conservation">Tourism and Conservation</option><option value="Living with Religious and Moral Education">Living with Religious and Moral Education</option></select><label>Type or choose your topic</label><select data-class-id="sssClass" data-subject-id="sssSubject" data-topic-level="sss" id="sssTopicSelect"><option value="">Choose class and subject first</option></select><input id="sssTopic" placeholder="Or type your own topic"/><p class="topic-help">Choose the prescribed topic you want explained, or select Other.</p><button class="btn btn-blue" onclick="curriculumExplain('sss','sssClass','sssSubject','sssTopicSelect','sssTutor','sssTopic')">Click here for your explanation</button><div class="output" id="sssTutor"></div></article>
 <article class="card"><span class="step">2</span><h3>WASSCE Practice</h3>
-<p class="guide"><strong>Let’s practise some objective questions.</strong> Choose your stream if necessary, select your subject and type the topic you want to practise. You will receive 5 questions at a time. Select one answer for each question. You will immediately see whether your answer is correct or wrong. At the end, you will see your total correct answers, total wrong answers and the areas you need to revise.</p>
+<p class="guide"><strong>Let’s practise questions.</strong> Choose question type (Objective or Theory), select your stream if necessary, select your subject and type the topic you want to practise.</p>
+<label for="sssQuizType">Choose Question Type</label>
+<select id="sssQuizType" onchange="updatePracticeBtnText('sss')">
+<option value="objective">Objective</option>
+<option value="theory">Theory</option>
+</select>
 <label>Stream (optional)</label><select data-sss-stream="" data-target="sssQuizSubject" id="sssQuizStream"><option value="">Select stream</option><option value="Sciences &amp; Technologies">Sciences &amp; Technologies</option><option value="Mathematics &amp; Numeracy">Mathematics &amp; Numeracy</option><option value="Economics, Business &amp; Entrepreneurial Studies">Economics, Business &amp; Entrepreneurial Studies</option><option value="Languages &amp; Literatures">Languages &amp; Literatures</option><option value="Social &amp; Cultural Studies">Social &amp; Cultural Studies</option></select>
 <label>Subject</label><select id="sssQuizSubject"><option value="">Select subject</option><option value="Integrated Science">Integrated Science</option><option value="Biology">Biology</option><option value="Chemistry">Chemistry</option><option value="Computer Science">Computer Science</option><option value="Agricultural Science">Agricultural Science</option><option value="ICT">ICT</option><option value="Robotics">Robotics</option><option value="Physics">Physics</option><option value="Environmental Science">Environmental Science</option><option value="Health Sciences">Health Sciences</option><option value="Food Security">Food Security</option><option value="Engineering Science">Engineering Science</option><option value="Physical Health Education">Physical Health Education</option><option value="Climate Change Awareness, Preparedness and Resilience">Climate Change Awareness, Preparedness and Resilience</option><option value="Adolescent Health and Life Skills">Adolescent Health and Life Skills</option><option value="Computer Literacy">Computer Literacy</option><option value="Popular Science">Popular Science</option><option value="Fundamentals of Mathematics">Fundamentals of Mathematics</option><option value="Further Mathematics">Further Mathematics</option><option value="Statistics and Probability">Statistics and Probability</option><option value="Calculus">Calculus</option><option value="Mathematics for Business and Enterprise">Mathematics for Business and Enterprise</option><option value="Applications of Mathematics for Coding">Applications of Mathematics for Coding</option><option value="Mathematics for STEAMM">Mathematics for STEAMM</option><option value="Computer Mathematics">Computer Mathematics</option><option value="Mathematics in Other Disciplines">Mathematics in Other Disciplines</option><option value="Introductory Statistics and Probability">Introductory Statistics and Probability</option><option value="Functional Mathematics">Functional Mathematics</option><option value="Principles of Economics">Principles of Economics</option><option value="Entrepreneurship">Entrepreneurship</option><option value="Principles of Accounting">Principles of Accounting</option><option value="Business Management Studies">Business Management Studies</option><option value="Principles of Commerce">Principles of Commerce</option><option value="Principles of Marketing">Principles of Marketing</option><option value="Business Accounting">Business Accounting</option><option value="Clerical Office Studies">Clerical Office Studies</option><option value="Insurance Management">Insurance Management</option><option value="Business Economics">Business Economics</option><option value="Business and Society">Business and Society</option><option value="Customer Relationship Management">Customer Relationship Management</option><option value="Micro Small and Medium Enterprise Management">Micro Small and Medium Enterprise Management</option><option value="Business Ethics">Business Ethics</option><option value="English Language">English Language</option><option value="African Literature">African Literature</option><option value="English Literature">English Literature</option><option value="French as a Foreign Language">French as a Foreign Language</option><option value="Sierra Leonean Literature">Sierra Leonean Literature</option><option value="Mende Language">Mende Language</option><option value="Kathemne Language">Kathemne Language</option><option value="Hulimba Language">Hulimba Language</option><option value="Krio Language">Krio Language</option><option value="Creative Writing">Creative Writing</option><option value="Business English">Business English</option><option value="French for Tourism">French for Tourism</option><option value="Technical Writing">Technical Writing</option><option value="English for STEAMM">English for STEAMM</option><option value="French for Business and Marketing">French for Business and Marketing</option><option value="Everyday Basic French">Everyday Basic French</option><option value="Popular Literature Appreciation">Popular Literature Appreciation</option><option value="Arabic Language">Arabic Language</option><option value="Fula">Fula</option><option value="Sierra Leone History">Sierra Leone History</option><option value="African History">African History</option><option value="Geography">Geography</option><option value="Music">Music</option><option value="Dance and Drama Studies">Dance and Drama Studies</option><option value="Politics and Governance">Politics and Governance</option><option value="Social Studies and Civics">Social Studies and Civics</option><option value="Religious and Moral Education">Religious and Moral Education</option><option value="Geography and the Environment">Geography and the Environment</option><option value="Music as an Applied Subject">Music as an Applied Subject</option><option value="Entertainment Industry">Entertainment Industry</option><option value="Derivatives of Religious and Moral Education">Derivatives of Religious and Moral Education</option><option value="Dance Performance and Appreciation">Dance Performance and Appreciation</option><option value="Mining Industry and the Environment">Mining Industry and the Environment</option><option value="Fishing Industry and the Environment">Fishing Industry and the Environment</option><option value="Tourism and Conservation">Tourism and Conservation</option><option value="Living with Religious and Moral Education">Living with Religious and Moral Education</option></select>
 <label>Type or choose your topic (optional)</label><select data-subject-id="sssQuizSubject" data-topic-level="sss" id="sssQuizTopicSelect"><option value="">Choose a subject first</option></select><input id="sssQuizTopic" placeholder="Or type your own topic"/><p class="topic-help">Topics are listed from the curriculum database across SSS 1–3.</p>
-<button class="btn btn-blue" onclick="startQuiz('sss')" type="button">Generate 5 WASSCE Questions</button>
+<button class="btn btn-blue" id="sssPracticeBtn" onclick="startPractice('sss')" type="button">Generate 5 WASSCE Questions</button>
 <div class="output" id="sssQuiz"></div>
 </article>
 <article class="card"><span class="step">3</span><h3>SSS Assignment Learning Guide</h3><p class="guide assignment-personal-question"><span class="assignment-user-name">Student</span>, were you given an assignment today? Choose your subject and type the assignment.</p><label for="sssAssignmentSubject">Choose your subject</label><select id="sssAssignmentSubject"><option value="">Select subject</option><option value="Integrated Science">Integrated Science</option><option value="Biology">Biology</option><option value="Chemistry">Chemistry</option><option value="Computer Science">Computer Science</option><option value="Agricultural Science">Agricultural Science</option><option value="ICT">ICT</option><option value="Robotics">Robotics</option><option value="Physics">Physics</option><option value="Environmental Science">Environmental Science</option><option value="Health Sciences">Health Sciences</option><option value="Food Security">Food Security</option><option value="Engineering Science">Engineering Science</option><option value="Physical Health Education">Physical Health Education</option><option value="Climate Change Awareness, Preparedness and Resilience">Climate Change Awareness, Preparedness and Resilience</option><option value="Adolescent Health and Life Skills">Adolescent Health and Life Skills</option><option value="Computer Literacy">Computer Literacy</option><option value="Popular Science">Popular Science</option><option value="Fundamentals of Mathematics">Fundamentals of Mathematics</option><option value="Further Mathematics">Further Mathematics</option><option value="Statistics and Probability">Statistics and Probability</option><option value="Calculus">Calculus</option><option value="Mathematics for Business and Enterprise">Mathematics for Business and Enterprise</option><option value="Applications of Mathematics for Coding">Applications of Mathematics for Coding</option><option value="Mathematics for STEAMM">Mathematics for STEAMM</option><option value="Computer Mathematics">Computer Mathematics</option><option value="Mathematics in Other Disciplines">Mathematics in Other Disciplines</option><option value="Introductory Statistics and Probability">Introductory Statistics and Probability</option><option value="Functional Mathematics">Functional Mathematics</option><option value="Principles of Economics">Principles of Economics</option><option value="Entrepreneurship">Entrepreneurship</option><option value="Principles of Accounting">Principles of Accounting</option><option value="Business Management Studies">Business Management Studies</option><option value="Principles of Commerce">Principles of Commerce</option><option value="Principles of Marketing">Principles of Marketing</option><option value="Business Accounting">Business Accounting</option><option value="Clerical Office Studies">Clerical Office Studies</option><option value="Insurance Management">Insurance Management</option><option value="Business Economics">Business Economics</option><option value="Business and Society">Business and Society</option><option value="Customer Relationship Management">Customer Relationship Management</option><option value="Micro Small and Medium Enterprise Management">Micro Small and Medium Enterprise Management</option><option value="Business Ethics">Business Ethics</option><option value="English Language">English Language</option><option value="African Literature">African Literature</option><option value="English Literature">English Literature</option><option value="French as a Foreign Language">French as a Foreign Language</option><option value="Sierra Leonean Literature">Sierra Leonean Literature</option><option value="Mende Language">Mende Language</option><option value="Kathemne Language">Kathemne Language</option><option value="Hulimba Language">Hulimba Language</option><option value="Krio Language">Krio Language</option><option value="Creative Writing">Creative Writing</option><option value="Business English">Business English</option><option value="French for Tourism">French for Tourism</option><option value="Technical Writing">Technical Writing</option><option value="English for STEAMM">English for STEAMM</option><option value="French for Business and Marketing">French for Business and Marketing</option><option value="Everyday Basic French">Everyday Basic French</option><option value="Popular Literature Appreciation">Popular Literature Appreciation</option><option value="Arabic Language">Arabic Language</option><option value="Fula">Fula</option><option value="Sierra Leone History">Sierra Leone History</option><option value="African History">African History</option><option value="Geography">Geography</option><option value="Music">Music</option><option value="Dance and Drama Studies">Dance and Drama Studies</option><option value="Politics and Governance">Politics and Governance</option><option value="Social Studies and Civics">Social Studies and Civics</option><option value="Religious and Moral Education">Religious and Moral Education</option><option value="Geography and the Environment">Geography and the Environment</option><option value="Music as an Applied Subject">Music as an Applied Subject</option><option value="Entertainment Industry">Entertainment Industry</option><option value="Derivatives of Religious and Moral Education">Derivatives of Religious and Moral Education</option><option value="Dance Performance and Appreciation">Dance Performance and Appreciation</option><option value="Mining Industry and the Environment">Mining Industry and the Environment</option><option value="Fishing Industry and the Environment">Fishing Industry and the Environment</option><option value="Tourism and Conservation">Tourism and Conservation</option><option value="Living with Religious and Moral Education">Living with Religious and Moral Education</option></select><label>Type the assignment given to you</label><textarea id="sssAssignment" placeholder="Type the assignment given to you here"></textarea><button class="btn btn-blue" onclick="sssAssignmentGuide()">Click here for your step-by-step guide</button><div class="output" id="sssGuide"></div></article>
@@ -1084,18 +1108,30 @@ select:disabled{background-color:#f3f6f9 !important;color:#7a8794 !important;opa
 </div>
 <div class="prepare-teach-box" style="margin-top:18px">
 <h3>Prepare Exam Questions</h3>
-<p>Choose the teacher category, class or level, subject and curriculum topic for the examination. You can also type your own topic. Choose the question type: <strong>Theory — 5 questions</strong> or <strong>Objective — 10 questions</strong>. Each time you tap Generate Questions, Salone Class Room will prepare a fresh set of questions for the selected class, subject and topic.</p>
+<p>Choose the teacher category, class or level, subject and curriculum topic for the examination. You can also type your own topic. Choose the question type: <strong>Objective — 5 questions</strong> or <strong>Theory — 3 questions</strong>. Each time you tap Generate Questions, Salone Class Room will prepare a fresh set of questions for the selected class, subject and topic.</p>
 <div class="teacher-form-grid" style="margin-top:12px">
 <div><label for="teacherExamCategory">Teacher Category</label><select id="teacherExamCategory"><option value="">Select teacher category</option><option value="primary">Primary School Teacher</option><option value="jss">Junior Secondary School (JSS) Teacher</option><option value="sss">Senior Secondary School (SSS) Teacher</option></select></div>
 <div><label for="teacherExamClass">Class / Level</label><select id="teacherExamClass"><option value="">Select teacher category first</option></select></div>
 <div hidden="" id="teacherExamStreamWrap"><label for="teacherExamStream">SSS stream</label><select id="teacherExamStream"><option value="">Select stream</option></select></div>
 <div><label for="teacherExamSubject">Subject</label><select id="teacherExamSubject"><option value="">Select teacher category and class first</option></select></div>
 <div><label for="teacherExamTopic">Type or choose your topic</label><select id="teacherExamTopic"><option value="">Choose a subject first</option></select></div>
-<div><label for="teacherExamType">Question Type</label><select id="teacherExamType"><option value="">Select question type</option><option value="theory">Theory — 5 questions</option><option value="objective">Objective — 10 questions</option></select></div>
+<div><label for="teacherExamType">Question Type</label><select id="teacherExamType"><option value="">Select question type</option><option value="objective">Objective — 5 questions</option><option value="theory">Theory — 3 questions</option></select></div>
 </div>
 <input hidden="" id="teacherExamTopicOther" placeholder="Or type your own topic"/>
 <p class="topic-help">Select “Other / Type my own topic” if the topic you want is not listed.</p>
 <button class="btn btn-blue" id="prepareTeacherExamBtn" type="button">Generate Questions</button>
+</div>
+<div class="prepare-teach-box" style="margin-top:18px" id="teacherOwnTheoryBlock">
+<h3>Enter Your Own Theory Question</h3>
+<p>Type or paste your own theory question below. Salone Class Room will generate an appropriate model answer and comprehensive marking guide supporting NPSE, BECE or WASSCE examination standards.</p>
+<div class="teacher-form-grid" style="margin-top:12px">
+<div><label for="teacherOwnExamLevel">Examination Level</label><select id="teacherOwnExamLevel"><option value="npse">NPSE (Primary)</option><option value="bece">BECE (Junior Secondary)</option><option value="wassce" selected>WASSCE (Senior Secondary)</option></select></div>
+<div><label for="teacherOwnSubject">Subject (optional)</label><input id="teacherOwnSubject" placeholder="e.g. English Language, Mathematics, Integrated Science" type="text"/></div>
+</div>
+<label for="teacherOwnQuestion" style="margin-top:10px">Type or paste your theory question</label>
+<textarea id="teacherOwnQuestion" placeholder="Type or paste your theory question here..." rows="5" style="width:100%;box-sizing:border-box;margin-top:6px;border:1.5px solid #cbd6e4;border-radius:8px;padding:10px;font-family:inherit;font-size:1rem;"></textarea>
+<button class="btn btn-blue" id="teacherOwnQuestionBtn" style="margin-top:12px" type="button">Generate Answer &amp; Marking Guide</button>
+<div aria-live="polite" class="teacher-result-note" id="teacherOwnQuestionMessage" style="margin-top:14px"></div>
 </div>
 <div aria-live="polite" class="teacher-result-note" id="teacherOnlyMessage"></div>
 </div>
@@ -1503,14 +1539,45 @@ function updateDissertationTopics(){
       await callLearning({level,subject,topic,task,context:values.join('\n'),tool_key:(level+'-'+type).toLowerCase().replace(/[^a-z0-9]+/g,'-')},box);
     }
 
-    // ----- Interactive BECE / WASSCE objective practice -----
-    // Exactly five fresh questions are generated per round. Monthly subject limits are enforced by the backend.
+    // ----- Unified Exam Practice (NPSE, BECE, WASSCE) -----
     const QUIZ_ROUND_SIZE = 5;
-    const quizState = {jss:null, sss:null};
+    const THEORY_ROUND_SIZE = 3;
+    const practiceState = { primary: null, jss: null, sss: null };
+    const theoryPracticeState = { primary: null, jss: null, sss: null };
+    const lastPracticeTopic = { primary: '', jss: '', sss: '' };
+    const lastPracticeSubject = { primary: '', jss: '', sss: '' };
+
+    function safe(value){const node=document.createElement('div');node.textContent=value==null?'':String(value);return node.innerHTML}
+
+    function updatePracticeBtnText(level){
+      const exam = level === 'primary' ? 'NPSE' : level === 'jss' ? 'BECE' : 'WASSCE';
+      const typeEl = document.getElementById(level === 'primary' ? 'npseQuizType' : level + 'QuizType');
+      const isTheory = (typeEl?.value || 'objective') === 'theory';
+      const btn = document.getElementById(level === 'primary' ? 'npsePracticeBtn' : level + 'PracticeBtn');
+      if(btn){
+        btn.textContent = isTheory ? `Generate 3 ${exam} Theory Questions` : `Generate 5 ${exam} Questions`;
+      }
+    }
+    setTimeout(()=>{ updatePracticeBtnText('primary'); updatePracticeBtnText('jss'); updatePracticeBtnText('sss'); }, 0);
+
+    function scoreStorageKey(level, subject, topic){
+      return 'salone_score_' + [level, subject, topic].join('|').toLowerCase().replace(/[^a-z0-9]+/g, '_');
+    }
+    function getPreviousPracticeScore(level, subject, topic){
+      try{
+        const val = localStorage.getItem(scoreStorageKey(level, subject, topic));
+        return (val !== null && !isNaN(Number(val))) ? Number(val) : null;
+      }catch{ return null; }
+    }
+    function savePreviousPracticeScore(level, subject, topic, score){
+      try{
+        localStorage.setItem(scoreStorageKey(level, subject, topic), String(score));
+      }catch{}
+    }
+
     function seenKey(level,subject,topic){return 'saloneSeen_'+[level,subject,topic].join('|').toLowerCase()}
     function getSeenQuestions(level,subject,topic){try{return JSON.parse(sessionStorage.getItem(seenKey(level,subject,topic))||'[]').slice(-50)}catch{return []}}
     function rememberSeenQuestions(level,subject,topic,questions){const all=[...getSeenQuestions(level,subject,topic),...questions.map(q=>q.question).filter(Boolean)];sessionStorage.setItem(seenKey(level,subject,topic),JSON.stringify([...new Set(all)].slice(-50)))}
-
 
     function normalizedQuestionText(text){return String(text||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim()}
     async function fetchFreshQuestions({level,subject,topic,exam,count,toolKey}){
@@ -1538,94 +1605,446 @@ function updateDissertationTopics(){
       return collected.slice(0,count);
     }
 
-    async function startQuiz(level){
-      const subject=document.getElementById(level+'QuizSubject').value;
-      const topicSel=document.getElementById(level+'QuizTopicSelect'),manual=document.getElementById(level+'QuizTopic');let topic=(((manual?.value||'').trim()) || (topicSel?.value==='__other__'?'':topicSel?.value||'')).trim();
-      const box=document.getElementById(level+'Quiz');
-      const exam=level==='jss'?'BECE':'WASSCE';
-      if(!subject){showOutput(box,'Please choose a subject first.');return}
-      if(!topic)topic='Mixed '+exam+' practice questions in '+subject;
-      const wanted=QUIZ_ROUND_SIZE;
-      showOutput(box,firstName()?`Preparing ${wanted} new ${exam} questions, ${firstName()}…`:'Preparing '+wanted+' new '+exam+' questions…');
-      try{
-        const questions=await fetchFreshQuestions({level,subject,topic,exam,count:wanted,toolKey:level+'-'+exam.toLowerCase()+'-practice'});
-        if(questions.length===wanted) renderQuiz(level,questions); else showOutput(box,'We could not prepare five new questions this time. Please click the practice button again.');
-      }catch(e){handleLearningError(e,box)}
-    }
-
-    function renderQuiz(level,questions){
-      const box=document.getElementById(level+'Quiz');
-      const exam=level==='jss'?'BECE':'WASSCE';
-      if(!Array.isArray(questions)){box.textContent='The question service returned an invalid response. Please try again.';box.classList.add('show');return}
-      questions=questions.slice(0,QUIZ_ROUND_SIZE);
-      if(!questions.length){box.innerHTML='<strong>No questions were returned. Please try again.</strong>';box.classList.add('show');return}
-
-      quizState[level]={questions,answered:0,correct:0,wrong:0,weakAreas:{},responses:[]};
-      const qSubject=document.getElementById(level+'QuizSubject')?.value||'',qSel=document.getElementById(level+'QuizTopicSelect'),qManual=document.getElementById(level+'QuizTopic'),qTopic=(((qManual?.value||'').trim()) || (qSel?.value==='__other__'?'':qSel?.value||'')).trim();rememberSeenQuestions(level,qSubject,qTopic,questions);
-
-      box.innerHTML='<div class="quiz-head"><strong>'+exam+' Objective Practice</strong><br><span>Answer all '+questions.length+' questions. Your result and weak areas will appear at the end.</span></div>'+
-        questions.map((q,i)=>{
-          const opts=(q.options||[]).slice(0,4);
-          return '<div class="quiz-question" data-qindex="'+i+'" style="margin:18px 0;padding:16px;border:1px solid #d7e1ed;border-radius:12px;background:#fff">'+
-            '<p><strong>'+(i+1)+'. '+safe(q.question||'Question')+'</strong></p>'+
-            '<div class="quiz-options">'+opts.map((opt,j)=>
-              `<button type="button" class="btn" style="display:block;width:100%;text-align:left;justify-content:flex-start;margin:8px 0;background:#eef4fb;color:#17324d" onclick="checkQuizAnswer(this,decodeURIComponent('${encodeURIComponent(String(level||''))}'),${i},${j})">${String.fromCharCode(65+j)}. ${safe(opt)}</button>`
-            ).join('')+'</div><div class="feedback" style="margin-top:10px"></div></div>';
-        }).join('')+
-        '<div id="'+level+'QuizSummary"></div>';
-      box.classList.add('show');
-      box.scrollIntoView({behavior:'smooth',block:'start'});
-    }
-
-    function checkQuizAnswer(btn,level,index,choice){
-      const state=quizState[level];
-      if(!state || !state.questions[index]) return;
-      const q=state.questions[index];
-      const holder=btn.closest('.quiz-question');
-      if(holder.dataset.answered==='yes') return;
-      holder.dataset.answered='yes';
-      holder.querySelectorAll('.quiz-options button').forEach(b=>b.disabled=true);
-      const answer=Number(q.answer);
-      const feedback=holder.querySelector('.feedback');
-      state.answered++;
-
-      if(choice===answer){
-        state.correct++;
-        btn.style.background='#dff5e8';
-        feedback.innerHTML='<strong style="color:#16794b">Correct.</strong> '+safe(q.explanation||'Well done.');
-      }else{
-        state.wrong++;
-        btn.style.background='#fde7e5';
-        const buttons=holder.querySelectorAll('.quiz-options button');
-        if(buttons[answer]) buttons[answer].style.background='#dff5e8';
-        const weak=(q.weakArea||'This topic').trim();
-        state.weakAreas[weak]=(state.weakAreas[weak]||0)+1;
-        feedback.innerHTML='<strong style="color:#b42318">Wrong.</strong> The correct answer is <strong>'+String.fromCharCode(65+answer)+'</strong>. '+safe(q.explanation||'Review this area before trying again.');
+    function getPracticeConfig(level, repeatSameTopic){
+      let subject='', topic='', box=null, exam='', type='objective';
+      if(level === 'primary'){
+        exam = 'NPSE';
+        subject = (document.getElementById('npseSubject')?.value || '').trim();
+        const ts = document.getElementById('npseTopicSelect'), tm = document.getElementById('npseTopic');
+        topic = (((tm?.value||'').trim()) || (ts?.value==='__other__'?'':ts?.value||'')).trim();
+        box = document.getElementById('npseQuizArea');
+        type = document.getElementById('npseQuizType')?.value || 'objective';
+      } else if(level === 'jss'){
+        exam = 'BECE';
+        subject = (document.getElementById('jssQuizSubject')?.value || '').trim();
+        const ts = document.getElementById('jssQuizTopicSelect'), tm = document.getElementById('jssQuizTopic');
+        topic = (((tm?.value||'').trim()) || (ts?.value==='__other__'?'':ts?.value||'')).trim();
+        box = document.getElementById('jssQuiz');
+        type = document.getElementById('jssQuizType')?.value || 'objective';
+      } else if(level === 'sss'){
+        exam = 'WASSCE';
+        subject = (document.getElementById('sssQuizSubject')?.value || '').trim();
+        const ts = document.getElementById('sssQuizTopicSelect'), tm = document.getElementById('sssQuizTopic');
+        topic = (((tm?.value||'').trim()) || (ts?.value==='__other__'?'':ts?.value||'')).trim();
+        box = document.getElementById('sssQuiz');
+        type = document.getElementById('sssQuizType')?.value || 'objective';
       }
-      state.responses.push({index,choice,correct:choice===answer,weakArea:q.weakArea||''});
-      const qSubject=document.getElementById(level+'QuizSubject')?.value||'',qSel=document.getElementById(level+'QuizTopicSelect'),qManual=document.getElementById(level+'QuizTopic'),qTopic=(((qManual?.value||'').trim()) || (qSel?.value==='__other__'?'':qSel?.value||'')).trim();recordPracticeAttempt(level,qSubject,qTopic,q,choice,choice===answer).catch(()=>{});
-      if(state.answered===state.questions.length){showQuizSummary(level);loadLearningProgress().catch(()=>{})}
+      if(repeatSameTopic && lastPracticeTopic[level]){
+        topic = lastPracticeTopic[level];
+        if(lastPracticeSubject[level]) subject = lastPracticeSubject[level];
+      }
+      return { level, exam, subject, topic, box, type };
     }
 
-    function showQuizSummary(level){
-      const state=quizState[level];
-      const summary=document.getElementById(level+'QuizSummary');
-      if(!state||!summary) return;
-      const total=state.questions.length;
-      const percent=Math.round((state.correct/total)*100);
-      const weak=Object.entries(state.weakAreas).sort((a,b)=>b[1]-a[1]).map(([name,count])=>name+' ('+count+' wrong)').slice(0,5);
-      let message='';
-      if(percent>=80) message='Very good performance. Review the few areas you missed, then continue practising.';
-      else if(percent>=60) message='Good effort. Review the areas below before starting another round.';
-      else message='You need to revise this topic further. Study the weak areas below, then practise again.';
-      summary.innerHTML='<div style="margin-top:22px;padding:18px;border:2px solid #0a5acb;border-radius:14px;background:#f4f8ff">'+
-        '<h4 style="margin-top:0">Your Practice Results</h4>'+
-        '<p><strong>Correct:</strong> '+state.correct+' out of '+total+' &nbsp; | &nbsp; <strong>Wrong:</strong> '+state.wrong+' out of '+total+' &nbsp; | &nbsp; <strong>Score:</strong> '+percent+'%</p>'+
-        '<p>'+message+'</p>'+
-        (weak.length?'<p><strong>Areas to revise:</strong> '+weak.map(safe).join(', ')+'.</p>':'<p><strong>Areas to revise:</strong> No weak areas were identified in this round.</p>')+
-        '</div>';
-      summary.scrollIntoView({behavior:'smooth',block:'nearest'});
+    async function startPractice(level, repeatSameTopic=false){
+      const cfg = getPracticeConfig(level, repeatSameTopic);
+      if(!cfg.box) return;
+      if(!cfg.subject){
+        showOutput(cfg.box, cfg.level === 'primary' ? 'Please choose an NPSE paper first.' : 'Please choose a subject first.');
+        return;
+      }
+      if(!cfg.topic) cfg.topic = 'Mixed ' + cfg.exam + ' practice questions in ' + cfg.subject;
+      lastPracticeTopic[level] = cfg.topic;
+      lastPracticeSubject[level] = cfg.subject;
+
+      if(cfg.type === 'theory'){
+        await startTheoryPractice(cfg);
+      } else {
+        await startObjectivePractice(cfg);
+      }
     }
+
+    async function startObjectivePractice(cfg){
+      const wanted = QUIZ_ROUND_SIZE;
+      showOutput(cfg.box, firstName() ? `Preparing ${wanted} new ${cfg.exam} questions, ${firstName()}…` : `Preparing ${wanted} new ${cfg.exam} questions…`);
+      try{
+        const questions = await fetchFreshQuestions({
+          level: cfg.level === 'primary' ? 'primary' : cfg.level,
+          subject: cfg.subject,
+          topic: cfg.topic,
+          exam: cfg.exam,
+          count: wanted,
+          toolKey: `${cfg.level}-${cfg.exam.toLowerCase()}-practice`
+        });
+        if(questions.length === wanted){
+          rememberSeenQuestions(cfg.level, cfg.subject, cfg.topic, questions);
+          renderObjectivePractice(cfg, questions);
+        } else {
+          showOutput(cfg.box, 'We could not prepare five new questions this time. Please click the practice button again.');
+        }
+      }catch(e){
+        handleLearningError(e, cfg.box);
+      }
+    }
+
+    function renderObjectivePractice(cfg, questions){
+      const box = cfg.box;
+      if(!Array.isArray(questions) || !questions.length){
+        showOutput(box, 'No questions were returned. Please try again.');
+        return;
+      }
+      practiceState[cfg.level] = {
+        level: cfg.level,
+        exam: cfg.exam,
+        subject: cfg.subject,
+        topic: cfg.topic,
+        questions: questions.slice(0, QUIZ_ROUND_SIZE),
+        selected: {},
+        submitted: false,
+        correct: 0,
+        wrong: 0,
+        weakAreas: {}
+      };
+
+      box.innerHTML =
+        `<div class="quiz-head" style="margin-bottom:14px">` +
+          `<strong>${cfg.exam} Objective Practice (${safe(cfg.subject)})</strong><br>` +
+          `<span>Select your answers for all 5 questions below, then click <strong>Submit Answers</strong>.</span>` +
+        `</div>` +
+        practiceState[cfg.level].questions.map((q, i) => {
+          const opts = (q.options || []).slice(0, 4);
+          return `<div class="quiz-question" id="${cfg.level}_qwrap_${i}" data-qindex="${i}" style="margin:16px 0;padding:16px;border:1px solid #d7e1ed;border-radius:12px;background:#fff">` +
+            `<p style="font-size:1.02rem;margin-top:0"><strong>${i + 1}. ${safe(q.question || 'Question')}</strong></p>` +
+            `<div class="quiz-options">` +
+              opts.map((opt, j) =>
+                `<button type="button" class="btn quiz-option-btn" id="${cfg.level}_btn_${i}_${j}" onclick="selectObjectiveOption('${cfg.level}', ${i}, ${j})">` +
+                  `<strong>${String.fromCharCode(65 + j)}.</strong> ${safe(opt)}` +
+                `</button>`
+              ).join('') +
+            `</div>` +
+            `<div class="feedback" id="${cfg.level}_obj_fb_${i}"></div>` +
+          `</div>`;
+        }).join('') +
+        `<div id="${cfg.level}_obj_action_area" style="margin-top:20px;text-align:center">` +
+          `<button type="button" class="btn btn-blue" id="${cfg.level}_submit_obj_btn" onclick="submitObjectivePractice('${cfg.level}')" style="padding:12px 28px;font-size:1.05rem;font-weight:700">Submit Answers</button>` +
+          `<div id="${cfg.level}_obj_warning" style="margin-top:10px;color:#b42318;font-weight:700;display:none"></div>` +
+        `</div>` +
+        `<div id="${cfg.level}QuizSummary"></div>`;
+      box.classList.add('show');
+      box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function selectObjectiveOption(level, qIndex, optIndex){
+      const state = practiceState[level];
+      if(!state || state.submitted) return;
+      state.selected[qIndex] = optIndex;
+      for(let j = 0; j < 4; j++){
+        const btn = document.getElementById(`${level}_btn_${qIndex}_${j}`);
+        if(btn) btn.classList.toggle('selected', j === optIndex);
+      }
+      const warn = document.getElementById(`${level}_obj_warning`);
+      if(warn) warn.style.display = 'none';
+    }
+
+    function submitObjectivePractice(level){
+      const state = practiceState[level];
+      if(!state || state.submitted) return;
+      const unselected = [];
+      for(let i = 0; i < state.questions.length; i++){
+        if(state.selected[i] === undefined) unselected.push(i + 1);
+      }
+      if(unselected.length > 0){
+        const warn = document.getElementById(`${level}_obj_warning`);
+        if(warn){
+          warn.textContent = `Please select an answer for question ${unselected.join(', ')} before submitting.`;
+          warn.style.display = 'block';
+        }
+        const firstWrap = document.getElementById(`${level}_qwrap_${unselected[0] - 1}`);
+        if(firstWrap) firstWrap.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
+      state.submitted = true;
+      const submitBtn = document.getElementById(`${level}_submit_obj_btn`);
+      if(submitBtn) submitBtn.style.display = 'none';
+      const warn = document.getElementById(`${level}_obj_warning`);
+      if(warn) warn.style.display = 'none';
+
+      for(let i = 0; i < state.questions.length; i++){
+        const q = state.questions[i];
+        const userChoice = state.selected[i];
+        const correctChoice = Number(q.answer);
+        const isCorrect = userChoice === correctChoice;
+        if(isCorrect) state.correct++; else state.wrong++;
+
+        for(let j = 0; j < 4; j++){
+          const btn = document.getElementById(`${level}_btn_${i}_${j}`);
+          if(btn) btn.disabled = true;
+        }
+
+        const correctBtn = document.getElementById(`${level}_btn_${i}_${correctChoice}`);
+        if(correctBtn){
+          correctBtn.classList.remove('selected');
+          correctBtn.classList.add('correct-choice');
+        }
+
+        const fb = document.getElementById(`${level}_obj_fb_${i}`);
+        if(isCorrect){
+          if(fb){
+            fb.innerHTML = `<div style="margin-top:10px;padding:8px 12px;background:#dff5e8;border-left:4px solid #16a34a;border-radius:6px;color:#14532d"><strong style="color:#16794b">Correct!</strong> ${safe(q.explanation || 'Well done.')}</div>`;
+          }
+        } else {
+          const userBtn = document.getElementById(`${level}_btn_${i}_${userChoice}`);
+          if(userBtn){
+            userBtn.classList.remove('selected');
+            userBtn.classList.add('wrong-choice');
+          }
+          const weak = (q.weakArea || state.topic || 'This topic').trim();
+          state.weakAreas[weak] = (state.weakAreas[weak] || 0) + 1;
+          if(fb){
+            fb.innerHTML =
+              `<div style="margin-top:10px;padding:10px 12px;background:#fde7e5;border-left:4px solid #dc2626;border-radius:6px;color:#7f1d1d">` +
+                `<strong style="color:#b42318">Wrong.</strong> The correct answer is <strong>${String.fromCharCode(65 + correctChoice)}</strong>. ${safe(q.explanation || '')}` +
+                `<div style="margin-top:8px"><button type="button" class="btn btn-light" id="${level}_exp_btn_${i}" style="font-size:0.88rem;padding:6px 12px;background:#fff!important;color:#b42318!important;border:1px solid #fca5a5!important;cursor:pointer" onclick="explainWrongAnswer('${level}', ${i})">Explain My Wrong Answer</button></div>` +
+                `<div id="${level}_exp_box_${i}" style="display:none;margin-top:8px;padding:10px 12px;background:#fff;border-left:4px solid #b42318;border-radius:6px;color:#1e293b;font-size:0.92rem;line-height:1.5"></div>` +
+              `</div>`;
+          }
+        }
+        recordPracticeAttempt(state.level, state.subject, state.topic, q, userChoice, isCorrect).catch(()=>{});
+      }
+
+      showObjectiveQuizSummary(state);
+      loadLearningProgress().catch(()=>{});
+    }
+
+    function showObjectiveQuizSummary(state){
+      const level = state.level;
+      const summary = document.getElementById(`${level}QuizSummary`);
+      if(!summary) return;
+      const total = state.questions.length;
+      const percent = Math.round((state.correct / total) * 100);
+      const weak = Object.entries(state.weakAreas).sort((a,b)=>b[1]-a[1]).map(([name,count])=>name+' ('+count+' wrong)').slice(0,5);
+
+      const prevScore = getPreviousPracticeScore(level, state.subject, state.topic);
+      let improvementBanner = '';
+      if(prevScore !== null){
+        if(state.correct > prevScore){
+          const diff = state.correct - prevScore;
+          improvementBanner = `<div style="margin:12px 0;padding:12px 14px;background:#dff5e8;border:1.5px solid #34d399;border-radius:10px;color:#065f46"><strong>🎉 Great improvement!</strong> You scored <strong>${state.correct} out of ${total}</strong> — up from your previous score of ${prevScore}/${total} (an improvement of +${diff} ${diff === 1 ? 'mark' : 'marks'})! Excellent progress!</div>`;
+        } else if(state.correct === prevScore){
+          improvementBanner = `<div style="margin:12px 0;padding:12px 14px;background:#eef4fb;border:1px solid #cbd6e4;border-radius:10px;color:#17324d"><strong>Good consistency!</strong> You scored <strong>${state.correct} out of ${total}</strong>, matching your previous score of ${prevScore}/${total}.</div>`;
+        } else {
+          improvementBanner = `<div style="margin:12px 0;padding:12px 14px;background:#fff8e6;border:1px solid #ffd166;border-radius:10px;color:#7c5200">You scored <strong>${state.correct} out of ${total}</strong> (Your previous score was ${prevScore}/${total}). Practise this topic again to beat your previous score!</div>`;
+        }
+      }
+      savePreviousPracticeScore(level, state.subject, state.topic, state.correct);
+
+      let message = '';
+      if(percent >= 80) message = 'Very good performance. Review the few areas you missed, then continue practising.';
+      else if(percent >= 60) message = 'Good effort. Review the explanations above before starting another round.';
+      else message = 'You need to revise this topic further. Study the explanations and weak areas below, then practise again.';
+
+      summary.innerHTML =
+        `<div style="margin-top:22px;padding:18px;border:2px solid #0a5acb;border-radius:14px;background:#f4f8ff">` +
+          `<h4 style="margin-top:0;color:#073b8c">Your ${state.exam} Practice Results</h4>` +
+          `<p style="font-size:1.05rem"><strong>Score:</strong> <span style="font-size:1.25rem;color:#073b8c;font-weight:800">${state.correct} out of ${total}</span> (${percent}%) &nbsp;|&nbsp; <strong>Wrong:</strong> ${state.wrong}</p>` +
+          improvementBanner +
+          `<p>${message}</p>` +
+          (weak.length ? `<p><strong>Areas to revise:</strong> ${weak.map(safe).join(', ')}.</p>` : `<p><strong>Areas to revise:</strong> No weak areas were identified in this round.</p>`) +
+          `<div style="margin-top:18px;display:flex;flex-wrap:wrap;gap:10px">` +
+            `<button type="button" class="btn btn-blue" onclick="startPractice('${level}')">Try New Questions</button>` +
+            `<button type="button" class="btn btn-light" onclick="startPractice('${level}', true)">Practice This Topic Again</button>` +
+          `</div>` +
+        `</div>`;
+      summary.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    async function explainWrongAnswer(level, index){
+      const state = practiceState[level];
+      if(!state || !state.questions[index]) return;
+      const q = state.questions[index];
+      const userChoice = state.selected[index];
+      const correctChoice = Number(q.answer);
+      const btn = document.getElementById(`${level}_exp_btn_${index}`);
+      const box = document.getElementById(`${level}_exp_box_${index}`);
+      if(!box) return;
+      if(box.style.display !== 'none' && box.getAttribute('data-loaded') === '1'){
+        box.style.display = 'none';
+        if(btn) btn.textContent = 'Explain My Wrong Answer';
+        return;
+      }
+      box.style.display = 'block';
+      box.innerHTML = '<em>Preparing detailed explanation…</em>';
+      if(btn) btn.textContent = 'Explaining…';
+      try{
+        const res = await learningRequest({
+          level: state.level === 'primary' ? 'primary' : state.level,
+          subject: state.subject,
+          topic: state.topic,
+          task: 'explain_wrong_answer',
+          tool_key: `${level}-explain-wrong-answer`,
+          context: `Question: ${q.question}\nStudent selected: ${String.fromCharCode(65+userChoice)}. ${q.options[userChoice]||''}\nCorrect answer: ${String.fromCharCode(65+correctChoice)}. ${q.options[correctChoice]||''}\nTeacher note: ${q.explanation||''}`
+        });
+        const explanationText = (res.answer || res.explanation || '').trim();
+        if(explanationText){
+          box.innerHTML = `<strong style="color:#073b8c;display:block;margin-bottom:6px">Why your choice was incorrect:</strong>${safe(explanationText)}`;
+        } else {
+          box.innerHTML = `<strong>Why your choice was incorrect:</strong> You chose <strong>${String.fromCharCode(65+userChoice)}. ${safe(q.options[userChoice])}</strong>. The correct answer is <strong>${String.fromCharCode(65+correctChoice)}. ${safe(q.options[correctChoice])}</strong>. ${safe(q.explanation || '')}`;
+        }
+        box.setAttribute('data-loaded', '1');
+        if(btn) btn.textContent = 'Hide Explanation';
+      }catch(e){
+        box.innerHTML = `<strong>Why your choice was incorrect:</strong> You chose <strong>${String.fromCharCode(65+userChoice)}. ${safe(q.options[userChoice])}</strong>. The correct answer is <strong>${String.fromCharCode(65+correctChoice)}. ${safe(q.options[correctChoice])}</strong>. ${safe(q.explanation || '')}`;
+        box.setAttribute('data-loaded', '1');
+        if(btn) btn.textContent = 'Hide Explanation';
+      }
+    }
+
+    async function startTheoryPractice(cfg){
+      const wanted = THEORY_ROUND_SIZE;
+      showOutput(cfg.box, firstName() ? `Preparing ${wanted} new ${cfg.exam} theory questions, ${firstName()}…` : `Preparing ${wanted} new ${cfg.exam} theory questions…`);
+      try{
+        const res = await learningRequest({
+          level: cfg.level === 'primary' ? 'primary' : cfg.level,
+          subject: cfg.subject,
+          topic: cfg.topic,
+          exam: cfg.exam,
+          task: 'theory_quiz',
+          question_count: wanted,
+          tool_key: `${cfg.level}-${cfg.exam.toLowerCase()}-theory-practice`,
+          context: `Generate exactly 3 theory examination questions for ${cfg.exam} ${cfg.subject} on ${cfg.topic}. Include model answers and key marking points.`
+        });
+        const questions = Array.isArray(res.questions) ? res.questions.slice(0, wanted) : [];
+        if(questions.length === wanted){
+          renderTheoryPractice(cfg, questions);
+        } else {
+          showOutput(cfg.box, 'We could not prepare three new theory questions this time. Please click the practice button again.');
+        }
+      }catch(e){
+        handleLearningError(e, cfg.box);
+      }
+    }
+
+    function renderTheoryPractice(cfg, questions){
+      const box = cfg.box;
+      theoryPracticeState[cfg.level] = {
+        level: cfg.level,
+        exam: cfg.exam,
+        subject: cfg.subject,
+        topic: cfg.topic,
+        questions,
+        submitted: false
+      };
+
+      box.innerHTML =
+        `<div class="quiz-head" style="margin-bottom:16px">` +
+          `<strong>${cfg.exam} Theory Practice (${safe(cfg.subject)})</strong><br>` +
+          `<span>Answer all 3 questions in your own words. Click <strong>Submit Answers</strong> for AI marking, feedback and model answers.</span>` +
+        `</div>` +
+        questions.map((q, i) =>
+          `<div class="theory-question-card" data-qindex="${i}" style="margin:16px 0;padding:16px;border:1px solid #d7e1ed;border-radius:12px;background:#fff">` +
+            `<p style="font-size:1.02rem;margin-top:0"><strong>Question ${i + 1}.</strong> ${safe(q.question)}</p>` +
+            `<label for="${cfg.level}_theory_ans_${i}" style="display:block;margin:10px 0 4px;font-weight:600;color:#334155;font-size:0.92rem">Type your answer here...</label>` +
+            `<textarea id="${cfg.level}_theory_ans_${i}" class="theory-answer-box" placeholder="Type your answer here..." rows="4"></textarea>` +
+            `<div id="${cfg.level}_theory_fb_${i}" style="display:none;margin-top:12px"></div>` +
+          `</div>`
+        ).join('') +
+        `<div id="${cfg.level}_theory_action_area" style="margin-top:20px;text-align:center">` +
+          `<button type="button" class="btn btn-blue" id="${cfg.level}_submit_theory_btn" onclick="submitTheoryPractice('${cfg.level}')" style="padding:12px 28px;font-size:1.05rem;font-weight:700">Submit Answers</button>` +
+          `<div id="${cfg.level}_theory_status" style="margin-top:10px;font-weight:600;color:#073b8c"></div>` +
+        `</div>` +
+        `<div id="${cfg.level}_theory_summary" style="margin-top:20px"></div>`;
+      box.classList.add('show');
+      box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    async function submitTheoryPractice(level){
+      const state = theoryPracticeState[level];
+      if(!state || state.submitted) return;
+      const answers = [];
+      let hasAny = false;
+      for(let i = 0; i < state.questions.length; i++){
+        const val = (document.getElementById(`${level}_theory_ans_${i}`)?.value || '').trim();
+        answers.push(val);
+        if(val) hasAny = true;
+      }
+      const statusEl = document.getElementById(`${level}_theory_status`);
+      if(!hasAny){
+        if(statusEl) statusEl.textContent = 'Please type your answer in the answer boxes before submitting.';
+        return;
+      }
+
+      state.submitted = true;
+      for(let i = 0; i < state.questions.length; i++){
+        const ta = document.getElementById(`${level}_theory_ans_${i}`);
+        if(ta) ta.disabled = true;
+      }
+      const submitBtn = document.getElementById(`${level}_submit_theory_btn`);
+      if(submitBtn) submitBtn.disabled = true;
+      if(statusEl) statusEl.textContent = 'AI is marking your answers and preparing feedback…';
+
+      try{
+        const markRes = await learningRequest({
+          level: state.level === 'primary' ? 'primary' : state.level,
+          subject: state.subject,
+          topic: state.topic,
+          exam: state.exam,
+          task: 'mark_theory',
+          tool_key: `${level}-${state.exam.toLowerCase()}-theory-marking`,
+          context: JSON.stringify({
+            exam: state.exam,
+            subject: state.subject,
+            topic: state.topic,
+            submissions: state.questions.map((q, idx) => ({
+              question_number: idx + 1,
+              question: q.question,
+              model_answer: q.model_answer,
+              student_answer: answers[idx] || '(No answer provided)'
+            }))
+          })
+        });
+
+        if(submitBtn) submitBtn.style.display = 'none';
+        if(statusEl) statusEl.style.display = 'none';
+
+        const feedbackList = Array.isArray(markRes.feedback) ? markRes.feedback : [];
+        for(let i = 0; i < state.questions.length; i++){
+          const fbBox = document.getElementById(`${level}_theory_fb_${i}`);
+          if(!fbBox) continue;
+          const fb = feedbackList[i] || {};
+          const modelAns = fb.model_answer || state.questions[i]?.model_answer || 'Complete answer aligned with Sierra Leone curriculum.';
+          const correctText = fb.correct_points || (answers[i] ? 'Answer reviewed.' : 'No answer was provided for this question.');
+          const improveText = fb.needs_improvement || 'Compare your answer with the model answer below.';
+
+          fbBox.style.display = 'block';
+          fbBox.innerHTML =
+            `<div style="background:#f8fafc;border:1px solid #cbd6e4;border-radius:10px;padding:14px;margin-top:12px">` +
+              `<h4 style="margin:0 0 10px;color:#073b8c">Feedback for Question ${i + 1}</h4>` +
+              `<div style="background:#ecfdf5;border-left:4px solid #10b981;padding:10px 12px;border-radius:6px;margin-bottom:8px;color:#064e3b">` +
+                `<strong>What was correct:</strong> ${safe(correctText)}` +
+              `</div>` +
+              `<div style="background:#fffbeb;border-left:4px solid #f59e0b;padding:10px 12px;border-radius:6px;margin-bottom:8px;color:#78350f">` +
+                `<strong>What needs improvement:</strong> ${safe(improveText)}` +
+              `</div>` +
+              (fb.score_comment ? `<div style="font-weight:600;color:#1e3a8a;margin-bottom:8px">Assessment: ${safe(fb.score_comment)}</div>` : '') +
+              `<div style="background:#eff6ff;border-left:4px solid #3b82f6;padding:12px;border-radius:6px;margin-top:10px;color:#1e3a8a">` +
+                `<strong>Model Answer:</strong>` +
+                `<div style="margin-top:6px;line-height:1.5;white-space:pre-wrap">${safe(modelAns)}</div>` +
+              `</div>` +
+            `</div>`;
+        }
+
+        const summaryBox = document.getElementById(`${level}_theory_summary`);
+        if(summaryBox){
+          summaryBox.innerHTML =
+            `<div style="margin-top:22px;padding:18px;border:2px solid #0a5acb;border-radius:14px;background:#f4f8ff">` +
+              `<h4 style="margin-top:0;color:#073b8c">${state.exam} Theory Practice Complete</h4>` +
+              `<p>${safe(markRes.overall_summary || 'Your theory answers have been marked. Review the feedback and model answers above.')}</p>` +
+              `<div style="margin-top:16px;display:flex;flex-wrap:wrap;gap:10px">` +
+                `<button type="button" class="btn btn-blue" onclick="startPractice('${level}')">Try New Questions</button>` +
+                `<button type="button" class="btn btn-light" onclick="startPractice('${level}', true)">Practice This Topic Again</button>` +
+              `</div>` +
+            `</div>`;
+          summaryBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      }catch(e){
+        if(submitBtn) submitBtn.disabled = false;
+        if(statusEl) statusEl.textContent = e.message || 'Marking failed. Please try clicking Submit Answers again.';
+      }
+    }
+
+    function startQuiz(level){ startPractice(level); }
+    function startNPSEQuiz(){ startPractice('primary'); }
     function cvValue(id){return document.getElementById(id).value.trim()}
     function safe(value){const node=document.createElement('div');node.textContent=value;return node.innerHTML}
     function cvLines(value){return value.split(/\n+/).map(v=>v.trim()).filter(Boolean).map(v=>'<li>'+safe(v)+'</li>').join('')}
@@ -1650,22 +2069,8 @@ function updateDissertationTopics(){
 <script>
 let npseState=null;
 async function startNPSEQuiz(){
-  const subject=document.getElementById('npseSubject')?.value||'',ts=document.getElementById('npseTopicSelect'),tm=document.getElementById('npseTopic'),topic=(((tm?.value||'').trim()) || (ts?.value==='__other__'?'':ts?.value||'')).trim(),area=document.getElementById('npseQuizArea');
-  if(!subject){area.innerHTML='<div class="quiz-notice">Please choose an NPSE paper first.</div>';return}
-  const practiceTopic=topic||('Mixed NPSE practice questions in '+subject);
-  area.innerHTML='<div class="quiz-notice">Preparing 5 new NPSE questions…</div>';
-  try{
-    const questions=await fetchFreshQuestions({level:'primary',subject,topic:practiceTopic,exam:'NPSE',count:5,toolKey:'primary-npse-practice'});
-    if(questions.length!==5){area.innerHTML='<div class="quiz-notice">We could not prepare five new questions this time. Please click the practice button again.</div>';return}
-    rememberSeenQuestions('primary',subject,practiceTopic,questions);
-    renderNPSE(questions);
-  }catch(e){if(e.code==='registration_required'){showAccountTab('register');openAccountModal();return}area.innerHTML='<div class="quiz-notice">'+safe(e.message||'Unable to prepare questions.')+'</div>'}
+  await startPractice('primary');
 }
-function renderNPSE(qs){const area=document.getElementById('npseQuizArea');if(!Array.isArray(qs)||!qs.length){area.innerHTML='<div class="quiz-notice">No questions were returned. Please try again.</div>';return}npseState={qs:qs.slice(0,5),answered:0,correct:0};area.innerHTML=npseState.qs.map((q,i)=>'<div class="quiz-question" style="margin:14px 0;padding:14px;border:1px solid #d7e1ed;border-radius:12px;background:#fff"><p><strong>'+(i+1)+'. '+safe(q.question)+'</strong></p>'+(q.options||[]).slice(0,4).map((o,j)=>'<button class="btn" style="display:block;width:100%;text-align:left;justify-content:flex-start;margin:7px 0;background:#eef4fb;color:#17324d" onclick="answerNPSE(this,'+i+','+j+')">'+String.fromCharCode(65+j)+'. '+safe(o)+'</button>').join('')+'<div id="npseFb'+i+'"></div></div>').join('')+'<div id="npseSummary"></div>'}
-
-// Exam practice is manual: selecting a subject or topic never generates questions automatically.
-
-function answerNPSE(btn,i,j){if(btn.closest('.quiz-question').dataset.done)return;btn.closest('.quiz-question').dataset.done='1';const q=npseState.qs[i],ok=Number(q.answer)===j;npseState.answered++;if(ok)npseState.correct++;const subject=npseSubject?.value||'',ts=npseTopicSelect,tm=npseTopic,topic=(((tm?.value||'').trim()) || (ts?.value==='__other__'?'':ts?.value||'')).trim();recordPracticeAttempt('primary',subject,topic,q,j,ok).catch(()=>{});document.getElementById('npseFb'+i).innerHTML='<strong>'+(ok?'Correct':'Wrong')+'.</strong> '+safe(q.explanation||'');if(npseState.answered===npseState.qs.length){document.getElementById('npseSummary').innerHTML='<div class="notice"><strong>Result: '+npseState.correct+'/'+npseState.qs.length+' correct.</strong> Review the explanations above and practise weak areas again.</div>';loadLearningProgress().catch(()=>{})}}
 async function jssAssignmentGuide(){const subject=document.getElementById('jssAssignmentSubject')?.value||'',topic=document.getElementById('jssAssignment')?.value.trim()||'',box=document.getElementById('jssGuide');if(!subject){flagRequired(document.getElementById('jssAssignmentSubject'),'Please select your subject.');showOutput(box,'Please select your subject.');return}if(!topic){flagRequired(document.getElementById('jssAssignment'),'Please type the assignment given to you.');showOutput(box,'Please type the assignment given to you.');return}await callLearning({level:'jss',subject,topic,task:'assignment',tool_key:'jss-assignment-guide'},box)}
 async function sssAssignmentGuide(){const subject=document.getElementById('sssAssignmentSubject')?.value||'',topic=document.getElementById('sssAssignment')?.value.trim()||'',box=document.getElementById('sssGuide');if(!subject){flagRequired(document.getElementById('sssAssignmentSubject'),'Please select your subject.');showOutput(box,'Please select your subject.');return}if(!topic){flagRequired(document.getElementById('sssAssignment'),'Please type the assignment given to you.');showOutput(box,'Please type the assignment given to you.');return}await callLearning({level:'sss',subject,topic,task:'assignment',tool_key:'sss-assignment-guide'},box)}
 async function primaryAssignmentGuide(){const subject=primaryAssignmentSubject.value,topic=primaryAssignment.value.trim(),box=primaryAssignmentOutput;if(!subject){flagRequired(primaryAssignmentSubject,'Please select your subject.');showOutput(box,'Please select your subject.');return}if(!topic){flagRequired(primaryAssignment,'Please type the assignment given to you.');showOutput(box,'Please type the assignment given to you.');return}await callLearning({level:'primary',subject,topic,task:'assignment',tool_key:'primary-assignment-guide'},box)}
@@ -1943,7 +2348,28 @@ function preparePrimaryTeacherSupport(type){
   const selectedExamTopic=()=>((examTopic.value==='__other__'?examTopicOther.value:examTopic.value)||'').trim();
   const baseValid=()=>category.value&&classSel.value&&subjectSel.value&&(category.value!=='sss'||streamSel.value);
   document.getElementById('prepareTeacherLessonBtn')?.addEventListener('click',async()=>{const topic=selectedTopic(),date=(document.getElementById('teacherPrepDate')?.value||'').trim(),duration=(document.getElementById('teacherPrepDuration')?.value||'').trim();if(!baseValid()||!topic||!date||!duration){msg.textContent='Please choose the teacher category, class, subject and topic, then add the date and duration.';return}const context=['Document: Lesson Notes','Date: '+date,'Duration: '+duration,'Prepare practical lesson notes for the selected class, subject and topic.'].join('\n');await callLearning({level:category.value,class_level:classSel.value,subject:subjectSel.value,topic,task:'teacher',context,tool_key:'teacher-lesson-note'},msg)});
-  document.getElementById('prepareTeacherExamBtn')?.addEventListener('click',async()=>{const subject=(examSubject.value||'').trim(),topic=selectedExamTopic(),type=(examType?.value||'').trim();if(!examCategory.value||!examClass.value||(examCategory.value==='sss'&&!examStream.value)||!subject||!topic||!type){msg.textContent='Please choose the teacher category, class or level, subject, topic and question type.';return}const nonce=Date.now()+'-'+Math.random().toString(36).slice(2);if(type==='objective'){await callLearning({level:examCategory.value,class_level:examClass.value,subject,topic,task:'teacher_exam_objective',exam_type:'objective',question_count:10,context:'Generate a NEW set of exactly ten objective multiple-choice examination questions. Number them 1 to 10. Each question must have exactly four options labelled A, B, C and D. Do not include answers or marking schemes. Fresh generation ID: '+nonce,tool_key:'teacher-exam-objective'},msg);return}await callLearning({level:examCategory.value,class_level:examClass.value,subject,topic,task:'teacher_exam_theory',exam_type:'theory',question_count:5,context:'Generate a NEW set of exactly five theory examination questions only. Number them 1 to 5. Do not include answers, marking schemes or multiple-choice options. Fresh generation ID: '+nonce,tool_key:'teacher-exam-theory'},msg)});
+  document.getElementById('prepareTeacherExamBtn')?.addEventListener('click',async()=>{const subject=(examSubject.value||'').trim(),topic=selectedExamTopic(),type=(examType?.value||'').trim();if(!examCategory.value||!examClass.value||(examCategory.value==='sss'&&!examStream.value)||!subject||!topic||!type){msg.textContent='Please choose the teacher category, class or level, subject, topic and question type.';return}const nonce=Date.now()+'-'+Math.random().toString(36).slice(2);if(type==='objective'){await callLearning({level:examCategory.value,class_level:examClass.value,subject,topic,task:'teacher_exam_objective',exam_type:'objective',question_count:5,context:'Generate a NEW set of exactly five objective multiple-choice examination questions. Number them 1 to 5. Each question must have exactly four options labelled A, B, C and D. Do not include answers or marking schemes. Fresh generation ID: '+nonce,tool_key:'teacher-exam-objective'},msg);return}await callLearning({level:examCategory.value,class_level:examClass.value,subject,topic,task:'teacher_exam_theory',exam_type:'theory',question_count:3,context:'Generate a NEW set of exactly three theory examination questions only. Number them 1 to 3. Do not include answers, marking schemes or multiple-choice options. Fresh generation ID: '+nonce,tool_key:'teacher-exam-theory'},msg)});
+  document.getElementById('teacherOwnQuestionBtn')?.addEventListener('click',async()=>{
+    const level=(document.getElementById('teacherOwnExamLevel')?.value||'wassce').trim();
+    const subject=(document.getElementById('teacherOwnSubject')?.value||'').trim()||'General';
+    const question=(document.getElementById('teacherOwnQuestion')?.value||'').trim();
+    const ownMsg=document.getElementById('teacherOwnQuestionMessage');
+    if(!question){
+      flagRequired(document.getElementById('teacherOwnQuestion'),'Please type or paste your theory question.');
+      if(ownMsg)ownMsg.textContent='Please type or paste your theory question.';
+      return;
+    }
+    const examName=level.toUpperCase();
+    await callLearning({
+      level,
+      subject,
+      topic:question,
+      task:'teacher_marking_guide',
+      exam_type:'theory',
+      context:`Teacher custom theory question for ${examName} ${subject}.\nGenerate an appropriate model answer and comprehensive marking guide according to official ${examName} examination standards.`,
+      tool_key:'teacher-own-theory-guide'
+    },ownMsg);
+  });
 })();
 </script><script>
 (function(){
@@ -2141,9 +2567,9 @@ function clearFieldError(el){if(!el)return;el.classList.remove('field-invalid');
 function flagRequired(el,message){if(!el)return false;el.classList.add('field-invalid');el.setAttribute('aria-invalid','true');let e=el.parentElement?.querySelector('.inline-field-error[data-for="'+el.id+'"]');if(!e){e=document.createElement('div');e.className='inline-field-error';e.dataset.for=el.id;el.insertAdjacentElement('afterend',e)}e.textContent=message||'Please complete this field.';el.scrollIntoView({behavior:'smooth',block:'center'});setTimeout(()=>el.focus({preventScroll:true}),350);return false}
 function requireValue(el,message){clearFieldError(el);return String(el?.value||'').trim()?true:flagRequired(el,message)}
 document.addEventListener('input',e=>{if(e.target.matches('input,textarea,select'))clearFieldError(e.target)});document.addEventListener('change',e=>{if(e.target.matches('input,textarea,select'))clearFieldError(e.target)});
-function personalLead(payload){const n=firstName();if(!n)return '';const t=(payload?.task||'').toLowerCase();if(t==='assignment')return `Thank you, ${n}. Here is your assignment guide.`;if(t==='review')return `Thank you, ${n}. Here is feedback on your answer.`;if(t==='topics')return `${n}, here are research topic suggestions for you.`;if(t==='proposal')return `${n}, here is your proposal framework.`;if(t==='dissertation')return `${n}, here is your dissertation guidance.`;if(t==='defense')return `${n}, here is your dissertation defence preparation guide.`;if(t==='teacher')return `Thank you, ${n}. Here is the teaching support you requested.`;if(t==='teacher_exam'||t==='teacher_exam_objective'||t==='teacher_exam_theory')return `Thank you, ${n}. Here are your examination questions.`;if((payload?.level||'').toLowerCase()==='university'||t==='lecturer')return `Thank you, ${n}. Here is your lecturer-style explanation.`;return `Thank you, ${n}. Here is your lesson explanation.`}
+function personalLead(payload){const n=firstName();if(!n)return '';const t=(payload?.task||'').toLowerCase();if(t==='assignment')return `Thank you, ${n}. Here is your assignment guide.`;if(t==='review')return `Thank you, ${n}. Here is feedback on your answer.`;if(t==='topics')return `${n}, here are research topic suggestions for you.`;if(t==='proposal')return `${n}, here is your proposal framework.`;if(t==='dissertation')return `${n}, here is your dissertation guidance.`;if(t==='defense')return `${n}, here is your dissertation defence preparation guide.`;if(t==='teacher')return `Thank you, ${n}. Here is the teaching support you requested.`;if(t==='teacher_marking_guide')return `Thank you, ${n}. Here is your model answer and marking guide.`;if(t==='mark_theory')return `Thank you, ${n}. Here is your theory assessment and feedback.`;if(t==='teacher_exam'||t==='teacher_exam_objective'||t==='teacher_exam_theory')return `Thank you, ${n}. Here are your examination questions.`;if((payload?.level||'').toLowerCase()==='university'||t==='lecturer')return `Thank you, ${n}. Here is your lecturer-style explanation.`;return `Thank you, ${n}. Here is your lesson explanation.`}
 function personalisedText(payload,text){const lead=personalLead(payload);return lead?lead+'\n\n'+text:text}
-function requestLoadingText(payload){const t=(payload?.task||'').toLowerCase();if(t==='teacher')return 'Preparing your lesson notes…';if(t==='teacher_exam_objective')return 'Generating 10 objective questions…';if(t==='teacher_exam_theory')return 'Generating 5 theory questions…';if(t==='teacher_exam')return (payload?.exam_type||'').toLowerCase()==='objective'?'Generating 10 objective questions…':'Generating 5 theory questions…';if(t==='topics')return 'Finding suitable research topics…';if(t==='proposal')return 'Preparing your proposal framework…';if(t==='dissertation')return 'Preparing your dissertation guidance…';if(t==='defense')return 'Preparing your dissertation defence guide…';if(t==='review')return 'Reviewing your work…';if(t==='assignment')return 'Preparing your step-by-step assignment guide…';if(t==='lecturer'||(payload?.level||'').toLowerCase()==='university')return 'Preparing your Salone Class Room Lecturer explanation…';return 'Preparing your lesson explanation…'}
+function requestLoadingText(payload){const t=(payload?.task||'').toLowerCase();if(t==='teacher')return 'Preparing your lesson notes…';if(t==='teacher_exam_objective')return 'Generating 5 objective questions…';if(t==='teacher_exam_theory')return 'Generating 3 theory questions…';if(t==='teacher_exam')return (payload?.exam_type||'').toLowerCase()==='objective'?'Generating 5 objective questions…':'Generating 3 theory questions…';if(t==='teacher_marking_guide')return 'Preparing model answer & marking guide…';if(t==='theory_quiz')return 'Generating 3 theory questions…';if(t==='mark_theory')return 'AI is marking your theory answers…';if(t==='explain_wrong_answer')return 'Explaining why this answer is incorrect…';if(t==='topics')return 'Finding suitable research topics…';if(t==='proposal')return 'Preparing your proposal framework…';if(t==='dissertation')return 'Preparing your dissertation guidance…';if(t==='defense')return 'Preparing your dissertation defence guide…';if(t==='review')return 'Reviewing your work…';if(t==='assignment')return 'Preparing your step-by-step assignment guide…';if(t==='lecturer'||(payload?.level||'').toLowerCase()==='university')return 'Preparing your Salone Class Room Lecturer explanation…';return 'Preparing your lesson explanation…'}
 function needsEducationalVisual(payload){const task=(payload.task||'tutor').toLowerCase(),level=(payload.level||'').toLowerCase(),request=[payload.topic,payload.context].filter(Boolean).join(' ');return ['tutor','lecturer'].includes(task)&&['primary','jss','sss','university'].includes(level)&&/\b(map|diagram|draw|drawing|illustrat(?:e|ion)|labelled|labeled|graph|chart|visual|anatomy|life cycle|water cycle|food chain|circuit)\b/i.test(request)}
 async function addEducationalVisual(box,payload,token){if(!needsEducationalVisual(payload)||!token)return;const status=document.createElement('p');status.className='visual-status';status.textContent='Generating the educational visual…';box.appendChild(status);try{const r=await fetch('/.netlify/functions/diagram',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({level:payload.level,subject:payload.subject,topic:payload.topic,token})}),d=await r.json();if(!r.ok)throw Error(d.error||'Unable to generate visual.');const img=document.createElement('img');img.className='answer-visual';img.src=d.image;img.alt=d.alt||'Educational visual';img.loading='lazy';status.replaceWith(img)}catch(e){status.textContent='The explanation is ready, but the requested visual could not be generated right now.'}}
 async function callLearning(payload,box){const n=firstName(),msg=requestLoadingText(payload),previous=box.id?lastLearningAnswers[box.id]:'';showOutput(box,n?msg.replace('…',`, ${n}…`):msg);try{const requestPayload={...payload,...(previous?{previous_response:previous}:{})};const d=await learningRequest(requestPayload),answer=personalisedText(payload,d.answer||'No response was returned. Please try again.');renderLearningAnswer(box,answer,payload);await addEducationalVisual(box,payload,d.diagram_token)}catch(e){handleLearningError(e,box)}}
