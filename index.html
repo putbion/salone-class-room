@@ -421,6 +421,72 @@ main section{
   display: block;
 }
 
+/* TEACHERS FEATURE NAVIGATION & ACCORDION PANELS */
+.teacher-feature-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  list-style: none;
+  padding: 0 16px !important;
+  margin: 10px 0 16px !important;
+}
+.teacher-nav-pill {
+  background: #fff7ed;
+  border: 1.5px solid #EA580C;
+  color: #9a3412;
+  font-weight: 700;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: all 0.15s ease;
+  text-align: left;
+  line-height: 1.3;
+}
+.teacher-nav-pill:hover,
+.teacher-nav-pill.active {
+  background: #EA580C;
+  color: #ffffff;
+  border-color: #c2410c;
+}
+.teacher-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  padding: 8px 6px;
+  user-select: none;
+  border-radius: 8px;
+  transition: background 0.15s ease;
+}
+.teacher-panel-header:hover {
+  background: #fff7ed;
+}
+.teacher-panel-header:focus-visible {
+  outline: 2px solid #EA580C;
+  outline-offset: 2px;
+}
+.teacher-panel-chevron {
+  font-size: 1.3rem;
+  color: #EA580C;
+  font-weight: 700;
+  margin-left: 14px;
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.teacher-card-closed .teacher-panel-chevron {
+  transform: rotate(-90deg);
+}
+.teacher-card-closed .teacher-panel-body {
+  display: none !important;
+}
+.teacher-panel-body {
+  margin-top: 14px;
+  border-top: 1px solid #fed7aa;
+  padding-top: 16px;
+}
+
 /* UNIVERSITY - Deep Purple #6D28D9 */
 .edu-university {
   border-top: 6px solid #6D28D9 !important;
@@ -1843,11 +1909,11 @@ select:disabled{background-color:#f3f6f9 !important;color:#7a8794 !important;opa
 <div class="section-identity-tag tag-teachers"><span class="id-dot"></span> <strong>TEACHERS</strong> • TEACHERS SECTION</div>
 <h2><span style="display:inline-block;background:#EA580C;color:#ffffff;padding:2px 10px;border-radius:6px;font-size:0.85em;margin-right:8px;vertical-align:middle">TEACHERS</span> Welcome to the Teachers Section<span class="section-user-name"></span></h2>
 <p class="section-feature-label">In this section, we have:</p>
-<ul>
-<li>Prepare to Teach</li>
-<li>Prepare Lesson Notes</li>
-<li>Prepare Exam Questions</li>
-<li>Teachers Guide</li>
+<ul class="teacher-feature-nav">
+  <li><button type="button" class="teacher-nav-pill active" data-target="prepareToTeach" onclick="openTeacherSection('prepareToTeach')">1. Prepare to Teach</button></li>
+  <li><button type="button" class="teacher-nav-pill" data-target="prepareLessonNotes" onclick="openTeacherSection('prepareLessonNotes')">2. Prepare Lesson Notes</button></li>
+  <li><button type="button" class="teacher-nav-pill" data-target="prepareExamQuestions" onclick="openTeacherSection('prepareExamQuestions')">3. Prepare Exam Questions &amp; Marking Scheme</button></li>
+  <li><button type="button" class="teacher-nav-pill" data-target="teachersGuide" onclick="openTeacherSection('teachersGuide')">4. Teachers Guide</button></li>
 </ul>
 </div>
 <p class="section-ribbon-description">Professional support for teachers: personal topic preparation, structured lesson notes, examination questions with answer keys &amp; marking schemes, and practical classroom guidance.</p>
@@ -1856,81 +1922,104 @@ select:disabled{background-color:#f3f6f9 !important;color:#7a8794 !important;opa
 
 <!-- 1. PREPARE TO TEACH -->
 <div class="prepare-teach-box" id="prepareToTeachCard" style="border-top:4px solid #EA580C;margin-top:14px;background:#fff">
-<span class="tool-badge badge-teachers" style="background:#EA580C;color:#fff;padding:4px 10px;border-radius:6px;font-size:0.82rem;font-weight:700">1. PREPARE TO TEACH</span>
-<h3 style="margin-top:12px;margin-bottom:6px;color:#193b53">Prepare to Teach</h3>
-<p style="color:#475569;margin-bottom:14px">Help yourself personally understand and prepare for a topic before entering the classroom. This guide provides topic explanations, core points, simple ways to explain the concept, local examples, common difficult areas, likely questions learners may ask, simple classroom demonstrations, and quick self-readiness checks.</p>
-<div class="teacher-form-grid" style="margin-top:12px">
-<div><label for="prepTeachCategory">Teacher Category</label><select id="prepTeachCategory"><option value="">Select teacher category</option><option value="primary">Primary School Teacher</option><option value="jss">Junior Secondary School (JSS) Teacher</option><option value="sss">Senior Secondary School (SSS) Teacher</option></select></div>
-<div><label for="prepTeachClass">Class / Level</label><select id="prepTeachClass"><option value="">Select teacher category first</option></select></div>
-<div hidden="" id="prepTeachStreamWrap"><label for="prepTeachStream">SSS stream</label><select id="prepTeachStream"><option value="">Select stream</option></select></div>
-<div><label for="prepTeachSubject">Subject</label><select id="prepTeachSubject"><option value="">Select teacher category and class first</option></select></div>
-<div><label for="prepTeachTopic">Type or choose your topic</label><select id="prepTeachTopic"><option value="">Choose a subject first</option></select></div>
-</div>
-<p class="topic-help">Choose a listed curriculum topic above or enter your topic below.</p>
-<div style="margin-top:8px"><label for="prepTeachTopicOther" style="font-weight:700">Topic</label><input id="prepTeachTopicOther" placeholder="Enter topic here..." style="width:100%;box-sizing:border-box;margin-top:4px"/></div>
-<div style="margin-top:16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
-  <button class="btn btn-teachers-action" id="prepareTeacherToTeachBtn" type="button" style="padding:11px 22px;font-size:1rem">Prepare Me to Teach</button>
-  <div id="prepTeachStatus" style="display:none;font-weight:700;color:#EA580C">Preparing your teaching guide...</div>
-</div>
-<div id="prepTeachOutput" class="output" style="margin-top:16px"></div>
+  <div class="teacher-panel-header" onclick="toggleTeacherSection('prepareToTeach')" onkeydown="if(event.key==='Enter'||event.key===' ')toggleTeacherSection('prepareToTeach')" tabindex="0" role="button" aria-expanded="true">
+    <div style="flex:1">
+      <span class="tool-badge badge-teachers" style="background:#EA580C;color:#fff;padding:4px 10px;border-radius:6px;font-size:0.82rem;font-weight:700">1. PREPARE TO TEACH</span>
+      <h3 style="margin-top:10px;margin-bottom:4px;color:#193b53;font-size:1.25rem">Prepare to Teach</h3>
+      <p style="color:#475569;margin:0;font-size:0.95rem">Help yourself personally understand and prepare for a topic before entering the classroom. This guide provides topic explanations, core points, simple ways to explain the concept, local examples, common difficult areas, likely questions learners may ask, simple classroom demonstrations, and quick self-readiness checks.</p>
+    </div>
+    <div class="teacher-panel-chevron" id="chevron-prepareToTeach">▼</div>
+  </div>
+  <div class="teacher-panel-body" id="prepareToTeachPanel" style="display:block">
+    <div class="teacher-form-grid">
+      <div><label for="prepTeachCategory">Teacher Category</label><select id="prepTeachCategory"><option value="">Select teacher category</option><option value="primary">Primary School Teacher</option><option value="jss">Junior Secondary School (JSS) Teacher</option><option value="sss">Senior Secondary School (SSS) Teacher</option></select></div>
+      <div><label for="prepTeachClass">Class / Level</label><select id="prepTeachClass"><option value="">Select teacher category first</option></select></div>
+      <div hidden="" id="prepTeachStreamWrap"><label for="prepTeachStream">SSS stream</label><select id="prepTeachStream"><option value="">Select stream</option></select></div>
+      <div><label for="prepTeachSubject">Subject</label><select id="prepTeachSubject"><option value="">Select teacher category and class first</option></select></div>
+      <div><label for="prepTeachTopic">Type or choose your topic</label><select id="prepTeachTopic"><option value="">Choose a subject first</option></select></div>
+    </div>
+    <p class="topic-help">Choose a listed curriculum topic above or enter your topic below.</p>
+    <div style="margin-top:8px"><label for="prepTeachTopicOther" style="font-weight:700">Topic</label><input id="prepTeachTopicOther" placeholder="Enter topic here..." style="width:100%;box-sizing:border-box;margin-top:4px"/></div>
+    <div style="margin-top:16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+      <button class="btn btn-teachers-action" id="prepareTeacherToTeachBtn" type="button" style="padding:11px 22px;font-size:1rem">Prepare Me to Teach</button>
+      <div id="prepTeachStatus" style="display:none;font-weight:700;color:#EA580C">Preparing your teaching guide...</div>
+    </div>
+    <div id="prepTeachOutput" class="output" style="margin-top:16px"></div>
+  </div>
 </div>
 
 <!-- 2. PREPARE LESSON NOTES -->
-<div class="prepare-teach-box compact-lesson-actions" id="prepareLessonNotesCard" style="border-top:4px solid #EA580C;margin-top:24px;background:#fff">
-<span class="tool-badge badge-teachers" style="background:#EA580C;color:#fff;padding:4px 10px;border-radius:6px;font-size:0.82rem;font-weight:700">2. PREPARE LESSON NOTES</span>
-<h3 style="margin-top:12px;margin-bottom:6px;color:#193b53">Prepare Lesson Notes</h3>
-<p style="color:#475569;margin-bottom:14px">Select the school level, class, subject and clear topic, then add the date and duration to generate your structured lesson note document.</p>
-<div class="teacher-form-grid" style="margin-top:12px">
-<div><label for="teacherCategoryOnly">Teacher Category</label><select id="teacherCategoryOnly"><option value="">Select teacher category</option><option value="primary">Primary School Teacher</option><option value="jss">Junior Secondary School (JSS) Teacher</option><option value="sss">Senior Secondary School (SSS) Teacher</option></select></div>
-<div><label for="teacherClassOnly">Class</label><select id="teacherClassOnly"><option value="">Select class</option></select></div>
-<div hidden="" id="teacherStreamOnlyWrap"><label for="teacherStreamOnly">SSS stream</label><select id="teacherStreamOnly"><option value="">Select stream</option></select></div>
-<div><label for="teacherSubjectOnly">Subject</label><select id="teacherSubjectOnly"><option value="">Select subject</option></select></div>
-<div><label for="teacherTopicOnly">Type or choose your topic</label><select id="teacherTopicOnly"><option value="">Choose class and subject first</option></select></div>
-</div>
-<p class="topic-help">Choose a listed curriculum topic above or enter your lesson topic below.</p>
-<div style="margin-top:8px"><label for="teacherTopicOther" style="font-weight:700">Topic</label><input id="teacherTopicOther" placeholder="Enter lesson topic here..." style="width:100%;box-sizing:border-box;margin-top:4px"/></div>
-<div class="teacher-form-grid" style="margin-top:12px">
-<div><label for="teacherPrepDate">Date</label><input id="teacherPrepDate" type="date"/></div>
-<div><label for="teacherPrepDuration">Duration</label><select id="teacherPrepDuration"><option value="">Select duration</option><option>30 minutes</option><option>40 minutes</option><option>45 minutes</option><option>60 minutes</option><option>80 minutes</option></select></div>
-</div>
-<div style="margin-top:16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
-  <button class="btn btn-teachers-action" id="prepareTeacherLessonBtn" type="button" style="padding:11px 22px;font-size:1rem">Generate Your Lesson Notes</button>
-  <div id="teacherLessonStatus" style="display:none;font-weight:700;color:#EA580C">Preparing your lesson notes...</div>
-</div>
-<div id="teacherLessonOutput" class="output" style="margin-top:16px"></div>
+<div class="prepare-teach-box compact-lesson-actions teacher-card-closed" id="prepareLessonNotesCard" style="border-top:4px solid #EA580C;margin-top:24px;background:#fff">
+  <div class="teacher-panel-header" onclick="toggleTeacherSection('prepareLessonNotes')" onkeydown="if(event.key==='Enter'||event.key===' ')toggleTeacherSection('prepareLessonNotes')" tabindex="0" role="button" aria-expanded="false">
+    <div style="flex:1">
+      <span class="tool-badge badge-teachers" style="background:#EA580C;color:#fff;padding:4px 10px;border-radius:6px;font-size:0.82rem;font-weight:700">2. PREPARE LESSON NOTES</span>
+      <h3 style="margin-top:10px;margin-bottom:4px;color:#193b53;font-size:1.25rem">Prepare Lesson Notes</h3>
+      <p style="color:#475569;margin:0;font-size:0.95rem">Select the school level, class, subject and clear topic, then add the date and duration to generate your structured lesson note document.</p>
+    </div>
+    <div class="teacher-panel-chevron" id="chevron-prepareLessonNotes">▼</div>
+  </div>
+  <div class="teacher-panel-body" id="prepareLessonNotesPanel" style="display:none">
+    <div class="teacher-form-grid">
+      <div><label for="teacherCategoryOnly">Teacher Category</label><select id="teacherCategoryOnly"><option value="">Select teacher category</option><option value="primary">Primary School Teacher</option><option value="jss">Junior Secondary School (JSS) Teacher</option><option value="sss">Senior Secondary School (SSS) Teacher</option></select></div>
+      <div><label for="teacherClassOnly">Class</label><select id="teacherClassOnly"><option value="">Select class</option></select></div>
+      <div hidden="" id="teacherStreamOnlyWrap"><label for="teacherStreamOnly">SSS stream</label><select id="teacherStreamOnly"><option value="">Select stream</option></select></div>
+      <div><label for="teacherSubjectOnly">Subject</label><select id="teacherSubjectOnly"><option value="">Select subject</option></select></div>
+      <div><label for="teacherTopicOnly">Type or choose your topic</label><select id="teacherTopicOnly"><option value="">Choose class and subject first</option></select></div>
+    </div>
+    <p class="topic-help">Choose a listed curriculum topic above or enter your lesson topic below.</p>
+    <div style="margin-top:8px"><label for="teacherTopicOther" style="font-weight:700">Topic</label><input id="teacherTopicOther" placeholder="Enter lesson topic here..." style="width:100%;box-sizing:border-box;margin-top:4px"/></div>
+    <div class="teacher-form-grid" style="margin-top:12px">
+      <div><label for="teacherPrepDate">Date</label><input id="teacherPrepDate" type="date"/></div>
+      <div><label for="teacherPrepDuration">Duration</label><select id="teacherPrepDuration"><option value="">Select duration</option><option>30 minutes</option><option>40 minutes</option><option>45 minutes</option><option>60 minutes</option><option>80 minutes</option></select></div>
+    </div>
+    <div style="margin-top:16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+      <button class="btn btn-teachers-action" id="prepareTeacherLessonBtn" type="button" style="padding:11px 22px;font-size:1rem">Generate Your Lesson Notes</button>
+      <div id="teacherLessonStatus" style="display:none;font-weight:700;color:#EA580C">Preparing your lesson notes...</div>
+    </div>
+    <div id="teacherLessonOutput" class="output" style="margin-top:16px"></div>
+  </div>
 </div>
 
-<!-- 3. PREPARE EXAM QUESTIONS -->
-<div class="prepare-teach-box" id="prepareExamQuestionsCard" style="border-top:4px solid #EA580C;margin-top:24px;background:#fff">
-<span class="tool-badge badge-teachers" style="background:#EA580C;color:#fff;padding:4px 10px;border-radius:6px;font-size:0.82rem;font-weight:700">3. PREPARE EXAM QUESTIONS</span>
-<h3 style="margin-top:12px;margin-bottom:6px;color:#193b53">Prepare Exam Questions</h3>
-<p style="color:#475569;margin-bottom:14px">Choose the teacher category, class or level, subject and topic. Choose <strong>Objective</strong> to generate exactly 10 objective questions with a separate Answer Key, or <strong>Theory</strong> to generate exactly 5 theory questions with a dedicated Marking Scheme.</p>
-<div class="teacher-form-grid" style="margin-top:12px">
-<div><label for="teacherExamCategory">Teacher Category</label><select id="teacherExamCategory"><option value="">Select teacher category</option><option value="primary">Primary School Teacher</option><option value="jss">Junior Secondary School (JSS) Teacher</option><option value="sss">Senior Secondary School (SSS) Teacher</option></select></div>
-<div><label for="teacherExamClass">Class / Level</label><select id="teacherExamClass"><option value="">Select teacher category first</option></select></div>
-<div hidden="" id="teacherExamStreamWrap"><label for="teacherExamStream">SSS stream</label><select id="teacherExamStream"><option value="">Select stream</option></select></div>
-<div><label for="teacherExamSubject">Subject</label><select id="teacherExamSubject"><option value="">Select teacher category and class first</option></select></div>
-<div><label for="teacherExamTopic">Type or choose your topic</label><select id="teacherExamTopic"><option value="">Choose a subject first</option></select></div>
-<div><label for="teacherExamType">Choose Question Type</label><select id="teacherExamType"><option value="">Choose Question Type</option><option value="objective">Objective</option><option value="theory">Theory</option></select></div>
-</div>
-<div style="margin-top:8px"><label for="teacherExamTopicOther" style="font-weight:700">Topic</label><input id="teacherExamTopicOther" placeholder="Or type your own topic here..." style="width:100%;box-sizing:border-box;margin-top:4px"/></div>
-<p class="topic-help">Select or type the topic for the examination questions.</p>
-<div style="margin-top:16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
-  <button class="btn btn-teachers-action" id="prepareTeacherExamBtn" type="button" style="padding:11px 22px;font-size:1rem">Generate Questions</button>
-  <div id="teacherExamStatus" style="display:none;font-weight:700;color:#EA580C">Preparing your questions...</div>
-</div>
-<div id="teacherExamOutput" class="output" style="margin-top:16px"></div>
+<!-- 3. PREPARE EXAM QUESTIONS & MARKING SCHEME -->
+<div class="prepare-teach-box teacher-card-closed" id="prepareExamQuestionsCard" style="border-top:4px solid #EA580C;margin-top:24px;background:#fff">
+  <div class="teacher-panel-header" onclick="toggleTeacherSection('prepareExamQuestions')" onkeydown="if(event.key==='Enter'||event.key===' ')toggleTeacherSection('prepareExamQuestions')" tabindex="0" role="button" aria-expanded="false">
+    <div style="flex:1">
+      <span class="tool-badge badge-teachers" style="background:#EA580C;color:#fff;padding:4px 10px;border-radius:6px;font-size:0.82rem;font-weight:700">3. PREPARE EXAM QUESTIONS &amp; MARKING SCHEME</span>
+      <h3 style="margin-top:10px;margin-bottom:4px;color:#193b53;font-size:1.25rem">Prepare Exam Questions &amp; Marking Scheme</h3>
+      <p style="color:#475569;margin:0;font-size:0.95rem">Choose the teacher category, class or level, subject and topic. Choose <strong>Objective</strong> to generate exactly 10 objective questions with a separate Answer Key, or <strong>Theory</strong> to generate exactly 5 theory questions with a dedicated Marking Scheme.</p>
+    </div>
+    <div class="teacher-panel-chevron" id="chevron-prepareExamQuestions">▼</div>
+  </div>
+  <div class="teacher-panel-body" id="prepareExamQuestionsPanel" style="display:none">
+    <div class="teacher-form-grid">
+      <div><label for="teacherExamCategory">Teacher Category</label><select id="teacherExamCategory"><option value="">Select teacher category</option><option value="primary">Primary School Teacher</option><option value="jss">Junior Secondary School (JSS) Teacher</option><option value="sss">Senior Secondary School (SSS) Teacher</option></select></div>
+      <div><label for="teacherExamClass">Class / Level</label><select id="teacherExamClass"><option value="">Select teacher category first</option></select></div>
+      <div hidden="" id="teacherExamStreamWrap"><label for="teacherExamStream">SSS stream</label><select id="teacherExamStream"><option value="">Select stream</option></select></div>
+      <div><label for="teacherExamSubject">Subject</label><select id="teacherExamSubject"><option value="">Select teacher category and class first</option></select></div>
+      <div><label for="teacherExamTopic">Type or choose your topic</label><select id="teacherExamTopic"><option value="">Choose a subject first</option></select></div>
+      <div><label for="teacherExamType">Choose Question Type</label><select id="teacherExamType"><option value="">Choose Question Type</option><option value="objective">Objective</option><option value="theory">Theory</option></select></div>
+    </div>
+    <div style="margin-top:8px"><label for="teacherExamTopicOther" style="font-weight:700">Topic</label><input id="teacherExamTopicOther" placeholder="Or type your own topic here..." style="width:100%;box-sizing:border-box;margin-top:4px"/></div>
+    <p class="topic-help">Select or type the topic for the examination questions.</p>
+    <div style="margin-top:16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+      <button class="btn btn-teachers-action" id="prepareTeacherExamBtn" type="button" style="padding:11px 22px;font-size:1rem">Generate Questions</button>
+      <div id="teacherExamStatus" style="display:none;font-weight:700;color:#EA580C">Preparing your questions...</div>
+    </div>
+    <div id="teacherExamOutput" class="output" style="margin-top:16px"></div>
+  </div>
 </div>
 
 <!-- 4. TEACHERS GUIDE -->
 <div class="prepare-teach-box" id="teachersGuideBlock" style="border-top:4px solid #EA580C;margin-top:24px;background:#fff">
-<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
-  <div>
-    <span class="tool-badge badge-teachers" style="background:#EA580C;color:#fff;padding:4px 10px;border-radius:6px;font-size:0.82rem;font-weight:700">4. TEACHERS GUIDE</span>
-    <h3 style="margin:8px 0 4px;color:#193b53">Teachers Guide</h3>
-    <p style="margin:0;color:#475569">Practical, respectful guidance on professional conduct, learner differences, positive discipline, conflict management, hygiene, and effective teaching.</p>
+  <div class="teacher-panel-header" onclick="toggleTeacherSection('teachersGuide')" onkeydown="if(event.key==='Enter'||event.key===' ')toggleTeacherSection('teachersGuide')" tabindex="0" role="button" aria-expanded="true">
+    <div style="flex:1">
+      <span class="tool-badge badge-teachers" style="background:#EA580C;color:#fff;padding:4px 10px;border-radius:6px;font-size:0.82rem;font-weight:700">4. TEACHERS GUIDE</span>
+      <h3 style="margin-top:10px;margin-bottom:4px;color:#193b53;font-size:1.25rem">Teachers Guide</h3>
+      <p style="color:#475569;margin:0;font-size:0.95rem">Practical, respectful guidance on professional conduct, learner differences, positive discipline, conflict management, hygiene, and effective teaching.</p>
+    </div>
+    <div class="teacher-panel-chevron" id="chevron-teachersGuide">▼</div>
   </div>
-</div>
+  <div class="teacher-panel-body" id="teachersGuideBody" style="display:block">
 
 <div style="margin-top:16px;margin-bottom:14px">
   <label for="teachersGuideSearch" style="display:block;font-weight:700;color:#1e293b;margin-bottom:6px">Search Teachers Guide</label>
@@ -3360,6 +3449,80 @@ async function primaryAssignmentGuide(){const subject=primaryAssignmentSubject.v
     }
   }
 
+  // --- TEACHERS SECTION ACCORDION & NAVIGATION CONTROLLERS ---
+  window.openTeacherSection = function(sectionKey){
+    const keys = ['prepareToTeach', 'prepareLessonNotes', 'prepareExamQuestions', 'teachersGuide'];
+    const cardIds = {
+      prepareToTeach: 'prepareToTeachCard',
+      prepareLessonNotes: 'prepareLessonNotesCard',
+      prepareExamQuestions: 'prepareExamQuestionsCard',
+      teachersGuide: 'teachersGuideBlock'
+    };
+    const panelIds = {
+      prepareToTeach: 'prepareToTeachPanel',
+      prepareLessonNotes: 'prepareLessonNotesPanel',
+      prepareExamQuestions: 'prepareExamQuestionsPanel',
+      teachersGuide: 'teachersGuideBody'
+    };
+
+    keys.forEach(k => {
+      const card = document.getElementById(cardIds[k]);
+      const panel = document.getElementById(panelIds[k]);
+      const pill = document.querySelector('.teacher-nav-pill[data-target="' + k + '"]');
+      const header = card ? card.querySelector('.teacher-panel-header') : null;
+
+      if (k === sectionKey) {
+        if(card) card.classList.remove('teacher-card-closed');
+        if(panel) panel.style.display = 'block';
+        if(pill) pill.classList.add('active');
+        if(header) header.setAttribute('aria-expanded', 'true');
+      } else if (['prepareToTeach', 'prepareLessonNotes', 'prepareExamQuestions'].includes(k) && ['prepareToTeach', 'prepareLessonNotes', 'prepareExamQuestions'].includes(sectionKey)) {
+        // Only one of the three main tool panels open at a time
+        if(card) card.classList.add('teacher-card-closed');
+        if(panel) panel.style.display = 'none';
+        if(pill) pill.classList.remove('active');
+        if(header) header.setAttribute('aria-expanded', 'false');
+      } else {
+        if(pill && k !== sectionKey) pill.classList.remove('active');
+      }
+    });
+
+    const targetCard = document.getElementById(cardIds[sectionKey]);
+    if(targetCard){
+      targetCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  window.toggleTeacherSection = function(sectionKey){
+    const cardIds = {
+      prepareToTeach: 'prepareToTeachCard',
+      prepareLessonNotes: 'prepareLessonNotesCard',
+      prepareExamQuestions: 'prepareExamQuestionsCard',
+      teachersGuide: 'teachersGuideBlock'
+    };
+    const panelIds = {
+      prepareToTeach: 'prepareToTeachPanel',
+      prepareLessonNotes: 'prepareLessonNotesPanel',
+      prepareExamQuestions: 'prepareExamQuestionsPanel',
+      teachersGuide: 'teachersGuideBody'
+    };
+    const card = document.getElementById(cardIds[sectionKey]);
+    const panel = document.getElementById(panelIds[sectionKey]);
+    if(!card || !panel) return;
+
+    const isClosed = card.classList.contains('teacher-card-closed') || panel.style.display === 'none';
+    if(isClosed){
+      openTeacherSection(sectionKey);
+    } else {
+      card.classList.add('teacher-card-closed');
+      panel.style.display = 'none';
+      const header = card.querySelector('.teacher-panel-header');
+      if(header) header.setAttribute('aria-expanded', 'false');
+      const pill = document.querySelector('.teacher-nav-pill[data-target="' + sectionKey + '"]');
+      if(pill) pill.classList.remove('active');
+    }
+  };
+
   // 1. Setup Prepare to Teach Dropdowns
   const prepCategory = document.getElementById('prepTeachCategory');
   const prepClass = document.getElementById('prepTeachClass');
@@ -3526,7 +3689,7 @@ async function primaryAssignmentGuide(){const subject=primaryAssignmentSubject.v
               '<button type="button" class="btn btn-teachers-action" id="btnShowAnswerKey" onclick="showTeacherAnswerKey()" style="padding:10px 22px;font-weight:700">Generate Answer Key</button>' +
               '<div id="teacherAnswerKeyContainer" style="display:none;margin-top:14px;padding:16px 20px;background:#f8fafc;border:1.5px solid #cbd6e4;border-radius:10px">' +
                 '<h4 style="margin:0 0 10px;color:#1e3a8a">Answer Key (10 Questions)</h4>' +
-                '<pre style="font-size:1.05rem;line-height:1.7;font-family:monospace;margin:0;white-space:pre-wrap">' + safe(currentExamObjectiveKey || 'Answer key unavailable.') + '</pre>' +
+                '<pre style="font-size:1.05rem;line-height:1.7;font-family:monospace;margin:0;white-space:pre-wrap;word-break:break-word">' + safe(currentExamObjectiveKey || 'Answer key unavailable.') + '</pre>' +
               '</div>' +
             '</div>';
           box.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -3574,15 +3737,23 @@ async function primaryAssignmentGuide(){const subject=primaryAssignmentSubject.v
 
   window.showTeacherAnswerKey = function(){
     const el = document.getElementById('teacherAnswerKeyContainer');
-    if(el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
+    if(el) {
+      el.style.display = el.style.display === 'none' ? 'block' : 'none';
+      if(el.style.display === 'block'){
+        el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }
   };
 
   window.generateTeacherMarkingScheme = async function(){
     const status = document.getElementById('teacherMarkingSchemeStatus');
     const container = document.getElementById('teacherMarkingSchemeContainer');
     const btn = document.getElementById('btnShowMarkingScheme');
-    if(container && container.innerHTML.trim()){
+    if(container && container.innerHTML.trim() && !container.innerHTML.includes("couldn't complete")){
       container.style.display = container.style.display === 'none' ? 'block' : 'none';
+      if(container.style.display === 'block'){
+        container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
       return;
     }
     if(status) status.style.display = 'block';
@@ -3595,16 +3766,20 @@ async function primaryAssignmentGuide(){const subject=primaryAssignmentSubject.v
         topic: ((examTopicOther?.value || (examTopic?.value === '__other__' ? '' : examTopic?.value) || examTopic?.value || '')).trim(),
         task: 'teacher_marking_scheme',
         tool_key: 'teacher-marking-scheme',
-        context: 'Marking scheme for these 5 theory questions:' + String.fromCharCode(10) + currentExamTheoryQuestions
+        context: 'Marking scheme for these exact 5 theory examination questions. For each question provide: Question number, expected answer/key points, marks allocated to each point, and total marks for the question. At the end, provide overall total marks.' + String.fromCharCode(10) + currentExamTheoryQuestions
       });
       if(res && res.answer){
         if(container){
           container.innerHTML =
-            '<h4 style="margin:0 0 10px;color:#1e3a8a">Theory Examination Marking Scheme</h4>' +
-            '<div style="white-space:pre-wrap;font-family:inherit;line-height:1.6;font-size:1rem">' +
-              safe(res.answer) +
+            '<div style="border-top:2px dashed #EA580C;padding-top:14px">' +
+              '<h4 style="margin:0 0 10px;color:#9a3412;font-size:1.15rem">Theory Examination Marking Scheme &amp; Mark Allocation</h4>' +
+              '<p style="font-size:0.9rem;color:#64748b;margin:0 0 14px">Aligned with Sierra Leone curriculum and classroom assessment standards.</p>' +
+              '<div style="white-space:pre-wrap;font-family:inherit;line-height:1.65;font-size:1.02rem;color:#1e293b">' +
+                safe(res.answer) +
+              '</div>' +
             '</div>';
           container.style.display = 'block';
+          container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
       } else {
         if(container){

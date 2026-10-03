@@ -79,7 +79,7 @@ exports.handler=async(event)=>{
 
   const callGroq=async(requestPrompt=prompt)=>{
    if(!GROQ)throw new Error('Groq key unavailable');
-   const body={model:groqModel,messages:[{role:'user',content:requestPrompt}],temperature:['quiz','theory_quiz'].includes(task)?0.9:0.78,max_tokens:['quiz','theory_quiz'].includes(task)?3000:(more?2600:1200)};
+   const body={model:groqModel,messages:[{role:'user',content:requestPrompt}],temperature:['quiz','theory_quiz'].includes(task)?0.9:0.78,max_tokens:['quiz','theory_quiz','teacher_prep','teacher_marking_scheme','teacher_exam_objective'].includes(task)?3000:(more?2600:1200)};
    if(['quiz','teacher_exam_objective','theory_quiz','mark_theory'].includes(task))body.response_format={type:'json_object'};
    const r=await fetch('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+GROQ},body:JSON.stringify(body)});
    const raw=await r.text();if(!r.ok){console.error('[learning-api][groq]',r.status,raw.slice(0,800));throw new Error('Groq '+r.status)}
@@ -88,7 +88,7 @@ exports.handler=async(event)=>{
   };
   const callDeepSeek=async(requestPrompt=prompt)=>{
    if(!DEEPSEEK)throw new Error('DeepSeek key unavailable');
-   const body={model:deepseekModel,messages:[{role:'user',content:requestPrompt}],thinking:{type:'disabled'},temperature:['quiz','theory_quiz'].includes(task)?0.9:0.78,max_tokens:['quiz','theory_quiz'].includes(task)?3000:(more?2600:1200)};
+   const body={model:deepseekModel,messages:[{role:'user',content:requestPrompt}],thinking:{type:'disabled'},temperature:['quiz','theory_quiz'].includes(task)?0.9:0.78,max_tokens:['quiz','theory_quiz','teacher_prep','teacher_marking_scheme','teacher_exam_objective'].includes(task)?3000:(more?2600:1200)};
    if(['quiz','teacher_exam_objective','theory_quiz','mark_theory'].includes(task))body.response_format={type:'json_object'};
    const r=await fetch('https://api.deepseek.com/chat/completions',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+DEEPSEEK},body:JSON.stringify(body)});
    const raw=await r.text();if(!r.ok){console.error('[learning-api][deepseek]',r.status,raw.slice(0,800));throw new Error('DeepSeek '+r.status)}
