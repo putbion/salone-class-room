@@ -81,7 +81,7 @@ exports.handler=async(event)=>{
    if(!GROQ)throw new Error('Groq key unavailable');
    const body={model:groqModel,messages:[{role:'user',content:requestPrompt}],temperature:['quiz','theory_quiz'].includes(task)?0.9:0.78,max_tokens:['quiz','theory_quiz','teacher_prep','teacher_marking_scheme','teacher_exam_objective'].includes(task)?3000:(more?2600:1200)};
    if(['quiz','teacher_exam_objective','theory_quiz','mark_theory'].includes(task))body.response_format={type:'json_object'};
-   const r=await fetch('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+GROQ},body:JSON.stringify(body)});
+   const r=await fetch('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+GROQ},body:JSON.stringify(body),signal:AbortSignal.timeout(8500)});
    const raw=await r.text();if(!r.ok){console.error('[learning-api][groq]',r.status,raw.slice(0,800));throw new Error('Groq '+r.status)}
    const d=JSON.parse(raw),text=clean(d.choices?.[0]?.message?.content,30000);if(!text)throw new Error('Groq empty');
    return {provider:'groq',model:d.model||groqModel,text,usage:d.usage||{}};
@@ -90,13 +90,16 @@ exports.handler=async(event)=>{
    if(!DEEPSEEK)throw new Error('DeepSeek key unavailable');
    const body={model:deepseekModel,messages:[{role:'user',content:requestPrompt}],thinking:{type:'disabled'},temperature:['quiz','theory_quiz'].includes(task)?0.9:0.78,max_tokens:['quiz','theory_quiz','teacher_prep','teacher_marking_scheme','teacher_exam_objective'].includes(task)?3000:(more?2600:1200)};
    if(['quiz','teacher_exam_objective','theory_quiz','mark_theory'].includes(task))body.response_format={type:'json_object'};
-   const r=await fetch('https://api.deepseek.com/chat/completions',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+DEEPSEEK},body:JSON.stringify(body)});
+   const r=await fetch('https://api.deepseek.com/chat/completions',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+DEEPSEEK},body:JSON.stringify(body),signal:AbortSignal.timeout(8500)});
    const raw=await r.text();if(!r.ok){console.error('[learning-api][deepseek]',r.status,raw.slice(0,800));throw new Error('DeepSeek '+r.status)}
    const d=JSON.parse(raw),text=clean(d.choices?.[0]?.message?.content,30000);if(!text)throw new Error('DeepSeek empty');
    return {provider:'deepseek',model:d.model||deepseekModel,text,usage:d.usage||{}};
   };
   let result;
-  try{result=await callDeepSeek()}catch(dErr){console.error('[learning-api][fallback-to-groq]',dErr.message);try{result=await callGroq()}catch(gErr){console.error('[learning-api][all-ai-failed]',gErr.message);return json(502,{error:"We couldn't generate the questions. Please try again."})}}
+  if(GROQ){
+   try{result=await callGroq()}catch(gErr){console.error('[learning-api][fallback-to-deepseek]',gErr.message);try{result=await callDeepSeek()}catch(dErr){console.error('[learning-api][all-ai-failed]',dErr.message);return json(502,{error:"We couldn't generate the requested content. Please try again."})}}
+  }else{
+   try{result=await callDeepSeek()}catch(dErr){console.error('[learning-api][deepseek-failed]',dErr.message);return json(502,{error:"We couldn't generate the requested content. Please try again."})}}
   if(previousResponse&&tooSimilar(result.text,previousResponse)){
    const retryPrompt=prompt+'\nQUALITY CHECK: The draft was too similar to the previous response. Start over with a different approach, different examples and different organisation. Do not paraphrase the earlier answer.';
    try{result=result.provider==='deepseek'?(GROQ?await callGroq(retryPrompt):await callDeepSeek(retryPrompt)):await callDeepSeek(retryPrompt)}catch(retryErr){console.error('[learning-api][freshness-retry]',retryErr.message)}

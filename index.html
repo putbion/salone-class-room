@@ -3554,10 +3554,37 @@ async function primaryAssignmentGuide(){const subject=primaryAssignmentSubject.v
   const examType = document.getElementById('teacherExamType');
   setupCategoryWorkflow(examCategory, examClass, examStreamWrap, examStream, examSubject, examTopic, examTopicOther);
 
+  function formatTeacherContent(rawText){
+    const safeText = safe(String(rawText || '')).trim();
+    let formatted = safeText
+      .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+      .replace(/^#{1,4}\s*(.+)$/gm, '<h4 style="margin:20px 0 8px;color:#9a3412;font-size:1.12rem;border-bottom:1px solid #fed7aa;padding-bottom:4px">$1</h4>')
+      .replace(/^([A-I]\.\s+[^<\n]+)$/gm, '<h4 style="margin:20px 0 8px;color:#9a3412;font-size:1.12rem;border-bottom:1px solid #fed7aa;padding-bottom:4px">$1</h4>');
+
+    const lines = formatted.split(/\n/);
+    const out = [];
+    let inList = false;
+    for(const raw of lines){
+      const line = raw.trim();
+      if(/^[-•*]\s+/.test(line)){
+        if(!inList){ out.push('<ul style="margin:6px 0 12px 20px;padding:0">'); inList = true; }
+        out.push('<li style="margin-bottom:4px">' + line.replace(/^[-•*]\s+/, '') + '</li>');
+        continue;
+      }
+      if(inList){ out.push('</ul>'); inList = false; }
+      if(!line) continue;
+      if(line.startsWith('<h4')) out.push(line);
+      else out.push('<p style="margin:0 0 10px;line-height:1.65">' + line + '</p>');
+    }
+    if(inList) out.push('</ul>');
+    return out.join('');
+  }
+
   // --- TOOL 1: PREPARE TO TEACH ACTION ---
   document.getElementById('prepareTeacherToTeachBtn')?.addEventListener('click', async () => {
     const box = document.getElementById('prepTeachOutput');
     const status = document.getElementById('prepTeachStatus');
+    const btn = document.getElementById('prepareTeacherToTeachBtn');
     const cat = prepCategory?.value || '';
     const cls = prepClass?.value || '';
     const subj = (prepSubject?.value || '').trim();
@@ -3567,7 +3594,16 @@ async function primaryAssignmentGuide(){const subject=primaryAssignmentSubject.v
       showOutput(box, 'Please choose the teacher category, class or level, subject and topic.');
       return;
     }
-    if(status) status.style.display = 'block';
+    if(btn) btn.disabled = true;
+    if(status){
+      status.style.display = 'block';
+      status.textContent = 'Preparing your teaching guide...';
+    }
+    if(box){
+      box.classList.remove('show');
+      box.style.display = 'none';
+      box.innerHTML = '';
+    }
     const nonce = Date.now() + '-' + Math.random().toString(36).slice(2);
     try{
       const res = await learningRequest({
@@ -3584,17 +3620,51 @@ async function primaryAssignmentGuide(){const subject=primaryAssignmentSubject.v
           '<div style="margin-bottom:14px;padding:12px 14px;background:#fff8eb;border-left:4px solid #EA580C;border-radius:6px;font-size:0.95rem;color:#7c2d12">' +
             '<strong>Teacher Professional Note:</strong> Please review and adapt where necessary for your class. Salone Class Room supports the teacher; it does not replace the teacher.' +
           '</div>' +
-          '<div class="teacher-prep-content" style="line-height:1.65;font-size:1.02rem;white-space:pre-wrap;font-family:inherit">' +
-            safe(res.answer) +
+          '<div class="teacher-prep-content" style="line-height:1.65;font-size:1.02rem;color:#1e293b">' +
+            formatTeacherContent(res.answer) +
           '</div>';
+        box.classList.add('show');
+        box.style.display = 'block';
         box.scrollIntoView({ behavior: 'smooth', block: 'start' });
       } else {
-        showOutput(box, "We couldn't complete this request. Please try again.");
+        throw new Error("No teaching guide content was returned.");
       }
     }catch(e){
-      handleLearningError(e, box);
+      console.error('[Prepare to Teach]', e?.message || e);
+      if(e.code === 'registration_required'){
+        pendingToolAction = null;
+        showAccountTab('register');
+        openAccountModal();
+        if(box){
+          box.innerHTML =
+            '<div style="padding:16px 18px;background:#fff8eb;border:1.5px solid #fed7aa;border-radius:8px;color:#9a3412">' +
+              '<p style="margin:0 0 10px;font-weight:700;font-size:1rem">Account Required</p>' +
+              '<p style="margin:0 0 12px;font-size:0.95rem">You have used the free preview for this tool. Please create a free account or log in to continue preparing teaching guides.</p>' +
+              '<button type="button" class="btn btn-teachers-action" onclick="openAccountModal()" style="padding:8px 18px;font-size:0.92rem">Create Account / Login</button>' +
+            '</div>';
+          box.classList.add('show');
+          box.style.display = 'block';
+        }
+      } else if(e.code === 'payment_required' || e.status === 402){
+        openPaymentModal(currentProfile || {category:'teacher'});
+      } else {
+        if(box){
+          box.innerHTML =
+            '<div class="teacher-failure-state" style="padding:16px 18px;background:#fef2f2;border:1.5px solid #fca5a5;border-radius:8px;color:#991b1b">' +
+              '<p style="margin:0 0 12px;font-weight:700;font-size:1rem">We couldn’t prepare your teaching guide. Please try again.</p>' +
+              '<button type="button" class="btn btn-teachers-action try-again-prep-btn" style="padding:9px 22px;font-size:0.95rem;background:#EA580C;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:700">Try Again</button>' +
+            '</div>';
+          box.classList.add('show');
+          box.style.display = 'block';
+          box.querySelector('.try-again-prep-btn')?.addEventListener('click', () => {
+            document.getElementById('prepareTeacherToTeachBtn')?.click();
+          });
+          box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      }
     }finally{
       if(status) status.style.display = 'none';
+      if(btn) btn.disabled = false;
     }
   });
 
@@ -3602,6 +3672,7 @@ async function primaryAssignmentGuide(){const subject=primaryAssignmentSubject.v
   document.getElementById('prepareTeacherLessonBtn')?.addEventListener('click', async () => {
     const box = document.getElementById('teacherLessonOutput');
     const status = document.getElementById('teacherLessonStatus');
+    const btn = document.getElementById('prepareTeacherLessonBtn');
     const cat = category?.value || '';
     const cls = classSel?.value || '';
     const subj = (subjectSel?.value || '').trim();
@@ -3613,7 +3684,16 @@ async function primaryAssignmentGuide(){const subject=primaryAssignmentSubject.v
       showOutput(box, 'Please choose the teacher category, class, subject and topic, then add the date and duration.');
       return;
     }
-    if(status) status.style.display = 'block';
+    if(btn) btn.disabled = true;
+    if(status){
+      status.style.display = 'block';
+      status.textContent = 'Preparing your lesson notes...';
+    }
+    if(box){
+      box.classList.remove('show');
+      box.style.display = 'none';
+      box.innerHTML = '';
+    }
     const context = ['Document: Lesson Notes', 'Date: ' + date, 'Duration: ' + duration, 'Prepare practical lesson notes for the selected class, subject and topic.'].join(String.fromCharCode(10));
     try{
       const res = await learningRequest({
@@ -3630,17 +3710,51 @@ async function primaryAssignmentGuide(){const subject=primaryAssignmentSubject.v
           '<div style="margin-bottom:14px;padding:12px 14px;background:#fff8eb;border-left:4px solid #EA580C;border-radius:6px;font-size:0.95rem;color:#7c2d12">' +
             '<strong>Teacher Professional Note:</strong> Please review and adapt where necessary for your class.' +
           '</div>' +
-          '<div class="teacher-lesson-content" style="line-height:1.65;font-size:1.02rem;white-space:pre-wrap;font-family:inherit">' +
-            safe(res.answer) +
+          '<div class="teacher-lesson-content" style="line-height:1.65;font-size:1.02rem;color:#1e293b">' +
+            formatTeacherContent(res.answer) +
           '</div>';
+        box.classList.add('show');
+        box.style.display = 'block';
         box.scrollIntoView({ behavior: 'smooth', block: 'start' });
       } else {
-        showOutput(box, "We couldn't complete this request. Please try again.");
+        throw new Error("No lesson notes content was returned.");
       }
     }catch(e){
-      handleLearningError(e, box);
+      console.error('[Prepare Lesson Notes]', e?.message || e);
+      if(e.code === 'registration_required'){
+        pendingToolAction = null;
+        showAccountTab('register');
+        openAccountModal();
+        if(box){
+          box.innerHTML =
+            '<div style="padding:16px 18px;background:#fff8eb;border:1.5px solid #fed7aa;border-radius:8px;color:#9a3412">' +
+              '<p style="margin:0 0 10px;font-weight:700;font-size:1rem">Account Required</p>' +
+              '<p style="margin:0 0 12px;font-size:0.95rem">You have used the free preview for this tool. Please create a free account or log in to continue preparing lesson notes.</p>' +
+              '<button type="button" class="btn btn-teachers-action" onclick="openAccountModal()" style="padding:8px 18px;font-size:0.92rem">Create Account / Login</button>' +
+            '</div>';
+          box.classList.add('show');
+          box.style.display = 'block';
+        }
+      } else if(e.code === 'payment_required' || e.status === 402){
+        openPaymentModal(currentProfile || {category:'teacher'});
+      } else {
+        if(box){
+          box.innerHTML =
+            '<div class="teacher-failure-state" style="padding:16px 18px;background:#fef2f2;border:1.5px solid #fca5a5;border-radius:8px;color:#991b1b">' +
+              '<p style="margin:0 0 12px;font-weight:700;font-size:1rem">We couldn’t generate your lesson notes. Please try again.</p>' +
+              '<button type="button" class="btn btn-teachers-action try-again-lesson-btn" style="padding:9px 22px;font-size:0.95rem;background:#EA580C;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:700">Try Again</button>' +
+            '</div>';
+          box.classList.add('show');
+          box.style.display = 'block';
+          box.querySelector('.try-again-lesson-btn')?.addEventListener('click', () => {
+            document.getElementById('prepareTeacherLessonBtn')?.click();
+          });
+          box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      }
     }finally{
       if(status) status.style.display = 'none';
+      if(btn) btn.disabled = false;
     }
   });
 
@@ -3651,6 +3765,7 @@ async function primaryAssignmentGuide(){const subject=primaryAssignmentSubject.v
   document.getElementById('prepareTeacherExamBtn')?.addEventListener('click', async () => {
     const box = document.getElementById('teacherExamOutput');
     const status = document.getElementById('teacherExamStatus');
+    const btn = document.getElementById('prepareTeacherExamBtn');
     const cat = examCategory?.value || '';
     const cls = examClass?.value || '';
     const subj = (examSubject?.value || '').trim();
@@ -3661,7 +3776,16 @@ async function primaryAssignmentGuide(){const subject=primaryAssignmentSubject.v
       showOutput(box, 'Please choose the teacher category, class or level, subject, topic and question type.');
       return;
     }
-    if(status) status.style.display = 'block';
+    if(btn) btn.disabled = true;
+    if(status){
+      status.style.display = 'block';
+      status.textContent = 'Preparing your questions...';
+    }
+    if(box){
+      box.classList.remove('show');
+      box.style.display = 'none';
+      box.innerHTML = '';
+    }
     const nonce = Date.now() + '-' + Math.random().toString(36).slice(2);
     try{
       if(type === 'objective'){
@@ -3682,7 +3806,7 @@ async function primaryAssignmentGuide(){const subject=primaryAssignmentSubject.v
             '<div style="margin-bottom:14px;padding:12px 14px;background:#fff8eb;border-left:4px solid #EA580C;border-radius:6px;font-size:0.95rem;color:#7c2d12">' +
               '<strong>Teacher Professional Note:</strong> Please review and adapt where necessary for your class.' +
             '</div>' +
-            '<div class="exam-questions-rendered" style="white-space:pre-wrap;font-family:inherit;line-height:1.6;font-size:1.02rem">' +
+            '<div class="exam-questions-rendered" style="white-space:pre-wrap;font-family:inherit;line-height:1.6;font-size:1.02rem;color:#1e293b">' +
               safe(res.answer) +
             '</div>' +
             '<div style="margin-top:18px">' +
@@ -3692,9 +3816,11 @@ async function primaryAssignmentGuide(){const subject=primaryAssignmentSubject.v
                 '<pre style="font-size:1.05rem;line-height:1.7;font-family:monospace;margin:0;white-space:pre-wrap;word-break:break-word">' + safe(currentExamObjectiveKey || 'Answer key unavailable.') + '</pre>' +
               '</div>' +
             '</div>';
+          box.classList.add('show');
+          box.style.display = 'block';
           box.scrollIntoView({ behavior: 'smooth', block: 'start' });
         } else {
-          showOutput(box, "We couldn't complete this request. Please try again.");
+          throw new Error("No examination questions returned.");
         }
       } else {
         const res = await learningRequest({
@@ -3714,7 +3840,7 @@ async function primaryAssignmentGuide(){const subject=primaryAssignmentSubject.v
             '<div style="margin-bottom:14px;padding:12px 14px;background:#fff8eb;border-left:4px solid #EA580C;border-radius:6px;font-size:0.95rem;color:#7c2d12">' +
               '<strong>Teacher Professional Note:</strong> Please review and adapt where necessary for your class.' +
             '</div>' +
-            '<div class="exam-questions-rendered" style="white-space:pre-wrap;font-family:inherit;line-height:1.6;font-size:1.02rem">' +
+            '<div class="exam-questions-rendered" style="white-space:pre-wrap;font-family:inherit;line-height:1.6;font-size:1.02rem;color:#1e293b">' +
               safe(res.answer) +
             '</div>' +
             '<div style="margin-top:18px">' +
@@ -3723,15 +3849,49 @@ async function primaryAssignmentGuide(){const subject=primaryAssignmentSubject.v
               '<div id="teacherMarkingSchemeContainer" style="display:none;margin-top:14px;padding:16px 20px;background:#f8fafc;border:1.5px solid #cbd6e4;border-radius:10px">' +
               '</div>' +
             '</div>';
+          box.classList.add('show');
+          box.style.display = 'block';
           box.scrollIntoView({ behavior: 'smooth', block: 'start' });
         } else {
-          showOutput(box, "We couldn't complete this request. Please try again.");
+          throw new Error("No theory questions returned.");
         }
       }
     }catch(e){
-      handleLearningError(e, box);
+      console.error('[Prepare Exam Questions]', e?.message || e);
+      if(e.code === 'registration_required'){
+        pendingToolAction = null;
+        showAccountTab('register');
+        openAccountModal();
+        if(box){
+          box.innerHTML =
+            '<div style="padding:16px 18px;background:#fff8eb;border:1.5px solid #fed7aa;border-radius:8px;color:#9a3412">' +
+              '<p style="margin:0 0 10px;font-weight:700;font-size:1rem">Account Required</p>' +
+              '<p style="margin:0 0 12px;font-size:0.95rem">You have used the free preview for this tool. Please create a free account or log in to continue generating examination questions.</p>' +
+              '<button type="button" class="btn btn-teachers-action" onclick="openAccountModal()" style="padding:8px 18px;font-size:0.92rem">Create Account / Login</button>' +
+            '</div>';
+          box.classList.add('show');
+          box.style.display = 'block';
+        }
+      } else if(e.code === 'payment_required' || e.status === 402){
+        openPaymentModal(currentProfile || {category:'teacher'});
+      } else {
+        if(box){
+          box.innerHTML =
+            '<div class="teacher-failure-state" style="padding:16px 18px;background:#fef2f2;border:1.5px solid #fca5a5;border-radius:8px;color:#991b1b">' +
+              '<p style="margin:0 0 12px;font-weight:700;font-size:1rem">We couldn’t generate your examination questions. Please try again.</p>' +
+              '<button type="button" class="btn btn-teachers-action try-again-exam-btn" style="padding:9px 22px;font-size:0.95rem;background:#EA580C;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:700">Try Again</button>' +
+            '</div>';
+          box.classList.add('show');
+          box.style.display = 'block';
+          box.querySelector('.try-again-exam-btn')?.addEventListener('click', () => {
+            document.getElementById('prepareTeacherExamBtn')?.click();
+          });
+          box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      }
     }finally{
       if(status) status.style.display = 'none';
+      if(btn) btn.disabled = false;
     }
   });
 
@@ -3749,7 +3909,7 @@ async function primaryAssignmentGuide(){const subject=primaryAssignmentSubject.v
     const status = document.getElementById('teacherMarkingSchemeStatus');
     const container = document.getElementById('teacherMarkingSchemeContainer');
     const btn = document.getElementById('btnShowMarkingScheme');
-    if(container && container.innerHTML.trim() && !container.innerHTML.includes("couldn't complete")){
+    if(container && container.innerHTML.trim() && !container.innerHTML.includes("couldn't complete") && !container.innerHTML.includes("couldn’t generate")){
       container.style.display = container.style.display === 'none' ? 'block' : 'none';
       if(container.style.display === 'block'){
         container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -3775,22 +3935,28 @@ async function primaryAssignmentGuide(){const subject=primaryAssignmentSubject.v
               '<h4 style="margin:0 0 10px;color:#9a3412;font-size:1.15rem">Theory Examination Marking Scheme &amp; Mark Allocation</h4>' +
               '<p style="font-size:0.9rem;color:#64748b;margin:0 0 14px">Aligned with Sierra Leone curriculum and classroom assessment standards.</p>' +
               '<div style="white-space:pre-wrap;font-family:inherit;line-height:1.65;font-size:1.02rem;color:#1e293b">' +
-                safe(res.answer) +
+                formatTeacherContent(res.answer) +
               '</div>' +
             '</div>';
           container.style.display = 'block';
           container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
       } else {
-        if(container){
-          showOutput(container, "We couldn't complete this request. Please try again.");
-          container.style.display = 'block';
-        }
+        throw new Error("No marking scheme returned.");
       }
     }catch(e){
+      console.error('[Marking Scheme]', e?.message || e);
       if(container){
-        handleLearningError(e, container);
+        container.innerHTML =
+          '<div style="padding:14px 16px;background:#fef2f2;border:1.5px solid #fca5a5;border-radius:8px;color:#991b1b">' +
+            '<p style="margin:0 0 10px;font-weight:700">We couldn’t generate the marking scheme. Please try again.</p>' +
+            '<button type="button" class="btn btn-teachers-action retry-marking-scheme-btn" style="padding:7px 18px;font-size:0.92rem;background:#EA580C;color:#fff;border:none;border-radius:6px;cursor:pointer">Try Again</button>' +
+          '</div>';
         container.style.display = 'block';
+        container.querySelector('.retry-marking-scheme-btn')?.addEventListener('click', () => {
+          window.generateTeacherMarkingScheme();
+        });
+        container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       }
     }finally{
       if(status) status.style.display = 'none';
