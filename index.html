@@ -5,7 +5,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<meta content="Salone Class Room provides AI-assisted text learning, exam practice, teacher lesson planning and research guidance for Sierra Leone." name="description"/>
+<meta content="Salone Class Room provides structured text learning, exam practice, teacher lesson planning and research guidance for Sierra Leone." name="description"/>
 <meta content="#073b8c" name="theme-color"/>
 <link href="/manifest.webmanifest" rel="manifest"/>
 <meta content="yes" name="mobile-web-app-capable"/>
@@ -365,6 +365,60 @@ main section{
 .edu-teachers .section-head .kicker {
   background: #ffedd5;
   color: #9a3412;
+}
+
+.teacher-guide-card {
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  background: #ffffff;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+.teacher-guide-card.open {
+  border-color: #EA580C;
+}
+.teacher-guide-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 18px;
+  background: #f8fafc;
+  cursor: pointer;
+  user-select: none;
+}
+.teacher-guide-card.open .teacher-guide-header {
+  background: #fff7ed;
+  border-bottom: 1px solid #fed7aa;
+}
+.teacher-guide-header h4 {
+  margin: 0;
+  font-size: 1.02rem;
+  color: #1e293b;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.teacher-guide-card.open .teacher-guide-header h4 {
+  color: #9a3412;
+}
+.teacher-guide-icon {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #EA580C;
+  transition: transform 0.2s ease;
+}
+.teacher-guide-card.open .teacher-guide-icon {
+  transform: rotate(180deg);
+}
+.teacher-guide-body {
+  display: none;
+  padding: 18px;
+  color: #334155;
+  line-height: 1.6;
+  background: #ffffff;
+}
+.teacher-guide-card.open .teacher-guide-body {
+  display: block;
 }
 
 /* UNIVERSITY - Deep Purple #6D28D9 */
@@ -1338,7 +1392,7 @@ select:disabled{background-color:#f3f6f9 !important;color:#7a8794 !important;opa
 <span class="tool-badge badge-primary">PRIMARY • Classes 1–5</span>
 <h3>Primary Class Practice (Classes 1–5)</h3>
 <p>
-        Practise questions for your normal class level. Select your class (Class 1–5), choose your subject, topic, and whether you want Objective (5 questions) or Theory (3 questions).
+        Practise theory questions for your normal class level. Select Class 1 to Class 5, choose your subject, topic, and click Generate Practice Questions.
       </p>
 <div class="row">
 <div>
@@ -1372,13 +1426,7 @@ select:disabled{background-color:#f3f6f9 !important;color:#7a8794 !important;opa
 <select data-class-id="primaryPracticeClass" data-subject-id="primaryPracticeSubject" data-topic-level="primary" id="primaryPracticeTopicSelect"><option value="">Choose class and subject first</option></select>
 <input id="primaryPracticeTopic" placeholder="Or type your own topic or question" type="text"/>
 <p class="topic-help">Choose a listed topic or type your own topic. If left blank, questions will be mixed from the subject.</p>
-<label for="primaryPracticeQuizType">Choose Question Type</label>
-<select id="primaryPracticeQuizType" onchange="updatePracticeBtnText('primary_class')">
-<option value="">Choose Question Type</option>
-<option value="objective">Objective</option>
-<option value="theory">Theory</option>
-</select>
-<button class="btn btn-primary-action" id="primaryClassPracticeBtn" onclick="startPractice('primary_class')" type="button">Generate Questions</button>
+<button class="btn btn-primary-action" id="primaryClassPracticeBtn" onclick="startPractice('primary_class')" type="button">Generate Practice Questions</button>
 <div aria-live="polite" class="quiz-area" id="primaryClassQuizArea"></div>
 </article>
 <article class="card tool-card primary-card npse-card" id="npsePracticeCard">
@@ -1505,7 +1553,7 @@ select:disabled{background-color:#f3f6f9 !important;color:#7a8794 !important;opa
 <article class="card" id="jssTutorCard"><span class="step">1</span><span class="tool-badge badge-jss">JSS • Classes 1–3</span><h3>JSS Text Tutor</h3><p class="guide">Choose your class and subject, type the word or topic you do not understand, then click the button for a simple explanation.</p><div class="row"><div><label>Class</label><select id="jssClass"><option>JSS 1</option><option>JSS 2</option><option>JSS 3</option></select></div><div><label>Subject</label><select data-jss-subject="" id="jssSubject"><option value="">Select subject</option><option value="English Language">English Language</option><option value="Mathematics">Mathematics</option><option value="Integrated Science">Integrated Science</option><option value="Social Studies">Social Studies</option><option value="Civic Education">Civic Education</option><option value="Agricultural Science">Agricultural Science</option><option value="Business Studies">Business Studies</option><option value="Religious and Moral Education">Religious and Moral Education</option><option value="Physical and Health Education">Physical and Health Education</option><option value="Creative Practical Arts">Creative Practical Arts</option><option value="Information and Communication Technology (ICT)">Information and Communication Technology (ICT)</option><option value="French">French</option><option value="Krio">Krio</option></select></div></div><label>Type or choose your topic</label><select data-class-id="jssClass" data-subject-id="jssSubject" data-topic-level="jss" id="jssTopicSelect"><option value="">Choose class and subject first</option></select><input id="jssTopic" placeholder="Or type your own topic"/><p class="topic-help">Choose the prescribed topic you want explained, or select Other.</p><button class="btn btn-jss-action" onclick="curriculumExplain('jss','jssClass','jssSubject','jssTopicSelect','jssTutor','jssTopic')">Click here for your explanation</button><div class="output" id="jssTutor"></div></article>
 <article class="card" id="jssAssignmentCard"><span class="step">2</span><span class="tool-badge badge-jss">JSS • Homework Support</span><h3>JSS Assignment Learning Guide</h3><p class="guide assignment-personal-question"><span class="assignment-user-name">Student</span>, were you given an assignment today? Choose your subject and type the assignment.</p><label for="jssAssignmentSubject">Choose your subject</label><select id="jssAssignmentSubject"><option value="">Select subject</option><option value="English Language">English Language</option><option value="Mathematics">Mathematics</option><option value="Integrated Science">Integrated Science</option><option value="Social Studies">Social Studies</option><option value="Civic Education">Civic Education</option><option value="Agricultural Science">Agricultural Science</option><option value="Business Studies">Business Studies</option><option value="Religious and Moral Education">Religious and Moral Education</option><option value="Physical and Health Education">Physical and Health Education</option><option value="Creative Practical Arts">Creative Practical Arts</option><option value="Information and Communication Technology (ICT)">Information and Communication Technology (ICT)</option><option value="French">French</option><option value="Krio">Krio</option></select><label>Type the assignment given to you</label><textarea id="jssAssignment" placeholder="Type the assignment given to you here"></textarea><button class="btn btn-jss-action" onclick="jssAssignmentGuide()">Click here for your step-by-step guide</button><div class="output" id="jssGuide"></div></article>
 <article class="card jss-class-practice-card" id="jssClassPracticeCard"><span class="step">3</span><span class="tool-badge badge-jss">JSS • Classes 1–2</span><h3>JSS Class Practice (JSS 1–2)</h3>
-<p class="guide">Practise questions for your normal class level. Select JSS 1 or JSS 2, choose your subject, topic, and whether you want Objective (5 questions) or Theory (3 questions).</p>
+<p class="guide">Practise theory questions for your normal class level. Select JSS 1 or JSS 2, choose your subject, topic, and click Generate Practice Questions.</p>
 <div class="row">
 <div>
 <label for="jssPracticeClass">Choose your class</label>
@@ -1526,13 +1574,7 @@ select:disabled{background-color:#f3f6f9 !important;color:#7a8794 !important;opa
 <select data-class-id="jssPracticeClass" data-subject-id="jssPracticeSubject" data-topic-level="jss" id="jssPracticeTopicSelect"><option value="">Choose class and subject first</option></select>
 <input id="jssPracticeTopic" placeholder="Or type your own topic" type="text"/>
 <p class="topic-help">Choose a listed topic or type your own topic. If left blank, questions will be mixed from the subject.</p>
-<label for="jssClassQuizType">Choose Question Type</label>
-<select id="jssClassQuizType" onchange="updatePracticeBtnText('jss_class')">
-<option value="">Choose Question Type</option>
-<option value="objective">Objective</option>
-<option value="theory">Theory</option>
-</select>
-<button class="btn btn-jss-action" id="jssClassPracticeBtn" onclick="startPractice('jss_class')" type="button">Generate Questions</button>
+<button class="btn btn-jss-action" id="jssClassPracticeBtn" onclick="startPractice('jss_class')" type="button">Generate Practice Questions</button>
 <div aria-live="polite" class="quiz-area" id="jssClassQuiz"></div>
 </article>
 <article class="card" id="becePracticeCard"><span class="step">4</span><span class="tool-badge badge-jss">JSS • Class 3 / BECE</span><h3>BECE Practice</h3>
@@ -1633,9 +1675,9 @@ select:disabled{background-color:#f3f6f9 !important;color:#7a8794 !important;opa
 <ul>
 <li>SSS Text Tutor</li>
 <li>SSS Assignment Learning Guide</li>
-<li>WASSCE Essay Question &amp; Answer Reviewer</li>
-<li>SSS 1–2 Practice</li>
 <li>WASSCE Practice</li>
+<li>WASSCE Essay Questions &amp; Answer Reviewer</li>
+<li>SSS 1–2 Practice</li>
 <li>WASSCE Exam Success Guide</li>
 </ul>
 <p class="section-ribbon-description section-summary-under-welcome">Support for SSS students to understand difficult topics, practise class curriculum and WASSCE questions, and improve examination readiness.</p>
@@ -1643,7 +1685,21 @@ select:disabled{background-color:#f3f6f9 !important;color:#7a8794 !important;opa
 <div class="grid">
 <article class="card" id="sssTutorCard"><span class="step">1</span><span class="tool-badge badge-sss">SSS • Classes 1–3</span><h3>SSS Text Tutor</h3><p class="guide">Choose your class and subject, type the word or topic you do not understand, then click the button for an explanation based on that subject.</p><div class="row"><div><label>Class</label><select id="sssClass"><option>SSS 1</option><option>SSS 2</option><option>SSS 3</option></select></div><div><label>Stream (optional)</label><select data-sss-stream="" data-target="sssSubject" id="sssStream"><option value="">Select stream</option><option value="Sciences &amp; Technologies">Sciences &amp; Technologies</option><option value="Mathematics &amp; Numeracy">Mathematics &amp; Numeracy</option><option value="Economics, Business &amp; Entrepreneurial Studies">Economics, Business &amp; Entrepreneurial Studies</option><option value="Languages &amp; Literatures">Languages &amp; Literatures</option><option value="Social &amp; Cultural Studies">Social &amp; Cultural Studies</option></select></div></div><label>Subject</label><select id="sssSubject"><option value="">Select subject</option><option value="Integrated Science">Integrated Science</option><option value="Biology">Biology</option><option value="Chemistry">Chemistry</option><option value="Computer Science">Computer Science</option><option value="Agricultural Science">Agricultural Science</option><option value="ICT">ICT</option><option value="Robotics">Robotics</option><option value="Physics">Physics</option><option value="Environmental Science">Environmental Science</option><option value="Health Sciences">Health Sciences</option><option value="Food Security">Food Security</option><option value="Engineering Science">Engineering Science</option><option value="Physical Health Education">Physical Health Education</option><option value="Climate Change Awareness, Preparedness and Resilience">Climate Change Awareness, Preparedness and Resilience</option><option value="Adolescent Health and Life Skills">Adolescent Health and Life Skills</option><option value="Computer Literacy">Computer Literacy</option><option value="Popular Science">Popular Science</option><option value="Fundamentals of Mathematics">Fundamentals of Mathematics</option><option value="Further Mathematics">Further Mathematics</option><option value="Statistics and Probability">Statistics and Probability</option><option value="Calculus">Calculus</option><option value="Mathematics for Business and Enterprise">Mathematics for Business and Enterprise</option><option value="Applications of Mathematics for Coding">Applications of Mathematics for Coding</option><option value="Mathematics for STEAMM">Mathematics for STEAMM</option><option value="Computer Mathematics">Computer Mathematics</option><option value="Mathematics in Other Disciplines">Mathematics in Other Disciplines</option><option value="Introductory Statistics and Probability">Introductory Statistics and Probability</option><option value="Functional Mathematics">Functional Mathematics</option><option value="Principles of Economics">Principles of Economics</option><option value="Entrepreneurship">Entrepreneurship</option><option value="Principles of Accounting">Principles of Accounting</option><option value="Business Management Studies">Business Management Studies</option><option value="Principles of Commerce">Principles of Commerce</option><option value="Principles of Marketing">Principles of Marketing</option><option value="Business Accounting">Business Accounting</option><option value="Clerical Office Studies">Clerical Office Studies</option><option value="Insurance Management">Insurance Management</option><option value="Business Economics">Business Economics</option><option value="Business and Society">Business and Society</option><option value="Customer Relationship Management">Customer Relationship Management</option><option value="Micro Small and Medium Enterprise Management">Micro Small and Medium Enterprise Management</option><option value="Business Ethics">Business Ethics</option><option value="English Language">English Language</option><option value="African Literature">African Literature</option><option value="English Literature">English Literature</option><option value="French as a Foreign Language">French as a Foreign Language</option><option value="Sierra Leonean Literature">Sierra Leonean Literature</option><option value="Mende Language">Mende Language</option><option value="Kathemne Language">Kathemne Language</option><option value="Hulimba Language">Hulimba Language</option><option value="Krio Language">Krio Language</option><option value="Creative Writing">Creative Writing</option><option value="Business English">Business English</option><option value="French for Tourism">French for Tourism</option><option value="Technical Writing">Technical Writing</option><option value="English for STEAMM">English for STEAMM</option><option value="French for Business and Marketing">French for Business and Marketing</option><option value="Everyday Basic French">Everyday Basic French</option><option value="Popular Literature Appreciation">Popular Literature Appreciation</option><option value="Arabic Language">Arabic Language</option><option value="Fula">Fula</option><option value="Sierra Leone History">Sierra Leone History</option><option value="African History">African History</option><option value="Geography">Geography</option><option value="Music">Music</option><option value="Dance and Drama Studies">Dance and Drama Studies</option><option value="Politics and Governance">Politics and Governance</option><option value="Social Studies and Civics">Social Studies and Civics</option><option value="Religious and Moral Education">Religious and Moral Education</option><option value="Geography and the Environment">Geography and the Environment</option><option value="Music as an Applied Subject">Music as an Applied Subject</option><option value="Entertainment Industry">Entertainment Industry</option><option value="Derivatives of Religious and Moral Education">Derivatives of Religious and Moral Education</option><option value="Dance Performance and Appreciation">Dance Performance and Appreciation</option><option value="Mining Industry and the Environment">Mining Industry and the Environment</option><option value="Fishing Industry and the Environment">Fishing Industry and the Environment</option><option value="Tourism and Conservation">Tourism and Conservation</option><option value="Living with Religious and Moral Education">Living with Religious and Moral Education</option></select><label>Type or choose your topic</label><select data-class-id="sssClass" data-subject-id="sssSubject" data-topic-level="sss" id="sssTopicSelect"><option value="">Choose class and subject first</option></select><input id="sssTopic" placeholder="Or type your own topic"/><p class="topic-help">Choose a curriculum topic, or select Other to type your own.</p><button class="btn btn-sss-action" onclick="curriculumExplain('sss','sssClass','sssSubject','sssTopicSelect','sssTutor','sssTopic')">Click here for your explanation</button><div class="output" id="sssTutor"></div></article>
 <article class="card" id="sssAssignmentCard"><span class="step">2</span><span class="tool-badge badge-sss">SSS • Homework Support</span><h3>SSS Assignment Learning Guide</h3><p class="guide assignment-personal-question"><span class="assignment-user-name">Student</span>, were you given an assignment today? Choose your subject and type the assignment.</p><label for="sssAssignmentSubject">Choose your subject</label><select id="sssAssignmentSubject"><option value="">Select subject</option><option value="Integrated Science">Integrated Science</option><option value="Biology">Biology</option><option value="Chemistry">Chemistry</option><option value="Computer Science">Computer Science</option><option value="Agricultural Science">Agricultural Science</option><option value="ICT">ICT</option><option value="Robotics">Robotics</option><option value="Physics">Physics</option><option value="Environmental Science">Environmental Science</option><option value="Health Sciences">Health Sciences</option><option value="Food Security">Food Security</option><option value="Engineering Science">Engineering Science</option><option value="Physical Health Education">Physical Health Education</option><option value="Climate Change Awareness, Preparedness and Resilience">Climate Change Awareness, Preparedness and Resilience</option><option value="Adolescent Health and Life Skills">Adolescent Health and Life Skills</option><option value="Computer Literacy">Computer Literacy</option><option value="Popular Science">Popular Science</option><option value="Fundamentals of Mathematics">Fundamentals of Mathematics</option><option value="Further Mathematics">Further Mathematics</option><option value="Statistics and Probability">Statistics and Probability</option><option value="Calculus">Calculus</option><option value="Mathematics for Business and Enterprise">Mathematics for Business and Enterprise</option><option value="Applications of Mathematics for Coding">Applications of Mathematics for Coding</option><option value="Mathematics for STEAMM">Mathematics for STEAMM</option><option value="Computer Mathematics">Computer Mathematics</option><option value="Mathematics in Other Disciplines">Mathematics in Other Disciplines</option><option value="Introductory Statistics and Probability">Introductory Statistics and Probability</option><option value="Functional Mathematics">Functional Mathematics</option><option value="Principles of Economics">Principles of Economics</option><option value="Entrepreneurship">Entrepreneurship</option><option value="Principles of Accounting">Principles of Accounting</option><option value="Business Management Studies">Business Management Studies</option><option value="Principles of Commerce">Principles of Commerce</option><option value="Principles of Marketing">Principles of Marketing</option><option value="Business Accounting">Business Accounting</option><option value="Clerical Office Studies">Clerical Office Studies</option><option value="Insurance Management">Insurance Management</option><option value="Business Economics">Business Economics</option><option value="Business and Society">Business and Society</option><option value="Customer Relationship Management">Customer Relationship Management</option><option value="Micro Small and Medium Enterprise Management">Micro Small and Medium Enterprise Management</option><option value="Business Ethics">Business Ethics</option><option value="English Language">English Language</option><option value="African Literature">African Literature</option><option value="English Literature">English Literature</option><option value="French as a Foreign Language">French as a Foreign Language</option><option value="Sierra Leonean Literature">Sierra Leonean Literature</option><option value="Mende Language">Mende Language</option><option value="Kathemne Language">Kathemne Language</option><option value="Hulimba Language">Hulimba Language</option><option value="Krio Language">Krio Language</option><option value="Creative Writing">Creative Writing</option><option value="Business English">Business English</option><option value="French for Tourism">French for Tourism</option><option value="Technical Writing">Technical Writing</option><option value="English for STEAMM">English for STEAMM</option><option value="French for Business and Marketing">French for Business and Marketing</option><option value="Everyday Basic French">Everyday Basic French</option><option value="Popular Literature Appreciation">Popular Literature Appreciation</option><option value="Arabic Language">Arabic Language</option><option value="Fula">Fula</option><option value="Sierra Leone History">Sierra Leone History</option><option value="African History">African History</option><option value="Geography">Geography</option><option value="Music">Music</option><option value="Dance and Drama Studies">Dance and Drama Studies</option><option value="Politics and Governance">Politics and Governance</option><option value="Social Studies and Civics">Social Studies and Civics</option><option value="Religious and Moral Education">Religious and Moral Education</option><option value="Geography and the Environment">Geography and the Environment</option><option value="Music as an Applied Subject">Music as an Applied Subject</option><option value="Entertainment Industry">Entertainment Industry</option><option value="Derivatives of Religious and Moral Education">Derivatives of Religious and Moral Education</option><option value="Dance Performance and Appreciation">Dance Performance and Appreciation</option><option value="Mining Industry and the Environment">Mining Industry and the Environment</option><option value="Fishing Industry and the Environment">Fishing Industry and the Environment</option><option value="Tourism and Conservation">Tourism and Conservation</option><option value="Living with Religious and Moral Education">Living with Religious and Moral Education</option></select><label>Type the assignment given to you</label><textarea id="sssAssignment" placeholder="Type the assignment given to you here"></textarea><button class="btn btn-sss-action" onclick="sssAssignmentGuide()">Click here for your step-by-step guide</button><div class="output" id="sssGuide"></div></article>
-<article class="card" id="wassceEssayCard"><span class="step">3</span><span class="tool-badge badge-sss">SSS • Essay Support</span><h3>WASSCE Essay Question &amp; Answer Reviewer</h3><div class="essay-review-guide tool-use-guide">
+<article class="card" id="wasscePracticeCard"><span class="step">3</span><span class="tool-badge badge-sss">SSS • Class 3 / WASSCE</span><h3>WASSCE Practice</h3>
+<p class="guide"><strong>Let’s practise questions.</strong> Choose question type (Objective or Theory), select your stream if necessary, select your subject and type the topic you want to practise.</p>
+<label for="sssQuizType">Choose Question Type</label>
+<select id="sssQuizType" onchange="updatePracticeBtnText('sss')">
+<option value="">Choose Question Type</option>
+<option value="objective">Objective</option>
+<option value="theory">Theory</option>
+</select>
+<label>Stream (optional)</label><select data-sss-stream="" data-target="sssQuizSubject" id="sssQuizStream"><option value="">Select stream</option><option value="Sciences &amp; Technologies">Sciences &amp; Technologies</option><option value="Mathematics &amp; Numeracy">Mathematics &amp; Numeracy</option><option value="Economics, Business &amp; Entrepreneurial Studies">Economics, Business &amp; Entrepreneurial Studies</option><option value="Languages &amp; Literatures">Languages &amp; Literatures</option><option value="Social &amp; Cultural Studies">Social &amp; Cultural Studies</option></select>
+<label>Subject</label><select id="sssQuizSubject"><option value="">Select subject</option><option value="Integrated Science">Integrated Science</option><option value="Biology">Biology</option><option value="Chemistry">Chemistry</option><option value="Computer Science">Computer Science</option><option value="Agricultural Science">Agricultural Science</option><option value="ICT">ICT</option><option value="Robotics">Robotics</option><option value="Physics">Physics</option><option value="Environmental Science">Environmental Science</option><option value="Health Sciences">Health Sciences</option><option value="Food Security">Food Security</option><option value="Engineering Science">Engineering Science</option><option value="Physical Health Education">Physical Health Education</option><option value="Climate Change Awareness, Preparedness and Resilience">Climate Change Awareness, Preparedness and Resilience</option><option value="Adolescent Health and Life Skills">Adolescent Health and Life Skills</option><option value="Computer Literacy">Computer Literacy</option><option value="Popular Science">Popular Science</option><option value="Fundamentals of Mathematics">Fundamentals of Mathematics</option><option value="Further Mathematics">Further Mathematics</option><option value="Statistics and Probability">Statistics and Probability</option><option value="Calculus">Calculus</option><option value="Mathematics for Business and Enterprise">Mathematics for Business and Enterprise</option><option value="Applications of Mathematics for Coding">Applications of Mathematics for Coding</option><option value="Mathematics for STEAMM">Mathematics for STEAMM</option><option value="Computer Mathematics">Computer Mathematics</option><option value="Mathematics in Other Disciplines">Mathematics in Other Disciplines</option><option value="Introductory Statistics and Probability">Introductory Statistics and Probability</option><option value="Functional Mathematics">Functional Mathematics</option><option value="Principles of Economics">Principles of Economics</option><option value="Entrepreneurship">Entrepreneurship</option><option value="Principles of Accounting">Principles of Accounting</option><option value="Business Management Studies">Business Management Studies</option><option value="Principles of Commerce">Principles of Commerce</option><option value="Principles of Marketing">Principles of Marketing</option><option value="Business Accounting">Business Accounting</option><option value="Clerical Office Studies">Clerical Office Studies</option><option value="Insurance Management">Insurance Management</option><option value="Business Economics">Business Economics</option><option value="Business and Society">Business and Society</option><option value="Customer Relationship Management">Customer Relationship Management</option><option value="Micro Small and Medium Enterprise Management">Micro Small and Medium Enterprise Management</option><option value="Business Ethics">Business Ethics</option><option value="English Language">English Language</option><option value="African Literature">African Literature</option><option value="English Literature">English Literature</option><option value="French as a Foreign Language">French as a Foreign Language</option><option value="Sierra Leonean Literature">Sierra Leonean Literature</option><option value="Mende Language">Mende Language</option><option value="Kathemne Language">Kathemne Language</option><option value="Hulimba Language">Hulimba Language</option><option value="Krio Language">Krio Language</option><option value="Creative Writing">Creative Writing</option><option value="Business English">Business English</option><option value="French for Tourism">French for Tourism</option><option value="Technical Writing">Technical Writing</option><option value="English for STEAMM">English for STEAMM</option><option value="French for Business and Marketing">French for Business and Marketing</option><option value="Everyday Basic French">Everyday Basic French</option><option value="Popular Literature Appreciation">Popular Literature Appreciation</option><option value="Arabic Language">Arabic Language</option><option value="Fula">Fula</option><option value="Sierra Leone History">Sierra Leone History</option><option value="African History">African History</option><option value="Geography">Geography</option><option value="Music">Music</option><option value="Dance and Drama Studies">Dance and Drama Studies</option><option value="Politics and Governance">Politics and Governance</option><option value="Social Studies and Civics">Social Studies and Civics</option><option value="Religious and Moral Education">Religious and Moral Education</option><option value="Geography and the Environment">Geography and the Environment</option><option value="Music as an Applied Subject">Music as an Applied Subject</option><option value="Entertainment Industry">Entertainment Industry</option><option value="Derivatives of Religious and Moral Education">Derivatives of Religious and Moral Education</option><option value="Dance Performance and Appreciation">Dance Performance and Appreciation</option><option value="Mining Industry and the Environment">Mining Industry and the Environment</option><option value="Fishing Industry and the Environment">Fishing Industry and the Environment</option><option value="Tourism and Conservation">Tourism and Conservation</option><option value="Living with Religious and Moral Education">Living with Religious and Moral Education</option></select>
+<label>Type or choose your topic (optional)</label><select data-subject-id="sssQuizSubject" data-topic-level="sss" id="sssQuizTopicSelect"><option value="">Choose a subject first</option></select><input id="sssQuizTopic" placeholder="Or type your own topic"/><p class="topic-help">Topics are listed from the curriculum database across SSS 1–3.</p>
+<button class="btn btn-sss-action" id="sssPracticeBtn" onclick="startPractice('sss')" type="button">Generate Questions</button>
+<div class="output" id="sssQuiz"></div>
+</article>
+<article class="card" id="wassceEssayCard"><span class="step">4</span><span class="tool-badge badge-sss">SSS • Essay Support</span><h3>WASSCE Essay Questions &amp; Answer Reviewer</h3><div class="essay-review-guide tool-use-guide">
 <strong>How to use this WASSCE reviewer</strong>
 <p>
     Choose the WASSCE subject first. Then type or paste the essay, passage, source material or structured question content,
@@ -1655,7 +1711,7 @@ select:disabled{background-color:#f3f6f9 !important;color:#7a8794 !important;opa
   </p>
 </div><div class="essay-review-fields">
 <label for="wassceEssaySubject">WASSCE subject</label>
-<select id="wassceEssaySubject"><option value="">Select WAEC Sierra Leone subject</option><option>Agricultural Science</option><option>Biology</option><option>Business Management</option><option>Chemistry</option><option>Christian Religious Studies</option><option>Civic Education</option><option>Commerce</option><option>Economics</option><option>English Language</option><option>Geography</option><option>Government</option><option>Health Science</option><option>History</option><option>Home Management</option><option>Islamic Studies</option><option>Literature-in-English</option><option>Mathematics</option><option>Physical Education</option><option>Physics</option><option>Principles of Cost Accounting</option><option>Technical Drawing</option><option>Visual Arts</option></select><p class="waec-sl-note">The subjects in this list are restricted to subjects officially listed by WAEC Sierra Leone for WASSCE candidates. This reviewer is intended for essay, theory, structured or extended-response questions.</p>
+<select id="wassceEssaySubject"><option value="">Select subject</option><option>Agricultural Science</option><option>Biology</option><option>Business Management</option><option>Chemistry</option><option>Christian Religious Studies</option><option>Civic Education</option><option>Commerce</option><option>Economics</option><option>English Language</option><option>Geography</option><option>Government</option><option>Health Science</option><option>History</option><option>Home Management</option><option>Islamic Studies</option><option>Literature-in-English</option><option>Mathematics</option><option>Physical Education</option><option>Physics</option><option>Principles of Cost Accounting</option><option>Technical Drawing</option><option>Visual Arts</option></select><p class="waec-sl-note">The subjects in this list are official WASSCE subjects for Sierra Leone candidates. This reviewer is intended for essay, theory, structured or extended-response questions.</p>
 <label for="essayPassageInput">Essay, passage or source material</label>
 <textarea id="essayPassageInput" placeholder="Type or paste the essay, passage, source material, case study or other information connected to the question" rows="10"></textarea>
 <label for="essayQuestionInput">Question</label>
@@ -1667,8 +1723,8 @@ select:disabled{background-color:#f3f6f9 !important;color:#7a8794 !important;opa
   </button>
 <div aria-live="polite" class="teacher-result-note" id="essayReviewMessage"></div>
 </div><p class="guide">Paste your own draft to receive feedback on clarity, structure, grammar and missing ideas.</p><button class="btn btn-sss-action" onclick="demoResult('sssReview','writing feedback')">Click here for feedback on your writing</button><div class="output" id="sssReview"></div></article>
-<article class="card sss-class-practice-card" id="sssClassPracticeCard"><span class="step">4</span><span class="tool-badge badge-sss">SSS • Classes 1–2</span><h3>SSS Class Practice (SSS 1–2)</h3>
-<p class="guide">Practise questions for your normal class level. Select SSS 1 or SSS 2, choose your stream, subject, topic, and whether you want Objective (5 questions) or Theory (3 questions).</p>
+<article class="card sss-class-practice-card" id="sssClassPracticeCard"><span class="step">5</span><span class="tool-badge badge-sss">SSS • Classes 1–2</span><h3>SSS Class Practice (SSS 1–2)</h3>
+<p class="guide">Practise theory questions for your normal class level. Select SSS 1 or SSS 2, choose your stream, subject, topic, and click Generate Practice Questions.</p>
 <div class="row">
 <div>
 <label for="sssPracticeClass">Choose your class</label>
@@ -1698,28 +1754,9 @@ select:disabled{background-color:#f3f6f9 !important;color:#7a8794 !important;opa
 <select data-class-id="sssPracticeClass" data-subject-id="sssPracticeSubject" data-topic-level="sss" id="sssPracticeTopicSelect"><option value="">Choose class and subject first</option></select>
 <input id="sssPracticeTopic" placeholder="Or type your own topic" type="text"/>
 <p class="topic-help">Choose a listed topic or type your own topic. If left blank, questions will be mixed from the subject.</p>
-<label for="sssClassQuizType">Choose Question Type</label>
-<select id="sssClassQuizType" onchange="updatePracticeBtnText('sss_class')">
-<option value="">Choose Question Type</option>
-<option value="objective">Objective</option>
-<option value="theory">Theory</option>
-</select>
-<button class="btn btn-sss-action" id="sssClassPracticeBtn" onclick="startPractice('sss_class')" type="button">Generate Questions</button>
+
+<button class="btn btn-sss-action" id="sssClassPracticeBtn" onclick="startPractice('sss_class')" type="button">Generate Practice Questions</button>
 <div aria-live="polite" class="quiz-area" id="sssClassQuiz"></div>
-</article>
-<article class="card" id="wasscePracticeCard"><span class="step">5</span><span class="tool-badge badge-sss">SSS • Class 3 / WASSCE</span><h3>WASSCE Practice</h3>
-<p class="guide"><strong>Let’s practise questions.</strong> Choose question type (Objective or Theory), select your stream if necessary, select your subject and type the topic you want to practise.</p>
-<label for="sssQuizType">Choose Question Type</label>
-<select id="sssQuizType" onchange="updatePracticeBtnText('sss')">
-<option value="">Choose Question Type</option>
-<option value="objective">Objective</option>
-<option value="theory">Theory</option>
-</select>
-<label>Stream (optional)</label><select data-sss-stream="" data-target="sssQuizSubject" id="sssQuizStream"><option value="">Select stream</option><option value="Sciences &amp; Technologies">Sciences &amp; Technologies</option><option value="Mathematics &amp; Numeracy">Mathematics &amp; Numeracy</option><option value="Economics, Business &amp; Entrepreneurial Studies">Economics, Business &amp; Entrepreneurial Studies</option><option value="Languages &amp; Literatures">Languages &amp; Literatures</option><option value="Social &amp; Cultural Studies">Social &amp; Cultural Studies</option></select>
-<label>Subject</label><select id="sssQuizSubject"><option value="">Select subject</option><option value="Integrated Science">Integrated Science</option><option value="Biology">Biology</option><option value="Chemistry">Chemistry</option><option value="Computer Science">Computer Science</option><option value="Agricultural Science">Agricultural Science</option><option value="ICT">ICT</option><option value="Robotics">Robotics</option><option value="Physics">Physics</option><option value="Environmental Science">Environmental Science</option><option value="Health Sciences">Health Sciences</option><option value="Food Security">Food Security</option><option value="Engineering Science">Engineering Science</option><option value="Physical Health Education">Physical Health Education</option><option value="Climate Change Awareness, Preparedness and Resilience">Climate Change Awareness, Preparedness and Resilience</option><option value="Adolescent Health and Life Skills">Adolescent Health and Life Skills</option><option value="Computer Literacy">Computer Literacy</option><option value="Popular Science">Popular Science</option><option value="Fundamentals of Mathematics">Fundamentals of Mathematics</option><option value="Further Mathematics">Further Mathematics</option><option value="Statistics and Probability">Statistics and Probability</option><option value="Calculus">Calculus</option><option value="Mathematics for Business and Enterprise">Mathematics for Business and Enterprise</option><option value="Applications of Mathematics for Coding">Applications of Mathematics for Coding</option><option value="Mathematics for STEAMM">Mathematics for STEAMM</option><option value="Computer Mathematics">Computer Mathematics</option><option value="Mathematics in Other Disciplines">Mathematics in Other Disciplines</option><option value="Introductory Statistics and Probability">Introductory Statistics and Probability</option><option value="Functional Mathematics">Functional Mathematics</option><option value="Principles of Economics">Principles of Economics</option><option value="Entrepreneurship">Entrepreneurship</option><option value="Principles of Accounting">Principles of Accounting</option><option value="Business Management Studies">Business Management Studies</option><option value="Principles of Commerce">Principles of Commerce</option><option value="Principles of Marketing">Principles of Marketing</option><option value="Business Accounting">Business Accounting</option><option value="Clerical Office Studies">Clerical Office Studies</option><option value="Insurance Management">Insurance Management</option><option value="Business Economics">Business Economics</option><option value="Business and Society">Business and Society</option><option value="Customer Relationship Management">Customer Relationship Management</option><option value="Micro Small and Medium Enterprise Management">Micro Small and Medium Enterprise Management</option><option value="Business Ethics">Business Ethics</option><option value="English Language">English Language</option><option value="African Literature">African Literature</option><option value="English Literature">English Literature</option><option value="French as a Foreign Language">French as a Foreign Language</option><option value="Sierra Leonean Literature">Sierra Leonean Literature</option><option value="Mende Language">Mende Language</option><option value="Kathemne Language">Kathemne Language</option><option value="Hulimba Language">Hulimba Language</option><option value="Krio Language">Krio Language</option><option value="Creative Writing">Creative Writing</option><option value="Business English">Business English</option><option value="French for Tourism">French for Tourism</option><option value="Technical Writing">Technical Writing</option><option value="English for STEAMM">English for STEAMM</option><option value="French for Business and Marketing">French for Business and Marketing</option><option value="Everyday Basic French">Everyday Basic French</option><option value="Popular Literature Appreciation">Popular Literature Appreciation</option><option value="Arabic Language">Arabic Language</option><option value="Fula">Fula</option><option value="Sierra Leone History">Sierra Leone History</option><option value="African History">African History</option><option value="Geography">Geography</option><option value="Music">Music</option><option value="Dance and Drama Studies">Dance and Drama Studies</option><option value="Politics and Governance">Politics and Governance</option><option value="Social Studies and Civics">Social Studies and Civics</option><option value="Religious and Moral Education">Religious and Moral Education</option><option value="Geography and the Environment">Geography and the Environment</option><option value="Music as an Applied Subject">Music as an Applied Subject</option><option value="Entertainment Industry">Entertainment Industry</option><option value="Derivatives of Religious and Moral Education">Derivatives of Religious and Moral Education</option><option value="Dance Performance and Appreciation">Dance Performance and Appreciation</option><option value="Mining Industry and the Environment">Mining Industry and the Environment</option><option value="Fishing Industry and the Environment">Fishing Industry and the Environment</option><option value="Tourism and Conservation">Tourism and Conservation</option><option value="Living with Religious and Moral Education">Living with Religious and Moral Education</option></select>
-<label>Type or choose your topic (optional)</label><select data-subject-id="sssQuizSubject" data-topic-level="sss" id="sssQuizTopicSelect"><option value="">Choose a subject first</option></select><input id="sssQuizTopic" placeholder="Or type your own topic"/><p class="topic-help">Topics are listed from the curriculum database across SSS 1–3.</p>
-<button class="btn btn-sss-action" id="sssPracticeBtn" onclick="startPractice('sss')" type="button">Generate Questions</button>
-<div class="output" id="sssQuiz"></div>
 </article>
 <article class="card exam-guide-card" id="wassceExamGuideCard" style="grid-column: 1 / -1">
 <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
@@ -1804,18 +1841,47 @@ select:disabled{background-color:#f3f6f9 !important;color:#7a8794 !important;opa
 <section class="section ribbon-section" id="learning-progress"><div class="ribbon-intro"><div class="section-ribbon">My Learning Journey</div><p class="section-ribbon-description">See the questions you have attempted, your scores, subjects practised, recent results, weaknesses and areas that need improvement.</p></div><div class="card"><div class="progress-empty" id="progressSignedOut">Log in to see My Learning Journey.</div><div hidden="" id="progressContent"><div class="progress-grid"><div class="progress-card"><span>Questions attempted</span><strong id="progressAttempted">0</strong></div><div class="progress-card"><span>Correct</span><strong id="progressCorrect">0</strong></div><div class="progress-card"><span>Wrong</span><strong id="progressWrong">0</strong></div><div class="progress-card"><span>Overall score</span><strong id="progressScore">0%</strong></div></div><div class="grid"><div><h3>Performance by subject</h3><div class="progress-list" id="progressSubjects"></div></div><div><h3>Weaknesses / Areas to Improve</h3><div class="progress-list" id="progressWeak"></div></div></div><div style="margin-top:16px"><h3>Recent practice</h3><div class="progress-list" id="progressRecent"></div></div><button class="btn btn-light" id="refreshProgressBtn" style="margin-top:14px" type="button">Refresh my progress</button><div aria-live="polite" class="result" id="progressRefreshStatus"></div></div></div></section><section class="section ribbon-section edu-teachers" id="teachers"><div class="ribbon-intro">
 <div class="section-ribbon">Teachers</div><div class="section-personal-welcome" data-welcome-section="teacher">
 <div class="section-identity-tag tag-teachers"><span class="id-dot"></span> <strong>TEACHERS</strong> • TEACHERS SECTION</div>
-<h2><span style="display:inline-block;background:#EA580C;color:#ffffff;padding:2px 10px;border-radius:6px;font-size:0.85em;margin-right:8px;vertical-align:middle">TEACHERS</span> Welcome to the Teachers Section<span class="section-user-name"></span></h2><p class="section-feature-label">In this section, we have:</p><ul><li>Prepare Lesson Notes</li><li>Prepare Exam Questions</li></ul></div>
-<p class="section-ribbon-description">Prepare practical lesson notes and theory examination questions for the class and subject you teach.</p>
+<h2><span style="display:inline-block;background:#EA580C;color:#ffffff;padding:2px 10px;border-radius:6px;font-size:0.85em;margin-right:8px;vertical-align:middle">TEACHERS</span> Welcome to the Teachers Section<span class="section-user-name"></span></h2>
+<p class="section-feature-label">In this section, we have:</p>
+<ul>
+<li>Prepare to Teach</li>
+<li>Prepare Lesson Notes</li>
+<li>Prepare Exam Questions</li>
+<li>Teachers Guide</li>
+</ul>
+</div>
+<p class="section-ribbon-description">Professional support for teachers: personal topic preparation, structured lesson notes, examination questions with answer keys &amp; marking schemes, and practical classroom guidance.</p>
 </div>
 <div class="teacher-single-wrap">
-<div class="teacher-selector-card">
-<h3>Teacher, Prepare Your Lesson Notes</h3>
-<p>Select the school level, class, subject and topic, then add the date and duration below.</p>
-<label class="teacher-category-label" for="teacherCategoryOnly">Teacher Category</label>
-<select id="teacherCategoryOnly"><option value="">Select teacher category</option><option value="primary">Primary School Teacher</option><option value="jss">Junior Secondary School (JSS) Teacher</option><option value="sss">Senior Secondary School (SSS) Teacher</option></select>
+
+<!-- 1. PREPARE TO TEACH -->
+<div class="prepare-teach-box" id="prepareToTeachCard" style="border-top:4px solid #EA580C;margin-top:14px;background:#fff">
+<span class="tool-badge badge-teachers" style="background:#EA580C;color:#fff;padding:4px 10px;border-radius:6px;font-size:0.82rem;font-weight:700">1. PREPARE TO TEACH</span>
+<h3 style="margin-top:12px;margin-bottom:6px;color:#193b53">Prepare to Teach</h3>
+<p style="color:#475569;margin-bottom:14px">Help yourself personally understand and prepare for a topic before entering the classroom. This guide provides topic explanations, core points, simple ways to explain the concept, local examples, common difficult areas, likely questions learners may ask, simple classroom demonstrations, and quick self-readiness checks.</p>
+<div class="teacher-form-grid" style="margin-top:12px">
+<div><label for="prepTeachCategory">Teacher Category</label><select id="prepTeachCategory"><option value="">Select teacher category</option><option value="primary">Primary School Teacher</option><option value="jss">Junior Secondary School (JSS) Teacher</option><option value="sss">Senior Secondary School (SSS) Teacher</option></select></div>
+<div><label for="prepTeachClass">Class / Level</label><select id="prepTeachClass"><option value="">Select teacher category first</option></select></div>
+<div hidden="" id="prepTeachStreamWrap"><label for="prepTeachStream">SSS stream</label><select id="prepTeachStream"><option value="">Select stream</option></select></div>
+<div><label for="prepTeachSubject">Subject</label><select id="prepTeachSubject"><option value="">Select teacher category and class first</option></select></div>
+<div><label for="prepTeachTopic">Type or choose your topic</label><select id="prepTeachTopic"><option value="">Choose a subject first</option></select></div>
 </div>
-<div class="teacher-choice-panel" id="teacherChoicePanel">
-<div class="teacher-form-grid">
+<p class="topic-help">Choose a listed curriculum topic above or enter your topic below.</p>
+<div style="margin-top:8px"><label for="prepTeachTopicOther" style="font-weight:700">Topic</label><input id="prepTeachTopicOther" placeholder="Enter topic here..." style="width:100%;box-sizing:border-box;margin-top:4px"/></div>
+<div style="margin-top:16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+  <button class="btn btn-teachers-action" id="prepareTeacherToTeachBtn" type="button" style="padding:11px 22px;font-size:1rem">Prepare Me to Teach</button>
+  <div id="prepTeachStatus" style="display:none;font-weight:700;color:#EA580C">Preparing your teaching guide...</div>
+</div>
+<div id="prepTeachOutput" class="output" style="margin-top:16px"></div>
+</div>
+
+<!-- 2. PREPARE LESSON NOTES -->
+<div class="prepare-teach-box compact-lesson-actions" id="prepareLessonNotesCard" style="border-top:4px solid #EA580C;margin-top:24px;background:#fff">
+<span class="tool-badge badge-teachers" style="background:#EA580C;color:#fff;padding:4px 10px;border-radius:6px;font-size:0.82rem;font-weight:700">2. PREPARE LESSON NOTES</span>
+<h3 style="margin-top:12px;margin-bottom:6px;color:#193b53">Prepare Lesson Notes</h3>
+<p style="color:#475569;margin-bottom:14px">Select the school level, class, subject and clear topic, then add the date and duration to generate your structured lesson note document.</p>
+<div class="teacher-form-grid" style="margin-top:12px">
+<div><label for="teacherCategoryOnly">Teacher Category</label><select id="teacherCategoryOnly"><option value="">Select teacher category</option><option value="primary">Primary School Teacher</option><option value="jss">Junior Secondary School (JSS) Teacher</option><option value="sss">Senior Secondary School (SSS) Teacher</option></select></div>
 <div><label for="teacherClassOnly">Class</label><select id="teacherClassOnly"><option value="">Select class</option></select></div>
 <div hidden="" id="teacherStreamOnlyWrap"><label for="teacherStreamOnly">SSS stream</label><select id="teacherStreamOnly"><option value="">Select stream</option></select></div>
 <div><label for="teacherSubjectOnly">Subject</label><select id="teacherSubjectOnly"><option value="">Select subject</option></select></div>
@@ -1823,48 +1889,246 @@ select:disabled{background-color:#f3f6f9 !important;color:#7a8794 !important;opa
 </div>
 <p class="topic-help">Choose a listed curriculum topic above or enter your lesson topic below.</p>
 <div style="margin-top:8px"><label for="teacherTopicOther" style="font-weight:700">Topic</label><input id="teacherTopicOther" placeholder="Enter lesson topic here..." style="width:100%;box-sizing:border-box;margin-top:4px"/></div>
-<div class="prepare-teach-box compact-lesson-actions">
 <div class="teacher-form-grid" style="margin-top:12px">
 <div><label for="teacherPrepDate">Date</label><input id="teacherPrepDate" type="date"/></div>
 <div><label for="teacherPrepDuration">Duration</label><select id="teacherPrepDuration"><option value="">Select duration</option><option>30 minutes</option><option>40 minutes</option><option>45 minutes</option><option>60 minutes</option><option>80 minutes</option></select></div>
 </div>
-<button class="btn btn-teachers-action" id="prepareTeacherLessonBtn" type="button">Generate Your Lesson Notes</button>
-<div id="teacherLessonStatus" style="display:none;margin-top:12px;font-weight:700;color:#EA580C">Preparing your lesson notes...</div>
+<div style="margin-top:16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+  <button class="btn btn-teachers-action" id="prepareTeacherLessonBtn" type="button" style="padding:11px 22px;font-size:1rem">Generate Your Lesson Notes</button>
+  <div id="teacherLessonStatus" style="display:none;font-weight:700;color:#EA580C">Preparing your lesson notes...</div>
+</div>
 <div id="teacherLessonOutput" class="output" style="margin-top:16px"></div>
 </div>
-<div class="prepare-teach-box" style="margin-top:18px">
-<h3>Prepare Exam Questions</h3>
-<p>Choose the teacher category, class or level, subject and curriculum topic for the examination. You can also type your own topic. Choose the question type: <strong>Objective — 10 questions</strong> or <strong>Theory — 5 questions</strong>. Each time you tap Generate Questions, Salone Class Room will prepare a fresh set of questions for the selected class, subject and topic.</p>
+
+<!-- 3. PREPARE EXAM QUESTIONS -->
+<div class="prepare-teach-box" id="prepareExamQuestionsCard" style="border-top:4px solid #EA580C;margin-top:24px;background:#fff">
+<span class="tool-badge badge-teachers" style="background:#EA580C;color:#fff;padding:4px 10px;border-radius:6px;font-size:0.82rem;font-weight:700">3. PREPARE EXAM QUESTIONS</span>
+<h3 style="margin-top:12px;margin-bottom:6px;color:#193b53">Prepare Exam Questions</h3>
+<p style="color:#475569;margin-bottom:14px">Choose the teacher category, class or level, subject and topic. Choose <strong>Objective</strong> to generate exactly 10 objective questions with a separate Answer Key, or <strong>Theory</strong> to generate exactly 5 theory questions with a dedicated Marking Scheme.</p>
 <div class="teacher-form-grid" style="margin-top:12px">
 <div><label for="teacherExamCategory">Teacher Category</label><select id="teacherExamCategory"><option value="">Select teacher category</option><option value="primary">Primary School Teacher</option><option value="jss">Junior Secondary School (JSS) Teacher</option><option value="sss">Senior Secondary School (SSS) Teacher</option></select></div>
 <div><label for="teacherExamClass">Class / Level</label><select id="teacherExamClass"><option value="">Select teacher category first</option></select></div>
 <div hidden="" id="teacherExamStreamWrap"><label for="teacherExamStream">SSS stream</label><select id="teacherExamStream"><option value="">Select stream</option></select></div>
 <div><label for="teacherExamSubject">Subject</label><select id="teacherExamSubject"><option value="">Select teacher category and class first</option></select></div>
 <div><label for="teacherExamTopic">Type or choose your topic</label><select id="teacherExamTopic"><option value="">Choose a subject first</option></select></div>
-<div><label for="teacherExamType">Choose Question Type</label><select id="teacherExamType"><option value="">Choose Question Type</option><option value="objective">Objective — 10 questions</option><option value="theory">Theory — 5 questions</option></select></div>
+<div><label for="teacherExamType">Choose Question Type</label><select id="teacherExamType"><option value="">Choose Question Type</option><option value="objective">Objective</option><option value="theory">Theory</option></select></div>
 </div>
-<input hidden="" id="teacherExamTopicOther" placeholder="Or type your own topic"/>
-<p class="topic-help">Select “Other / Type my own topic” if the topic you want is not listed.</p>
-<button class="btn btn-teachers-action" id="prepareTeacherExamBtn" type="button">Generate Questions</button>
-<div id="teacherExamStatus" style="display:none;margin-top:12px;font-weight:700;color:#EA580C">Preparing your questions...</div>
+<div style="margin-top:8px"><label for="teacherExamTopicOther" style="font-weight:700">Topic</label><input id="teacherExamTopicOther" placeholder="Or type your own topic here..." style="width:100%;box-sizing:border-box;margin-top:4px"/></div>
+<p class="topic-help">Select or type the topic for the examination questions.</p>
+<div style="margin-top:16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+  <button class="btn btn-teachers-action" id="prepareTeacherExamBtn" type="button" style="padding:11px 22px;font-size:1rem">Generate Questions</button>
+  <div id="teacherExamStatus" style="display:none;font-weight:700;color:#EA580C">Preparing your questions...</div>
+</div>
 <div id="teacherExamOutput" class="output" style="margin-top:16px"></div>
 </div>
-<div class="prepare-teach-box" style="margin-top:18px" id="teacherOwnTheoryBlock">
-<h3>Enter Your Own Theory Question</h3>
-<p>Type or paste your own theory question below. Salone Class Room will generate an appropriate model answer and comprehensive marking guide supporting NPSE, BECE or WASSCE examination standards.</p>
-<div class="teacher-form-grid" style="margin-top:12px">
-<div><label for="teacherOwnExamLevel">Examination Level</label><select id="teacherOwnExamLevel"><option value="npse">NPSE (Primary)</option><option value="bece">BECE (Junior Secondary)</option><option value="wassce" selected>WASSCE (Senior Secondary)</option></select></div>
-<div><label for="teacherOwnSubject">Subject (optional)</label><input id="teacherOwnSubject" placeholder="e.g. English Language, Mathematics, Integrated Science" type="text"/></div>
+
+<!-- 4. TEACHERS GUIDE -->
+<div class="prepare-teach-box" id="teachersGuideBlock" style="border-top:4px solid #EA580C;margin-top:24px;background:#fff">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+  <div>
+    <span class="tool-badge badge-teachers" style="background:#EA580C;color:#fff;padding:4px 10px;border-radius:6px;font-size:0.82rem;font-weight:700">4. TEACHERS GUIDE</span>
+    <h3 style="margin:8px 0 4px;color:#193b53">Teachers Guide</h3>
+    <p style="margin:0;color:#475569">Practical, respectful guidance on professional conduct, learner differences, positive discipline, conflict management, hygiene, and effective teaching.</p>
+  </div>
 </div>
-<label for="teacherOwnQuestion" style="margin-top:10px">Type or paste your theory question</label>
-<textarea id="teacherOwnQuestion" placeholder="Type or paste your theory question here..." rows="5" style="width:100%;box-sizing:border-box;margin-top:6px;border:1.5px solid #cbd6e4;border-radius:8px;padding:10px;font-family:inherit;font-size:1rem;"></textarea>
-<button class="btn btn-blue" id="teacherOwnQuestionBtn" style="margin-top:12px" type="button">Generate Answer &amp; Marking Guide</button>
-<div aria-live="polite" class="teacher-result-note" id="teacherOwnQuestionMessage" style="margin-top:14px"></div>
+
+<div style="margin-top:16px;margin-bottom:14px">
+  <label for="teachersGuideSearch" style="display:block;font-weight:700;color:#1e293b;margin-bottom:6px">Search Teachers Guide</label>
+  <input type="text" id="teachersGuideSearch" placeholder="Search keywords: e.g. slow learner, fast learner, dress code, first aid, fighting, conflict, large class, classroom hygiene..." style="width:100%;box-sizing:border-box;padding:11px 14px;border:1.5px solid #cbd6e4;border-radius:8px;font-size:1rem" oninput="searchTeachersGuide(this.value)"/>
 </div>
+
+<div id="teachersGuideCardsContainer" style="display:flex;flex-direction:column;gap:12px;margin-top:14px">
+
+  <!-- Guide Card 1 -->
+  <div class="teacher-guide-card" data-guide-title="Professional Appearance and Dress" data-keywords="professional appearance dress code clothing shoes role model hygiene neatness clean respectful">
+    <div class="teacher-guide-header" onclick="toggleTeacherGuideCard(this)">
+      <h4><span>👔</span> Professional Appearance and Dress</h4>
+      <span class="teacher-guide-icon">▼</span>
+    </div>
+    <div class="teacher-guide-body">
+      <p>Teachers are respected professional role models in the school and wider community. Your presentation sets an example of self-respect and order.</p>
+      <ul>
+        <li><strong>Dress neatly and cleanly:</strong> Ensure clothing is washed, pressed, and in good condition. Professionalism is about cleanliness, dignity, and modesty—not expensive clothes.</li>
+        <li><strong>Personal hygiene:</strong> Maintain high standards of personal cleanliness and grooming every day.</li>
+        <li><strong>Appropriate school clothing:</strong> Wear clothing that is suitable for the school environment and respectful of pupils and colleagues.</li>
+        <li><strong>Follow school dress policies:</strong> Comply with any official dress code or guidelines established by your school or educational authority.</li>
+        <li><strong>Practical footwear:</strong> Choose comfortable and practical shoes suitable for walking, standing, and classroom duties throughout the school day.</li>
+        <li><strong>Avoid distracting attire:</strong> Avoid clothing with offensive slogans, overly casual sportswear, or transparent materials that distract from teaching.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Guide Card 2 -->
+  <div class="teacher-guide-card" data-guide-title="Understanding Learner Differences" data-keywords="learner differences learning speeds abilities individual needs respect empathy prior knowledge confidence stupid dull incapable hopeless">
+    <div class="teacher-guide-header" onclick="toggleTeacherGuideCard(this)">
+      <h4><span>🧠</span> Understanding Learner Differences</h4>
+      <span class="teacher-guide-icon">▼</span>
+    </div>
+    <div class="teacher-guide-body">
+      <p>Every classroom contains pupils with diverse abilities, backgrounds, and learning styles. Recognizing these differences is the foundation of effective teaching.</p>
+      <ul>
+        <li><strong>Different learning speeds:</strong> Learners do not absorb information at the identical pace. Some require multiple explanations, while others grasp concepts quickly.</li>
+        <li><strong>Different prior knowledge:</strong> Pupils arrive with unequal foundations depending on previous schooling, home support, and attendance.</li>
+        <li><strong>Varied confidence levels:</strong> Quiet or hesitant pupils often understand more than they voice; they need gentle encouragement to participate.</li>
+        <li><strong>Eliminate insulting labels:</strong> Never refer to a pupil as "stupid", "dull", "incapable", "hopeless", or "lazy". Such derogatory terms damage a child's dignity and permanently extinguish enthusiasm for learning.</li>
+        <li><strong>Focus on progress:</strong> Measure each pupil against their own past performance and encourage consistent personal improvement.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Guide Card 3 -->
+  <div class="teacher-guide-card" data-guide-title="Learners Who Need More Time" data-keywords="slow learner struggling patience support breaking steps familiar examples practice encouragement no humiliation">
+    <div class="teacher-guide-header" onclick="toggleTeacherGuideCard(this)">
+      <h4><span>⏳</span> Supporting Learners Who Need More Time (Slow Learners)</h4>
+      <span class="teacher-guide-icon">▼</span>
+    </div>
+    <div class="teacher-guide-body">
+      <p>Pupils who take longer to learn need structured, compassionate pedagogical support rather than criticism.</p>
+      <ul>
+        <li><strong>Practise patience:</strong> Maintain a calm, encouraging demeanour when explaining difficult concepts multiple times.</li>
+        <li><strong>Simplify language:</strong> Rephrase complex academic terminology using clear, everyday words that pupils easily understand.</li>
+        <li><strong>Break tasks into small steps:</strong> Divide difficult exercises into small, achievable milestones to build gradual mastery.</li>
+        <li><strong>Use familiar local examples:</strong> Connect abstract concepts to familiar things pupils see in everyday Sierra Leone life.</li>
+        <li><strong>Demonstrate visually:</strong> Use drawings on the chalkboard, gestures, or real objects to illustrate what you are explaining.</li>
+        <li><strong>Frequent comprehension checks:</strong> Ask quick, friendly questions to verify understanding before moving to the next topic.</li>
+        <li><strong>Never humiliate:</strong> Never mock a wrong answer or allow other pupils to laugh. Treat mistakes as natural stepping stones to understanding.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Guide Card 4 -->
+  <div class="teacher-guide-card" data-guide-title="Fast and Advanced Learners" data-keywords="fast learner advanced gifted challenge extension exercises problem solving leadership peer mentoring">
+    <div class="teacher-guide-header" onclick="toggleTeacherGuideCard(this)">
+      <h4><span>🚀</span> Engaging Fast and Advanced Learners</h4>
+      <span class="teacher-guide-icon">▼</span>
+    </div>
+    <div class="teacher-guide-body">
+      <p>Advanced pupils complete regular classwork quickly and can become bored or disruptive if not appropriately stimulated.</p>
+      <ul>
+        <li><strong>Extension questions:</strong> Prepare higher-order questions that require deeper analysis, evaluation, or creative problem solving.</li>
+        <li><strong>Additional challenges:</strong> Provide extension exercises or supplementary reading while peers complete core exercises.</li>
+        <li><strong>Explain reasoning:</strong> Ask advanced pupils to explain *how* and *why* they arrived at their answer, deepening their cognitive grasp.</li>
+        <li><strong>Constructive peer mentoring:</strong> Where appropriate, allow advanced pupils to pair with and support peers in a respectful, friendly manner.</li>
+        <li><strong>Prevent domination:</strong> Ensure advanced pupils do not dominate every classroom discussion or make other pupils feel inferior.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Guide Card 5 -->
+  <div class="teacher-guide-card" data-guide-title="Supporting the Middle Group" data-keywords="middle group average learners steady progress feedback recognition challenges participation">
+    <div class="teacher-guide-header" onclick="toggleTeacherGuideCard(this)">
+      <h4><span>⚖️</span> Supporting the Middle Group</h4>
+      <span class="teacher-guide-icon">▼</span>
+    </div>
+    <div class="teacher-guide-body">
+      <p>Teachers often inadvertently direct attention only to the highest achievers and the struggling pupils, leaving the majority in the middle unnoticed.</p>
+      <ul>
+        <li><strong>Active engagement:</strong> Regularly call on pupils in the middle group by name to answer questions and contribute ideas.</li>
+        <li><strong>Constructive feedback:</strong> Review their work thoroughly and provide specific written comments on how they can move up to higher mastery.</li>
+        <li><strong>Encourage ambition:</strong> Inspire middle pupils to believe they can attain excellence with consistent practice and curiosity.</li>
+        <li><strong>Celebrate steady progress:</strong> Recognize consistent effort, neat classwork, and incremental improvements in test scores.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Guide Card 6 -->
+  <div class="teacher-guide-card" data-guide-title="Inclusive Classroom Practice" data-keywords="inclusive gender equality girls boys disability special needs seating accessibility respect referral">
+    <div class="teacher-guide-header" onclick="toggleTeacherGuideCard(this)">
+      <h4><span>🤝</span> Inclusive Classroom Practice</h4>
+      <span class="teacher-guide-icon">▼</span>
+    </div>
+    <div class="teacher-guide-body">
+      <p>An inclusive classroom welcomes every pupil regardless of gender, socio-economic background, physical ability, or personal background.</p>
+      <ul>
+        <li><strong>Gender equality:</strong> Call equally upon boys and girls for answers, leadership roles, chalkboard writing, and science experiments.</li>
+        <li><strong>Accommodating physical needs:</strong> Seat pupils with visual or hearing impairments near the front and close to the chalkboard. Ensure wheelchair or crutch access is unobstructed.</li>
+        <li><strong>Fair treatment for all:</strong> Treat pupils from all socio-economic, linguistic, and cultural backgrounds with equal dignity and respect.</li>
+        <li><strong>Professional referral boundaries:</strong> Teachers must not attempt medical or psychological diagnoses. If a pupil shows signs of developmental delays, severe vision/hearing impairment, or trauma, report observations objectively to the school principal or guidance counsellor following official procedures.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Guide Card 7 -->
+  <div class="teacher-guide-card" data-guide-title="Classroom Management and Positive Discipline" data-keywords="classroom management positive discipline rules expectations order calm shouting humiliation consistency engagement">
+    <div class="teacher-guide-header" onclick="toggleTeacherGuideCard(this)">
+      <h4><span>📋</span> Classroom Management and Positive Discipline</h4>
+      <span class="teacher-guide-icon">▼</span>
+    </div>
+    <div class="teacher-guide-body">
+      <p>Effective classroom management creates a calm, structured atmosphere where teaching and learning can flourish safely.</p>
+      <ul>
+        <li><strong>Establish clear expectations:</strong> Agree on concise, positive classroom rules at the start of the term and review them regularly.</li>
+        <li><strong>Start lessons promptly:</strong> Enter the classroom on time and begin immediately with an engaging starter activity to set a purposeful tone.</li>
+        <li><strong>Keep pupils engaged:</strong> Active lessons with varied activities naturally minimize restlessness, boredom, and classroom disruption.</li>
+        <li><strong>Remain calm under pressure:</strong> Address misbehaviour firmly and quietly without shouting, losing temper, or creating dramatic scenes.</li>
+        <li><strong>Correct without humiliating:</strong> Never demean a child in front of the whole class. Speak to the pupil privately where possible.</li>
+        <li><strong>Follow school disciplinary policies:</strong> Administer legitimate, fair, and educational disciplinary measures approved by your school. Never use harsh physical or humiliating punishments.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Guide Card 8 -->
+  <div class="teacher-guide-card" data-guide-title="Conflict Management in the Classroom" data-keywords="conflict management fighting argument resolution mediation safety listening facts reconciliation de-escalation">
+    <div class="teacher-guide-header" onclick="toggleTeacherGuideCard(this)">
+      <h4><span>🕊️</span> Conflict Management &amp; Resolution (Fighting &amp; Disagreements)</h4>
+      <span class="teacher-guide-icon">▼</span>
+    </div>
+    <div class="teacher-guide-body">
+      <p>When disagreements, shouting, or physical confrontations occur between pupils, follow this structured, peaceful resolution approach:</p>
+      <ol>
+        <li><strong>Stay calm:</strong> Take a deep breath. Your composure signals that the situation is under control.</li>
+        <li><strong>Prioritize immediate safety:</strong> Step in quickly, order pupils to stop, and physically separate the parties to prevent injury.</li>
+        <li><strong>Allow tempers to cool:</strong> Give the pupils a few moments of silence to calm down before questioning them.</li>
+        <li><strong>Listen impartially:</strong> Hear each pupil's account one at a time without allowing interruptions or passing premature judgements.</li>
+        <li><strong>Establish facts:</strong> Ask neutral questions: "What happened first?", "What did you feel?", "What could have been done differently?".</li>
+        <li><strong>Remind pupils of mutual respect:</strong> Explain that disagreements are normal, but violence, insults, and revenge are unacceptable.</li>
+        <li><strong>Guide them to a peaceful resolution:</strong> Help the pupils apologize where appropriate, shake hands or acknowledge mutual responsibility.</li>
+        <li><strong>Follow school referral procedures:</strong> Document serious incidents involving physical harm or weapons and refer them immediately to the school head teacher or disciplinary committee.</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- Guide Card 9 -->
+  <div class="teacher-guide-card" data-guide-title="Classroom Hygiene, Health and Safety" data-keywords="classroom hygiene health safety first aid ventilation cleaning large class sickness injury clean water">
+    <div class="teacher-guide-header" onclick="toggleTeacherGuideCard(this)">
+      <h4><span>🧹</span> Classroom Hygiene, Health &amp; Safety (First Aid &amp; Large Classes)</h4>
+      <span class="teacher-guide-icon">▼</span>
+    </div>
+    <div class="teacher-guide-body">
+      <p>A clean, well-ordered classroom protects pupils' health and promotes mental focus and productivity.</p>
+      <ul>
+        <li><strong>Clean and swept environment:</strong> Ensure the classroom floor is swept daily, waste bins are emptied, and chalk dust is minimized.</li>
+        <li><strong>Ventilation and lighting:</strong> Keep windows and doors open to allow fresh air and natural sunlight to circulate throughout the day.</li>
+        <li><strong>Clear walkways:</strong> Keep aisles free of schoolbags, loose benches, and tripping hazards to ensure safe movement and quick exit during an emergency.</li>
+        <li><strong>First aid awareness:</strong> Know the location of the school first aid box. For minor cuts or scrapes, clean the wound and apply a sterile dressing. For severe fever, fainting, vomiting, or injury, immediately alert the school health coordinator or head teacher.</li>
+        <li><strong>Managing large classes:</strong> In classes with 50+ pupils, organize the room into distinct rows or cooperative groups with student row monitors. Use clear hand signals or rhythmic clapping rather than straining your voice to call the class to attention.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Guide Card 10 -->
+  <div class="teacher-guide-card" data-guide-title="Teacher Professional Judgement and Ethics" data-keywords="teacher professional judgement ethics support teacher replacement school authority regulations syllabus mutual respect">
+    <div class="teacher-guide-header" onclick="toggleTeacherGuideCard(this)">
+      <h4><span>⭐</span> Teacher Professional Judgement &amp; Mutual Respect</h4>
+      <span class="teacher-guide-icon">▼</span>
+    </div>
+    <div class="teacher-guide-body">
+      <p><strong>"Salone Class Room supports the teacher; it does not replace the teacher."</strong></p>
+      <ul>
+        <li><strong>Professional review &amp; adaptation:</strong> Generated lesson notes, exam questions, and teaching guides are helpful drafts. Always review, adapt, and tailor them to the specific abilities, pace, and context of your pupils.</li>
+        <li><strong>Respect school authority and curriculum:</strong> Comply with your school's scheme of work, head teacher's instructions, and the official Ministry of Basic and Senior Secondary Education (MBSSE) syllabus.</li>
+        <li><strong>Mutual respect:</strong> Model dignity, fairness, and encouragement in every interaction. When pupils feel genuinely valued by their teacher, their academic confidence and good conduct naturally grow.</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+</div>
+
 <div aria-live="polite" class="teacher-result-note" id="teacherOnlyMessage"></div>
 </div>
-</div>
-</section><section class="section edu-university ribbon-section" id="research">
+</section>
+<section class="section edu-university ribbon-section" id="research">
 <div class="section-personal-welcome" data-welcome-section="university">
 <div class="section-identity-tag tag-university"><span class="id-dot"></span> <strong>UNIVERSITY</strong> • UNIVERSITY STUDENTS SECTION</div>
 <h2><span style="display:inline-block;background:#6D28D9;color:#ffffff;padding:2px 10px;border-radius:6px;font-size:0.85em;margin-right:8px;vertical-align:middle">UNIVERSITY</span> Welcome to the University Students Section<span class="section-user-name"></span></h2><p class="section-feature-label">In this section, we have:</p><ul><li>Salone Class Room Lecturer</li><li>Topic Finder</li><li>Proposal Framework</li><li>Dissertation Problem Guide</li><li>Dissertation Defence Guide</li></ul><p class="section-ribbon-description section-summary-under-welcome">This section is for university students. Use it for academic learning, research topics, proposal development, dissertation guidance, and defence preparation.</p></div>
@@ -2175,7 +2439,7 @@ function updateDissertationTopics(){
 <div class="bottom-admin-access admin-after-comments">
 
 </div>
-<footer class="footer"><div class="pytbion-footer-brand" style="text-align:center;margin:0 auto 18px;padding:14px 12px"><strong style="display:block;font-size:1.1rem">Pytbion Technologies Ltd</strong><span style="display:block;font-size:.78rem;white-space:nowrap">Your AI Digital Solutions Partner in Sierra Leone.</span></div>
+<footer class="footer"><div class="pytbion-footer-brand" style="text-align:center;margin:0 auto 18px;padding:14px 12px"><strong style="display:block;font-size:1.1rem">Pytbion Technologies Ltd</strong><span style="display:block;font-size:.78rem;white-space:nowrap">Your Digital Solutions Partner in Sierra Leone.</span></div>
 <div class="education-slogan">
 <div class="slogan-mark">✦</div>
 <p>Learn with purpose. Teach with confidence. Build a brighter future.</p>
@@ -2313,7 +2577,7 @@ function updateDissertationTopics(){
         const actEl = document.getElementById('welcomeBackActivity');
         if(!box || !actEl) return;
         const name = typeof firstName === 'function' ? firstName() : '';
-        nameEl.textContent = name ? 'Welcome back, ' + name + '!' : 'Welcome back!';
+        nameEl.textContent = name ? 'Welcome back, ' + name : 'Welcome back';
         actEl.textContent = 'You were practising ' + act.label + '.';
         box.style.display = 'block';
       }catch{}
@@ -2322,6 +2586,8 @@ function updateDissertationTopics(){
     function dismissWelcomeBack(){
       const box = document.getElementById('welcomeBackContainer');
       if(box) box.style.display = 'none';
+      const home = document.getElementById('home');
+      if(home) home.scrollIntoView({ behavior: 'smooth' });
     }
 
     function continueLastLearning(){
@@ -2417,19 +2683,22 @@ function updateDissertationTopics(){
     }
 
     function updatePracticeBtnText(level){
+      if(level.endsWith('_class')){
+        let btnId = '';
+        if(level === 'primary_class') btnId = 'primaryClassPracticeBtn';
+        else if(level === 'jss_class') btnId = 'jssClassPracticeBtn';
+        else if(level === 'sss_class') btnId = 'sssClassPracticeBtn';
+        const btn = document.getElementById(btnId);
+        if(btn) btn.textContent = 'Generate Practice Questions';
+        return;
+      }
       let btnId = '', typeId = '', examLabel = '';
       if(level === 'primary'){
         btnId = 'npsePracticeBtn'; typeId = 'npseQuizType'; examLabel = 'NPSE';
-      } else if(level === 'primary_class'){
-        btnId = 'primaryClassPracticeBtn'; typeId = 'primaryPracticeQuizType'; examLabel = 'Class Practice';
       } else if(level === 'jss'){
         btnId = 'jssPracticeBtn'; typeId = 'jssQuizType'; examLabel = 'BECE';
-      } else if(level === 'jss_class'){
-        btnId = 'jssClassPracticeBtn'; typeId = 'jssClassQuizType'; examLabel = 'Class Practice';
       } else if(level === 'sss'){
         btnId = 'sssPracticeBtn'; typeId = 'sssQuizType'; examLabel = 'WASSCE';
-      } else if(level === 'sss_class'){
-        btnId = 'sssClassPracticeBtn'; typeId = 'sssClassQuizType'; examLabel = 'Class Practice';
       }
       const btn = document.getElementById(btnId);
       const typeEl = document.getElementById(typeId);
@@ -2520,7 +2789,7 @@ function updateDissertationTopics(){
         const ts = document.getElementById('primaryPracticeTopicSelect'), tm = document.getElementById('primaryPracticeTopic');
         topic = (((tm?.value||'').trim()) || (ts?.value==='__other__'?'':ts?.value||'')).trim();
         box = document.getElementById('primaryClassQuizArea');
-        type = document.getElementById('primaryPracticeQuizType')?.value || '';
+        type = 'theory';
       } else if(level === 'jss'){
         exam = 'BECE';
         classLevel = 'JSS 3';
@@ -2536,7 +2805,7 @@ function updateDissertationTopics(){
         const ts = document.getElementById('jssPracticeTopicSelect'), tm = document.getElementById('jssPracticeTopic');
         topic = (((tm?.value||'').trim()) || (ts?.value==='__other__'?'':ts?.value||'')).trim();
         box = document.getElementById('jssClassQuiz');
-        type = document.getElementById('jssClassQuizType')?.value || '';
+        type = 'theory';
       } else if(level === 'sss'){
         exam = 'WASSCE';
         classLevel = 'SSS 3';
@@ -2552,7 +2821,7 @@ function updateDissertationTopics(){
         const ts = document.getElementById('sssPracticeTopicSelect'), tm = document.getElementById('sssPracticeTopic');
         topic = (((tm?.value||'').trim()) || (ts?.value==='__other__'?'':ts?.value||'')).trim();
         box = document.getElementById('sssClassQuiz');
-        type = document.getElementById('sssClassQuizType')?.value || '';
+        type = 'theory';
       }
 
       if(repeatSameTopic && lastPracticeTopic[level]){
@@ -2905,7 +3174,7 @@ function updateDissertationTopics(){
       }
       const submitBtn = document.getElementById(level + '_submit_theory_btn');
       if(submitBtn) submitBtn.disabled = true;
-      if(statusEl) statusEl.textContent = 'AI is assessing your answers and preparing feedback…';
+      if(statusEl) statusEl.textContent = 'Assessing your answer...';
 
       try{
         const parentLevel = state.level.startsWith('primary') ? 'primary' : (state.level.startsWith('jss') ? 'jss' : 'sss');
@@ -3010,108 +3279,377 @@ async function primaryAssignmentGuide(){const subject=primaryAssignmentSubject.v
 </script>
 <script>
 (function(){
-  const category=document.getElementById('teacherCategoryOnly');
-  const panel=document.getElementById('teacherChoicePanel');
-  const classSel=document.getElementById('teacherClassOnly');
-  const streamWrap=document.getElementById('teacherStreamOnlyWrap');
-  const streamSel=document.getElementById('teacherStreamOnly');
-  const subjectSel=document.getElementById('teacherSubjectOnly');
-  const topicSel=document.getElementById('teacherTopicOnly');
-  const topicOther=document.getElementById('teacherTopicOther');
-  const examCategory=document.getElementById('teacherExamCategory');
-  const examClass=document.getElementById('teacherExamClass');
-  const examStreamWrap=document.getElementById('teacherExamStreamWrap');
-  const examStream=document.getElementById('teacherExamStream');
-  const examSubject=document.getElementById('teacherExamSubject');
-  const examTopic=document.getElementById('teacherExamTopic');
-  const examTopicOther=document.getElementById('teacherExamTopicOther');
-  const examType=document.getElementById('teacherExamType');
-  const msg=document.getElementById('teacherOnlyMessage');
-  if(!category)return;
+  const primarySubjects = ["English Language", "Mathematics (including Financial Literacy)", "Civic Education (Civics)", "Social Studies (including Environmental Studies)", "Physical & Health Education", "Music & Expressive Arts", "French Appreciation", "Science (including Basic Technology & How Things Work)", "ICT Literacy"];
+  const jssSubjects = ["English Language", "Mathematics", "Integrated Science", "Social Studies", "Civic Education", "Agricultural Science", "Business Studies", "Religious and Moral Education", "Physical and Health Education", "Creative Practical Arts", "Information and Communication Technology (ICT)", "French", "Krio"];
+  const sssStreams = {
+    "Sciences & Technologies": ["Integrated Science", "Biology", "Chemistry", "Computer Science", "Agricultural Science", "ICT", "Robotics", "Physics", "Environmental Science", "Health Sciences", "Food Security", "Engineering Science", "Physical Health Education", "Climate Change Awareness, Preparedness and Resilience", "Adolescent Health and Life Skills", "Computer Literacy", "Popular Science"],
+    "Mathematics & Numeracy": ["Fundamentals of Mathematics", "Further Mathematics", "Statistics and Probability", "Calculus", "Mathematics for Business and Enterprise", "Applications of Mathematics for Coding", "Mathematics for STEAMM", "Computer Mathematics", "Mathematics in Other Disciplines", "Introductory Statistics and Probability", "Functional Mathematics"],
+    "Economics, Business & Entrepreneurial Studies": ["Principles of Economics", "Entrepreneurship", "Principles of Accounting", "Business Management Studies", "Principles of Commerce", "Principles of Marketing", "Business Accounting", "Clerical Office Studies", "Insurance Management", "Business Economics", "Business and Society", "Customer Relationship Management", "Micro Small and Medium Enterprise Management", "Business Ethics"],
+    "Languages & Literatures": ["English Language", "African Literature", "English Literature", "French as a Foreign Language", "Sierra Leonean Literature", "Mende Language", "Kathemne Language", "Hulimba Language", "Krio Language", "Creative Writing", "Business English", "French for Tourism", "Technical Writing", "English for STEAMM", "French for Business and Marketing", "Everyday Basic French", "Popular Literature Appreciation", "Arabic Language", "Fula"],
+    "Social & Cultural Studies": ["Sierra Leone History", "African History", "Geography", "Music", "Dance and Drama Studies", "Politics and Governance", "Social Studies and Civics", "Religious and Moral Education", "Geography and the Environment", "Music as an Applied Subject", "Entertainment Industry", "Derivatives of Religious and Moral Education", "Dance Performance and Appreciation", "Mining Industry and Environment", "Introduction to Social Work", "Philosophy and Critical Thinking", "Physical Geography", "Human Geography", "Social Sciences Foundation", "Cultural Heritage and Tourism", "Performing Arts and Media Studies", "Environmental and Sustainable Development Studies", "Film and Television Production"]
+  };
 
-  const primarySubjects=["English Language","Mathematics (including Financial Literacy)","Civic Education (Civics)","Social Studies (including Environmental Studies)","Physical & Health Education","Music & Expressive Arts","French Appreciation","Science (including Basic Technology & How Things Work)","ICT Literacy"];
-  const jssSubjects=["English Language","Mathematics","Integrated Science","Social Studies","Civic Education","Agricultural Science","Business Studies","Religious and Moral Education","Physical and Health Education","Creative Practical Arts","Information and Communication Technology (ICT)","French","Krio"];
-  const sssStreams={"Sciences & Technologies":["Integrated Science","Biology","Chemistry","Computer Science","Agricultural Science","ICT","Robotics","Physics","Environmental Science","Health Sciences","Food Security","Engineering Science","Physical Health Education","Climate Change Awareness, Preparedness and Resilience","Adolescent Health and Life Skills","Computer Literacy","Popular Science"],"Mathematics & Numeracy":["Fundamentals of Mathematics","Further Mathematics","Statistics and Probability","Calculus","Mathematics for Business and Enterprise","Applications of Mathematics for Coding","Mathematics for STEAMM","Computer Mathematics","Mathematics in Other Disciplines","Introductory Statistics and Probability","Functional Mathematics"],"Economics, Business & Entrepreneurial Studies":["Principles of Economics","Entrepreneurship","Principles of Accounting","Business Management Studies","Principles of Commerce","Principles of Marketing","Business Accounting","Clerical Office Studies","Insurance Management","Business Economics","Business and Society","Customer Relationship Management","Micro Small and Medium Enterprise Management","Business Ethics"],"Languages & Literatures":["English Language","African Literature","English Literature","French as a Foreign Language","Sierra Leonean Literature","Mende Language","Kathemne Language","Hulimba Language","Krio Language","Creative Writing","Business English","French for Tourism","Technical Writing","English for STEAMM","French for Business and Marketing","Everyday Basic French","Popular Literature Appreciation","Arabic Language","Fula"],"Social & Cultural Studies":["Sierra Leone History","African History","Geography","Music","Dance and Drama Studies","Politics and Governance","Social Studies and Civics","Religious and Moral Education","Geography and the Environment","Music as an Applied Subject","Entertainment Industry","Derivatives of Religious and Moral Education","Dance Performance and Appreciation","Mining Industry and the Environment","Fishing Industry and the Environment","Tourism and Conservation","Living with Religious and Moral Education"]};
-  function fill(sel,items,placeholder){sel.innerHTML='';sel.appendChild(new Option(placeholder,''));items.forEach(x=>sel.appendChild(new Option(x,x)));}
-  category.addEventListener('change',()=>{const level=category.value;panel.hidden=false;msg.textContent='';fill(topicSel,[],'Choose class and subject first');topicOther.hidden=true;examTopicOther.hidden=true;if(level==='primary'){fill(classSel,['Class 1','Class 2','Class 3','Class 4','Class 5','Class 6'],'Select class');fill(subjectSel,primarySubjects,'Select subject');streamWrap.hidden=true;fill(streamSel,[],'Select stream')}else if(level==='jss'){fill(classSel,['JSS 1','JSS 2','JSS 3'],'Select class');fill(subjectSel,jssSubjects,'Select subject');streamWrap.hidden=true;fill(streamSel,[],'Select stream')}else if(level==='sss'){fill(classSel,['SSS 1','SSS 2','SSS 3'],'Select class');fill(streamSel,Object.keys(sssStreams),'Select stream');fill(subjectSel,[],'Select a stream first');streamWrap.hidden=false}else{fill(classSel,[],'Select teacher category first');fill(subjectSel,[],'Select teacher category first');streamWrap.hidden=true}});
-  streamSel.addEventListener('change',()=>{const items=sssStreams[streamSel.value]||[];fill(subjectSel,items,items.length?'Select subject':'Select a stream first');fill(topicSel,[],'Choose a subject first');topicOther.hidden=true});
-  async function loadTeacherTopics(){if(!category.value||!classSel.value||!subjectSel.value){fill(topicSel,[],'Choose class and subject first');topicOther.hidden=true;return}const fallback=localTopicsFor(category.value,classSel.value,subjectSel.value);fill(topicSel,fallback,fallback.length?'Choose a topic':'Choose or type a topic');topicSel.appendChild(new Option('Other / Type my own topic','__other__'));try{const d=await platformPost({action:'curriculum_topics',level:category.value,class_level:classSel.value,subject:subjectSel.value},8000);const items=[...new Set([...(d.topics||[]).filter(Boolean),...fallback])];fill(topicSel,items,items.length?'Choose a topic':'Choose or type a topic');topicSel.appendChild(new Option('Other / Type my own topic','__other__'))}catch{/* Keep local topics visible. */}}
-  classSel.addEventListener('change',loadTeacherTopics);subjectSel.addEventListener('change',loadTeacherTopics);topicSel.addEventListener('change',()=>{topicOther.hidden=topicSel.value!=='__other__';if(!topicOther.hidden)topicOther.focus()});
-  examCategory.addEventListener('change',()=>{const level=examCategory.value;msg.textContent='';fill(examTopic,[],'Choose a subject first');examTopicOther.hidden=true;if(level==='primary'){fill(examClass,['Class 1','Class 2','Class 3','Class 4','Class 5','Class 6'],'Select class / level');fill(examSubject,primarySubjects,'Select subject');examStreamWrap.hidden=true;fill(examStream,[],'Select stream')}else if(level==='jss'){fill(examClass,['JSS 1','JSS 2','JSS 3'],'Select class / level');fill(examSubject,jssSubjects,'Select subject');examStreamWrap.hidden=true;fill(examStream,[],'Select stream')}else if(level==='sss'){fill(examClass,['SSS 1','SSS 2','SSS 3'],'Select class / level');fill(examStream,Object.keys(sssStreams),'Select stream');fill(examSubject,[],'Select a stream first');examStreamWrap.hidden=false}else{fill(examClass,[],'Select teacher category first');fill(examSubject,[],'Select teacher category first');fill(examStream,[],'Select stream');examStreamWrap.hidden=true}});
-  examStream.addEventListener('change',()=>{const items=sssStreams[examStream.value]||[];fill(examSubject,items,items.length?'Select subject':'Select a stream first');fill(examTopic,[],'Choose a subject first');examTopicOther.hidden=true});
-  async function loadTeacherExamTopics(){if(!examCategory.value||!examClass.value||!examSubject.value){fill(examTopic,[],'Choose a subject first');examTopicOther.hidden=true;return}const fallback=localTopicsFor(examCategory.value,examClass.value,examSubject.value);fill(examTopic,fallback,fallback.length?'Choose a topic':'Choose or type a topic');examTopic.appendChild(new Option('Other / Type my own topic','__other__'));try{const d=await platformPost({action:'curriculum_topics',level:examCategory.value,class_level:examClass.value,subject:examSubject.value},8000);const items=[...new Set([...(d.topics||[]).filter(Boolean),...fallback])];fill(examTopic,items,items.length?'Choose a topic':'Choose or type a topic');examTopic.appendChild(new Option('Other / Type my own topic','__other__'))}catch{/* Keep local topics visible. */}}
-  examSubject.addEventListener('change',loadTeacherExamTopics);
-  examTopic.addEventListener('change',()=>{examTopicOther.hidden=examTopic.value!=='__other__';if(!examTopicOther.hidden)examTopicOther.focus()});
-  const selectedTopic=()=>((topicOther.value||topicSel.value==='__other__'?'':topicSel.value)||topicOther.value||topicSel.value||'').trim();
-  const selectedExamTopic=()=>((examTopicOther.value||examTopic.value==='__other__'?'':examTopic.value)||examTopicOther.value||examTopic.value||'').trim();
-  const baseValid=()=>category.value&&classSel.value&&subjectSel.value&&(category.value!=='sss'||streamSel.value);
-  document.getElementById('prepareTeacherLessonBtn')?.addEventListener('click',async()=>{
-    const topic=selectedTopic(),date=(document.getElementById('teacherPrepDate')?.value||'').trim(),duration=(document.getElementById('teacherPrepDuration')?.value||'').trim();
-    const lessonBox=document.getElementById('teacherLessonOutput');
-    const lessonStatus=document.getElementById('teacherLessonStatus');
-    if(msg) msg.textContent='';
-    if(!baseValid()||!topic||!date||!duration){
-      if(lessonBox){
-        showOutput(lessonBox,'Please choose the teacher category, class, subject and topic, then add the date and duration.');
-      } else if(msg){
-        msg.textContent='Please choose the teacher category, class, subject and topic, then add the date and duration.';
+  function fill(sel, items, placeholder){
+    if(!sel) return;
+    sel.innerHTML = '';
+    sel.appendChild(new Option(placeholder, ''));
+    items.forEach(x => sel.appendChild(new Option(x, x)));
+  }
+
+  function setupCategoryWorkflow(catEl, classEl, streamWrapEl, streamEl, subjEl, topicSelEl, topicOtherEl){
+    if(!catEl) return;
+    catEl.addEventListener('change', () => {
+      const level = catEl.value;
+      fill(topicSelEl, [], 'Choose class and subject first');
+      if(topicOtherEl) topicOtherEl.hidden = true;
+      if(level === 'primary'){
+        fill(classEl, ['Class 1', 'Class 2', 'Class 3', 'Class 4', 'Class 5', 'Class 6'], 'Select class / level');
+        fill(subjEl, primarySubjects, 'Select subject');
+        if(streamWrapEl) streamWrapEl.hidden = true;
+        fill(streamEl, [], 'Select stream');
+      } else if(level === 'jss'){
+        fill(classEl, ['JSS 1', 'JSS 2', 'JSS 3'], 'Select class / level');
+        fill(subjEl, jssSubjects, 'Select subject');
+        if(streamWrapEl) streamWrapEl.hidden = true;
+        fill(streamEl, [], 'Select stream');
+      } else if(level === 'sss'){
+        fill(classEl, ['SSS 1', 'SSS 2', 'SSS 3'], 'Select class / level');
+        fill(streamEl, Object.keys(sssStreams), 'Select stream');
+        fill(subjEl, [], 'Select a stream first');
+        if(streamWrapEl) streamWrapEl.hidden = false;
+      } else {
+        fill(classEl, [], 'Select teacher category first');
+        fill(subjEl, [], 'Select teacher category first');
+        if(streamWrapEl) streamWrapEl.hidden = true;
       }
-      return;
+    });
+
+    if(streamEl){
+      streamEl.addEventListener('change', () => {
+        const items = sssStreams[streamEl.value] || [];
+        fill(subjEl, items, items.length ? 'Select subject' : 'Select a stream first');
+        fill(topicSelEl, [], 'Choose a subject first');
+        if(topicOtherEl) topicOtherEl.hidden = true;
+      });
     }
-    if(lessonStatus) lessonStatus.style.display='block';
-    const context=['Document: Lesson Notes','Date: '+date,'Duration: '+duration,'Prepare practical lesson notes for the selected class, subject and topic.'].join('\n');
-    try{
-      await callLearning({level:category.value,class_level:classSel.value,subject:subjectSel.value,topic,task:'teacher',context,tool_key:'teacher-lesson-note'},lessonBox||msg);
-    }finally{
-      if(lessonStatus) lessonStatus.style.display='none';
-    }
-  });
-  document.getElementById('prepareTeacherExamBtn')?.addEventListener('click',async()=>{
-    const subject=(examSubject.value||'').trim(),topic=selectedExamTopic(),type=(examType?.value||'').trim();
-    const examBox=document.getElementById('teacherExamOutput');
-    const examStatus=document.getElementById('teacherExamStatus');
-    if(msg) msg.textContent='';
-    if(!examCategory.value||!examClass.value||(examCategory.value==='sss'&&!examStream.value)||!subject||!topic||!type){
-      if(examBox){
-        showOutput(examBox,'Please choose the teacher category, class or level, subject, topic and question type.');
-      } else if(msg){
-        msg.textContent='Please choose the teacher category, class or level, subject, topic and question type.';
-      }
-      return;
-    }
-    if(examStatus) examStatus.style.display='block';
-    const nonce=Date.now()+'-'+Math.random().toString(36).slice(2);
-    try{
-      if(type==='objective'){
-        await callLearning({level:examCategory.value,class_level:examClass.value,subject,topic,task:'teacher_exam_objective',exam_type:'objective',question_count:10,context:'Generate a NEW set of exactly ten objective multiple-choice examination questions. Number them 1 to 10. Each question must have exactly four options labelled A, B, C and D. Do not mix theory questions with objective questions. Do not include answers or marking schemes. Fresh generation ID: '+nonce,tool_key:'teacher-exam-objective'},examBox||msg);
+
+    async function loadTopics(){
+      if(!catEl.value || !classEl.value || !subjEl.value){
+        fill(topicSelEl, [], 'Choose class and subject first');
+        if(topicOtherEl) topicOtherEl.hidden = true;
         return;
       }
-      await callLearning({level:examCategory.value,class_level:examClass.value,subject,topic,task:'teacher_exam_theory',exam_type:'theory',question_count:5,context:'Generate a NEW set of exactly five theory examination questions only. Number them 1 to 5. Do not mix objective questions or multiple-choice options with theory questions. Do not include answers or marking schemes. Fresh generation ID: '+nonce,tool_key:'teacher-exam-theory'},examBox||msg);
-    }finally{
-      if(examStatus) examStatus.style.display='none';
+      const fallback = typeof localTopicsFor === 'function' ? localTopicsFor(catEl.value, classEl.value, subjEl.value) : [];
+      fill(topicSelEl, fallback, fallback.length ? 'Choose a topic' : 'Choose or type a topic');
+      topicSelEl.appendChild(new Option('Other / Type my own topic', '__other__'));
+      try{
+        const d = await platformPost({ action: 'curriculum_topics', level: catEl.value, class_level: classEl.value, subject: subjEl.value }, 8000);
+        const items = [...new Set([...(d.topics || []).filter(Boolean), ...fallback])];
+        fill(topicSelEl, items, items.length ? 'Choose a topic' : 'Choose or type a topic');
+        topicSelEl.appendChild(new Option('Other / Type my own topic', '__other__'));
+      }catch{}
     }
-  });
-  document.getElementById('teacherOwnQuestionBtn')?.addEventListener('click',async()=>{
-    const level=(document.getElementById('teacherOwnExamLevel')?.value||'wassce').trim();
-    const subject=(document.getElementById('teacherOwnSubject')?.value||'').trim()||'General';
-    const question=(document.getElementById('teacherOwnQuestion')?.value||'').trim();
-    const ownMsg=document.getElementById('teacherOwnQuestionMessage');
-    if(!question){
-      flagRequired(document.getElementById('teacherOwnQuestion'),'Please type or paste your theory question.');
-      if(ownMsg)ownMsg.textContent='Please type or paste your theory question.';
+
+    if(classEl) classEl.addEventListener('change', loadTopics);
+    if(subjEl) subjEl.addEventListener('change', loadTopics);
+    if(topicSelEl && topicOtherEl){
+      topicSelEl.addEventListener('change', () => {
+        topicOtherEl.hidden = topicSelEl.value !== '__other__';
+        if(!topicOtherEl.hidden) topicOtherEl.focus();
+      });
+    }
+  }
+
+  // 1. Setup Prepare to Teach Dropdowns
+  const prepCategory = document.getElementById('prepTeachCategory');
+  const prepClass = document.getElementById('prepTeachClass');
+  const prepStreamWrap = document.getElementById('prepTeachStreamWrap');
+  const prepStream = document.getElementById('prepTeachStream');
+  const prepSubject = document.getElementById('prepTeachSubject');
+  const prepTopic = document.getElementById('prepTeachTopic');
+  const prepTopicOther = document.getElementById('prepTeachTopicOther');
+  setupCategoryWorkflow(prepCategory, prepClass, prepStreamWrap, prepStream, prepSubject, prepTopic, prepTopicOther);
+
+  // 2. Setup Prepare Lesson Notes Dropdowns
+  const category = document.getElementById('teacherCategoryOnly');
+  const classSel = document.getElementById('teacherClassOnly');
+  const streamWrap = document.getElementById('teacherStreamOnlyWrap');
+  const streamSel = document.getElementById('teacherStreamOnly');
+  const subjectSel = document.getElementById('teacherSubjectOnly');
+  const topicSel = document.getElementById('teacherTopicOnly');
+  const topicOther = document.getElementById('teacherTopicOther');
+  setupCategoryWorkflow(category, classSel, streamWrap, streamSel, subjectSel, topicSel, topicOther);
+
+  // 3. Setup Prepare Exam Questions Dropdowns
+  const examCategory = document.getElementById('teacherExamCategory');
+  const examClass = document.getElementById('teacherExamClass');
+  const examStreamWrap = document.getElementById('teacherExamStreamWrap');
+  const examStream = document.getElementById('teacherExamStream');
+  const examSubject = document.getElementById('teacherExamSubject');
+  const examTopic = document.getElementById('teacherExamTopic');
+  const examTopicOther = document.getElementById('teacherExamTopicOther');
+  const examType = document.getElementById('teacherExamType');
+  setupCategoryWorkflow(examCategory, examClass, examStreamWrap, examStream, examSubject, examTopic, examTopicOther);
+
+  // --- TOOL 1: PREPARE TO TEACH ACTION ---
+  document.getElementById('prepareTeacherToTeachBtn')?.addEventListener('click', async () => {
+    const box = document.getElementById('prepTeachOutput');
+    const status = document.getElementById('prepTeachStatus');
+    const cat = prepCategory?.value || '';
+    const cls = prepClass?.value || '';
+    const subj = (prepSubject?.value || '').trim();
+    const top = ((prepTopicOther?.value || (prepTopic?.value === '__other__' ? '' : prepTopic?.value) || prepTopic?.value || '')).trim();
+
+    if(!cat || !cls || (cat === 'sss' && !prepStream?.value) || !subj || !top){
+      showOutput(box, 'Please choose the teacher category, class or level, subject and topic.');
       return;
     }
-    const examName=level.toUpperCase();
-    await callLearning({
-      level,
-      subject,
-      topic:question,
-      task:'teacher_marking_guide',
-      exam_type:'theory',
-      context:`Teacher custom theory question for ${examName} ${subject}.\nGenerate an appropriate model answer and comprehensive marking guide according to official ${examName} examination standards.`,
-      tool_key:'teacher-own-theory-guide'
-    },ownMsg);
+    if(status) status.style.display = 'block';
+    const nonce = Date.now() + '-' + Math.random().toString(36).slice(2);
+    try{
+      const res = await learningRequest({
+        level: cat,
+        class_level: cls,
+        subject: subj,
+        topic: top,
+        task: 'teacher_prep',
+        tool_key: 'teacher-prepare-to-teach',
+        context: 'Comprehensive teaching preparation guide for teacher personal readiness before entering class on ' + cls + ' ' + subj + ' - ' + top + '. Fresh ID: ' + nonce
+      });
+      if(res && res.answer){
+        box.innerHTML =
+          '<div style="margin-bottom:14px;padding:12px 14px;background:#fff8eb;border-left:4px solid #EA580C;border-radius:6px;font-size:0.95rem;color:#7c2d12">' +
+            '<strong>Teacher Professional Note:</strong> Please review and adapt where necessary for your class. Salone Class Room supports the teacher; it does not replace the teacher.' +
+          '</div>' +
+          '<div class="teacher-prep-content" style="line-height:1.65;font-size:1.02rem;white-space:pre-wrap;font-family:inherit">' +
+            safe(res.answer) +
+          '</div>';
+        box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+        showOutput(box, "We couldn't complete this request. Please try again.");
+      }
+    }catch(e){
+      handleLearningError(e, box);
+    }finally{
+      if(status) status.style.display = 'none';
+    }
   });
+
+  // --- TOOL 2: PREPARE LESSON NOTES ACTION ---
+  document.getElementById('prepareTeacherLessonBtn')?.addEventListener('click', async () => {
+    const box = document.getElementById('teacherLessonOutput');
+    const status = document.getElementById('teacherLessonStatus');
+    const cat = category?.value || '';
+    const cls = classSel?.value || '';
+    const subj = (subjectSel?.value || '').trim();
+    const top = ((topicOther?.value || (topicSel?.value === '__other__' ? '' : topicSel?.value) || topicSel?.value || '')).trim();
+    const date = (document.getElementById('teacherPrepDate')?.value || '').trim();
+    const duration = (document.getElementById('teacherPrepDuration')?.value || '').trim();
+
+    if(!cat || !cls || (cat === 'sss' && !streamSel?.value) || !subj || !top || !date || !duration){
+      showOutput(box, 'Please choose the teacher category, class, subject and topic, then add the date and duration.');
+      return;
+    }
+    if(status) status.style.display = 'block';
+    const context = ['Document: Lesson Notes', 'Date: ' + date, 'Duration: ' + duration, 'Prepare practical lesson notes for the selected class, subject and topic.'].join(String.fromCharCode(10));
+    try{
+      const res = await learningRequest({
+        level: cat,
+        class_level: cls,
+        subject: subj,
+        topic: top,
+        task: 'teacher',
+        context,
+        tool_key: 'teacher-lesson-note'
+      });
+      if(res && res.answer){
+        box.innerHTML =
+          '<div style="margin-bottom:14px;padding:12px 14px;background:#fff8eb;border-left:4px solid #EA580C;border-radius:6px;font-size:0.95rem;color:#7c2d12">' +
+            '<strong>Teacher Professional Note:</strong> Please review and adapt where necessary for your class.' +
+          '</div>' +
+          '<div class="teacher-lesson-content" style="line-height:1.65;font-size:1.02rem;white-space:pre-wrap;font-family:inherit">' +
+            safe(res.answer) +
+          '</div>';
+        box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+        showOutput(box, "We couldn't complete this request. Please try again.");
+      }
+    }catch(e){
+      handleLearningError(e, box);
+    }finally{
+      if(status) status.style.display = 'none';
+    }
+  });
+
+  // --- TOOL 3: PREPARE EXAM QUESTIONS ACTION ---
+  let currentExamObjectiveKey = '';
+  let currentExamTheoryQuestions = '';
+
+  document.getElementById('prepareTeacherExamBtn')?.addEventListener('click', async () => {
+    const box = document.getElementById('teacherExamOutput');
+    const status = document.getElementById('teacherExamStatus');
+    const cat = examCategory?.value || '';
+    const cls = examClass?.value || '';
+    const subj = (examSubject?.value || '').trim();
+    const top = ((examTopicOther?.value || (examTopic?.value === '__other__' ? '' : examTopic?.value) || examTopic?.value || '')).trim();
+    const type = (examType?.value || '').trim();
+
+    if(!cat || !cls || (cat === 'sss' && !examStream?.value) || !subj || !top || !type){
+      showOutput(box, 'Please choose the teacher category, class or level, subject, topic and question type.');
+      return;
+    }
+    if(status) status.style.display = 'block';
+    const nonce = Date.now() + '-' + Math.random().toString(36).slice(2);
+    try{
+      if(type === 'objective'){
+        const res = await learningRequest({
+          level: cat,
+          class_level: cls,
+          subject: subj,
+          topic: top,
+          task: 'teacher_exam_objective',
+          exam_type: 'objective',
+          question_count: 10,
+          tool_key: 'teacher-exam-objective',
+          context: 'Generate a NEW set of exactly ten objective multiple-choice examination questions. Number them 1 to 10. Each question must have exactly four options labelled A, B, C and D. Do not mix theory questions with objective questions. Fresh generation ID: ' + nonce
+        });
+        if(res && res.answer){
+          currentExamObjectiveKey = res.answer_key || '';
+          box.innerHTML =
+            '<div style="margin-bottom:14px;padding:12px 14px;background:#fff8eb;border-left:4px solid #EA580C;border-radius:6px;font-size:0.95rem;color:#7c2d12">' +
+              '<strong>Teacher Professional Note:</strong> Please review and adapt where necessary for your class.' +
+            '</div>' +
+            '<div class="exam-questions-rendered" style="white-space:pre-wrap;font-family:inherit;line-height:1.6;font-size:1.02rem">' +
+              safe(res.answer) +
+            '</div>' +
+            '<div style="margin-top:18px">' +
+              '<button type="button" class="btn btn-teachers-action" id="btnShowAnswerKey" onclick="showTeacherAnswerKey()" style="padding:10px 22px;font-weight:700">Generate Answer Key</button>' +
+              '<div id="teacherAnswerKeyContainer" style="display:none;margin-top:14px;padding:16px 20px;background:#f8fafc;border:1.5px solid #cbd6e4;border-radius:10px">' +
+                '<h4 style="margin:0 0 10px;color:#1e3a8a">Answer Key (10 Questions)</h4>' +
+                '<pre style="font-size:1.05rem;line-height:1.7;font-family:monospace;margin:0;white-space:pre-wrap">' + safe(currentExamObjectiveKey || 'Answer key unavailable.') + '</pre>' +
+              '</div>' +
+            '</div>';
+          box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+          showOutput(box, "We couldn't complete this request. Please try again.");
+        }
+      } else {
+        const res = await learningRequest({
+          level: cat,
+          class_level: cls,
+          subject: subj,
+          topic: top,
+          task: 'teacher_exam_theory',
+          exam_type: 'theory',
+          question_count: 5,
+          tool_key: 'teacher-exam-theory',
+          context: 'Generate a NEW set of exactly five theory examination questions only. Number them 1 to 5. Do not mix objective questions or multiple-choice options with theory questions. Fresh generation ID: ' + nonce
+        });
+        if(res && res.answer){
+          currentExamTheoryQuestions = res.answer;
+          box.innerHTML =
+            '<div style="margin-bottom:14px;padding:12px 14px;background:#fff8eb;border-left:4px solid #EA580C;border-radius:6px;font-size:0.95rem;color:#7c2d12">' +
+              '<strong>Teacher Professional Note:</strong> Please review and adapt where necessary for your class.' +
+            '</div>' +
+            '<div class="exam-questions-rendered" style="white-space:pre-wrap;font-family:inherit;line-height:1.6;font-size:1.02rem">' +
+              safe(res.answer) +
+            '</div>' +
+            '<div style="margin-top:18px">' +
+              '<button type="button" class="btn btn-teachers-action" id="btnShowMarkingScheme" onclick="generateTeacherMarkingScheme()" style="padding:10px 22px;font-weight:700">Generate Marking Scheme</button>' +
+              '<div id="teacherMarkingSchemeStatus" style="display:none;font-weight:700;color:#EA580C;margin-top:10px">Preparing marking scheme...</div>' +
+              '<div id="teacherMarkingSchemeContainer" style="display:none;margin-top:14px;padding:16px 20px;background:#f8fafc;border:1.5px solid #cbd6e4;border-radius:10px">' +
+              '</div>' +
+            '</div>';
+          box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+          showOutput(box, "We couldn't complete this request. Please try again.");
+        }
+      }
+    }catch(e){
+      handleLearningError(e, box);
+    }finally{
+      if(status) status.style.display = 'none';
+    }
+  });
+
+  window.showTeacherAnswerKey = function(){
+    const el = document.getElementById('teacherAnswerKeyContainer');
+    if(el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
+  };
+
+  window.generateTeacherMarkingScheme = async function(){
+    const status = document.getElementById('teacherMarkingSchemeStatus');
+    const container = document.getElementById('teacherMarkingSchemeContainer');
+    const btn = document.getElementById('btnShowMarkingScheme');
+    if(container && container.innerHTML.trim()){
+      container.style.display = container.style.display === 'none' ? 'block' : 'none';
+      return;
+    }
+    if(status) status.style.display = 'block';
+    if(btn) btn.disabled = true;
+    try{
+      const res = await learningRequest({
+        level: examCategory?.value || 'primary',
+        class_level: examClass?.value || '',
+        subject: examSubject?.value || '',
+        topic: ((examTopicOther?.value || (examTopic?.value === '__other__' ? '' : examTopic?.value) || examTopic?.value || '')).trim(),
+        task: 'teacher_marking_scheme',
+        tool_key: 'teacher-marking-scheme',
+        context: 'Marking scheme for these 5 theory questions:' + String.fromCharCode(10) + currentExamTheoryQuestions
+      });
+      if(res && res.answer){
+        if(container){
+          container.innerHTML =
+            '<h4 style="margin:0 0 10px;color:#1e3a8a">Theory Examination Marking Scheme</h4>' +
+            '<div style="white-space:pre-wrap;font-family:inherit;line-height:1.6;font-size:1rem">' +
+              safe(res.answer) +
+            '</div>';
+          container.style.display = 'block';
+        }
+      } else {
+        if(container){
+          showOutput(container, "We couldn't complete this request. Please try again.");
+          container.style.display = 'block';
+        }
+      }
+    }catch(e){
+      if(container){
+        handleLearningError(e, container);
+        container.style.display = 'block';
+      }
+    }finally{
+      if(status) status.style.display = 'none';
+      if(btn) btn.disabled = false;
+    }
+  };
+
+  // --- TOOL 4: TEACHERS GUIDE INTERACTIONS ---
+  window.toggleTeacherGuideCard = function(headerEl){
+    const card = headerEl.closest('.teacher-guide-card');
+    if(card) card.classList.toggle('open');
+  };
+
+  window.searchTeachersGuide = function(query){
+    const q = (query || '').toLowerCase().trim();
+    const cards = document.querySelectorAll('.teacher-guide-card');
+    cards.forEach(card => {
+      if(!q){
+        card.style.display = 'block';
+        return;
+      }
+      const title = (card.getAttribute('data-guide-title') || '').toLowerCase();
+      const keywords = (card.getAttribute('data-keywords') || '').toLowerCase();
+      const text = (card.textContent || '').toLowerCase();
+      if(title.includes(q) || keywords.includes(q) || text.includes(q)){
+        card.style.display = 'block';
+        card.classList.add('open');
+      } else {
+        card.style.display = 'none';
+        card.classList.remove('open');
+      }
+    });
+  };
+
 })();
 </script><script>
 (function(){
@@ -3257,16 +3795,16 @@ async function loadLearningProgress(){
  }finally{if(btn){btn.disabled=false;btn.textContent='Refresh my progress'}}
 }
 async function learningRequest(payload){const controller=new AbortController(),tm=setTimeout(()=>controller.abort(),85000);try{const adminToken=sessionStorage.getItem('salone_admin_token')||'',generation_id=Date.now()+'-'+crypto.getRandomValues(new Uint32Array(2)).join('-');const r=await fetch(LEARNING_API,{method:'POST',headers:{'Content-Type':'application/json',...authHeaders(),...(adminToken?{'X-Admin-Token':adminToken}:{})},body:JSON.stringify({...payload,generation_id,device_id:deviceId()}),signal:controller.signal});const d=await r.json().catch(()=>({}));if(!r.ok){const e=new Error(d.error||'Unable to complete this request.');e.code=d.code;e.status=r.status;throw e}return d}finally{clearTimeout(tm)}}
-function handleLearningError(e,box){if(e.name==='AbortError')return showOutput(box,'This request is taking longer than expected. Please try again. If it continues, the AI service may be busy.');if(e.code==='registration_required'){pendingToolAction=null;showAccountTab('register');openAccountModal();return}if(e.code==='payment_required'||e.status===402){openPaymentModal(currentProfile||{category:'university'});return}showOutput(box,e.message||'Something went wrong. Please try again.')}
+function handleLearningError(e,box){if(e.name==='AbortError')return showOutput(box,'This request is taking longer than expected. Please try again.');if(e.code==='registration_required'){pendingToolAction=null;showAccountTab('register');openAccountModal();return}if(e.code==='payment_required'||e.status===402){openPaymentModal(currentProfile||{category:'university'});return}showOutput(box,"We couldn't complete this request. Please try again.")}
 function firstName(){const n=(currentProfile?.full_name||'').trim();return n?n.split(/\s+/)[0]:''}
 function updatePersonalisedWelcomes(){const n=firstName();const suffix=n?', '+n:'';const main=document.getElementById('mainWelcomeName');if(main)main.textContent=suffix;document.querySelectorAll('.section-user-name').forEach(el=>el.textContent=suffix);document.querySelectorAll('.assignment-user-name').forEach(el=>el.textContent=n||'Student')}
 function clearFieldError(el){if(!el)return;el.classList.remove('field-invalid');el.removeAttribute('aria-invalid');const e=el.parentElement?.querySelector('.inline-field-error[data-for="'+el.id+'"]');if(e)e.remove()}
 function flagRequired(el,message){if(!el)return false;el.classList.add('field-invalid');el.setAttribute('aria-invalid','true');let e=el.parentElement?.querySelector('.inline-field-error[data-for="'+el.id+'"]');if(!e){e=document.createElement('div');e.className='inline-field-error';e.dataset.for=el.id;el.insertAdjacentElement('afterend',e)}e.textContent=message||'Please complete this field.';el.scrollIntoView({behavior:'smooth',block:'center'});setTimeout(()=>el.focus({preventScroll:true}),350);return false}
 function requireValue(el,message){clearFieldError(el);return String(el?.value||'').trim()?true:flagRequired(el,message)}
 document.addEventListener('input',e=>{if(e.target.matches('input,textarea,select'))clearFieldError(e.target)});document.addEventListener('change',e=>{if(e.target.matches('input,textarea,select'))clearFieldError(e.target)});
-function personalLead(payload){const n=firstName();if(!n)return '';const t=(payload?.task||'').toLowerCase();if(t==='assignment')return `Thank you, ${n}. Here is your assignment guide.`;if(t==='review')return `Thank you, ${n}. Here is feedback on your answer.`;if(t==='topics')return `${n}, here are research topic suggestions for you.`;if(t==='proposal')return `${n}, here is your proposal framework.`;if(t==='dissertation')return `${n}, here is your dissertation guidance.`;if(t==='defense')return `${n}, here is your dissertation defence preparation guide.`;if(t==='teacher')return `Thank you, ${n}. Here is the teaching support you requested.`;if(t==='teacher_marking_guide')return `Thank you, ${n}. Here is your model answer and marking guide.`;if(t==='mark_theory')return `Thank you, ${n}. Here is your theory assessment and feedback.`;if(t==='teacher_exam'||t==='teacher_exam_objective'||t==='teacher_exam_theory')return `Thank you, ${n}. Here are your examination questions.`;if((payload?.level||'').toLowerCase()==='university'||t==='lecturer')return `Thank you, ${n}. Here is your lecturer-style explanation.`;return `Thank you, ${n}. Here is your lesson explanation.`}
+function personalLead(payload){const n=firstName();if(!n)return '';const t=(payload?.task||'').toLowerCase();if(t==='assignment')return `Thank you, ${n}. Here is your assignment guide.`;if(t==='review')return `Thank you, ${n}. Here is feedback on your answer.`;if(t==='topics')return `${n}, here are research topic suggestions for you.`;if(t==='proposal')return `${n}, here is your proposal framework.`;if(t==='dissertation')return `${n}, here is your dissertation guidance.`;if(t==='defense')return `${n}, here is your dissertation defence preparation guide.`;if(t==='teacher_prep')return `Thank you, ${n}. Here is your teaching preparation guide.`;if(t==='teacher')return `Thank you, ${n}. Here is the teaching support you requested.`;if(t==='teacher_marking_scheme'||t==='teacher_marking_guide')return `Thank you, ${n}. Here is your model answer and marking guide.`;if(t==='mark_theory')return `Thank you, ${n}. Here is your theory assessment and feedback.`;if(t==='teacher_exam'||t==='teacher_exam_objective'||t==='teacher_exam_theory')return `Thank you, ${n}. Here are your examination questions.`;if((payload?.level||'').toLowerCase()==='university'||t==='lecturer')return `Thank you, ${n}. Here is your lecturer-style explanation.`;return `Thank you, ${n}. Here is your lesson explanation.`}
 function personalisedText(payload,text){const lead=personalLead(payload);return lead?lead+'\n\n'+text:text}
-function requestLoadingText(payload){const t=(payload?.task||'').toLowerCase();if(t==='teacher')return 'Preparing your lesson notes…';if(t==='teacher_exam_objective')return 'Generating 10 objective questions…';if(t==='teacher_exam_theory')return 'Generating 5 theory questions…';if(t==='teacher_exam')return (payload?.exam_type||'').toLowerCase()==='objective'?'Generating 10 objective questions…':'Generating 5 theory questions…';if(t==='teacher_marking_guide')return 'Preparing model answer & marking guide…';if(t==='theory_quiz')return 'Generating 3 theory questions…';if(t==='mark_theory')return 'AI is marking your theory answers…';if(t==='explain_wrong_answer')return 'Explaining why this answer is incorrect…';if(t==='topics')return 'Finding suitable research topics…';if(t==='proposal')return 'Preparing your proposal framework…';if(t==='dissertation')return 'Preparing your dissertation guidance…';if(t==='defense')return 'Preparing your dissertation defence guide…';if(t==='review')return 'Reviewing your work…';if(t==='assignment')return 'Preparing your step-by-step assignment guide…';if(t==='lecturer'||(payload?.level||'').toLowerCase()==='university')return 'Preparing your Salone Class Room Lecturer explanation…';return 'Preparing your lesson explanation…'}
+function requestLoadingText(payload){const t=(payload?.task||'').toLowerCase();if(t==='teacher_prep')return 'Preparing your teaching guide…';if(t==='teacher')return 'Preparing your lesson notes…';if(t==='teacher_exam_objective')return 'Generating 10 objective questions…';if(t==='teacher_exam_theory')return 'Generating 5 theory questions…';if(t==='teacher_exam')return (payload?.exam_type||'').toLowerCase()==='objective'?'Generating 10 objective questions…':'Generating 5 theory questions…';if(t==='teacher_marking_scheme'||t==='teacher_marking_guide')return 'Preparing marking scheme…';if(t==='theory_quiz')return 'Generating 3 theory questions…';if(t==='mark_theory')return 'Assessing your answer…';if(t==='explain_wrong_answer')return 'Explaining why this answer is incorrect…';if(t==='topics')return 'Finding suitable research topics…';if(t==='proposal')return 'Preparing your proposal framework…';if(t==='dissertation')return 'Preparing your dissertation guidance…';if(t==='defense')return 'Preparing your dissertation defence guide…';if(t==='review')return 'Reviewing your work…';if(t==='assignment')return 'Preparing your step-by-step assignment guide…';if(t==='lecturer'||(payload?.level||'').toLowerCase()==='university')return 'Preparing your Salone Class Room Lecturer explanation…';return 'Preparing your lesson explanation…'}
 function needsEducationalVisual(payload){const task=(payload.task||'tutor').toLowerCase(),level=(payload.level||'').toLowerCase(),request=[payload.topic,payload.context].filter(Boolean).join(' ');return ['tutor','lecturer'].includes(task)&&['primary','jss','sss','university'].includes(level)&&/\b(map|diagram|draw|drawing|illustrat(?:e|ion)|labelled|labeled|graph|chart|visual|anatomy|life cycle|water cycle|food chain|circuit)\b/i.test(request)}
 async function addEducationalVisual(box,payload,token){if(!needsEducationalVisual(payload)||!token)return;const status=document.createElement('p');status.className='visual-status';status.textContent='Generating the educational visual…';box.appendChild(status);try{const r=await fetch('/.netlify/functions/diagram',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({level:payload.level,subject:payload.subject,topic:payload.topic,token})}),d=await r.json();if(!r.ok)throw Error(d.error||'Unable to generate visual.');const img=document.createElement('img');img.className='answer-visual';img.src=d.image;img.alt=d.alt||'Educational visual';img.loading='lazy';status.replaceWith(img)}catch(e){status.textContent='The explanation is ready, but the requested visual could not be generated right now.'}}
 async function callLearning(payload,box){const n=firstName(),msg=requestLoadingText(payload),previous=box.id?lastLearningAnswers[box.id]:'';showOutput(box,n?msg.replace('…',`, ${n}…`):msg);try{const requestPayload={...payload,...(previous?{previous_response:previous}:{})};const d=await learningRequest(requestPayload),answer=personalisedText(payload,d.answer||'No response was returned. Please try again.');renderLearningAnswer(box,answer,payload);await addEducationalVisual(box,payload,d.diagram_token)}catch(e){handleLearningError(e,box)}}
