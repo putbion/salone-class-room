@@ -1349,6 +1349,34 @@ select:disabled{background-color:#f3f6f9 !important;color:#7a8794 !important;opa
 </style>
 <link href="/manifest.webmanifest" rel="manifest"/>
 <meta content="#0b4f9c" name="theme-color"/>
+
+<style id="critical-field-visibility-fix">
+/* Critical fix: make every typing/choice field unmistakably visible. */
+input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
+select,
+textarea{
+  width:100% !important;
+  border:3px solid #4f687d !important;
+  border-radius:10px !important;
+  background-color:#fff !important;
+  color:#172b3a !important;
+  font-weight:700 !important;
+  min-height:50px !important;
+  box-shadow:0 1px 3px rgba(0,0,0,.10) !important;
+}
+input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):focus,
+select:focus,
+textarea:focus{
+  border-color:#073b8c !important;
+  outline:3px solid rgba(7,59,140,.20) !important;
+  box-shadow:0 0 0 1px #073b8c !important;
+}
+select{
+  cursor:pointer !important;
+  touch-action:manipulation !important;
+}
+</style>
+
 </head>
 <body>
 <div class="topbar">Built for Sierra Leonean learners and teachers • Text-first • Mobile-friendly</div>
@@ -2607,6 +2635,10 @@ function updateDissertationTopics(){
 
     // Standardized MBSSE curriculum topics and authoritative Sierra Leone administrative facts (5 regions, 16 districts, 190 chiefdoms)
     const localTopicLibrary={
+      'Music and Expressive Arts':['Singing and Voice Development','Rhythm, Beat and Tempo','Pitch and Melody','Traditional Sierra Leonean Songs','Musical Instruments and Sound Production','Creative Dance and Movement','Drawing, Colour and Pattern','Painting and Printing','Modelling and Craft Work','Drama, Role Play and Storytelling','Traditional Arts and Crafts of Sierra Leone','Creative Performance and Appreciation'],
+      'Music & Expressive Arts':['Singing and Voice Development','Rhythm, Beat and Tempo','Pitch and Melody','Traditional Sierra Leonean Songs','Musical Instruments and Sound Production','Creative Dance and Movement','Drawing, Colour and Pattern','Painting and Printing','Modelling and Craft Work','Drama, Role Play and Storytelling','Traditional Arts and Crafts of Sierra Leone','Creative Performance and Appreciation'],
+      'Expressive Arts':['Drawing, Colour and Pattern','Painting and Printing','Modelling and Craft Work','Drama and Role Play','Creative Dance and Movement','Singing and Rhythm','Traditional Arts and Crafts of Sierra Leone','Storytelling and Performance','Design and Creative Expression','Art and Cultural Appreciation'],
+      'Music':['Rhythm, Beat and Tempo','Pitch, Melody and Harmony','Voice Training and Singing','Traditional Sierra Leonean Music','Musical Instruments and Classification','Music Notation','Composition and Song Writing','Music Performance','Music Appreciation and Listening','Music in Society and Culture'],
       'English Language':['Nouns and Pronouns','Verbs and Tenses','Adjectives and Adverbs','Prepositions and Conjunctions','Reading Comprehension','Vocabulary Development','Narrative Essay Writing','Descriptive Essay Writing','Expository Essay Writing','Formal and Informal Letter Writing','Summary Writing','Oral English: Vowels and Consonants','Oral English: Stress and Intonation'],
       'Mathematics':['Whole Numbers and Place Value','Fractions, Decimals and Percentages','Ratio, Proportion and Rates','Indices and Logarithms','Algebraic Expressions and Factorisation','Linear and Quadratic Equations','Simultaneous Equations','Geometry: Angles and Polygons','Mensuration: Perimeter, Area and Volume','Trigonometry','Plane Geometry and Circle Theorems','Statistics: Mean, Median, Mode and Frequency','Probability'],
       'Mathematics (including Financial Literacy)':['Whole Numbers and Number Operations','Fractions and Decimals','Percentages and Financial Calculations','Money: Profit, Loss and Simple Interest','Household and Business Budgeting','Measurement: Length, Mass and Capacity','Geometry and Shapes','Data Handling and Bar Charts','Patterns and Simple Equations'],
@@ -2684,6 +2716,9 @@ function updateDissertationTopics(){
       if(lower.includes('social')) return localTopicLibrary['Social Studies'].filter(isCleanCurriculumTopic);
       if(lower.includes('agricult') || lower.includes('farming')) return localTopicLibrary['Agricultural Science'].filter(isCleanCurriculumTopic);
       if(lower.includes('comput') || lower.includes('ict') || lower.includes('technolog')) return localTopicLibrary['ICT'].filter(isCleanCurriculumTopic);
+      if(lower.includes('music') && lower.includes('expressive')) return localTopicLibrary['Music and Expressive Arts'].filter(isCleanCurriculumTopic);
+      if(lower.includes('expressive art')) return localTopicLibrary['Expressive Arts'].filter(isCleanCurriculumTopic);
+      if(lower === 'music' || lower.includes('music as an applied')) return localTopicLibrary['Music'].filter(isCleanCurriculumTopic);
       if(lower.includes('health') || lower.includes('physical')) return localTopicLibrary['Physical and Health Education'].filter(isCleanCurriculumTopic);
       if(lower.includes('relig') || lower.includes('moral')) return localTopicLibrary['Religious and Moral Education'].filter(isCleanCurriculumTopic);
       if(lower.includes('french')) return localTopicLibrary['French'].filter(isCleanCurriculumTopic);
