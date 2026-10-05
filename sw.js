@@ -1,4 +1,4 @@
-const CACHE='salone-class-room-v10';
+const CACHE='salone-class-room-v11';
 const CORE=['/','/index.html','/offline.html','/manifest.webmanifest','/icon-192.png','/icon-512.png'];
 
 self.addEventListener('install',event=>{
@@ -25,6 +25,18 @@ self.addEventListener('fetch',event=>{
   // Open the installed app quickly from its cached shell, then refresh the cache in
   // the background. A new service-worker version replaces this cache on deployment.
   if(request.mode==='navigate'){
+    // Never serve the learner app shell for the admin dashboard.
+    // /admin is resolved by Netlify to /admin.html and must stay network-first.
+    if(url.pathname==='/admin' || url.pathname==='/admin/' || url.pathname==='/admin.html'){
+      event.respondWith(
+        fetch(request, {cache:'no-store'}).catch(async()=>{
+          const cache=await caches.open(CACHE);
+          return (await cache.match('/offline.html')) || Response.error();
+        })
+      );
+      return;
+    }
+
     event.respondWith((async()=>{
       const cache=await caches.open(CACHE);
       const cached=await cache.match('/index.html');
