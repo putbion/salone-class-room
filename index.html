@@ -1259,6 +1259,22 @@ input:focus,select:focus,textarea:focus{
 .answer-body p{margin:.55em 0}.answer-body h4{margin:.85em 0 .35em;color:var(--blue);font-size:1.08rem}.answer-body ul{margin:.4em 0 .7em 1.2em;padding:0}.answer-body li{margin:.25em 0}.answer-body strong{font-weight:800}.answer-visual{display:block;width:min(100%,760px);height:auto;margin:16px auto 4px;border:1px solid #d8e2ee;border-radius:12px;background:#fff}.visual-status{margin-top:12px;color:#526273;font-size:.94rem}.more-detail-btn{margin-top:12px}
 @media(max-width:620px){.output,.teacher-result-note{font-size:1.05rem;line-height:1.7}}
 
+/* V3.12: clearer fields and clean learning-answer presentation */
+input,select,textarea{border:2px solid #9aabba;font-weight:600}
+input::placeholder,textarea::placeholder{font-weight:600;color:#687887;opacity:1}
+select{cursor:pointer;font-weight:700}
+.output{border-left:0 !important;white-space:normal !important}
+.answer-body{border:0 !important;padding-left:0 !important;margin-left:0 !important}
+.answer-body h4{font-weight:850;text-decoration:underline;text-underline-offset:3px}
+.answer-body p{white-space:normal;margin:.6em 0}
+.answer-body ol,.answer-body ul{padding-left:1.55em;margin:.5em 0 .8em}
+.answer-body .alpha-list{list-style-type:lower-alpha}
+.answer-table-wrap{width:100%;overflow-x:auto;margin:12px 0}
+.answer-table{width:100%;border-collapse:collapse;background:#fff;font-size:.96em}
+.answer-table th,.answer-table td{border:1px solid #cbd6e4;padding:9px 10px;text-align:left;vertical-align:top}
+.answer-table th{font-weight:800;background:#eef5fb;color:var(--blue)}
+@media(max-width:620px){input,select,textarea{min-height:48px}.answer-table{font-size:.92em}}
+
 /* V3.11: highly visible dropdown indicator on phones, tablets and computers */
 select{
   -webkit-appearance:none !important;
@@ -4490,9 +4506,34 @@ function cat(c){return({primary:'Primary School Pupil',jss:'JSS Student',sss:'SS
 function authHeaders(){const t=sessionToken();return t?{'Authorization':'Bearer '+t}:{}}
 function showOutput(box,text){box.textContent=text;box.classList.add('show');box.scrollIntoView({behavior:'smooth',block:'nearest'})}
 function formatAIText(text){
-  const esc=safe(String(text||'')).replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>').replace(/^#{1,4}\s*(.+)$/gm,'<h4>$1</h4>');
-  const lines=esc.split(/\n/),out=[];let inList=false;
-  for(const raw of lines){const line=raw.trim();if(/^[-•*]\s+/.test(line)){if(!inList){out.push('<ul>');inList=true}out.push('<li>'+line.replace(/^[-•*]\s+/,'')+'</li>');continue}if(inList){out.push('</ul>');inList=false}if(!line)continue;if(line.startsWith('<h4>'))out.push(line);else out.push('<p>'+line+'</p>')}if(inList)out.push('</ul>');return out.join('')
+  // Clean common Markdown artefacts before presenting educational content.
+  const raw=String(text||'').replace(/\r/g,'').replace(/^\s*>\s?/gm,'').replace(/^\s*[-_=]{3,}\s*$/gm,'');
+  const lines=raw.split('\n'),out=[];
+  let listType='',tableRows=[];
+  const inline=(value)=>safe(value).replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>').replace(/__([^_]+)__/g,'<strong>$1</strong>').replace(/\*([^*\n]+)\*/g,'<em>$1</em>');
+  const closeList=()=>{if(listType){out.push(listType==='ol'?'</ol>':'</ul>');listType=''}};
+  const flushTable=()=>{
+    if(!tableRows.length)return;
+    const rows=tableRows.filter(r=>!r.every(c=>/^:?-{3,}:?$/.test(c.trim())));
+    if(rows.length){out.push('<div class="answer-table-wrap"><table class="answer-table">');rows.forEach((r,i)=>out.push('<tr>'+r.map(c=>(i===0?'<th>':'<td>')+inline(c.trim())+(i===0?'</th>':'</td>')).join('')+'</tr>'));out.push('</table></div>')}
+    tableRows=[];
+  };
+  for(const original of lines){
+    let line=original.trim();
+    if(!line){closeList();flushTable();continue}
+    if(/^\|.*\|$/.test(line)){closeList();tableRows.push(line.slice(1,-1).split('|'));continue}else flushTable();
+    const heading=line.match(/^#{1,6}\s+(.+)$/);if(heading){closeList();out.push('<h4>'+inline(heading[1])+'</h4>');continue}
+    const numbered=line.match(/^(\d+)[.)]\s+(.+)$/);if(numbered){if(listType!=='ol'){closeList();out.push('<ol>');listType='ol'}out.push('<li>'+inline(numbered[2])+'</li>');continue}
+    const lettered=line.match(/^([a-z])[.)]\s+(.+)$/i);if(lettered&&!/^[A-D][.)]\s+/i.test(line)){if(listType!=='ol'){closeList();out.push('<ol class="alpha-list">');listType='ol'}out.push('<li>'+inline(lettered[2])+'</li>');continue}
+    const bullet=line.match(/^[-•*]\s+(.+)$/);if(bullet){if(listType!=='ul'){closeList();out.push('<ul>');listType='ul'}out.push('<li>'+inline(bullet[1])+'</li>');continue}
+    closeList();
+    line=line.replace(/^\*+|\*+$/g,'').trim();
+    if(!line)continue;
+    const label=line.match(/^(Answer|Hint|Activity|Quick quiz(?: question)?|Example|Examples|Theory|Class|Subject|Topic)\s*[:–-]\s*(.*)$/i);
+    if(label)out.push('<p><strong>'+inline(label[1])+':</strong> '+inline(label[2])+'</p>');
+    else out.push('<p>'+inline(line)+'</p>');
+  }
+  closeList();flushTable();return out.join('')
 }
 const lastLearningPayload={};
 const lastLearningAnswers={};
