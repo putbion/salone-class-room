@@ -1320,6 +1320,16 @@ select:disabled{background-color:#f3f6f9 !important;color:#7a8794 !important;opa
 .theory-answer-box{width:100%;box-sizing:border-box;margin-top:8px;border:1.5px solid #cbd6e4;border-radius:10px;padding:12px;font-family:inherit;font-size:0.98rem;line-height:1.5;background:#ffffff;color:#1e293b;resize:vertical}
 .theory-answer-box:focus{outline:none;border-color:#0a5acb;box-shadow:0 0 0 3px rgba(10,90,203,0.15)}
 .theory-answer-box:disabled{background:#f8fafc;color:#475467}
+
+.unanswered-highlight {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.35) !important;
+  transition: all 0.3s ease;
+}
+.classroom-interactive-tip {
+  animation: fadeIn 0.3s ease;
+}
+
 </style>
 <link href="/manifest.webmanifest" rel="manifest"/>
 <meta content="#0b4f9c" name="theme-color"/>
@@ -1491,7 +1501,7 @@ select:disabled{background-color:#f3f6f9 !important;color:#7a8794 !important;opa
 <label for="primaryPracticeTopicSelect">Type or choose your topic</label>
 <select data-class-id="primaryPracticeClass" data-subject-id="primaryPracticeSubject" data-topic-level="primary" id="primaryPracticeTopicSelect"><option value="">Choose class and subject first</option></select>
 <input id="primaryPracticeTopic" placeholder="Or type your own topic or question" type="text"/>
-<p class="topic-help">Choose a listed topic or type your own topic. If left blank, questions will be mixed from the subject.</p>
+<p class="topic-help">Choose a listed curriculum topic or type your own topic below.</p>
 <button class="btn btn-primary-action" id="primaryClassPracticeBtn" onclick="startPractice('primary_class')" type="button">Generate Practice Questions</button>
 <div aria-live="polite" class="quiz-area" id="primaryClassQuizArea"></div>
 </article>
@@ -1517,7 +1527,7 @@ select:disabled{background-color:#f3f6f9 !important;color:#7a8794 !important;opa
 <option>Verbal Aptitude</option>
 <option>General Paper</option>
 </select>
-<label for="npseTopicSelect">Type or choose your topic (optional)</label><select data-class-fixed="Class 6" data-subject-id="npseSubject" data-topic-level="primary" id="npseTopicSelect"><option value="">Choose a paper first</option></select><input id="npseTopic" placeholder="Or type your own topic" type="text"/><p class="topic-help">Choose a listed topic or type your own topic below. Topic is optional for exam practice.</p>
+<label for="npseTopicSelect">Type or choose your topic</label><select data-class-fixed="Class 6" data-subject-id="npseSubject" data-topic-level="primary" id="npseTopicSelect"><option value="">Choose a paper first</option></select><input id="npseTopic" placeholder="Or type your own topic" type="text"/><p class="topic-help">Choose a listed curriculum topic or type your own topic below.</p>
 <button class="btn btn-primary-action" id="npsePracticeBtn" onclick="startPractice('primary')" type="button">Generate Questions</button>
 <div aria-live="polite" class="quiz-area" id="npseQuizArea"></div>
 </article>
@@ -1639,7 +1649,7 @@ select:disabled{background-color:#f3f6f9 !important;color:#7a8794 !important;opa
 <label for="jssPracticeTopicSelect">Type or choose your topic</label>
 <select data-class-id="jssPracticeClass" data-subject-id="jssPracticeSubject" data-topic-level="jss" id="jssPracticeTopicSelect"><option value="">Choose class and subject first</option></select>
 <input id="jssPracticeTopic" placeholder="Or type your own topic" type="text"/>
-<p class="topic-help">Choose a listed topic or type your own topic. If left blank, questions will be mixed from the subject.</p>
+<p class="topic-help">Choose a listed curriculum topic or type your own topic below.</p>
 <button class="btn btn-jss-action" id="jssClassPracticeBtn" onclick="startPractice('jss_class')" type="button">Generate Practice Questions</button>
 <div aria-live="polite" class="quiz-area" id="jssClassQuiz"></div>
 </article>
@@ -1652,7 +1662,7 @@ select:disabled{background-color:#f3f6f9 !important;color:#7a8794 !important;opa
 <option value="theory">Theory</option>
 </select>
 <label>Subject</label><select data-jss-subject="" id="jssQuizSubject"><option value="">Select subject</option><option value="English Language">English Language</option><option value="Mathematics">Mathematics</option><option value="Integrated Science">Integrated Science</option><option value="Social Studies">Social Studies</option><option value="Civic Education">Civic Education</option><option value="Agricultural Science">Agricultural Science</option><option value="Business Studies">Business Studies</option><option value="Religious and Moral Education">Religious and Moral Education</option><option value="Physical and Health Education">Physical and Health Education</option><option value="Creative Practical Arts">Creative Practical Arts</option><option value="Information and Communication Technology (ICT)">Information and Communication Technology (ICT)</option><option value="French">French</option><option value="Krio">Krio</option></select>
-<label>Type or choose your topic (optional)</label><select data-subject-id="jssQuizSubject" data-topic-level="jss" id="jssQuizTopicSelect"><option value="">Choose a subject first</option></select><input id="jssQuizTopic" placeholder="Or type your own topic"/><p class="topic-help">Choose a listed topic or type your own topic. If you leave it blank, questions will be mixed from the selected subject.</p>
+<label>Type or choose your topic</label><select data-subject-id="jssQuizSubject" data-topic-level="jss" id="jssQuizTopicSelect"><option value="">Choose a subject first</option></select><input id="jssQuizTopic" placeholder="Or type your own topic"/><p class="topic-help">Choose a listed curriculum topic or type your own topic below.</p>
 <button class="btn btn-jss-action" id="jssPracticeBtn" onclick="startPractice('jss')" type="button">Generate Questions</button>
 <div class="output" id="jssQuiz"></div>
 </article>
@@ -1741,9 +1751,9 @@ select:disabled{background-color:#f3f6f9 !important;color:#7a8794 !important;opa
 <ul>
 <li>SSS Text Tutor</li>
 <li>SSS Assignment Learning Guide</li>
+<li>SSS Class Practice (SSS 1–2)</li>
 <li>WASSCE Practice</li>
 <li>WASSCE Essay Questions &amp; Answer Reviewer</li>
-<li>SSS 1–2 Practice</li>
 <li>WASSCE Exam Success Guide</li>
 </ul>
 <p class="section-ribbon-description section-summary-under-welcome">Support for SSS students to understand difficult topics, practise class curriculum and WASSCE questions, and improve examination readiness.</p>
@@ -1751,45 +1761,7 @@ select:disabled{background-color:#f3f6f9 !important;color:#7a8794 !important;opa
 <div class="grid">
 <article class="card" id="sssTutorCard"><span class="step">1</span><span class="tool-badge badge-sss">SSS • Classes 1–3</span><h3>SSS Text Tutor</h3><p class="guide">Choose your class and subject, type the word or topic you do not understand, then click the button for an explanation based on that subject.</p><div class="row"><div><label>Class</label><select id="sssClass"><option>SSS 1</option><option>SSS 2</option><option>SSS 3</option></select></div><div><label>Stream (optional)</label><select data-sss-stream="" data-target="sssSubject" id="sssStream"><option value="">Select stream</option><option value="Sciences &amp; Technologies">Sciences &amp; Technologies</option><option value="Mathematics &amp; Numeracy">Mathematics &amp; Numeracy</option><option value="Economics, Business &amp; Entrepreneurial Studies">Economics, Business &amp; Entrepreneurial Studies</option><option value="Languages &amp; Literatures">Languages &amp; Literatures</option><option value="Social &amp; Cultural Studies">Social &amp; Cultural Studies</option></select></div></div><label>Subject</label><select id="sssSubject"><option value="">Select subject</option><option value="Integrated Science">Integrated Science</option><option value="Biology">Biology</option><option value="Chemistry">Chemistry</option><option value="Computer Science">Computer Science</option><option value="Agricultural Science">Agricultural Science</option><option value="ICT">ICT</option><option value="Robotics">Robotics</option><option value="Physics">Physics</option><option value="Environmental Science">Environmental Science</option><option value="Health Sciences">Health Sciences</option><option value="Food Security">Food Security</option><option value="Engineering Science">Engineering Science</option><option value="Physical Health Education">Physical Health Education</option><option value="Climate Change Awareness, Preparedness and Resilience">Climate Change Awareness, Preparedness and Resilience</option><option value="Adolescent Health and Life Skills">Adolescent Health and Life Skills</option><option value="Computer Literacy">Computer Literacy</option><option value="Popular Science">Popular Science</option><option value="Fundamentals of Mathematics">Fundamentals of Mathematics</option><option value="Further Mathematics">Further Mathematics</option><option value="Statistics and Probability">Statistics and Probability</option><option value="Calculus">Calculus</option><option value="Mathematics for Business and Enterprise">Mathematics for Business and Enterprise</option><option value="Applications of Mathematics for Coding">Applications of Mathematics for Coding</option><option value="Mathematics for STEAMM">Mathematics for STEAMM</option><option value="Computer Mathematics">Computer Mathematics</option><option value="Mathematics in Other Disciplines">Mathematics in Other Disciplines</option><option value="Introductory Statistics and Probability">Introductory Statistics and Probability</option><option value="Functional Mathematics">Functional Mathematics</option><option value="Principles of Economics">Principles of Economics</option><option value="Entrepreneurship">Entrepreneurship</option><option value="Principles of Accounting">Principles of Accounting</option><option value="Business Management Studies">Business Management Studies</option><option value="Principles of Commerce">Principles of Commerce</option><option value="Principles of Marketing">Principles of Marketing</option><option value="Business Accounting">Business Accounting</option><option value="Clerical Office Studies">Clerical Office Studies</option><option value="Insurance Management">Insurance Management</option><option value="Business Economics">Business Economics</option><option value="Business and Society">Business and Society</option><option value="Customer Relationship Management">Customer Relationship Management</option><option value="Micro Small and Medium Enterprise Management">Micro Small and Medium Enterprise Management</option><option value="Business Ethics">Business Ethics</option><option value="English Language">English Language</option><option value="African Literature">African Literature</option><option value="English Literature">English Literature</option><option value="French as a Foreign Language">French as a Foreign Language</option><option value="Sierra Leonean Literature">Sierra Leonean Literature</option><option value="Mende Language">Mende Language</option><option value="Kathemne Language">Kathemne Language</option><option value="Hulimba Language">Hulimba Language</option><option value="Krio Language">Krio Language</option><option value="Creative Writing">Creative Writing</option><option value="Business English">Business English</option><option value="French for Tourism">French for Tourism</option><option value="Technical Writing">Technical Writing</option><option value="English for STEAMM">English for STEAMM</option><option value="French for Business and Marketing">French for Business and Marketing</option><option value="Everyday Basic French">Everyday Basic French</option><option value="Popular Literature Appreciation">Popular Literature Appreciation</option><option value="Arabic Language">Arabic Language</option><option value="Fula">Fula</option><option value="Sierra Leone History">Sierra Leone History</option><option value="African History">African History</option><option value="Geography">Geography</option><option value="Music">Music</option><option value="Dance and Drama Studies">Dance and Drama Studies</option><option value="Politics and Governance">Politics and Governance</option><option value="Social Studies and Civics">Social Studies and Civics</option><option value="Religious and Moral Education">Religious and Moral Education</option><option value="Geography and the Environment">Geography and the Environment</option><option value="Music as an Applied Subject">Music as an Applied Subject</option><option value="Entertainment Industry">Entertainment Industry</option><option value="Derivatives of Religious and Moral Education">Derivatives of Religious and Moral Education</option><option value="Dance Performance and Appreciation">Dance Performance and Appreciation</option><option value="Mining Industry and the Environment">Mining Industry and the Environment</option><option value="Fishing Industry and the Environment">Fishing Industry and the Environment</option><option value="Tourism and Conservation">Tourism and Conservation</option><option value="Living with Religious and Moral Education">Living with Religious and Moral Education</option></select><label>Type or choose your topic</label><select data-class-id="sssClass" data-subject-id="sssSubject" data-topic-level="sss" id="sssTopicSelect"><option value="">Choose class and subject first</option></select><input id="sssTopic" placeholder="Or type your own topic"/><p class="topic-help">Choose a curriculum topic, or select Other to type your own.</p><button class="btn btn-sss-action" onclick="curriculumExplain('sss','sssClass','sssSubject','sssTopicSelect','sssTutor','sssTopic')">Click here for your explanation</button><div class="output" id="sssTutor"></div></article>
 <article class="card" id="sssAssignmentCard"><span class="step">2</span><span class="tool-badge badge-sss">SSS • Homework Support</span><h3>SSS Assignment Learning Guide</h3><p class="guide assignment-personal-question"><span class="assignment-user-name">Student</span>, were you given an assignment today? Choose your subject and type the assignment.</p><label for="sssAssignmentSubject">Choose your subject</label><select id="sssAssignmentSubject"><option value="">Select subject</option><option value="Integrated Science">Integrated Science</option><option value="Biology">Biology</option><option value="Chemistry">Chemistry</option><option value="Computer Science">Computer Science</option><option value="Agricultural Science">Agricultural Science</option><option value="ICT">ICT</option><option value="Robotics">Robotics</option><option value="Physics">Physics</option><option value="Environmental Science">Environmental Science</option><option value="Health Sciences">Health Sciences</option><option value="Food Security">Food Security</option><option value="Engineering Science">Engineering Science</option><option value="Physical Health Education">Physical Health Education</option><option value="Climate Change Awareness, Preparedness and Resilience">Climate Change Awareness, Preparedness and Resilience</option><option value="Adolescent Health and Life Skills">Adolescent Health and Life Skills</option><option value="Computer Literacy">Computer Literacy</option><option value="Popular Science">Popular Science</option><option value="Fundamentals of Mathematics">Fundamentals of Mathematics</option><option value="Further Mathematics">Further Mathematics</option><option value="Statistics and Probability">Statistics and Probability</option><option value="Calculus">Calculus</option><option value="Mathematics for Business and Enterprise">Mathematics for Business and Enterprise</option><option value="Applications of Mathematics for Coding">Applications of Mathematics for Coding</option><option value="Mathematics for STEAMM">Mathematics for STEAMM</option><option value="Computer Mathematics">Computer Mathematics</option><option value="Mathematics in Other Disciplines">Mathematics in Other Disciplines</option><option value="Introductory Statistics and Probability">Introductory Statistics and Probability</option><option value="Functional Mathematics">Functional Mathematics</option><option value="Principles of Economics">Principles of Economics</option><option value="Entrepreneurship">Entrepreneurship</option><option value="Principles of Accounting">Principles of Accounting</option><option value="Business Management Studies">Business Management Studies</option><option value="Principles of Commerce">Principles of Commerce</option><option value="Principles of Marketing">Principles of Marketing</option><option value="Business Accounting">Business Accounting</option><option value="Clerical Office Studies">Clerical Office Studies</option><option value="Insurance Management">Insurance Management</option><option value="Business Economics">Business Economics</option><option value="Business and Society">Business and Society</option><option value="Customer Relationship Management">Customer Relationship Management</option><option value="Micro Small and Medium Enterprise Management">Micro Small and Medium Enterprise Management</option><option value="Business Ethics">Business Ethics</option><option value="English Language">English Language</option><option value="African Literature">African Literature</option><option value="English Literature">English Literature</option><option value="French as a Foreign Language">French as a Foreign Language</option><option value="Sierra Leonean Literature">Sierra Leonean Literature</option><option value="Mende Language">Mende Language</option><option value="Kathemne Language">Kathemne Language</option><option value="Hulimba Language">Hulimba Language</option><option value="Krio Language">Krio Language</option><option value="Creative Writing">Creative Writing</option><option value="Business English">Business English</option><option value="French for Tourism">French for Tourism</option><option value="Technical Writing">Technical Writing</option><option value="English for STEAMM">English for STEAMM</option><option value="French for Business and Marketing">French for Business and Marketing</option><option value="Everyday Basic French">Everyday Basic French</option><option value="Popular Literature Appreciation">Popular Literature Appreciation</option><option value="Arabic Language">Arabic Language</option><option value="Fula">Fula</option><option value="Sierra Leone History">Sierra Leone History</option><option value="African History">African History</option><option value="Geography">Geography</option><option value="Music">Music</option><option value="Dance and Drama Studies">Dance and Drama Studies</option><option value="Politics and Governance">Politics and Governance</option><option value="Social Studies and Civics">Social Studies and Civics</option><option value="Religious and Moral Education">Religious and Moral Education</option><option value="Geography and the Environment">Geography and the Environment</option><option value="Music as an Applied Subject">Music as an Applied Subject</option><option value="Entertainment Industry">Entertainment Industry</option><option value="Derivatives of Religious and Moral Education">Derivatives of Religious and Moral Education</option><option value="Dance Performance and Appreciation">Dance Performance and Appreciation</option><option value="Mining Industry and the Environment">Mining Industry and the Environment</option><option value="Fishing Industry and the Environment">Fishing Industry and the Environment</option><option value="Tourism and Conservation">Tourism and Conservation</option><option value="Living with Religious and Moral Education">Living with Religious and Moral Education</option></select><label>Type the assignment given to you</label><textarea id="sssAssignment" placeholder="Type the assignment given to you here"></textarea><button class="btn btn-sss-action" onclick="sssAssignmentGuide()">Click here for your step-by-step guide</button><div class="output" id="sssGuide"></div></article>
-<article class="card" id="wasscePracticeCard"><span class="step">3</span><span class="tool-badge badge-sss">SSS • Class 3 / WASSCE</span><h3>WASSCE Practice</h3>
-<p class="guide"><strong>Let’s practise questions.</strong> Choose question type (Objective or Theory), select your stream if necessary, select your subject and type the topic you want to practise.</p>
-<label for="sssQuizType">Choose Question Type</label>
-<select id="sssQuizType" onchange="updatePracticeBtnText('sss')">
-<option value="">Choose Question Type</option>
-<option value="objective">Objective</option>
-<option value="theory">Theory</option>
-</select>
-<label>Stream (optional)</label><select data-sss-stream="" data-target="sssQuizSubject" id="sssQuizStream"><option value="">Select stream</option><option value="Sciences &amp; Technologies">Sciences &amp; Technologies</option><option value="Mathematics &amp; Numeracy">Mathematics &amp; Numeracy</option><option value="Economics, Business &amp; Entrepreneurial Studies">Economics, Business &amp; Entrepreneurial Studies</option><option value="Languages &amp; Literatures">Languages &amp; Literatures</option><option value="Social &amp; Cultural Studies">Social &amp; Cultural Studies</option></select>
-<label>Subject</label><select id="sssQuizSubject"><option value="">Select subject</option><option value="Integrated Science">Integrated Science</option><option value="Biology">Biology</option><option value="Chemistry">Chemistry</option><option value="Computer Science">Computer Science</option><option value="Agricultural Science">Agricultural Science</option><option value="ICT">ICT</option><option value="Robotics">Robotics</option><option value="Physics">Physics</option><option value="Environmental Science">Environmental Science</option><option value="Health Sciences">Health Sciences</option><option value="Food Security">Food Security</option><option value="Engineering Science">Engineering Science</option><option value="Physical Health Education">Physical Health Education</option><option value="Climate Change Awareness, Preparedness and Resilience">Climate Change Awareness, Preparedness and Resilience</option><option value="Adolescent Health and Life Skills">Adolescent Health and Life Skills</option><option value="Computer Literacy">Computer Literacy</option><option value="Popular Science">Popular Science</option><option value="Fundamentals of Mathematics">Fundamentals of Mathematics</option><option value="Further Mathematics">Further Mathematics</option><option value="Statistics and Probability">Statistics and Probability</option><option value="Calculus">Calculus</option><option value="Mathematics for Business and Enterprise">Mathematics for Business and Enterprise</option><option value="Applications of Mathematics for Coding">Applications of Mathematics for Coding</option><option value="Mathematics for STEAMM">Mathematics for STEAMM</option><option value="Computer Mathematics">Computer Mathematics</option><option value="Mathematics in Other Disciplines">Mathematics in Other Disciplines</option><option value="Introductory Statistics and Probability">Introductory Statistics and Probability</option><option value="Functional Mathematics">Functional Mathematics</option><option value="Principles of Economics">Principles of Economics</option><option value="Entrepreneurship">Entrepreneurship</option><option value="Principles of Accounting">Principles of Accounting</option><option value="Business Management Studies">Business Management Studies</option><option value="Principles of Commerce">Principles of Commerce</option><option value="Principles of Marketing">Principles of Marketing</option><option value="Business Accounting">Business Accounting</option><option value="Clerical Office Studies">Clerical Office Studies</option><option value="Insurance Management">Insurance Management</option><option value="Business Economics">Business Economics</option><option value="Business and Society">Business and Society</option><option value="Customer Relationship Management">Customer Relationship Management</option><option value="Micro Small and Medium Enterprise Management">Micro Small and Medium Enterprise Management</option><option value="Business Ethics">Business Ethics</option><option value="English Language">English Language</option><option value="African Literature">African Literature</option><option value="English Literature">English Literature</option><option value="French as a Foreign Language">French as a Foreign Language</option><option value="Sierra Leonean Literature">Sierra Leonean Literature</option><option value="Mende Language">Mende Language</option><option value="Kathemne Language">Kathemne Language</option><option value="Hulimba Language">Hulimba Language</option><option value="Krio Language">Krio Language</option><option value="Creative Writing">Creative Writing</option><option value="Business English">Business English</option><option value="French for Tourism">French for Tourism</option><option value="Technical Writing">Technical Writing</option><option value="English for STEAMM">English for STEAMM</option><option value="French for Business and Marketing">French for Business and Marketing</option><option value="Everyday Basic French">Everyday Basic French</option><option value="Popular Literature Appreciation">Popular Literature Appreciation</option><option value="Arabic Language">Arabic Language</option><option value="Fula">Fula</option><option value="Sierra Leone History">Sierra Leone History</option><option value="African History">African History</option><option value="Geography">Geography</option><option value="Music">Music</option><option value="Dance and Drama Studies">Dance and Drama Studies</option><option value="Politics and Governance">Politics and Governance</option><option value="Social Studies and Civics">Social Studies and Civics</option><option value="Religious and Moral Education">Religious and Moral Education</option><option value="Geography and the Environment">Geography and the Environment</option><option value="Music as an Applied Subject">Music as an Applied Subject</option><option value="Entertainment Industry">Entertainment Industry</option><option value="Derivatives of Religious and Moral Education">Derivatives of Religious and Moral Education</option><option value="Dance Performance and Appreciation">Dance Performance and Appreciation</option><option value="Mining Industry and the Environment">Mining Industry and the Environment</option><option value="Fishing Industry and the Environment">Fishing Industry and the Environment</option><option value="Tourism and Conservation">Tourism and Conservation</option><option value="Living with Religious and Moral Education">Living with Religious and Moral Education</option></select>
-<label>Type or choose your topic (optional)</label><select data-subject-id="sssQuizSubject" data-topic-level="sss" id="sssQuizTopicSelect"><option value="">Choose a subject first</option></select><input id="sssQuizTopic" placeholder="Or type your own topic"/><p class="topic-help">Topics are listed from the curriculum database across SSS 1–3.</p>
-<button class="btn btn-sss-action" id="sssPracticeBtn" onclick="startPractice('sss')" type="button">Generate Questions</button>
-<div class="output" id="sssQuiz"></div>
-</article>
-<article class="card" id="wassceEssayCard"><span class="step">4</span><span class="tool-badge badge-sss">SSS • Essay Support</span><h3>WASSCE Essay Questions &amp; Answer Reviewer</h3><div class="essay-review-guide tool-use-guide">
-<strong>How to use this WASSCE reviewer</strong>
-<p>
-    Choose the WASSCE subject first. Then type or paste the essay, passage, source material or structured question content,
-    followed by the exact question and the answer written by the student.
-  </p>
-<p>
-    The reviewer will compare the source material, the question and the student's answer. It will identify what was answered
-    correctly, what is missing or inaccurate, and then provide a clearer suggested answer for learning and revision.
-  </p>
-</div><div class="essay-review-fields">
-<label for="wassceEssaySubject">WASSCE subject</label>
-<select id="wassceEssaySubject"><option value="">Select subject</option><option>Agricultural Science</option><option>Biology</option><option>Business Management</option><option>Chemistry</option><option>Christian Religious Studies</option><option>Civic Education</option><option>Commerce</option><option>Economics</option><option>English Language</option><option>Geography</option><option>Government</option><option>Health Science</option><option>History</option><option>Home Management</option><option>Islamic Studies</option><option>Literature-in-English</option><option>Mathematics</option><option>Physical Education</option><option>Physics</option><option>Principles of Cost Accounting</option><option>Technical Drawing</option><option>Visual Arts</option></select><p class="waec-sl-note">The subjects in this list are official WASSCE subjects for Sierra Leone candidates. This reviewer is intended for essay, theory, structured or extended-response questions.</p>
-<label for="essayPassageInput">Essay, passage or source material</label>
-<textarea id="essayPassageInput" placeholder="Type or paste the essay, passage, source material, case study or other information connected to the question" rows="10"></textarea>
-<label for="essayQuestionInput">Question</label>
-<textarea id="essayQuestionInput" placeholder="Type the exact WASSCE-style essay or structured question here" rows="5"></textarea>
-<label for="essayAnswerInput">Student's answer</label>
-<textarea id="essayAnswerInput" placeholder="Type or paste the student's answer here" rows="8"></textarea>
-<button class="btn btn-sss-action" id="reviewEssayAnswerBtn" type="button">
-    Click here to compare and get the correct answer
-  </button>
-<div aria-live="polite" class="teacher-result-note" id="essayReviewMessage"></div>
-</div><p class="guide">Paste your own draft to receive feedback on clarity, structure, grammar and missing ideas.</p><button class="btn btn-sss-action" onclick="demoResult('sssReview','writing feedback')">Click here for feedback on your writing</button><div class="output" id="sssReview"></div></article>
-<article class="card sss-class-practice-card" id="sssClassPracticeCard"><span class="step">5</span><span class="tool-badge badge-sss">SSS • Classes 1–2</span><h3>SSS Class Practice (SSS 1–2)</h3>
+<article class="card sss-class-practice-card" id="sssClassPracticeCard"><span class="step">3</span><span class="tool-badge badge-sss">SSS • Classes 1–2</span><h3>SSS Class Practice (SSS 1–2)</h3>
 <p class="guide">Practise theory questions for your normal class level. Select SSS 1 or SSS 2, choose your stream, subject, topic, and click Generate Practice Questions.</p>
 <div class="row">
 <div>
@@ -1819,11 +1791,49 @@ select:disabled{background-color:#f3f6f9 !important;color:#7a8794 !important;opa
 <label for="sssPracticeTopicSelect">Type or choose your topic</label>
 <select data-class-id="sssPracticeClass" data-subject-id="sssPracticeSubject" data-topic-level="sss" id="sssPracticeTopicSelect"><option value="">Choose class and subject first</option></select>
 <input id="sssPracticeTopic" placeholder="Or type your own topic" type="text"/>
-<p class="topic-help">Choose a listed topic or type your own topic. If left blank, questions will be mixed from the subject.</p>
+<p class="topic-help">Choose a listed curriculum topic or type your own topic below.</p>
 
 <button class="btn btn-sss-action" id="sssClassPracticeBtn" onclick="startPractice('sss_class')" type="button">Generate Practice Questions</button>
 <div aria-live="polite" class="quiz-area" id="sssClassQuiz"></div>
 </article>
+<article class="card" id="wasscePracticeCard"><span class="step">4</span><span class="tool-badge badge-sss">SSS • Class 3 / WASSCE</span><h3>WASSCE Practice</h3>
+<p class="guide"><strong>Let’s practise questions.</strong> Choose question type (Objective or Theory), select your stream if necessary, select your subject and type the topic you want to practise.</p>
+<label for="sssQuizType">Choose Question Type</label>
+<select id="sssQuizType" onchange="updatePracticeBtnText('sss')">
+<option value="">Choose Question Type</option>
+<option value="objective">Objective</option>
+<option value="theory">Theory</option>
+</select>
+<label>Stream (optional)</label><select data-sss-stream="" data-target="sssQuizSubject" id="sssQuizStream"><option value="">Select stream</option><option value="Sciences &amp; Technologies">Sciences &amp; Technologies</option><option value="Mathematics &amp; Numeracy">Mathematics &amp; Numeracy</option><option value="Economics, Business &amp; Entrepreneurial Studies">Economics, Business &amp; Entrepreneurial Studies</option><option value="Languages &amp; Literatures">Languages &amp; Literatures</option><option value="Social &amp; Cultural Studies">Social &amp; Cultural Studies</option></select>
+<label>Subject</label><select id="sssQuizSubject"><option value="">Select subject</option><option value="Integrated Science">Integrated Science</option><option value="Biology">Biology</option><option value="Chemistry">Chemistry</option><option value="Computer Science">Computer Science</option><option value="Agricultural Science">Agricultural Science</option><option value="ICT">ICT</option><option value="Robotics">Robotics</option><option value="Physics">Physics</option><option value="Environmental Science">Environmental Science</option><option value="Health Sciences">Health Sciences</option><option value="Food Security">Food Security</option><option value="Engineering Science">Engineering Science</option><option value="Physical Health Education">Physical Health Education</option><option value="Climate Change Awareness, Preparedness and Resilience">Climate Change Awareness, Preparedness and Resilience</option><option value="Adolescent Health and Life Skills">Adolescent Health and Life Skills</option><option value="Computer Literacy">Computer Literacy</option><option value="Popular Science">Popular Science</option><option value="Fundamentals of Mathematics">Fundamentals of Mathematics</option><option value="Further Mathematics">Further Mathematics</option><option value="Statistics and Probability">Statistics and Probability</option><option value="Calculus">Calculus</option><option value="Mathematics for Business and Enterprise">Mathematics for Business and Enterprise</option><option value="Applications of Mathematics for Coding">Applications of Mathematics for Coding</option><option value="Mathematics for STEAMM">Mathematics for STEAMM</option><option value="Computer Mathematics">Computer Mathematics</option><option value="Mathematics in Other Disciplines">Mathematics in Other Disciplines</option><option value="Introductory Statistics and Probability">Introductory Statistics and Probability</option><option value="Functional Mathematics">Functional Mathematics</option><option value="Principles of Economics">Principles of Economics</option><option value="Entrepreneurship">Entrepreneurship</option><option value="Principles of Accounting">Principles of Accounting</option><option value="Business Management Studies">Business Management Studies</option><option value="Principles of Commerce">Principles of Commerce</option><option value="Principles of Marketing">Principles of Marketing</option><option value="Business Accounting">Business Accounting</option><option value="Clerical Office Studies">Clerical Office Studies</option><option value="Insurance Management">Insurance Management</option><option value="Business Economics">Business Economics</option><option value="Business and Society">Business and Society</option><option value="Customer Relationship Management">Customer Relationship Management</option><option value="Micro Small and Medium Enterprise Management">Micro Small and Medium Enterprise Management</option><option value="Business Ethics">Business Ethics</option><option value="English Language">English Language</option><option value="African Literature">African Literature</option><option value="English Literature">English Literature</option><option value="French as a Foreign Language">French as a Foreign Language</option><option value="Sierra Leonean Literature">Sierra Leonean Literature</option><option value="Mende Language">Mende Language</option><option value="Kathemne Language">Kathemne Language</option><option value="Hulimba Language">Hulimba Language</option><option value="Krio Language">Krio Language</option><option value="Creative Writing">Creative Writing</option><option value="Business English">Business English</option><option value="French for Tourism">French for Tourism</option><option value="Technical Writing">Technical Writing</option><option value="English for STEAMM">English for STEAMM</option><option value="French for Business and Marketing">French for Business and Marketing</option><option value="Everyday Basic French">Everyday Basic French</option><option value="Popular Literature Appreciation">Popular Literature Appreciation</option><option value="Arabic Language">Arabic Language</option><option value="Fula">Fula</option><option value="Sierra Leone History">Sierra Leone History</option><option value="African History">African History</option><option value="Geography">Geography</option><option value="Music">Music</option><option value="Dance and Drama Studies">Dance and Drama Studies</option><option value="Politics and Governance">Politics and Governance</option><option value="Social Studies and Civics">Social Studies and Civics</option><option value="Religious and Moral Education">Religious and Moral Education</option><option value="Geography and the Environment">Geography and the Environment</option><option value="Music as an Applied Subject">Music as an Applied Subject</option><option value="Entertainment Industry">Entertainment Industry</option><option value="Derivatives of Religious and Moral Education">Derivatives of Religious and Moral Education</option><option value="Dance Performance and Appreciation">Dance Performance and Appreciation</option><option value="Mining Industry and the Environment">Mining Industry and the Environment</option><option value="Fishing Industry and the Environment">Fishing Industry and the Environment</option><option value="Tourism and Conservation">Tourism and Conservation</option><option value="Living with Religious and Moral Education">Living with Religious and Moral Education</option></select>
+<label>Type or choose your topic</label><select data-subject-id="sssQuizSubject" data-topic-level="sss" id="sssQuizTopicSelect"><option value="">Choose a subject first</option></select><input id="sssQuizTopic" placeholder="Or type your own topic"/><p class="topic-help">Topics are listed from the curriculum database across SSS 1–3.</p>
+<button class="btn btn-sss-action" id="sssPracticeBtn" onclick="startPractice('sss')" type="button">Generate Questions</button>
+<div class="output" id="sssQuiz"></div>
+</article>
+<article class="card" id="wassceEssayCard"><span class="step">5</span><span class="tool-badge badge-sss">SSS • Essay Support</span><h3>WASSCE Essay Questions &amp; Answer Reviewer</h3><div class="essay-review-guide tool-use-guide">
+<strong>How to use this WASSCE reviewer</strong>
+<p>
+    Choose the WASSCE subject first. Then type or paste the essay, passage, source material or structured question content,
+    followed by the exact question and the answer written by the student.
+  </p>
+<p>
+    The reviewer will compare the source material, the question and the student's answer. It will identify what was answered
+    correctly, what is missing or inaccurate, and then provide a clearer suggested answer for learning and revision.
+  </p>
+</div><div class="essay-review-fields">
+<label for="wassceEssaySubject">WASSCE subject</label>
+<select id="wassceEssaySubject"><option value="">Select subject</option><option>Agricultural Science</option><option>Biology</option><option>Business Management</option><option>Chemistry</option><option>Christian Religious Studies</option><option>Civic Education</option><option>Commerce</option><option>Economics</option><option>English Language</option><option>Geography</option><option>Government</option><option>Health Science</option><option>History</option><option>Home Management</option><option>Islamic Studies</option><option>Literature-in-English</option><option>Mathematics</option><option>Physical Education</option><option>Physics</option><option>Principles of Cost Accounting</option><option>Technical Drawing</option><option>Visual Arts</option></select><p class="waec-sl-note">The subjects in this list are official WASSCE subjects for Sierra Leone candidates. This reviewer is intended for essay, theory, structured or extended-response questions.</p>
+<label for="essayPassageInput">Essay, passage or source material</label>
+<textarea id="essayPassageInput" placeholder="Type or paste the essay, passage, source material, case study or other information connected to the question" rows="10"></textarea>
+<label for="essayQuestionInput">Question</label>
+<textarea id="essayQuestionInput" placeholder="Type the exact WASSCE-style essay or structured question here" rows="5"></textarea>
+<label for="essayAnswerInput">Student's answer</label>
+<textarea id="essayAnswerInput" placeholder="Type or paste the student's answer here" rows="8"></textarea>
+<button class="btn btn-sss-action" id="reviewEssayAnswerBtn" type="button">
+    Click here to compare and get the correct answer
+  </button>
+<div aria-live="polite" class="teacher-result-note" id="essayReviewMessage"></div>
+</div><p class="guide">Paste your own draft to receive feedback on clarity, structure, grammar and missing ideas.</p><button class="btn btn-sss-action" onclick="demoResult('sssReview','writing feedback')">Click here for feedback on your writing</button><div class="output" id="sssReview"></div></article>
 <article class="card exam-guide-card" id="wassceExamGuideCard" style="grid-column: 1 / -1">
 <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
   <div>
@@ -2551,60 +2561,178 @@ function updateDissertationTopics(){
     };
     function fillSelect(select,items,label){select.innerHTML='';select.add(new Option(label,''));items.forEach(item=>select.add(new Option(item,item)))}
     // V3.13: Local curriculum-topic fallback so topic dropdowns still work when the backend is unavailable.
+    // Non-topic filter enforcing strict curriculum compliance (Instruction #3)
+    function isCleanCurriculumTopic(t){
+      if(!t || typeof t !== 'string') return false;
+      const s = t.trim();
+      if(!s || s.length < 2) return false;
+      const nonTopicPatterns = [
+        /^revision\b/i,
+        /\brevision and examination practice\b/i,
+        /\bexamination practice\b/i,
+        /\bexam prep(?:aration)?\b/i,
+        /^practice\b/i,
+        /^exercises?\b/i,
+        /^general questions\b/i,
+        /^review\b/i,
+        /^sierra leone examples?\b/i,
+        /^introduction to the section\b/i,
+        /^introduction to /i,
+        /^key concepts(?: in)?/i,
+        /^important terms and definitions\b/i,
+        /^practical applications(?: of)?/i,
+        /^case studies\b/i,
+        /^sierra leone context\b/i,
+        /^west african context\b/i,
+        /^core principles of /i
+      ];
+      return !nonTopicPatterns.some(re => re.test(s));
+    }
+
+    // Standardized MBSSE curriculum topics and authoritative Sierra Leone administrative facts (5 regions, 16 districts, 190 chiefdoms)
     const localTopicLibrary={
-      'English Language':['Grammar','Parts of Speech','Tenses','Comprehension','Vocabulary','Sentence Construction','Essay Writing','Letter Writing','Summary Writing','Oral English'],
-      'Mathematics':['Whole Numbers','Fractions','Decimals','Percentages','Ratio and Proportion','Algebra','Geometry','Mensuration','Statistics','Probability'],
-      'Mathematics (including Financial Literacy)':['Whole Numbers','Fractions','Decimals','Percentages','Money and Financial Literacy','Measurement','Geometry','Data Handling','Patterns and Algebra'],
-      'Integrated Science':['Living Things','Matter','Energy','Forces and Motion','Human Body','Plants','Environment','Electricity','Heat','Water and Air'],
-      'Science (including Basic Technology & How Things Work)':['Living Things','Plants and Animals','Matter and Materials','Energy','Forces and Motion','Simple Machines','Electricity','Environment','Human Body'],
-      'Agricultural Science':['Soil','Crop Production','Animal Production','Farm Tools','Farm Management','Pests and Diseases','Post-harvest Management','Agricultural Economics'],
-      'Social Studies':['Family and Community','Culture','Environment','Population','Governance','Citizenship','Resources','Development','Peace and Conflict'],
-      'Social Studies and Civics':['Citizenship','Governance','Human Rights','Democracy','Culture','Population','Environment','National Development','Peace and Conflict'],
-      'Civic Education':['Citizenship','Rights and Responsibilities','Democracy','Rule of Law','National Values','Leadership','Human Rights','Community Participation'],
-      'Civic Education (Civics)':['Citizenship','Rights and Responsibilities','Democracy','Rule of Law','National Values','Leadership','Human Rights','Community Participation'],
-      'Business Studies':['Business Organisations','Trade','Office Practice','Bookkeeping','Entrepreneurship','Banking','Insurance','Marketing','Consumer Education'],
-      'Entrepreneurship':['Business Ideas','Opportunity Identification','Business Planning','Marketing','Finance','Record Keeping','Customer Service','Risk Management'],
-      'Principles of Economics':['Basic Economic Concepts','Demand and Supply','Production','Market Structures','Money and Banking','Public Finance','International Trade','Economic Development'],
-      'Principles of Accounting':['Accounting Concepts','Source Documents','Double Entry','Ledger Accounts','Trial Balance','Financial Statements','Bank Reconciliation','Control Accounts'],
-      'Biology':['Cell Biology','Nutrition','Respiration','Transport','Excretion','Coordination','Reproduction','Genetics','Ecology','Evolution'],
-      'Chemistry':['Atomic Structure','Periodic Table','Chemical Bonding','Acids Bases and Salts','Stoichiometry','Organic Chemistry','Electrochemistry','Rates of Reaction','Equilibrium'],
-      'Physics':['Measurement','Motion','Forces','Energy','Heat','Waves','Light','Electricity','Magnetism','Atomic Physics'],
-      'Geography':['Map Reading','Weather and Climate','Landforms','Population','Settlement','Agriculture','Industry','Transport','Natural Resources','Environment'],
-      'History':['Sources of History','Pre-colonial Africa','Colonialism','Independence','Nationalism','Sierra Leone History','West African History','World History'],
-      'Sierra Leone History':['Early Sierra Leone','Colonial Rule','Protectorate Administration','Nationalism','Independence','Post-independence Sierra Leone','Civil War and Peacebuilding'],
-      'ICT':['Computer Fundamentals','Hardware and Software','Word Processing','Spreadsheets','Presentations','Internet and Email','Cyber Safety','Databases','Networking','Programming Basics'],
-      'Information and Communication Technology (ICT)':['Computer Fundamentals','Hardware and Software','Word Processing','Spreadsheets','Presentations','Internet and Email','Cyber Safety','Databases','Networking'],
-      'Computer Science':['Computer Systems','Algorithms','Programming','Data Representation','Databases','Networks','Cybersecurity','Web Technologies','Problem Solving'],
-      'Religious and Moral Education':['Moral Values','Family Life','Religious Teachings','Peace and Tolerance','Leadership','Community Responsibility','Human Dignity'],
-      'Physical and Health Education':['Personal Hygiene','Nutrition','Fitness','Games and Sports','First Aid','Disease Prevention','Reproductive Health','Safety'],
-      'Physical Health Education':['Personal Hygiene','Nutrition','Fitness','Games and Sports','First Aid','Disease Prevention','Reproductive Health','Safety'],
-      'French':['Greetings','Numbers','Family','School','Daily Activities','Grammar','Vocabulary','Reading','Writing','Conversation'],
-      'Krio':['Grammar','Vocabulary','Reading','Writing','Comprehension','Oral Communication','Culture and Literature'],
-      'General Paper':['Science','Agricultural Science','Home Economics','Physical and Health Education','Social Studies']
+      'English Language':['Nouns and Pronouns','Verbs and Tenses','Adjectives and Adverbs','Prepositions and Conjunctions','Reading Comprehension','Vocabulary Development','Narrative Essay Writing','Descriptive Essay Writing','Expository Essay Writing','Formal and Informal Letter Writing','Summary Writing','Oral English: Vowels and Consonants','Oral English: Stress and Intonation'],
+      'Mathematics':['Whole Numbers and Place Value','Fractions, Decimals and Percentages','Ratio, Proportion and Rates','Indices and Logarithms','Algebraic Expressions and Factorisation','Linear and Quadratic Equations','Simultaneous Equations','Geometry: Angles and Polygons','Mensuration: Perimeter, Area and Volume','Trigonometry','Plane Geometry and Circle Theorems','Statistics: Mean, Median, Mode and Frequency','Probability'],
+      'Mathematics (including Financial Literacy)':['Whole Numbers and Number Operations','Fractions and Decimals','Percentages and Financial Calculations','Money: Profit, Loss and Simple Interest','Household and Business Budgeting','Measurement: Length, Mass and Capacity','Geometry and Shapes','Data Handling and Bar Charts','Patterns and Simple Equations'],
+      'Fundamentals of Mathematics':['Number Systems and Modular Arithmetic','Sets, Logic and Venn Diagrams','Algebraic Operations and Polynomials','Linear and Quadratic Inequalities','Functions and Relations','Coordinate Geometry','Sequences and Series (AP and GP)','Matrices and Determinants','Trigonometric Functions and Graphs','Vectors in a Plane','Statistics and Probability Distributions'],
+      'Further Mathematics':['Advanced Coordinate Geometry','Calculus: Differentiation and Applications','Calculus: Integration and Areas','Polynomials and Partial Fractions','Complex Numbers','Binomial Theorem and Mathematical Induction','Linear Algebra and Matrix Transformations','Differential Equations','Mechanics: Vectors, Kinematics and Dynamics','Probability Distributions and Hypothesis Testing'],
+      'Statistics and Probability':['Collection and Tabulation of Data','Measures of Central Tendency','Measures of Dispersion (Variance and Standard Deviation)','Probability Laws and Tree Diagrams','Discrete and Continuous Random Variables','Binomial and Normal Distributions','Correlation and Linear Regression','Sampling Techniques and Estimation'],
+      'Calculus':['Limits and Continuity','The Derivative and Rules of Differentiation','Chain Rule, Product and Quotient Rules','Tangents and Normals to Curves','Maxima, Minima and Rate of Change','Indefinite Integrals and Standard Integrals','Definite Integrals and Area Under Curves','Applications of Calculus in Science and Economics'],
+      'Integrated Science':['Living Things and Characteristics of Life','Cells and Tissues','Matter, Elements, Compounds and Mixtures','Energy Forms, Transfer and Conservation','Forces, Motion and Pressure','Human Body: Skeletal and Muscular Systems','Human Body: Circulatory and Respiratory Systems','Digestive and Excretory Systems','Plants: Photosynthesis and Transpiration','Ecosystems and Food Chains','Water Cycle and Air Pollution','Acids, Bases and Common Salts','Electricity, Magnetism and Basic Circuits'],
+      'Science (including Basic Technology & How Things Work)':['Living Things and Their Environment','Plants and Animals Around Us','Matter: Solids, Liquids and Gases','Energy and Everyday Uses','Forces and Simple Machines (Levers, Pulleys, Inclined Planes)','Electricity and Safe Use of Appliances','Water and Air in the Environment','Human Body and Healthy Habits','Earth and the Solar System'],
+      'Agricultural Science':['Soil Composition, Types and Fertility','Soil Conservation and Erosion Control','Crop Production: Maize, Rice and Cassava','Animal Husbandry: Cattle, Sheep, Goats and Poultry','Farm Tools and Machinery','Pests, Weeds and Plant Disease Management','Forestry, Agroforestry and Conservation','Agricultural Economics, Farm Records and Marketing','Post-Harvest Management and Storage in Sierra Leone'],
+      'Biology':['Cell Structure, Function and Organisation','Classification of Living Organisms','Nutrition in Plants and Animals','Respiration and Cellular Energy','Transport Systems in Plants and Animals','Excretion and Osmoregulation','Coordination: Nervous and Endocrine Systems','Locomotion and Skeletal Support','Reproduction: Plant and Animal Systems','Genetics, Heredity and Variation','Ecology: Habitats, Populations and Biomes','Evolution and Natural Selection'],
+      'Chemistry':['Atomic Structure and Chemical Bonding','The Periodic Table and Periodic Trends','Stoichiometry and the Mole Concept','States of Matter and Gas Laws','Acids, Bases, Salts and pH','Chemical Kinetics and Rates of Reaction','Chemical Equilibrium and Reversible Reactions','Electrochemistry and Redox Reactions','Organic Chemistry: Hydrocarbons (Alkanes, Alkenes, Alkynes)','Functional Groups: Alcohols, Carboxylic Acids and Esters','Non-Metals: Oxygen, Nitrogen, Chlorine and Sulphur','Metals and Metallurgy'],
+      'Physics':['Units, Dimensions and Measurements','Kinematics: Velocity and Acceleration','Newton’s Laws of Motion and Momentum','Work, Energy and Power','Circular Motion and Gravitation','Thermal Physics: Heat Transfer and Expansion','Waves and Wave Properties','Sound Waves and Acoustics','Geometrical Optics: Reflection and Refraction','Electric Fields and Ohm’s Law','Direct Current Circuits and Resistance','Magnetic Fields and Electromagnetic Induction','Atomic and Nuclear Physics'],
+      'Geography':['Map Reading, Contours, Scales and Coordinates','Physical Geography of Sierra Leone: Relief, Mountains and Hills','Weather and Climate Zones of Sierra Leone','Rivers, Lakes and Drainage Basins of Sierra Leone','Vegetation Belts and Forest Reserves of Sierra Leone','Administrative Geography: 5 Regions and 16 Districts','Population Distribution, Density and Migration in Sierra Leone','Mineral Resources and Mining in Sierra Leone (Diamonds, Rutile, Bauxite, Iron Ore)','Agriculture and Food Production Systems in Sierra Leone','Transport Networks and Coastal Trade in Sierra Leone','Environmental Conservation, Climate Change and Coastal Erosion in Sierra Leone'],
+      'Geography and the Environment':['Ecosystems and Biodiversity in West Africa','Land Degradation and Deforestation','Water Resource Management and Conservation','Mining and Environmental Impact in Sierra Leone','Urbanisation and Waste Management','Climate Change Vulnerability and Adaptation in Sierra Leone'],
+      'Social Studies':['Family Structures and Community Values in Sierra Leone','Culture, Ethnic Groups and Traditions in Sierra Leone','Physical Environment and Settlement Patterns','Administrative Divisions of Sierra Leone: 5 Regions and 16 Districts','Traditional Chieftaincy (190 Chiefdoms) and Local Councils','Citizenship: Rights, Duties and Responsibilities','Population Characteristics and Health Challenges','National Economic Resources and Sustainable Development','Peacebuilding, Rule of Law and Conflict Resolution'],
+      'Social Studies and Civics':['Citizenship and Democratic Participation','The Constitution and Arms of Government in Sierra Leone','Administrative Divisions: 5 Regions and 16 Districts','Local Governance: District and City Councils in Sierra Leone','Human Rights and Gender Equality','Economic Development and Financial Literacy','Environmental Protection and National Heritage','National Unity, Reconciliation and Peacebuilding'],
+      'Civic Education':['The 1991 Constitution of Sierra Leone and Constitutionalism','The Executive Branch: The Presidency and Cabinet','The Parliament of Sierra Leone: Composition and Law-Making','The Judiciary and Court System of Sierra Leone','Local Government and the 16 District Councils','Traditional Authority and the 190 Chiefdoms of Sierra Leone','The Electoral Commission for Sierra Leone (ECSL) and Voting','Fundamental Human Rights and Freedoms','National Values, Patriotism and Civic Duties','Anti-Corruption Commission (ACC) and Public Accountability','Civil Society Organisations and Media in Democracy'],
+      'Civic Education (Civics)':['Citizenship and Patriotism in Sierra Leone','Rights, Obligations and National Symbols','Democratic Governance and Separation of Powers','The 16 Districts and 5 Administrative Regions of Sierra Leone','Local Administration and Ward Committees','Rule of Law and Independent Judiciary','Youth Participation and Community Development'],
+      'Politics and Governance':['The State, Sovereignty and Forms of Government','Constitutional Framework of Sierra Leone','Public Administration and Civil Service','Decentralisation and Local Government Councils','Political Parties, Ideologies and Pressure Groups','Public Policy Formulation and Implementation','Electoral Systems and Democratic Consolidation in West Africa','Sierra Leone’s Foreign Relations and Regional Organisations (ECOWAS, AU, UN)'],
+      'History':['Sources and Methods of Historical Enquiry','Early African Civilisations and Empires','The Trans-Saharan and Trans-Atlantic Slave Trades','European Penetration and the Scramble for Africa','Colonial Rule and Policies in West Africa','Nationalist Movements and Independence in Africa','Pan-Africanism and Post-Colonial Challenges','Major World Events and International Organisations'],
+      'Sierra Leone History':['Early Inhabitants and Migrations into Sierra Leone','Pre-Colonial Kingdoms and Chieftaincies','Bunce Island and the Trans-Atlantic Slave Trade','Founding of the Colony of Freetown and Krio Society','British Colonial Rule: Colony and Protectorate','The 1898 Hut Tax Resistance (Bai Bureh, Nyagua, Bai Sherbro)','Constitutional Developments and the 1951 Constitution','Sir Milton Margai and the Road to Independence (April 27, 1961)','Post-Independence Politics and Republic Status (1971)','The Sierra Leone Civil War (1991–2002) and Peace Process','The Truth and Reconciliation Commission (TRC) and Post-War Reconstruction'],
+      'African History':['Ancient Egypt, Kush and Axum','The Empires of Western Sudan (Ghana, Mali, Songhai)','The Forest States: Asante, Dahomey and Oyo','The Kingdom of Benin and Kongo','The Spread of Islam and Christianity in Africa','The Scramble and Partition of Africa (1884–1885)','Colonial Administrative Systems: Direct and Indirect Rule','Decolonisation and African Independence Struggles'],
+      'Principles of Economics':['Basic Economic Problems: Scarcity, Choice and Opportunity Cost','Theory of Demand, Supply and Price Determination','Elasticity of Demand and Supply','Theory of Production, Costs and Revenue','Market Structures: Perfect Competition, Monopoly, Oligopoly','National Income Accounting and Measurements','Money, Commercial Banking and the Central Bank of Sierra Leone','Inflation and Unemployment in Developing Economies','Public Finance: Taxation and Government Expenditure','International Trade and Balance of Payments','Economic Growth and Sustainable Development in Sierra Leone'],
+      'Principles of Accounting':['Nature, Principles and Scope of Accounting','The Accounting Equation and Balance Sheet','Source Documents and Books of Prime Entry','Double Entry System and the General Ledger','The Trial Balance and Correction of Errors','Trading, Profit and Loss Account and Balance Sheet','Bank Reconciliation Statements','Depreciation of Non-Current Assets','Control Accounts and Incomplete Records','Partnership Accounts','Company Accounts and Financial Ratios'],
+      'Business Studies':['Nature and Objectives of Business Activity','Forms of Business Ownership (Sole Proprietorship, Partnership, Companies)','Office Organisation and Administrative Procedures','Business Communication and Filing Systems','Banking and Financial Services','Principles of Insurance and Risk Handling','Internal and External Trade','Marketing and Consumer Protection','Entrepreneurship and Small Business Management'],
+      'Business Management Studies':['Principles and Functions of Management (Planning, Organising, Leading, Controlling)','Organisational Structures and Departmentalisation','Human Resource Management: Recruitment and Motivation','Operations Management and Quality Control','Financial Management and Capital Budgeting','Marketing Management and Market Research','Strategic Management and Business Ethics','Business Law and Commercial Contracts in Sierra Leone'],
+      'Principles of Commerce':['Commerce and the Chain of Distribution','Home Trade: Wholesale and Retail Functions','International Trade: Export, Import and Customs Formalities','Transportation and Logistics in West Africa','Warehousing and Inventory Management','Advertising, Public Relations and Sales Promotion','Communication in Commerce','Banking Services and Financial Instruments'],
+      'Principles of Marketing':['Marketing Concepts and the Marketing Mix (4 Ps)','Consumer Behaviour and Decision-Making Process','Market Segmentation, Targeting and Positioning','Product Development and Product Life Cycle','Pricing Strategies and Policies','Distribution Channels and Retailing','Promotion, Digital Marketing and Personal Selling'],
+      'Entrepreneurship':['Characteristics and Mindset of Successful Entrepreneurs','Identifying Business Opportunities in Sierra Leone','Feasibility Studies and Business Planning','Financing a New Venture and Microfinance','Marketing and Customer Relations for Small Businesses','Financial Record Keeping and Cash Flow Management','Legal Requirements and Business Registration in Sierra Leone','Risk Assessment and Business Growth Strategies'],
+      'ICT':['Computer Hardware Components and Peripherals','System Software and Application Software','Operating Systems and File Management','Word Processing Techniques and Document Formatting','Electronic Spreadsheets: Formulas, Functions and Charts','Presentation Software and Slide Design','Database Management Concepts and Queries','Computer Networks and Internet Technologies','Web Browsing, Email and Online Collaboration','Cybersecurity, Data Privacy and Safe Computing Practices'],
+      'Information and Communication Technology (ICT)':['Introduction to Computers and Processing Cycle','Hardware, Software and Storage Devices','Word Processing, Documents and Layouts','Spreadsheets and Data Analysis','Databases and Information Retrieval','Internet Services and Digital Communication','Ethics, Safety and Computer Security in Sierra Leone'],
+      'Computer Science':['Computer Architecture and Central Processing Unit','Data Representation: Binary, Hexadecimal and ASCII','Algorithms, Flowcharts and Pseudocode','Programming Fundamentals: Variables, Loops and Conditionals','Data Structures: Arrays and Lists','Software Development Lifecycle','Relational Databases and SQL Queries','Network Protocols and Internet Architecture','Cybersecurity Principles and Threat Mitigation'],
+      'Home Economics':['Food Nutrients and Nutritional Requirements','Meal Planning for Different Family Groups','Food Preparation Methods and Recipe Application','Food Spoilage and Food Preservation','Kitchen Hygiene, Sanitation and Safety','Care and Maintenance of Home Equipment','Textiles, Fibres and Fabric Construction','Clothing Construction, Sewing and Mending','Family Resource Management and Home Budgeting','Child Care and Health Development'],
+      'Physical and Health Education':['Personal Hygiene, Grooming and Sanitation','Nutrition, Balanced Diet and Health','Physical Fitness and Exercise Physiology','Athletics: Track and Field Events','Ball Games: Football, Volleyball and Basketball','Racquet Games: Table Tennis and Badminton','First Aid, Injury Prevention and Emergency Response','Communicable and Non-Communicable Diseases','Drug Abuse, Substance Control and Life Skills','Community Health and Environmental Sanitation in Sierra Leone'],
+      'Physical Health Education':['Physical Fitness Components and Assessment','Safety, First Aid and Cardiopulmonary Resuscitation','Athletics and Sierra Leone National Sports','Nutrition for Active Health and Disease Prevention','Reproductive Health and Personal Wellbeing','Mental and Emotional Health'],
+      'Religious and Moral Education':['Moral Concepts: Honesty, Respect and Integrity','The Family and Community Responsibilities','Teachings of Christianity: The Life of Jesus Christ and Parables','Teachings of Islam: The Pillars of Islam and Prophet Muhammad (PBUH)','Traditional African Religion: Beliefs, Values and Ancestors','Religious Tolerance, Peaceful Coexistence and Unity in Sierra Leone','Leadership and Service in the Community','Human Dignity, Justice and Moral Decision-Making'],
+      'French':['Salutations et Présentations (Greetings and Introductions)','La Famille et la Maison (Family and Home)','L’École et la Salle de Classe (School and Classroom)','Les Nombres, la Date et l’Heure (Numbers, Date and Time)','La Nourriture et les Boissons (Food and Drinks)','Les Activités Quotidiennes (Daily Activities)','Les Vêtements et les Couleurs (Clothes and Colours)','La Grammaire: Les Noms, Articles et Adjectifs','Les Verbes au Présent, Passé Composé et Futur','Expression Orale et Compréhension de Texte'],
+      'French as a Foreign Language':['La Communication Quotidienne et l’Expression Personnelle','Les Temps Verbaux: Présent, Passé, Futur et Imparfait','La Description des Lieux, des Personnes et des Objets','Le Vocabulaire du Commerce et du Tourisme en Afrique de l’Ouest','La Rédaction de Lettres et Messages Formels/Informels','La Compréhension Écrite et Orale de Textes Littéraires et d’Actualité'],
+      'Krio':['Gramar: Pat dɛn pan Tok (Nawn, Pronawn, Vab)','Spɛlin Rul dɛn pan Krio','Krio Wod dɛn ɛn Usay dɛn Kɔmɔt','Krio Tɛns Makadɛn (Bin, De, Go, Dɔn)','Ridin ɛn Kɔmprɛhɛnshɔn pan Krio','Wraytin: Lɛta ɛn Kɔmpɔzishɔn pan Krio','Krio Parabul dɛn (Proverbs) ɛn Minin dɛn','Krio Kalchɔ, Oral Tradishɔn ɛn Tradisyɔnal Story dɛn'],
+      'General Paper':['General Science: Living Things and the Environment','General Science: Energy, Materials and Simple Machines','Social Studies: Sierra Leone History, 5 Regions and 16 Districts','Social Studies: Citizenship, Governance and Resources','Agricultural Science: Crops, Farm Animals and Soils','Health Education: Personal Hygiene, First Aid and Disease Prevention','Current Affairs and National Development in Sierra Leone']
     };
+
     function localTopicsFor(level,classLevel,subject){
       const s=(subject||'').trim();
-      if(!s)return [];
-      if(localTopicLibrary[s])return localTopicLibrary[s];
-      const lower=s.toLowerCase();
-      if(lower.includes('mathemat'))return localTopicLibrary['Mathematics'];
-      if(lower.includes('english')||lower.includes('literature')||lower.includes('writing'))return localTopicLibrary['English Language'];
-      if(lower.includes('science')||lower.includes('biology')||lower.includes('chemistry')||lower.includes('physics'))return ['Introduction to '+s,'Key concepts in '+s,'Practical applications of '+s,'Measurements and observations','Problem solving in '+s,'Revision and examination practice'];
-      if(lower.includes('business')||lower.includes('commerce')||lower.includes('marketing')||lower.includes('account')||lower.includes('econom'))return ['Introduction to '+s,'Core principles of '+s,'Business applications','Records and calculations','Sierra Leone examples','Revision and examination practice'];
-      if(lower.includes('language')||lower.includes('french')||lower.includes('krio')||lower.includes('mende')||lower.includes('fula')||lower.includes('arabic'))return ['Vocabulary','Grammar','Reading','Writing','Comprehension','Speaking and listening','Culture and literature'];
-      if(lower.includes('geograph')||lower.includes('history')||lower.includes('social')||lower.includes('relig')||lower.includes('civic')||lower.includes('govern'))return ['Introduction to '+s,'Key concepts','Sierra Leone context','West African context','Case studies','Revision and examination practice'];
-      return ['Introduction to '+s,'Key concepts in '+s,'Important terms and definitions','Practical applications','Sierra Leone examples','Revision and examination practice'];
+      if(!s) return [];
+      if(localTopicLibrary[s]) return localTopicLibrary[s].filter(isCleanCurriculumTopic);
+      // Match case-insensitive or trimmed exact keys
+      for(const k of Object.keys(localTopicLibrary)){
+        if(k.toLowerCase() === s.toLowerCase()){
+          return localTopicLibrary[k].filter(isCleanCurriculumTopic);
+        }
+      }
+      const lower = s.toLowerCase();
+      if(lower.includes('further math')) return localTopicLibrary['Further Mathematics'].filter(isCleanCurriculumTopic);
+      if(lower.includes('statistic') || lower.includes('probability')) return localTopicLibrary['Statistics and Probability'].filter(isCleanCurriculumTopic);
+      if(lower.includes('calculus')) return localTopicLibrary['Calculus'].filter(isCleanCurriculumTopic);
+      if(lower.includes('fundament') && lower.includes('math')) return localTopicLibrary['Fundamentals of Mathematics'].filter(isCleanCurriculumTopic);
+      if(lower.includes('mathemat')) return localTopicLibrary['Mathematics'].filter(isCleanCurriculumTopic);
+      if(lower.includes('english') || lower.includes('literature') || lower.includes('writing')) return localTopicLibrary['English Language'].filter(isCleanCurriculumTopic);
+      if(lower.includes('biology')) return localTopicLibrary['Biology'].filter(isCleanCurriculumTopic);
+      if(lower.includes('chemistry')) return localTopicLibrary['Chemistry'].filter(isCleanCurriculumTopic);
+      if(lower.includes('physics')) return localTopicLibrary['Physics'].filter(isCleanCurriculumTopic);
+      if(lower.includes('geograph')) return localTopicLibrary['Geography'].filter(isCleanCurriculumTopic);
+      if(lower.includes('sierra leone hist') || lower.includes('history')) return localTopicLibrary['Sierra Leone History'].filter(isCleanCurriculumTopic);
+      if(lower.includes('econom')) return localTopicLibrary['Principles of Economics'].filter(isCleanCurriculumTopic);
+      if(lower.includes('account')) return localTopicLibrary['Principles of Accounting'].filter(isCleanCurriculumTopic);
+      if(lower.includes('business manage')) return localTopicLibrary['Business Management Studies'].filter(isCleanCurriculumTopic);
+      if(lower.includes('commerce')) return localTopicLibrary['Principles of Commerce'].filter(isCleanCurriculumTopic);
+      if(lower.includes('market')) return localTopicLibrary['Principles of Marketing'].filter(isCleanCurriculumTopic);
+      if(lower.includes('entrepreneur')) return localTopicLibrary['Entrepreneurship'].filter(isCleanCurriculumTopic);
+      if(lower.includes('business')) return localTopicLibrary['Business Studies'].filter(isCleanCurriculumTopic);
+      if(lower.includes('politic') || lower.includes('govern')) return localTopicLibrary['Politics and Governance'].filter(isCleanCurriculumTopic);
+      if(lower.includes('civic')) return localTopicLibrary['Civic Education'].filter(isCleanCurriculumTopic);
+      if(lower.includes('social')) return localTopicLibrary['Social Studies'].filter(isCleanCurriculumTopic);
+      if(lower.includes('agricult') || lower.includes('farming')) return localTopicLibrary['Agricultural Science'].filter(isCleanCurriculumTopic);
+      if(lower.includes('comput') || lower.includes('ict') || lower.includes('technolog')) return localTopicLibrary['ICT'].filter(isCleanCurriculumTopic);
+      if(lower.includes('health') || lower.includes('physical')) return localTopicLibrary['Physical and Health Education'].filter(isCleanCurriculumTopic);
+      if(lower.includes('relig') || lower.includes('moral')) return localTopicLibrary['Religious and Moral Education'].filter(isCleanCurriculumTopic);
+      if(lower.includes('french')) return localTopicLibrary['French'].filter(isCleanCurriculumTopic);
+      if(lower.includes('krio')) return localTopicLibrary['Krio'].filter(isCleanCurriculumTopic);
+      if(lower.includes('home econom') || lower.includes('food')) return localTopicLibrary['Home Economics'].filter(isCleanCurriculumTopic);
+      return [];
     }
+
     document.querySelectorAll('[data-jss-subject]').forEach(select=>fillSelect(select,jssSubjects,'Choose subject'));
     const allSssSubjects=[...new Set(Object.values(sssSubjects).flat())].sort();
     function updateSSSSubjects(streamSelect){const target=document.getElementById(streamSelect.dataset.target);fillSelect(target,streamSelect.value?sssSubjects[streamSelect.value]:allSssSubjects,'Choose subject')}
     document.querySelectorAll('[data-sss-stream]').forEach(select=>{fillSelect(select,Object.keys(sssSubjects),'All streams');fillSelect(document.getElementById(select.dataset.target),allSssSubjects,'Choose subject');select.addEventListener('change',()=>{updateSSSSubjects(select);setTimeout(()=>document.querySelectorAll('[data-topic-level]').forEach(t=>{if(t.dataset.subjectId===select.dataset.target)loadTopicPicker(t)}),0)})});
     setTimeout(wireTopicPickers,0);
-    async function loadTopicPicker(select){const level=select.dataset.topicLevel,subject=document.getElementById(select.dataset.subjectId)?.value||'',classLevel=select.dataset.classFixed||document.getElementById(select.dataset.classId)?.value||'';const manualId=select.id.replace('Select','');const manual=document.getElementById(manualId);if(!subject){fillSelect(select,[],'Choose a subject first');if(manual)manual.hidden=false;return}const fallback=localTopicsFor(level,classLevel,subject);fillSelect(select,fallback,fallback.length?'Choose curriculum topic':'Loading curriculum topics…');if(!select.querySelector('option[value="__other__"]'))select.add(new Option('Other / Type my own topic','__other__'));try{const d=await platformPost({action:'curriculum_topics',level,class_level:classLevel,subject},8000);const remote=(d.topics||[]).filter(Boolean);const items=[...new Set([...remote,...fallback])];fillSelect(select,items,items.length?'Choose curriculum topic':'Choose or type a topic');select.add(new Option('Other / Type my own topic','__other__'))}catch{/* Keep the local fallback already displayed. */}if(manual)manual.hidden=false}
-    function wireTopicPickers(){document.querySelectorAll('[data-topic-level]').forEach(sel=>{const subject=document.getElementById(sel.dataset.subjectId),cls=sel.dataset.classId?document.getElementById(sel.dataset.classId):null;subject?.addEventListener('change',()=>loadTopicPicker(sel));cls?.addEventListener('change',()=>loadTopicPicker(sel));sel.addEventListener('change',()=>{const manual=document.getElementById(sel.id.replace('Select',''));if(manual){manual.hidden=false;if(sel.value==='__other__')manual.focus()}});const manual=document.getElementById(sel.id.replace('Select',''));if(manual)manual.hidden=false})}
+    async function loadTopicPicker(select){
+      const level=select.dataset.topicLevel,subject=document.getElementById(select.dataset.subjectId)?.value||'',classLevel=select.dataset.classFixed||document.getElementById(select.dataset.classId)?.value||'';
+      const manualId=select.id.replace('Select','');
+      const manual=document.getElementById(manualId);
+      if(!subject){fillSelect(select,[],'Choose a subject first');if(manual)manual.hidden=false;return}
+      const fallback=localTopicsFor(level,classLevel,subject);
+      fillSelect(select,fallback,fallback.length?'Choose curriculum topic':'Loading curriculum topics…');
+      if(!select.querySelector('option[value="__other__"]'))select.add(new Option('Other / Type my own topic','__other__'));
+      try{
+        const d=await platformPost({action:'curriculum_topics',level,class_level:classLevel,subject},8000);
+        const remote=(d.topics||[]).filter(Boolean);
+        const items=[...new Set([...remote,...fallback])].filter(isCleanCurriculumTopic);
+        fillSelect(select,items,items.length?'Choose curriculum topic':'Choose or type a topic');
+        select.add(new Option('Other / Type my own topic','__other__'));
+      }catch{/* Keep the local fallback already displayed. */}
+      if(manual)manual.hidden=false;
+    }
+    function wireTopicPickers(){
+      document.querySelectorAll('[data-topic-level]').forEach(sel=>{
+        const subject=document.getElementById(sel.dataset.subjectId),cls=sel.dataset.classId?document.getElementById(sel.dataset.classId):null;
+        subject?.addEventListener('change',()=>loadTopicPicker(sel));
+        cls?.addEventListener('change',()=>loadTopicPicker(sel));
+        sel.addEventListener('change',()=>{
+          const manual=document.getElementById(sel.id.replace('Select',''));
+          if(manual){manual.hidden=false;if(sel.value==='__other__')manual.focus()}
+        });
+        const manual=document.getElementById(sel.id.replace('Select',''));
+        if(manual)manual.hidden=false;
+      });
+    }
     async function curriculumExplain(level,classId,subjectId,topicSelectId,outputId,manualId){
-      const schoolClass=document.getElementById(classId)?.value||'',subject=document.getElementById(subjectId)?.value||'',sel=document.getElementById(topicSelectId),manual=manualId?document.getElementById(manualId):null,topic=((manual?.value||'').trim() || (sel?.value==='__other__'?'':sel?.value||'')).trim(),box=document.getElementById(outputId);
-      if(!subject){flagRequired(document.getElementById(subjectId),'Please select your subject.');showOutput(box,'Please select your subject.');return}if(!topic){const target=(sel?.value==='__other__'||!sel?.value)?(manual||sel):sel;flagRequired(target,'Please select or type your topic.');showOutput(box,'Please select or type your topic.');return}
+      const clsEl=classId?document.getElementById(classId):null,schoolClass=clsEl?.value||'';
+      const subjEl=document.getElementById(subjectId),subject=subjEl?.value||'';
+      const sel=document.getElementById(topicSelectId),manual=manualId?document.getElementById(manualId):null;
+      const topic=((manual?.value||'').trim() || (sel?.value==='__other__'?'':sel?.value||'')).trim();
+      const box=document.getElementById(outputId);
+      if(classId && !schoolClass){
+        flagRequired(clsEl,'Please choose your class first.');
+        showOutput(box,'Please choose your class first.');
+        return;
+      }
+      if(!subject){
+        flagRequired(subjEl,'Please choose a subject first.');
+        showOutput(box,'Please choose a subject first.');
+        return;
+      }
+      if(!topic){
+        const target=(sel?.value==='__other__'||!sel?.value)?(manual||sel):sel;
+        flagRequired(target,'Please choose a topic before continuing.');
+        showOutput(box,'Please choose a topic before continuing.');
+        return;
+      }
       await callLearning({level,class_level:schoolClass,subject,topic,task:'tutor',tool_key:(level+'-'+subject+'-tutor').toLowerCase().replace(/[^a-z0-9]+/g,'-')},box);
     }
     function toggleMenu(){document.getElementById('navLinks').classList.toggle('open')}
@@ -2924,20 +3052,35 @@ function updateDissertationTopics(){
       const cfg = getPracticeConfig(level, repeatSameTopic);
       if(!cfg.box) return;
 
+      // Compulsory field validation (Instruction #7)
       if(level.endsWith('_class') && !cfg.classLevel){
+        const clsEl = document.getElementById(level === 'primary_class' ? 'primaryPracticeClass' : level === 'jss_class' ? 'jssPracticeClass' : 'sssPracticeClass');
+        if(clsEl) flagRequired(clsEl, 'Please choose your class first.');
         showOutput(cfg.box, 'Please choose your class first.');
         return;
       }
       if(!cfg.subject){
+        const subjId = level === 'primary' ? 'npseSubject' : level === 'primary_class' ? 'primaryPracticeSubject' : level === 'jss' ? 'jssQuizSubject' : level === 'jss_class' ? 'jssPracticeSubject' : level === 'sss' ? 'sssQuizSubject' : 'sssPracticeSubject';
+        const subjEl = document.getElementById(subjId);
+        if(subjEl) flagRequired(subjEl, cfg.level === 'primary' ? 'Please choose an NPSE paper first.' : 'Please choose a subject first.');
         showOutput(cfg.box, cfg.level === 'primary' ? 'Please choose an NPSE paper first.' : 'Please choose a subject first.');
         return;
       }
+      if(!cfg.topic){
+        const topicId = level === 'primary' ? 'npseTopicSelect' : level === 'primary_class' ? 'primaryPracticeTopicSelect' : level === 'jss' ? 'jssQuizTopicSelect' : level === 'jss_class' ? 'jssPracticeTopicSelect' : level === 'sss' ? 'sssQuizTopicSelect' : 'sssPracticeTopicSelect';
+        const topicEl = document.getElementById(topicId);
+        if(topicEl) flagRequired(topicEl, 'Please choose a topic before continuing.');
+        showOutput(cfg.box, 'Please choose a topic before continuing.');
+        return;
+      }
       if(!cfg.type){
+        const typeId = level === 'primary' ? 'npseQuizType' : level === 'jss' ? 'jssQuizType' : 'sssQuizType';
+        const typeEl = document.getElementById(typeId);
+        if(typeEl) flagRequired(typeEl, 'Please choose a question type (Objective or Theory) first.');
         showOutput(cfg.box, 'Please choose a question type (Objective or Theory) first.');
         return;
       }
 
-      if(!cfg.topic) cfg.topic = (cfg.classLevel ? cfg.classLevel + ' ' : '') + 'Mixed ' + cfg.exam + ' practice questions in ' + cfg.subject;
       lastPracticeTopic[level] = cfg.topic;
       lastPracticeSubject[level] = cfg.subject;
 
@@ -3004,21 +3147,22 @@ function updateDissertationTopics(){
         answeredCount: 0,
         correct: 0,
         wrong: 0,
-        weakAreas: {}
+        weakAreas: {},
+        submitted: false
       };
 
       box.innerHTML =
         '<div class="quiz-head" style="margin-bottom:14px">' +
           '<strong>' + safe(cfg.classLevel || cfg.exam) + ' Objective Practice (' + safe(cfg.subject) + ')</strong><br>' +
-          '<span>Click an option to answer each question. Immediate feedback will appear directly below each question.</span>' +
+          '<span>Answer every question below. Immediate feedback appears directly beneath each question. When finished, submit to view your final score and congratulatory feedback.</span>' +
         '</div>' +
         practiceState[cfg.level].questions.map((q, i) => {
           const opts = (q.options || []).slice(0, 4);
-          return '<div class="quiz-question" id="' + cfg.level + '_qwrap_' + i + '" data-qindex="' + i + '" style="margin:16px 0;padding:16px;border:1px solid #d7e1ed;border-radius:12px;background:#fff">' +
+          return '<div class="quiz-question" id="' + cfg.level + '_qwrap_' + i + '" data-qindex="' + i + '" style="margin:16px 0;padding:16px;border:1px solid #d7e1ed;border-radius:12px;background:#fff;transition:all 0.3s ease">' +
             '<p style="font-size:1.02rem;margin-top:0"><strong>' + (i + 1) + '. ' + safe(q.question || 'Question') + '</strong></p>' +
             '<div class="quiz-options">' +
               opts.map((opt, j) =>
-                '<button type="button" class="btn quiz-option-btn" id="' + cfg.level + '_btn_' + i + '_' + j + '" onclick="answerObjectiveQuestion(\'' + cfg.level + '\', ' + i + ', ' + j + ')">' +
+                '<button type="button" class="btn quiz-option-btn" id="' + cfg.level + '_btn_' + i + '_' + j + '" onclick="answerObjectiveQuestion('' + cfg.level + '', ' + i + ', ' + j + ')">' +
                   '<strong>' + String.fromCharCode(65 + j) + '.</strong> ' + safe(opt) +
                 '</button>'
               ).join('') +
@@ -3026,6 +3170,10 @@ function updateDissertationTopics(){
             '<div class="feedback" id="' + cfg.level + '_obj_fb_' + i + '"></div>' +
           '</div>';
         }).join('') +
+        '<div id="' + cfg.level + '_obj_submit_area" style="margin:20px 0;text-align:center">' +
+          '<button type="button" class="btn btn-blue" id="' + cfg.level + '_obj_finish_btn" onclick="submitObjectivePractice('' + cfg.level + '')" style="padding:12px 28px;font-size:1.05rem;font-weight:700">Complete & View Final Results</button>' +
+          '<div id="' + cfg.level + '_obj_validation_msg" style="display:none;margin-top:12px;padding:10px 14px;background:#fef2f2;border:1.5px solid #f87171;border-radius:8px;color:#991b1b;font-weight:600"></div>' +
+        '</div>' +
         '<div id="' + cfg.level + 'QuizSummary"></div>';
       box.classList.add('show');
       box.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -3036,6 +3184,14 @@ function updateDissertationTopics(){
       if(!state || state.selected[qIndex] !== undefined) return;
       state.selected[qIndex] = optIndex;
       state.answeredCount = (state.answeredCount || 0) + 1;
+
+      // Remove unanswered highlight if present
+      const qWrap = document.getElementById(level + '_qwrap_' + qIndex);
+      if(qWrap) qWrap.classList.remove('unanswered-highlight');
+
+      // Clear any pending validation error message if user answers
+      const valMsg = document.getElementById(level + '_obj_validation_msg');
+      if(valMsg) valMsg.style.display = 'none';
 
       // Disable buttons for this question so learner cannot click multiple times
       for(let j = 0; j < 4; j++){
@@ -3073,7 +3229,7 @@ function updateDissertationTopics(){
               '<strong style="color:#b42318;font-size:1.05rem">✗ Incorrect</strong>' +
               '<p style="margin:6px 0 4px"><strong>Correct Answer: ' + String.fromCharCode(65 + correctChoice) + '. ' + safe(q.options[correctChoice]) + '</strong></p>' +
               (q.explanation ? '<p style="margin:4px 0 8px;font-size:0.95rem">' + safe(q.explanation) + '</p>' : '') +
-              '<div style="margin-top:8px"><button type="button" class="btn btn-light" id="' + level + '_exp_btn_' + qIndex + '" style="font-size:0.86rem;padding:6px 12px;background:#fff!important;color:#b42318!important;border:1px solid #fca5a5!important;cursor:pointer" onclick="explainWrongAnswer(\'' + level + '\', ' + qIndex + ')">Explain My Wrong Answer</button></div>' +
+              '<div style="margin-top:8px"><button type="button" class="btn btn-light" id="' + level + '_exp_btn_' + qIndex + '" style="font-size:0.86rem;padding:6px 12px;background:#fff!important;color:#b42318!important;border:1px solid #fca5a5!important;cursor:pointer" onclick="explainWrongAnswer('' + level + '', ' + qIndex + ')">Explain My Wrong Answer</button></div>' +
               '<div id="' + level + '_exp_box_' + qIndex + '" style="display:none;margin-top:8px;padding:10px 12px;background:#fff;border-left:4px solid #b42318;border-radius:6px;color:#1e293b;font-size:0.92rem;line-height:1.5"></div>' +
             '</div>';
         }
@@ -3082,12 +3238,65 @@ function updateDissertationTopics(){
       const parentLevel = level.startsWith('primary') ? 'primary' : (level.startsWith('jss') ? 'jss' : 'sss');
       recordPracticeAttempt(parentLevel, state.subject, state.topic, q, optIndex, isCorrect).catch(()=>{});
 
-      // Check if all questions are completed
+      // Automatically trigger completion if all answered
       if(state.answeredCount === state.questions.length){
-        state.submitted = true;
-        showObjectiveQuizSummary(state);
-        loadLearningProgress().catch(()=>{});
+        submitObjectivePractice(level);
       }
+    }
+
+    function submitObjectivePractice(level){
+      const state = practiceState[level];
+      if(!state || state.submitted) return;
+
+      // Check whether every question is answered (Instruction #6)
+      for(let i = 0; i < state.questions.length; i++){
+        if(state.selected[i] === undefined){
+          const missingQNum = i + 1;
+          const valMsg = document.getElementById(level + '_obj_validation_msg');
+          if(valMsg){
+            valMsg.textContent = 'You have not answered Question ' + missingQNum + '. Please answer all the questions before completing your practice.';
+            valMsg.style.display = 'block';
+          }
+          const qWrap = document.getElementById(level + '_qwrap_' + i);
+          if(qWrap){
+            qWrap.classList.add('unanswered-highlight');
+            qWrap.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+          return;
+        }
+      }
+
+      state.submitted = true;
+      const finishBtn = document.getElementById(level + '_obj_finish_btn');
+      if(finishBtn) finishBtn.style.display = 'none';
+      const valMsg = document.getElementById(level + '_obj_validation_msg');
+      if(valMsg) valMsg.style.display = 'none';
+
+      showObjectiveQuizSummary(state);
+      loadLearningProgress().catch(()=>{});
+    }
+
+    function getEncouragingPerformanceFeedback(score, total){
+      const pct = total > 0 ? (score / total) * 100 : 0;
+      let badge = '', headline = '', note = '';
+      if(score === total && total > 0){
+        badge = score + '/' + total + ' – Excellent! 🎉';
+        headline = 'Excellent! Congratulations! You got all the questions correct. Keep it up!';
+        note = 'Outstanding performance! You have mastered this concept with complete accuracy.';
+      } else if(pct >= 80){
+        badge = score + '/' + total + ' – Very Good!';
+        headline = 'Very Good!';
+        note = 'Impressive work! You demonstrated strong understanding of this topic.';
+      } else if(pct >= 60){
+        badge = score + '/' + total + ' – Good!';
+        headline = 'Good!';
+        note = 'Good effort! Review the explanations above to strengthen the areas you missed.';
+      } else {
+        badge = score + '/' + total + ' – Needs Improvement – Keep Practising.';
+        headline = 'Needs Improvement – Keep Practising.';
+        note = 'Do not be discouraged — learning takes practice! Review each explanation carefully and try this topic again.';
+      }
+      return { badge, headline, note, pct };
     }
 
     function showObjectiveQuizSummary(state){
@@ -3095,7 +3304,7 @@ function updateDissertationTopics(){
       const summary = document.getElementById(level + 'QuizSummary');
       if(!summary) return;
       const total = state.questions.length;
-      const percent = Math.round((state.correct / total) * 100);
+      const fb = getEncouragingPerformanceFeedback(state.correct, total);
       const weak = Object.entries(state.weakAreas).sort((a,b)=>b[1]-a[1]).map(([name,count])=>name+' ('+count+' wrong)').slice(0,5);
 
       const prevScore = getPreviousPracticeScore(level, state.subject, state.topic);
@@ -3112,21 +3321,33 @@ function updateDissertationTopics(){
       }
       savePreviousPracticeScore(level, state.subject, state.topic, state.correct);
 
-      let message = '';
-      if(percent >= 80) message = 'Very good performance. Review the explanations above, then continue practising.';
-      else if(percent >= 60) message = 'Good effort. Review the explanations above before starting another round.';
-      else message = 'You need to revise this topic further. Study the explanations and correct answers above, then practise again.';
+      // Next level-appropriate step recommendation (Instructions #11 & #13)
+      let nextStepPrompt = '';
+      if(fb.pct === 100){
+        nextStepPrompt = '<div class="classroom-interactive-tip" style="margin-top:14px;padding:12px 15px;background:#ecfdf5;border-left:4px solid #10b981;border-radius:8px;color:#064e3b;font-size:0.96rem">' +
+          '<strong>Classroom Tip:</strong> Excellent work! You answered all the questions correctly. Would you like to continue to another topic or try new questions?' +
+        '</div>';
+      } else {
+        const rec = level.startsWith('primary') ? 'relevant Class Practice or NPSE questions' : level.startsWith('jss') ? 'Class Practice or BECE questions' : 'Class Practice or WASSCE questions';
+        nextStepPrompt = '<div class="classroom-interactive-tip" style="margin-top:14px;padding:12px 15px;background:#f0fdf4;border-left:4px solid #22c55e;border-radius:8px;color:#14532d;font-size:0.96rem">' +
+          '<strong>Next Step:</strong> Well done on completing this ' + safe(state.subject) + ' practice! Would you like to practise ' + rec + ' below?' +
+        '</div>';
+      }
 
       summary.innerHTML =
-        '<div style="margin-top:22px;padding:18px;border:2px solid #0a5acb;border-radius:14px;background:#f4f8ff">' +
-          '<h4 style="margin-top:0;color:#073b8c">Your ' + safe(state.classLevel || state.exam) + ' Practice Results</h4>' +
-          '<p style="font-size:1.05rem"><strong>Score:</strong> <span style="font-size:1.25rem;color:#073b8c;font-weight:800">' + state.correct + ' out of ' + total + '</span> (' + percent + '%) &nbsp;|&nbsp; <strong>Wrong:</strong> ' + state.wrong + '</p>' +
+        '<div style="margin-top:22px;padding:20px;border:2.5px solid #0a5acb;border-radius:14px;background:#f4f8ff">' +
+          '<div style="display:inline-block;padding:5px 14px;background:#0a5acb;color:#fff;border-radius:999px;font-weight:800;font-size:0.95rem;margin-bottom:10px">' +
+            safe(fb.badge) +
+          '</div>' +
+          '<h3 style="margin:6px 0 10px;color:#073b8c;font-size:1.35rem">' + safe(fb.headline) + '</h3>' +
+          '<p style="font-size:1.02rem;color:#334155;margin:0 0 12px;line-height:1.5">' + safe(fb.note) + '</p>' +
+          '<p style="font-size:1.05rem;margin:10px 0"><strong>Score:</strong> <span style="font-size:1.25rem;color:#073b8c;font-weight:800">' + state.correct + ' out of ' + total + '</span> (' + Math.round(fb.pct) + '%) &nbsp;|&nbsp; <strong>Wrong:</strong> ' + state.wrong + '</p>' +
           improvementBanner +
-          '<p>' + message + '</p>' +
-          (weak.length ? '<p><strong>Areas to revise:</strong> ' + weak.map(safe).join(', ') + '.</p>' : '<p><strong>Areas to revise:</strong> No weak areas were identified in this round.</p>') +
+          (weak.length ? '<p style="margin:10px 0"><strong>Areas to revise:</strong> ' + weak.map(safe).join(', ') + '.</p>' : '<p style="margin:10px 0"><strong>Areas to revise:</strong> No weak areas were identified in this round.</p>') +
+          nextStepPrompt +
           '<div style="margin-top:18px;display:flex;flex-wrap:wrap;gap:10px">' +
-            '<button type="button" class="btn btn-blue" onclick="startPractice(\'' + level + '\')">Try New Questions</button>' +
-            '<button type="button" class="btn btn-light" onclick="startPractice(\'' + level + '\', true)">Practice This Topic Again</button>' +
+            '<button type="button" class="btn btn-blue" onclick="startPractice('' + level + '')">Try New Questions</button>' +
+            '<button type="button" class="btn btn-light" onclick="startPractice('' + level + '', true)">Practice This Topic Again</button>' +
           '</div>' +
         '</div>';
       summary.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -3158,7 +3379,10 @@ function updateDissertationTopics(){
           topic: state.topic,
           task: 'explain_wrong_answer',
           tool_key: level + '-explain-wrong-answer',
-          context: 'Question: ' + q.question + '\nStudent selected: ' + String.fromCharCode(65+userChoice) + '. ' + (q.options[userChoice]||'') + '\nCorrect answer: ' + String.fromCharCode(65+correctChoice) + '. ' + (q.options[correctChoice]||'') + '\nTeacher note: ' + (q.explanation||'')
+          context: 'Question: ' + q.question + '
+Student selected: ' + String.fromCharCode(65+userChoice) + '. ' + (q.options[userChoice]||'') + '
+Correct answer: ' + String.fromCharCode(65+correctChoice) + '. ' + (q.options[correctChoice]||'') + '
+Teacher note: ' + (q.explanation||'')
         });
         const explanationText = (res.answer || res.explanation || '').trim();
         if(explanationText){
@@ -3221,18 +3445,18 @@ function updateDissertationTopics(){
       box.innerHTML =
         '<div class="quiz-head" style="margin-bottom:16px">' +
           '<strong>' + safe(cfg.classLevel || cfg.exam) + ' Theory Practice (' + safe(cfg.subject) + ')</strong><br>' +
-          '<span>Answer the questions below in your own words. Click <strong>Submit Answers</strong> to receive constructive educational feedback, analysis of what you got right and missing points, and model answers.</span>' +
+          '<span>Answer every question below in your own words. Click <strong>Submit Answers</strong> to receive immediate score feedback, analysis of what you got right, missing points, and model answers.</span>' +
         '</div>' +
         questions.map((q, i) =>
-          '<div class="theory-question-card" data-qindex="' + i + '" style="margin:16px 0;padding:16px;border:1px solid #d7e1ed;border-radius:12px;background:#fff">' +
+          '<div class="theory-question-card" id="' + cfg.level + '_theory_wrap_' + i + '" data-qindex="' + i + '" style="margin:16px 0;padding:16px;border:1px solid #d7e1ed;border-radius:12px;background:#fff;transition:all 0.3s ease">' +
             '<p style="font-size:1.02rem;margin-top:0"><strong>Question ' + (i + 1) + '.</strong> ' + safe(q.question) + '</p>' +
             '<label for="' + cfg.level + '_theory_ans_' + i + '" style="display:block;margin:10px 0 4px;font-weight:600;color:#334155;font-size:0.92rem">Type Your Answer</label>' +
-            '<textarea id="' + cfg.level + '_theory_ans_' + i + '" class="theory-answer-box" placeholder="Type your answer here..." rows="4"></textarea>' +
+            '<textarea id="' + cfg.level + '_theory_ans_' + i + '" class="theory-answer-box" placeholder="Type your answer here..." rows="4" oninput="clearTheoryHighlight('' + cfg.level + '', ' + i + ')"></textarea>' +
             '<div id="' + cfg.level + '_theory_fb_' + i + '" style="display:none;margin-top:12px"></div>' +
           '</div>'
         ).join('') +
         '<div id="' + cfg.level + '_theory_action_area" style="margin-top:20px;text-align:center">' +
-          '<button type="button" class="btn btn-blue" id="' + cfg.level + '_submit_theory_btn" onclick="submitTheoryPractice(\'' + cfg.level + '\')" style="padding:12px 28px;font-size:1.05rem;font-weight:700">Submit Answers</button>' +
+          '<button type="button" class="btn btn-blue" id="' + cfg.level + '_submit_theory_btn" onclick="submitTheoryPractice('' + cfg.level + '')" style="padding:12px 28px;font-size:1.05rem;font-weight:700">Submit Answers</button>' +
           '<div id="' + cfg.level + '_theory_status" style="margin-top:10px;font-weight:600;color:#073b8c"></div>' +
         '</div>' +
         '<div id="' + cfg.level + '_theory_summary" style="margin-top:20px"></div>';
@@ -3240,20 +3464,40 @@ function updateDissertationTopics(){
       box.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
+    function clearTheoryHighlight(level, qIndex){
+      const wrap = document.getElementById(level + '_theory_wrap_' + qIndex);
+      if(wrap) wrap.classList.remove('unanswered-highlight');
+      const statusEl = document.getElementById(level + '_theory_status');
+      if(statusEl && statusEl.getAttribute('data-error') === '1'){
+        statusEl.textContent = '';
+        statusEl.removeAttribute('data-error');
+      }
+    }
+
     async function submitTheoryPractice(level){
       const state = theoryPracticeState[level];
       if(!state || state.submitted) return;
       const answers = [];
-      let hasAny = false;
+      const statusEl = document.getElementById(level + '_theory_status');
+
+      // Check whether every question is answered (Instruction #6)
       for(let i = 0; i < state.questions.length; i++){
         const val = (document.getElementById(level + '_theory_ans_' + i)?.value || '').trim();
+        if(!val){
+          const missingQNum = i + 1;
+          if(statusEl){
+            statusEl.textContent = 'You have not answered Question ' + missingQNum + '. Please answer all the questions before completing your practice.';
+            statusEl.setAttribute('data-error', '1');
+            statusEl.style.color = '#991b1b';
+          }
+          const wrap = document.getElementById(level + '_theory_wrap_' + i);
+          if(wrap){
+            wrap.classList.add('unanswered-highlight');
+            wrap.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+          return;
+        }
         answers.push(val);
-        if(val) hasAny = true;
-      }
-      const statusEl = document.getElementById(level + '_theory_status');
-      if(!hasAny){
-        if(statusEl) statusEl.textContent = 'Please type your answer in the answer boxes before submitting.';
-        return;
       }
 
       state.submitted = true;
@@ -3263,7 +3507,11 @@ function updateDissertationTopics(){
       }
       const submitBtn = document.getElementById(level + '_submit_theory_btn');
       if(submitBtn) submitBtn.disabled = true;
-      if(statusEl) statusEl.textContent = 'Assessing your answer...';
+      if(statusEl){
+        statusEl.removeAttribute('data-error');
+        statusEl.style.color = '#073b8c';
+        statusEl.textContent = 'Assessing your answers with official marking criteria…';
+      }
 
       try{
         const parentLevel = state.level.startsWith('primary') ? 'primary' : (state.level.startsWith('jss') ? 'jss' : 'sss');
@@ -3284,7 +3532,7 @@ function updateDissertationTopics(){
               question_number: idx + 1,
               question: q.question,
               model_answer: q.model_answer,
-              student_answer: answers[idx] || '(No answer provided)'
+              student_answer: answers[idx]
             }))
           })
         });
@@ -3293,18 +3541,28 @@ function updateDissertationTopics(){
         if(statusEl) statusEl.style.display = 'none';
 
         const feedbackList = Array.isArray(markRes.feedback) ? markRes.feedback : [];
+        let totalScore = 0;
+        const maxScore = state.questions.length;
+
         for(let i = 0; i < state.questions.length; i++){
           const fbBox = document.getElementById(level + '_theory_fb_' + i);
           if(!fbBox) continue;
           const fb = feedbackList[i] || {};
+          const marksAwarded = Number.isInteger(+fb.marks_awarded) ? +fb.marks_awarded : (fb.correct_points && !fb.needs_improvement ? 1 : 0);
+          totalScore += marksAwarded;
           const modelAns = fb.model_answer || state.questions[i]?.model_answer || 'Complete answer aligned with Sierra Leone curriculum.';
-          const correctText = fb.correct_points || (answers[i] ? 'Answer reviewed.' : 'No answer was provided for this question.');
+          const correctText = fb.correct_points || 'Answer reviewed.';
           const improveText = fb.needs_improvement || 'Compare your answer with the model answer below.';
 
           fbBox.style.display = 'block';
           fbBox.innerHTML =
             '<div style="background:#f8fafc;border:1px solid #cbd6e4;border-radius:10px;padding:14px;margin-top:12px">' +
-              '<h4 style="margin:0 0 10px;color:#073b8c">Feedback for Question ' + (i + 1) + '</h4>' +
+              '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">' +
+                '<h4 style="margin:0;color:#073b8c">Feedback for Question ' + (i + 1) + '</h4>' +
+                '<span style="padding:3px 10px;border-radius:999px;font-size:0.85rem;font-weight:700;' + (marksAwarded > 0 ? 'background:#dcfce7;color:#15803d' : 'background:#fee2e2;color:#b91c1c') + '">' +
+                  (marksAwarded > 0 ? '✓ Awarded (' + marksAwarded + '/1 Mark)' : 'Needs Revision (0/1 Mark)') +
+                '</span>' +
+              '</div>' +
               '<div style="background:#ecfdf5;border-left:4px solid #10b981;padding:10px 12px;border-radius:6px;margin-bottom:8px;color:#064e3b">' +
                 '<strong>What you got right:</strong> ' + safe(correctText) +
               '</div>' +
@@ -3319,22 +3577,44 @@ function updateDissertationTopics(){
             '</div>';
         }
 
+        const fbScore = getEncouragingPerformanceFeedback(totalScore, maxScore);
         const summaryBox = document.getElementById(level + '_theory_summary');
         if(summaryBox){
+          let nextStepPrompt = '';
+          if(fbScore.pct === 100){
+            nextStepPrompt = '<div class="classroom-interactive-tip" style="margin-top:14px;padding:12px 15px;background:#ecfdf5;border-left:4px solid #10b981;border-radius:8px;color:#064e3b;font-size:0.96rem">' +
+              '<strong>Classroom Tip:</strong> Excellent work! You answered all the questions correctly. Would you like to continue to another topic or try new questions?' +
+            '</div>';
+          } else {
+            const rec = level.startsWith('primary') ? 'NPSE practice' : level.startsWith('jss') ? 'BECE practice' : 'WASSCE practice';
+            nextStepPrompt = '<div class="classroom-interactive-tip" style="margin-top:14px;padding:12px 15px;background:#f0fdf4;border-left:4px solid #22c55e;border-radius:8px;color:#14532d;font-size:0.96rem">' +
+              '<strong>Next Step:</strong> Well done on completing this theory practice! Would you like to practise ' + rec + ' below?' +
+            '</div>';
+          }
+
           summaryBox.innerHTML =
-            '<div style="margin-top:22px;padding:18px;border:2px solid #0a5acb;border-radius:14px;background:#f4f8ff">' +
-              '<h4 style="margin-top:0;color:#073b8c">' + safe(state.classLevel || state.exam) + ' Theory Practice Complete</h4>' +
-              '<p>' + safe(markRes.overall_summary || 'Your theory answers have been assessed. Review the constructive feedback and model answers above.') + '</p>' +
-              '<div style="margin-top:16px;display:flex;flex-wrap:wrap;gap:10px">' +
-                '<button type="button" class="btn btn-blue" onclick="startPractice(\'' + level + '\')">Try New Questions</button>' +
-                '<button type="button" class="btn btn-light" onclick="startPractice(\'' + level + '\', true)">Practice This Topic Again</button>' +
+            '<div style="margin-top:22px;padding:20px;border:2.5px solid #0a5acb;border-radius:14px;background:#f4f8ff">' +
+              '<div style="display:inline-block;padding:5px 14px;background:#0a5acb;color:#fff;border-radius:999px;font-weight:800;font-size:0.95rem;margin-bottom:10px">' +
+                safe(fbScore.badge) +
+              '</div>' +
+              '<h3 style="margin:6px 0 10px;color:#073b8c;font-size:1.35rem">' + safe(fbScore.headline) + '</h3>' +
+              '<p style="font-size:1.02rem;color:#334155;margin:0 0 12px;line-height:1.5">' + safe(fbScore.note) + '</p>' +
+              '<p style="font-size:1.05rem;margin:10px 0"><strong>Score:</strong> <span style="font-size:1.25rem;color:#073b8c;font-weight:800">' + totalScore + ' out of ' + maxScore + '</span> (' + Math.round(fbScore.pct) + '%)</p>' +
+              '<p style="color:#475569;line-height:1.5">' + safe(markRes.overall_summary || 'Your theory answers have been assessed against Sierra Leone curriculum standards. Review the constructive feedback and model answers above.') + '</p>' +
+              nextStepPrompt +
+              '<div style="margin-top:18px;display:flex;flex-wrap:wrap;gap:10px">' +
+                '<button type="button" class="btn btn-blue" onclick="startPractice('' + level + '')">Try New Questions</button>' +
+                '<button type="button" class="btn btn-light" onclick="startPractice('' + level + '', true)">Practice This Topic Again</button>' +
               '</div>' +
             '</div>';
           summaryBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
       }catch(e){
         if(submitBtn) submitBtn.disabled = false;
-        if(statusEl) statusEl.textContent = e.message || 'Marking failed. Please try clicking Submit Answers again.';
+        if(statusEl){
+          statusEl.style.display = 'block';
+          statusEl.textContent = e.message || 'Marking failed. Please try clicking Submit Answers again.';
+        }
       }
     }
 
@@ -3590,8 +3870,30 @@ async function primaryAssignmentGuide(){const subject=primaryAssignmentSubject.v
     const subj = (prepSubject?.value || '').trim();
     const top = ((prepTopicOther?.value || (prepTopic?.value === '__other__' ? '' : prepTopic?.value) || prepTopic?.value || '')).trim();
 
-    if(!cat || !cls || (cat === 'sss' && !prepStream?.value) || !subj || !top){
-      showOutput(box, 'Please choose the teacher category, class or level, subject and topic.');
+    if(!cat){
+      if(prepCategory) flagRequired(prepCategory, 'Please select the educational category.');
+      showOutput(box, 'Please select the educational category before preparing your teaching guide.');
+      return;
+    }
+    if(!cls){
+      if(prepClass) flagRequired(prepClass, 'Please select the class or level.');
+      showOutput(box, 'Please select the class or level before preparing your teaching guide.');
+      return;
+    }
+    if(cat === 'sss' && !prepStream?.value){
+      if(prepStream) flagRequired(prepStream, 'Please select the study stream.');
+      showOutput(box, 'Please select the study stream before preparing your teaching guide.');
+      return;
+    }
+    if(!subj){
+      if(prepSubject) flagRequired(prepSubject, 'Please select the subject.');
+      showOutput(box, 'Please select the subject before preparing your teaching guide.');
+      return;
+    }
+    if(!top){
+      const topTarget = (prepTopic?.value === '__other__' || !prepTopic?.value) ? (prepTopicOther || prepTopic) : prepTopic;
+      if(topTarget) flagRequired(topTarget, 'Please enter or select the topic.');
+      showOutput(box, 'Please enter or choose the topic before preparing your teaching guide.');
       return;
     }
     if(btn) btn.disabled = true;
@@ -3680,8 +3982,42 @@ async function primaryAssignmentGuide(){const subject=primaryAssignmentSubject.v
     const date = (document.getElementById('teacherPrepDate')?.value || '').trim();
     const duration = (document.getElementById('teacherPrepDuration')?.value || '').trim();
 
-    if(!cat || !cls || (cat === 'sss' && !streamSel?.value) || !subj || !top || !date || !duration){
-      showOutput(box, 'Please choose the teacher category, class, subject and topic, then add the date and duration.');
+    if(!cat){
+      if(category) flagRequired(category, 'Please select the educational category.');
+      showOutput(box, 'Please select the educational category before generating your lesson notes.');
+      return;
+    }
+    if(!cls){
+      if(classSel) flagRequired(classSel, 'Please select the class.');
+      showOutput(box, 'Please select the class before generating your lesson notes.');
+      return;
+    }
+    if(cat === 'sss' && !streamSel?.value){
+      if(streamSel) flagRequired(streamSel, 'Please select the study stream.');
+      showOutput(box, 'Please select the study stream before generating your lesson notes.');
+      return;
+    }
+    if(!subj){
+      if(subjectSel) flagRequired(subjectSel, 'Please select the subject.');
+      showOutput(box, 'Please select the subject before generating your lesson notes.');
+      return;
+    }
+    if(!top){
+      const topTarget = (topicSel?.value === '__other__' || !topicSel?.value) ? (topicOther || topicSel) : topicSel;
+      if(topTarget) flagRequired(topTarget, 'Please enter the lesson topic.');
+      showOutput(box, 'Please enter the lesson topic before generating your lesson notes.');
+      return;
+    }
+    if(!date){
+      const dEl = document.getElementById('teacherPrepDate');
+      if(dEl) flagRequired(dEl, 'Please enter the lesson date.');
+      showOutput(box, 'Please enter the lesson date before generating your lesson notes.');
+      return;
+    }
+    if(!duration){
+      const durEl = document.getElementById('teacherPrepDuration');
+      if(durEl) flagRequired(durEl, 'Please enter the lesson duration.');
+      showOutput(box, 'Please enter the lesson duration before generating your lesson notes.');
       return;
     }
     if(btn) btn.disabled = true;
@@ -3772,8 +4108,35 @@ async function primaryAssignmentGuide(){const subject=primaryAssignmentSubject.v
     const top = ((examTopicOther?.value || (examTopic?.value === '__other__' ? '' : examTopic?.value) || examTopic?.value || '')).trim();
     const type = (examType?.value || '').trim();
 
-    if(!cat || !cls || (cat === 'sss' && !examStream?.value) || !subj || !top || !type){
-      showOutput(box, 'Please choose the teacher category, class or level, subject, topic and question type.');
+    if(!cat){
+      if(examCategory) flagRequired(examCategory, 'Please select the educational category.');
+      showOutput(box, 'Please select the educational category before generating the questions.');
+      return;
+    }
+    if(!cls){
+      if(examClass) flagRequired(examClass, 'Please select the class.');
+      showOutput(box, 'Please select the class before generating the questions.');
+      return;
+    }
+    if(cat === 'sss' && !examStream?.value){
+      if(examStream) flagRequired(examStream, 'Please select the study stream.');
+      showOutput(box, 'Please select the study stream before generating the questions.');
+      return;
+    }
+    if(!subj){
+      if(examSubject) flagRequired(examSubject, 'Please select the subject.');
+      showOutput(box, 'Please select the subject before generating the questions.');
+      return;
+    }
+    if(!top){
+      const topTarget = (examTopic?.value === '__other__' || !examTopic?.value) ? (examTopicOther || examTopic) : examTopic;
+      if(topTarget) flagRequired(topTarget, 'Please enter or select the topic.');
+      showOutput(box, 'Please enter or select the topic before generating the questions.');
+      return;
+    }
+    if(!type){
+      if(examType) flagRequired(examType, 'Please select the question type.');
+      showOutput(box, 'Please select the question type (Objective or Theory) before generating the questions.');
       return;
     }
     if(btn) btn.disabled = true;
@@ -4041,7 +4404,58 @@ async function findResearchTopics(){
     body:JSON.stringify({event_type:'page_view',section:'site',detail:'Salone Class Room'})
   }).catch(()=>{});
 })();
-</script><div aria-hidden="true" class="platform-modal" id="accountModal">
+
+// Classroom Inactivity Prompt (Instruction #12)
+let inactivityTimer = null;
+const INACTIVITY_TIMEOUT_MS = 6 * 60 * 1000; // 6 minutes of no interaction
+let inactivityModalShown = false;
+
+function resetInactivityTimer(){
+  if(inactivityTimer) clearTimeout(inactivityTimer);
+  // Only monitor if modal is not currently open
+  if(inactivityModalShown) return;
+
+  inactivityTimer = setTimeout(()=>{
+    const signedIn = !!(typeof currentProfile !== 'undefined' && currentProfile);
+    if(signedIn && !inactivityModalShown){
+      const modal = document.getElementById('inactivityModal');
+      if(modal){
+        modal.classList.add('open');
+        modal.setAttribute('aria-hidden', 'false');
+        inactivityModalShown = true;
+      }
+    }
+  }, INACTIVITY_TIMEOUT_MS);
+}
+
+function dismissInactivityPrompt(){
+  const modal = document.getElementById('inactivityModal');
+  if(modal){
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden', 'true');
+  }
+  inactivityModalShown = false;
+  resetInactivityTimer();
+}
+
+// Track meaningful user activity: clicks, typing, keydowns, scrolls, touch
+['mousedown', 'mousemove', 'keydown', 'scroll', 'touchstart', 'input'].forEach(evt => {
+  window.addEventListener(evt, () => {
+    if(!inactivityModalShown) resetInactivityTimer();
+  }, { passive: true });
+});
+resetInactivityTimer();
+</script>
+<div aria-hidden="true" class="platform-modal" id="inactivityModal">
+  <div class="platform-modal-card" style="max-width:440px;text-align:center;padding:32px 24px;border-radius:20px;box-shadow:0 20px 45px rgba(0,0,0,0.18)">
+    <div style="font-size:3rem;margin-bottom:12px;line-height:1">😊</div>
+    <h3 style="margin:0 0 10px;color:var(--blue);font-size:1.4rem">Are you still with the class?</h3>
+    <p style="color:#475569;margin:0 0 22px;font-size:0.98rem;line-height:1.55">Take your time. We have paused your learning session while you were away. Continue whenever you are ready!</p>
+    <button class="btn btn-blue" onclick="dismissInactivityPrompt()" type="button" style="width:100%;padding:13px 20px;font-weight:750;font-size:1.02rem;border-radius:12px">Yes, continue learning</button>
+  </div>
+</div>
+
+<div aria-hidden="true" class="platform-modal" id="accountModal">
 <div class="platform-modal-card">
 <button class="modal-close" onclick="closeAccountModal()" type="button">×</button>
 <div id="accountSignedOut">
@@ -4085,8 +4499,80 @@ function formatAIText(text){
 }
 const lastLearningPayload={};
 const lastLearningAnswers={};
-function renderLearningAnswer(box,text,payload){box.innerHTML='<div class="answer-body">'+formatAIText(text)+'</div>';if(box.id){lastLearningAnswers[box.id]=text}if(box.id&&payload&&!['quiz','topics'].includes((payload.task||'tutor').toLowerCase())&&payload.detail_mode!=='more'){lastLearningPayload[box.id]=payload;const b=document.createElement('button');b.type='button';b.className='btn btn-light more-detail-btn';b.textContent='Read more / Explain further';b.onclick=()=>requestMoreDetail(box.id);box.appendChild(b)}box.classList.add('show');box.scrollIntoView({behavior:'smooth',block:'nearest'})}
-async function requestMoreDetail(boxId){const box=document.getElementById(boxId),payload=lastLearningPayload[boxId];if(!box||!payload)return;const previous=lastLearningAnswers[boxId]||'';showOutput(box,firstName()?`Adding more detail for you, ${firstName()}…`:'Adding more detail…');try{const expanded={...payload,detail_mode:'more',...(previous?{previous_response:previous}:{})};const d=await learningRequest(expanded);renderLearningAnswer(box,personalisedText(expanded,d.answer||'No answer was returned. Please try again.'),expanded)}catch(e){handleLearningError(e,box)}}
+function renderLearningAnswer(box,text,payload){
+  box.innerHTML='<div class="answer-body">'+formatAIText(text)+'</div>';
+  if(box.id){lastLearningAnswers[box.id]=text}
+
+  // Next-step recommendation based on learner level & subject (Instructions #11 & #13)
+  if(payload && payload.task === 'tutor' && payload.subject){
+    const tipDiv=document.createElement('div');
+    tipDiv.className='classroom-interactive-tip';
+    tipDiv.style.cssText='margin-top:14px;padding:12px 14px;background:#f0fdf4;border-left:4px solid #22c55e;border-radius:8px;color:#14532d;font-size:0.95rem;line-height:1.5';
+    let rec='';
+    if(payload.level==='primary') rec='relevant Class Practice or NPSE questions';
+    else if(payload.level==='jss') rec='Class Practice or BECE questions';
+    else if(payload.level==='sss') rec='WASSCE questions';
+    else rec='further practice';
+    tipDiv.innerHTML='<strong>Classroom Guidance:</strong> Well done! I hope you understood this topic in <strong>'+safe(payload.subject)+'</strong>. Would you like to continue practising some '+rec+' below?';
+    box.appendChild(tipDiv);
+  }
+
+  // Read More expands in the exact same location directly beneath the content (Instruction #9)
+  if(box.id&&payload&&!['quiz','topics'].includes((payload.task||'tutor').toLowerCase())&&payload.detail_mode!=='more'){
+    lastLearningPayload[box.id]=payload;
+    const btnContainer=document.createElement('div');
+    btnContainer.className='read-more-actions';
+    btnContainer.style.cssText='margin-top:14px;display:flex;gap:10px;align-items:center';
+
+    const b=document.createElement('button');
+    b.type='button';
+    b.className='btn btn-light more-detail-btn';
+    b.textContent='Read more / Explain further';
+    b.onclick=()=>requestMoreDetail(box.id, btnContainer);
+    btnContainer.appendChild(b);
+    box.appendChild(btnContainer);
+  }
+  box.classList.add('show');
+  box.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+async function requestMoreDetail(boxId, btnContainer){
+  const box=document.getElementById(boxId),payload=lastLearningPayload[boxId];
+  if(!box||!payload)return;
+  const previous=lastLearningAnswers[boxId]||'';
+
+  // Inline container directly beneath the existing content without jumping or replacing (Instruction #9)
+  let inlineContainer=box.querySelector('.inline-read-more-container');
+  if(!inlineContainer){
+    inlineContainer=document.createElement('div');
+    inlineContainer.className='inline-read-more-container';
+    inlineContainer.style.cssText='margin-top:16px;padding:16px 18px;background:#f8fafc;border-left:4px solid #0284c7;border-radius:10px;line-height:1.65;font-size:1rem;color:#1e293b;animation:fadeIn 0.3s ease';
+    box.appendChild(inlineContainer);
+  }
+  inlineContainer.style.display='block';
+  inlineContainer.innerHTML='<em>Adding more detail for you…</em>';
+
+  if(btnContainer) btnContainer.style.display='none';
+
+  try{
+    const expanded={...payload,detail_mode:'more',...(previous?{previous_response:previous}:{})};
+    const d=await learningRequest(expanded);
+    const answerText=personalisedText(expanded,d.answer||'No additional detail was returned.');
+
+    inlineContainer.innerHTML=
+      '<div style="font-weight:700;color:#0369a1;margin-bottom:8px;font-size:1.02rem">Additional Explanation & In-depth Details:</div>' +
+      formatAIText(answerText) +
+      '<div style="margin-top:12px"><button type="button" class="btn btn-light" style="padding:6px 14px;font-size:0.88rem;background:#fff;border:1px solid #cbd5e1;cursor:pointer">Show Less</button></div>';
+
+    inlineContainer.querySelector('button')?.addEventListener('click',()=>{
+      inlineContainer.style.display='none';
+      if(btnContainer) btnContainer.style.display='flex';
+    });
+  }catch(e){
+    inlineContainer.innerHTML='<span style="color:#b91c1c">Unable to load additional detail right now. Please try again.</span>';
+    if(btnContainer) btnContainer.style.display='flex';
+  }
+}
 async function platformPost(payload,timeout=30000){const c=new AbortController(),tm=setTimeout(()=>c.abort(),timeout);try{const r=await fetch(PLATFORM_API,{method:'POST',headers:{'Content-Type':'application/json',...authHeaders()},body:JSON.stringify(payload),signal:c.signal});const d=await r.json().catch(()=>({}));if(!r.ok){const e=new Error(d.error||'Unable to complete this request.');e.code=d.code;e.status=r.status;throw e}return d}finally{clearTimeout(tm)}}
 async function requestPasswordReset(){const contact=(document.getElementById('loginContact')?.value||document.getElementById('regContact')?.value||'').trim();if(!contact){loginStatus.textContent='Enter your registered phone number or email first.';loginStatus.classList.add('show');return}loginStatus.textContent='Sending your reset request…';loginStatus.classList.add('show');try{await platformPost({action:'password_reset_request',contact});loginStatus.textContent='Reset request sent. An administrator can now reset your password and give you a temporary password privately.'}catch(e){loginStatus.textContent=e.message}}
 function localProgressKey(){return 'salone_learning_progress_'+(currentProfile?.id||currentProfile?.contact||'device')}

@@ -63,10 +63,11 @@ exports.handler=async(event)=>{
    let rows=[];
    try{rows=await arr('/rest/v1/curriculum_topics?active=eq.true&select=education_level,class_level,subject,unit_title,topic,verified&limit=1000')}catch(e){console.error('[platform-api][curriculum_topics]',e.message);return json(500,{error:'Curriculum topics are temporarily unavailable.'})}
    const sameClass=r=>{if(!wantedClass)return true;const c=norm(r.class_level);return !c||c===wantedClass||c.includes(wantedClass)||wantedClass.includes(c)};
+   const isNonTopic=t=>!t||/^(?:revision|practice|exercises?|exam preparation|general questions|review|introduction to the section|sierra leone examples?|revision and examination practice)\b/i.test(t.trim());
    const candidates=rows.filter(r=>levelKey(r.education_level)===wantedLevel&&subjectKey(r.subject)===wantedSubject&&sameClass(r));
    const broader=candidates.length?candidates:rows.filter(r=>levelKey(r.education_level)===wantedLevel&&subjectKey(r.subject)===wantedSubject);
    const seen=new Set(),topics=[];
-   for(const r of broader){for(const raw of [r.topic,r.unit_title]){const t=clean(raw,220);if(!t)continue;const k=norm(t);if(!k||k===norm(r.subject)||subjectKey(t)===wantedSubject)continue;if(!seen.has(k)){seen.add(k);topics.push(t)}break}}
+   for(const r of broader){for(const raw of [r.topic,r.unit_title]){const t=clean(raw,220);if(!t)continue;const k=norm(t);if(!k||k===norm(r.subject)||subjectKey(t)===wantedSubject||isNonTopic(t))continue;if(!seen.has(k)){seen.add(k);topics.push(t)}break}}
    topics.sort((a,b)=>a.localeCompare(b));return json(200,{topics:topics.slice(0,150)});
   }
 
