@@ -1327,6 +1327,8 @@ select:disabled{background-color:#f3f6f9 !important;color:#7a8794 !important;opa
   .ribbon-section{margin-top:14px;margin-bottom:14px;}
   .section-personal-welcome{margin-top:8px;margin-bottom:12px;}
 }
+/* Interactive personalized learning enhancement */
+.learning-action-row{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}.learning-action-row .btn{font-size:.9rem;padding:9px 13px}.practice-guidance{margin:10px 0;padding:9px 12px;background:#f8fafc;border-left:3px solid #0a5acb;border-radius:7px;color:#334155;font-size:.92rem}.achievement-chip{display:inline-block;margin:4px 6px 4px 0;padding:5px 10px;border-radius:999px;background:#fff7d6;border:1px solid #f2c94c;color:#6b4f00;font-weight:700;font-size:.86rem}@media(max-width:600px){.learning-action-row{display:grid;grid-template-columns:1fr 1fr}.learning-action-row .btn{width:100%;white-space:normal}}
 /* Practice Objective & Theory styling */
 .quiz-option-btn{display:block;width:100%;text-align:left;justify-content:flex-start;margin:8px 0;padding:11px 14px;background:#f4f8fd!important;color:#17324d!important;border:1.5px solid #cbd6e4!important;border-radius:10px;cursor:pointer;font-size:0.98rem;line-height:1.4;transition:all .15s ease}
 .quiz-option-btn:hover:not(:disabled){background:#e8f1fc!important;border-color:#93c5fd!important}
@@ -1356,13 +1358,13 @@ input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
 select,
 textarea{
   width:100% !important;
-  border:3px solid #4f687d !important;
+  border:3px solid #263f52 !important;
   border-radius:10px !important;
   background-color:#fff !important;
   color:#172b3a !important;
   font-weight:700 !important;
   min-height:50px !important;
-  box-shadow:0 1px 3px rgba(0,0,0,.10) !important;
+  box-shadow:0 1px 4px rgba(0,0,0,.16) !important;
 }
 input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):focus,
 select:focus,
@@ -2692,7 +2694,9 @@ function updateDissertationTopics(){
           return localTopicLibrary[k].filter(isCleanCurriculumTopic);
         }
       }
-      const lower = s.toLowerCase();
+      const lower = s.toLowerCase().replace(/&/g,'and').replace(/\s+/g,' ').trim();
+      // Music/Expressive Arts appears under several official/UI labels across school levels.
+      // Resolve these aliases before the generic subject matching so the topic picker never stays empty.
       if(lower.includes('further math')) return localTopicLibrary['Further Mathematics'].filter(isCleanCurriculumTopic);
       if(lower.includes('statistic') || lower.includes('probability')) return localTopicLibrary['Statistics and Probability'].filter(isCleanCurriculumTopic);
       if(lower.includes('calculus')) return localTopicLibrary['Calculus'].filter(isCleanCurriculumTopic);
@@ -2743,7 +2747,8 @@ function updateDissertationTopics(){
       try{
         const d=await platformPost({action:'curriculum_topics',level,class_level:classLevel,subject},8000);
         const remote=(d.topics||[]).filter(Boolean);
-        const items=[...new Set([...remote,...fallback])].filter(isCleanCurriculumTopic);
+        const guaranteedFallback = fallback.length ? fallback : localTopicsFor(level,classLevel,subject);
+        const items=[...new Set([...remote,...guaranteedFallback])].filter(isCleanCurriculumTopic);
         fillSelect(select,items,items.length?'Choose curriculum topic':'Choose or type a topic');
         select.add(new Option('Other / Type my own topic','__other__'));
       }catch{/* Keep the local fallback already displayed. */}
@@ -3205,7 +3210,8 @@ function updateDissertationTopics(){
       box.innerHTML =
         '<div class="quiz-head" style="margin-bottom:14px">' +
           '<strong>' + safe(cfg.classLevel || cfg.exam) + ' Objective Practice (' + safe(cfg.subject) + ')</strong><br>' +
-          '<span>Answer every question below. Immediate feedback appears directly beneath each question. When finished, submit to view your final score and congratulatory feedback.</span>' +
+          '<span>Answer every question below. Immediate feedback appears directly beneath each question. When finished, submit to view your final score and learning guidance.</span>' +
+          '<div class="practice-guidance" id="' + cfg.level + '_practice_guidance">Take your time and read each question carefully. You have answered 0 of ' + practiceState[cfg.level].questions.length + ' questions.</div>' +
         '</div>' +
         practiceState[cfg.level].questions.map((q, i) => {
           const opts = (q.options || []).slice(0, 4);
@@ -3235,6 +3241,11 @@ function updateDissertationTopics(){
       if(!state || state.selected[qIndex] !== undefined) return;
       state.selected[qIndex] = optIndex;
       state.answeredCount = (state.answeredCount || 0) + 1;
+      const guideEl = document.getElementById(level + '_practice_guidance');
+      if(guideEl){
+        const remaining = state.questions.length - state.answeredCount;
+        guideEl.textContent = remaining === 0 ? 'All questions answered. Check your answers and view your results.' : (remaining === 1 ? 'You have answered ' + state.answeredCount + ' of ' + state.questions.length + ' questions. One question remaining.' : 'You have answered ' + state.answeredCount + ' of ' + state.questions.length + ' questions.');
+      }
 
       // Remove unanswered highlight if present
       const qWrap = document.getElementById(level + '_qwrap_' + qIndex);
@@ -3329,24 +3340,13 @@ function updateDissertationTopics(){
 
     function getEncouragingPerformanceFeedback(score, total){
       const pct = total > 0 ? (score / total) * 100 : 0;
+      const n = typeof firstName === 'function' ? firstName() : '';
+      const who = n ? ', ' + n : '';
       let badge = '', headline = '', note = '';
-      if(score === total && total > 0){
-        badge = score + '/' + total + ' – Excellent! 🎉';
-        headline = 'Excellent! Congratulations! You got all the questions correct. Keep it up!';
-        note = 'Outstanding performance! You have mastered this concept with complete accuracy.';
-      } else if(pct >= 80){
-        badge = score + '/' + total + ' – Very Good!';
-        headline = 'Very Good!';
-        note = 'Impressive work! You demonstrated strong understanding of this topic.';
-      } else if(pct >= 60){
-        badge = score + '/' + total + ' – Good!';
-        headline = 'Good!';
-        note = 'Good effort! Review the explanations above to strengthen the areas you missed.';
-      } else {
-        badge = score + '/' + total + ' – Needs Improvement – Keep Practising.';
-        headline = 'Needs Improvement – Keep Practising.';
-        note = 'Do not be discouraged — learning takes practice! Review each explanation carefully and try this topic again.';
-      }
+      if(pct >= 80){ badge = score + '/' + total + ' • Excellent Score 🏆'; headline = 'Excellent work' + who + '! 👏🎉'; note = 'You performed very well. Keep building on this strong understanding.'; }
+      else if(pct >= 60){ badge = score + '/' + total + ' • Good Progress ⭐'; headline = 'Good work' + who + '. 👏⭐'; note = 'You are making good progress. Review the questions you missed before moving on.'; }
+      else if(pct >= 40){ badge = score + '/' + total + ' • Keep Learning 📚'; headline = 'Good attempt' + who + '. 👍📚'; note = 'Let’s work on the areas you found difficult, then try another short practice.'; }
+      else { badge = score + '/' + total + ' • Keep Practising 💪'; headline = 'Thank you for completing the exercise' + who + '. 💪📖'; note = 'Let’s review the difficult areas together and try again. Every attempt helps you improve.'; }
       return { badge, headline, note, pct };
     }
 
@@ -3379,10 +3379,9 @@ function updateDissertationTopics(){
           '<strong>Classroom Tip:</strong> Excellent work! You answered all the questions correctly. Would you like to continue to another topic or try new questions?' +
         '</div>';
       } else {
-        const rec = level.startsWith('primary') ? 'relevant Class Practice or NPSE questions' : level.startsWith('jss') ? 'Class Practice or BECE questions' : 'Class Practice or WASSCE questions';
-        nextStepPrompt = '<div class="classroom-interactive-tip" style="margin-top:14px;padding:12px 15px;background:#f0fdf4;border-left:4px solid #22c55e;border-radius:8px;color:#14532d;font-size:0.96rem">' +
-          '<strong>Next Step:</strong> Well done on completing this ' + safe(state.subject) + ' practice! Would you like to practise ' + rec + ' below?' +
-        '</div>';
+        const weakName = weak.length ? weak[0].replace(/\s*\(\d+ wrong\).*$/, '') : (state.topic || state.subject);
+        const recommendation = fb.pct < 60 ? 'Review ' + weakName + ' briefly before attempting another set.' : (fb.pct < 80 ? 'Review the questions you missed, then try five more questions.' : 'You are ready to continue to the next topic or try another set.');
+        nextStepPrompt = '<div class="classroom-interactive-tip" style="margin-top:14px;padding:12px 15px;background:#f0fdf4;border-left:4px solid #22c55e;border-radius:8px;color:#14532d;font-size:0.96rem"><strong>Recommended next step:</strong> ' + safe(recommendation) + '</div>';
       }
 
       summary.innerHTML =
@@ -3396,12 +3395,23 @@ function updateDissertationTopics(){
           improvementBanner +
           (weak.length ? '<p style="margin:10px 0"><strong>Areas to revise:</strong> ' + weak.map(safe).join(', ') + '.</p>' : '<p style="margin:10px 0"><strong>Areas to revise:</strong> No weak areas were identified in this round.</p>') +
           nextStepPrompt +
-          '<div style="margin-top:18px;display:flex;flex-wrap:wrap;gap:10px">' +
-            '<button type="button" class="btn btn-blue" onclick="startPractice(\'' + level + '\')">Try New Questions</button>' +
-            '<button type="button" class="btn btn-light" onclick="startPractice(\'' + level + '\', true)">Practice This Topic Again</button>' +
+          '<div class="learning-action-row">' +
+            (weak.length ? '<button type="button" class="btn btn-light" onclick="reviewPracticeTopic(\'' + level + '\')">Review Weak Area</button>' : '') +
+            '<button type="button" class="btn btn-blue" onclick="startPractice(\'' + level + '\', true)">Practice 5 More Questions</button>' +
+            '<button type="button" class="btn btn-light" onclick="startPractice(\'' + level + '\')">Try Similar Questions</button>' +
           '</div>' +
         '</div>';
       summary.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function reviewPracticeTopic(level){
+      const state = practiceState[level] || theoryPracticeState[level];
+      if(!state) return;
+      const parent = level.startsWith('primary') ? 'primary' : (level.startsWith('jss') ? 'jss' : 'sss');
+      const section = document.getElementById(parent);
+      if(section) section.scrollIntoView({behavior:'smooth',block:'start'});
+      const tutorTopic = document.getElementById(parent === 'primary' ? 'primaryWord' : parent === 'jss' ? 'jssWord' : 'sssWord');
+      if(tutorTopic && state.topic) tutorTopic.value = state.topic;
     }
 
     async function explainWrongAnswer(level, index){
@@ -4099,6 +4109,10 @@ async function primaryAssignmentGuide(){const subject=primaryAssignmentSubject.v
           '</div>';
         box.classList.add('show');
         box.style.display = 'block';
+        const follow=document.createElement('div');
+        follow.className='learning-action-row';
+        follow.innerHTML='<button type="button" class="btn btn-light" onclick="teacherLessonFollowUp(\'simplify\')">Simplify this lesson</button><button type="button" class="btn btn-light" onclick="teacherLessonFollowUp(\'examples\')">Add examples</button><button type="button" class="btn btn-teachers-action" onclick="openTeacherSection(\'prepareExamQuestions\')">Generate questions from this lesson</button><button type="button" class="btn btn-light" onclick="document.getElementById(\'prepareTeacherLessonBtn\').click()">Generate another version</button>';
+        box.appendChild(follow);
         box.scrollIntoView({ behavior: 'smooth', block: 'start' });
       } else {
         throw new Error("No lesson notes content was returned.");
@@ -4141,6 +4155,17 @@ async function primaryAssignmentGuide(){const subject=primaryAssignmentSubject.v
       if(btn) btn.disabled = false;
     }
   });
+
+  window.teacherLessonFollowUp=async function(mode){
+    const box=document.getElementById('teacherLessonOutput');
+    if(!box) return;
+    const cat=document.getElementById('teacherCategory')?.value||'teacher';
+    const cls=document.getElementById('teacherClass')?.value||'';
+    const subj=document.getElementById('teacherSubject')?.value||'';
+    const topic=document.getElementById('teacherTopicOther')?.value||document.getElementById('teacherTopic')?.value||'';
+    const instruction=mode==='simplify'?'Simplify the lesson notes while keeping the same learning objectives and class level.':'Add practical, age-appropriate examples to the lesson notes, using Sierra Leone context only where accurate and appropriate.';
+    await callLearning({level:cat,class_level:cls,subject:subj,topic,task:'teacher',context:instruction,tool_key:'teacher-lesson-followup-'+mode},box);
+  };
 
   // --- TOOL 3: PREPARE EXAM QUESTIONS ACTION ---
   let currentExamObjectiveKey = '';
@@ -4588,6 +4613,17 @@ function renderLearningAnswer(box,text,payload){
     else rec='further practice';
     tipDiv.innerHTML='<strong>Classroom Guidance:</strong> Well done! I hope you understood this topic in <strong>'+safe(payload.subject)+'</strong>. Would you like to continue practising some '+rec+' below?';
     box.appendChild(tipDiv);
+    const follow=document.createElement('div');
+    follow.className='learning-action-row';
+    follow.innerHTML='<button type="button" class="btn btn-light">Explain it more simply</button><button type="button" class="btn btn-light">Give another example</button><button type="button" class="btn btn-light">Give a Sierra Leone-related example</button><button type="button" class="btn btn-blue">Test me with 5 questions</button>';
+    const actions=[
+      ['Explain this topic more simply for my level.','more'],
+      ['Give me another clear example of this topic.','example'],
+      ['Give me a Sierra Leone-related example where it is accurate and appropriate. Do not invent official Sierra Leone facts.','sl-example'],
+      ['After this explanation, guide me to practise five questions on this topic.','quiz']
+    ];
+    [...follow.querySelectorAll('button')].forEach((b,i)=>b.onclick=()=>callLearning({...payload,context:[payload.context||'',actions[i][0]].filter(Boolean).join('\n'),detail_mode:actions[i][1]},box));
+    box.appendChild(follow);
   }
 
   // Read More expands in the exact same location directly beneath the content (Instruction #9)
@@ -4665,7 +4701,9 @@ function buildLocalProgress(){
  const map={};
  rows.forEach(x=>{const k=x.subject||'General';if(!map[k])map[k]={subject:k,attempted:0,correct:0};map[k].attempted++;if(x.is_correct)map[k].correct++});
  const subjects=Object.values(map).map(x=>({...x,score:x.attempted?Math.round(x.correct*100/x.attempted):0})).sort((a,b)=>b.attempted-a.attempted);
- const weak_topics=subjects.filter(x=>x.score<60).map(x=>({topic:x.subject,score:x.score}));
+ const topicMap={};
+ rows.forEach(x=>{const k=(x.subject||'General')+' → '+(x.topic||'General');if(!topicMap[k])topicMap[k]={topic:k,attempted:0,correct:0};topicMap[k].attempted++;if(x.is_correct)topicMap[k].correct++});
+ const weak_topics=Object.values(topicMap).filter(x=>x.attempted>=3).map(x=>({...x,score:Math.round(x.correct*100/x.attempted)})).filter(x=>x.score<60).sort((a,b)=>a.score-b.score);
  return {attempted,correct,wrong,score,subjects,weak_topics,recent:rows.slice(0,8)};
 }
 function renderProgressData(d){
@@ -4673,7 +4711,7 @@ function renderProgressData(d){
  if(attempted)attempted.textContent=Number(d.attempted||0);if(correct)correct.textContent=Number(d.correct||0);if(wrong)wrong.textContent=Number(d.wrong||0);if(score)score.textContent=Number(d.score||0)+'%';
  const subjectRows=Array.isArray(d.subjects)?d.subjects:[];
  if(subjects)subjects.innerHTML=subjectRows.length?subjectRows.map(x=>`<div class="progress-line"><span>${safe(x.subject||'General')}</span><strong>${Number(x.score||0)}% (${Number(x.correct||0)}/${Number(x.attempted||0)})</strong></div>`).join(''):'<div class="progress-empty">No subject results yet. Complete an NPSE, BECE or WASSCE practice question first.</div>';
- if(weak){const raw=Array.isArray(d.weak_topics)?d.weak_topics:(Array.isArray(d.weak_areas)?d.weak_areas:(Array.isArray(d.areas_to_improve)?d.areas_to_improve:[]));const derived=subjectRows.filter(x=>Number(x.score)<60).map(x=>({topic:x.subject,score:x.score}));const items=raw.length?raw:derived;weak.innerHTML=items.length?items.map(x=>`<div class="progress-line"><span>${safe(x.topic||x.weak_area||x.subject||'Area to improve')}</span><strong>${Number(x.score||0)}%</strong></div>`).join(''):'<div class="progress-empty">No weaknesses identified yet. Complete more practice questions.</div>'}
+ if(weak){const raw=Array.isArray(d.weak_topics)?d.weak_topics:(Array.isArray(d.weak_areas)?d.weak_areas:(Array.isArray(d.areas_to_improve)?d.areas_to_improve:[]));const items=raw.filter(x=>Number(x.attempted||3)>=3);weak.innerHTML=items.length?items.map(x=>`<div class="progress-line"><span>${safe(x.topic||x.weak_area||x.subject||'Area to improve')}</span><strong>${Number(x.score||0)}%</strong></div>`).join(''):'<div class="progress-empty">No weaknesses identified yet. Complete more practice questions.</div>'}
  const recentRows=Array.isArray(d.recent)?d.recent:[];
  if(recent)recent.innerHTML=recentRows.length?recentRows.map(x=>`<div class="progress-line"><span>${safe(x.subject||'General')} — ${safe(x.topic||'General')}</span><strong>${x.is_correct?'Correct':'Wrong'}</strong></div>`).join(''):'<div class="progress-empty">Start an exam practice to build your progress.</div>';
 }
