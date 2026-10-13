@@ -4579,41 +4579,34 @@ function cat(c){return({primary:'Primary School Pupil',jss:'JSS Student',sss:'SS
 function authHeaders(){const t=sessionToken();return t?{'Authorization':'Bearer '+t}:{}}
 function showOutput(box,text){box.textContent=text;box.classList.add('show');box.scrollIntoView({behavior:'smooth',block:'nearest'})}
 function formatAIText(text){
-  // Convert common AI Markdown/LaTeX into readable mobile-friendly educational text.
-  const readableMath=(v)=>String(v||'')
-    .replace(/\\\[/g,'').replace(/\\\]/g,'').replace(/\\\(/g,'').replace(/\\\)/g,'')
+  // Render generated content safely: escape HTML before applying supported formatting.
+  const math=String(text??'').replace(/\\\[|\\\]|\\\(|\\\)/g,'')
     .replace(/\\frac\{([^{}]+)\}\{([^{}]+)\}/g,'($1) ÷ ($2)')
-    .replace(/\\text\{([^{}]+)\}/g,'$1').replace(/\\times/g,'×').replace(/\\cdot/g,'×')
-    .replace(/\\leq/g,'≤').replace(/\\geq/g,'≥').replace(/\\approx/g,'≈')
-    .replace(/([A-Za-z])_\{([^{}]+)\}/g,'$1($2)').replace(/([A-Za-z])_([A-Za-z0-9])/g,'$1($2)')
-    .replace(/\\([A-Za-z]+)/g,'$1');
-  const raw=readableMath(text).replace(/\r/g,'').replace(/^\s*>\s?/gm,'').replace(/^\s*[-_=]{3,}\s*$/gm,'');
-  const lines=raw.split('\n'),out=[];
-  let listType='',tableRows=[];
-  const inline=(value)=>safe(value).replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>').replace(/__([^_]+)__/g,'<strong>$1</strong>').replace(/\*([^*\n]+)\*/g,'<em>$1</em>');
-  const closeList=()=>{if(listType){out.push(listType==='ol'?'</ol>':'</ul>');listType=''}};
-  const flushTable=()=>{
-    if(!tableRows.length)return;
-    const rows=tableRows.filter(r=>!r.every(c=>/^:?-{3,}:?$/.test(c.trim())));
-    if(rows.length){out.push('<div class="answer-table-wrap"><table class="answer-table">');rows.forEach((r,i)=>out.push('<tr>'+r.map(c=>(i===0?'<th>':'<td>')+inline(c.trim())+(i===0?'</th>':'</td>')).join('')+'</tr>'));out.push('</table></div>')}
-    tableRows=[];
-  };
-  for(const original of lines){
-    let line=original.trim();
-    if(!line){closeList();flushTable();continue}
-    if(/^\|.*\|$/.test(line)){closeList();tableRows.push(line.slice(1,-1).split('|'));continue}else flushTable();
-    const heading=line.match(/^#{1,6}\s+(.+)$/);if(heading){closeList();out.push('<h4>'+inline(heading[1])+'</h4>');continue}
-    const numbered=line.match(/^(\d+)[.)]\s+(.+)$/);if(numbered){if(listType!=='ol'){closeList();out.push('<ol>');listType='ol'}out.push('<li>'+inline(numbered[2])+'</li>');continue}
-    const lettered=line.match(/^([a-z])[.)]\s+(.+)$/i);if(lettered&&!/^[A-D][.)]\s+/i.test(line)){if(listType!=='ol'){closeList();out.push('<ol class="alpha-list">');listType='ol'}out.push('<li>'+inline(lettered[2])+'</li>');continue}
-    const bullet=line.match(/^[-•*]\s+(.+)$/);if(bullet){if(listType!=='ul'){closeList();out.push('<ul>');listType='ul'}out.push('<li>'+inline(bullet[1])+'</li>');continue}
-    closeList();
-    line=line.replace(/^\*+|\*+$/g,'').trim();
-    if(!line)continue;
-    const label=line.match(/^(Answer|Hint|Activity|Quick quiz(?: question)?|Example|Examples|Theory|Class|Subject|Topic)\s*[:–-]\s*(.*)$/i);
-    if(label)out.push('<p><strong>'+inline(label[1])+':</strong> '+inline(label[2])+'</p>');
+    .replace(/\\text\{([^{}]+)\}/g,'$1').replace(/\\times|\\cdot/g,'×')
+    .replace(/\\leq/g,'≤').replace(/\\geq/g,'≥').replace(/\\approx/g,'≈');
+  const clean=math.replace(/\r/g,'').replace(/^\s*>\s?/gm,'')
+    .replace(/^\s*[-_=]{3,}\s*$/gm,'')
+    .replace(/\b(Explanation|Summary|Introduction)\s*\(\s*(?:≈|~|about|approximately)?\s*\d+\s*(?:[-–]\s*\d+\s*)?(?:words?|letters?)\s*\)/gi,'$1');
+  const inline=value=>safe(value)
+    .replace(/\*\*([^*\n]+)\*\*/g,'<strong>$1</strong>')
+    .replace(/__([^_\n]+)__/g,'<strong>$1</strong>')
+    .replace(/(?<!\*)\*([^*\n]+)\*(?!\*)/g,'<em>$1</em>')
+    .replace(/(?<!\w)\/\/+(?!\w)/g,'');
+  const lines=clean.split('\n'),out=[];let list='',rows=[];
+  const close=()=>{if(list){out.push('</'+list+'>');list=''}};
+  const table=()=>{if(!rows.length)return;const valid=rows.filter(r=>!r.every(c=>/^:?-{3,}:?$/.test(c.trim())));if(valid.length){out.push('<div class="answer-table-wrap"><table class="answer-table">');valid.forEach((r,i)=>out.push('<tr>'+r.map(c=>(i===0?'<th>':'<td>')+inline(c.trim())+(i===0?'</th>':'</td>')).join('')+'</tr>'));out.push('</table></div>')}rows=[]};
+  for(let line of lines){line=line.trim();if(!line){close();table();continue}
+    if(/^\|.*\|$/.test(line)){close();rows.push(line.slice(1,-1).split('|'));continue}table();
+    const head=line.match(/^#{1,6}\s+(.+)$/);if(head){close();out.push('<h4>'+inline(head[1])+'</h4>');continue}
+    const num=line.match(/^\d+[.)]\s+(.+)$/);if(num){if(list!=='ol'){close();out.push('<ol>');list='ol'}out.push('<li>'+inline(num[1])+'</li>');continue}
+    const bullet=line.match(/^[-•*]\s+(.+)$/);if(bullet){if(list!=='ul'){close();out.push('<ul>');list='ul'}out.push('<li>'+inline(bullet[1])+'</li>');continue}
+    close();line=line.replace(/^\*{1,3}(?!\S)|(?<!\S)\*{1,3}$/g,'').trim();
+    const labelled=line.match(/^(Level\s*\/\s*Class|Learning Outcomes?|Answer|Hint|Activity|Quick quiz(?: question)?|Examples?|Theory|Class|Subject|Topic|Explanation|Summary)\*{0,3}\s*[:–-]\s*(.*)$/i);
+    if(labelled)out.push('<p><strong>'+inline(labelled[1])+':</strong> '+inline(labelled[2])+'</p>');
+    else if(/^(Explanation|Learning Outcomes?|Summary|Examples?|Activities|Questions|Introduction)\*{0,3}:?$/i.test(line.replace(/^\*+|\*+$/g,'')))out.push('<h4>'+inline(line.replace(/^\*+|\*+$/g,'').replace(/:$/,''))+'</h4>');
     else out.push('<p>'+inline(line)+'</p>');
   }
-  closeList();flushTable();return out.join('')
+  close();table();return out.join('');
 }
 const lastLearningPayload={};
 const lastLearningAnswers={};
@@ -4630,15 +4623,15 @@ function renderLearningAnswer(box,text,payload){
     let rec='Would you like another explanation or example?';
     if(payload.level==='primary' && /Class [12]/.test(cls)) rec='Would you like a simpler explanation, another example, or a short class activity?';
     else if(payload.level==='primary' && /Class [34]/.test(cls)) rec='Would you like another explanation, example, or more class practice?';
-    else if(payload.level==='primary' && /Class [56]/.test(cls)) rec='Would you like another explanation, example, or five practice questions?';
-    else if(payload.level==='jss') rec='Would you like another explanation, example, or five questions at your JSS level?';
-    else if(payload.level==='sss') rec='Would you like another explanation, example, or five questions at your SSS level?';
+    else if(payload.level==='primary' && /Class [56]/.test(cls)) rec='Would you like another explanation, example, or two practice questions?';
+    else if(payload.level==='jss') rec='Would you like another explanation, example, or two questions at your JSS level?';
+    else if(payload.level==='sss') rec='Would you like another explanation, example, or two questions at your SSS level?';
     tipDiv.innerHTML='<strong>Classroom Guidance:</strong> '+safe(rec);
     box.appendChild(tipDiv);
     const follow=document.createElement('div'); follow.className='learning-action-row';
     const allowQuiz=!(payload.level==='primary' && /Class [12]/.test(cls));
-    follow.innerHTML='<button type="button" class="btn btn-light">Explain it more simply</button><button type="button" class="btn btn-light">Give another example</button>'+(allowQuiz?'<button type="button" class="btn btn-blue">Test me with 5 questions</button>':'<button type="button" class="btn btn-blue">Give me a short activity</button>');
-    const actions=[['Explain this topic more simply for the selected class.','more'],['Give another clear example suitable for the selected class.','example'],[allowQuiz?'Give five fresh practice questions suitable for this exact class and topic.':'Give a very short age-appropriate activity for this Class 1 or Class 2 learner. Use filling gaps, matching, spelling, counting or simple number work as appropriate. Do not use objective multiple-choice or essay/theory questions.','quiz']];
+    follow.innerHTML='<button type="button" class="btn btn-light">Explain it more simply</button><button type="button" class="btn btn-light">Give another example</button>'+(allowQuiz?'<button type="button" class="btn btn-blue">Test me with 2 questions</button>':'<button type="button" class="btn btn-blue">Give me a short activity</button>');
+    const actions=[['Explain this topic more simply for the selected class.','more'],['Give another clear example suitable for the selected class.','example'],[allowQuiz?'Give exactly TWO fresh, clearly numbered (1 and 2) practice questions suitable for this exact class and topic. Return the two questions as plain text, without answers, word counts, or extra questions.':'Give a very short age-appropriate activity for this Class 1 or Class 2 learner. Use filling gaps, matching, spelling, counting or simple number work as appropriate. Do not use objective multiple-choice or essay/theory questions.','quiz']];
     const inline=document.createElement('div'); inline.className='inline-followup-answer'; inline.style.cssText='margin-top:12px;padding:12px 14px;background:#f8fafc;border-left:4px solid #0a5acb;border-radius:8px'; inline.hidden=true;
     [...follow.querySelectorAll('button')].forEach((b,i)=>b.onclick=async()=>{inline.hidden=false; inline.textContent='Preparing…'; const pl={...payload,context:[payload.context||'',actions[i][0]].filter(Boolean).join('\n'),detail_mode:actions[i][1],suppress_followups:true}; try{const d=await learningRequest(pl); inline.innerHTML='<div class="answer-body">'+formatAIText(personalisedText(pl,d.answer||'No response was returned. Please try again.'))+'</div>';}catch(e){handleLearningError(e,inline)}});
     box.appendChild(follow); box.appendChild(inline);
