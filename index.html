@@ -2811,7 +2811,7 @@ function updateDissertationTopics(){
 
     // ----- Unified Exam & Class Practice System -----
     const QUIZ_ROUND_SIZE = 5;
-    const THEORY_ROUND_SIZE = 3;
+    const THEORY_ROUND_SIZE = 2;
     const practiceState = { primary: null, primary_class: null, jss: null, jss_class: null, sss: null, sss_class: null };
     const theoryPracticeState = { primary: null, primary_class: null, jss: null, jss_class: null, sss: null, sss_class: null };
     const lastPracticeTopic = {};
@@ -3478,7 +3478,7 @@ function updateDissertationTopics(){
           question_count: wanted,
           excluded_questions: getSeenQuestions(cfg.level, cfg.subject, cfg.topic),
           tool_key: cfg.level + '-' + cfg.exam.toLowerCase().replace(/[^a-z0-9]+/g,'-') + '-theory-practice',
-          context: 'Generate exactly 3 fresh theory questions for ' + cfg.exam + (cfg.classLevel ? ' (' + cfg.classLevel + ') ' : ' ') + cfg.subject + ' on ' + cfg.topic + '. Do not repeat or lightly reword questions in excluded_questions. Questions must strictly match the selected class, subject and topic. Include model answers and key marking points.'
+          context: 'Generate exactly 2 fresh theory questions for ' + cfg.exam + (cfg.classLevel ? ' (' + cfg.classLevel + ') ' : ' ') + cfg.subject + ' on ' + cfg.topic + '. Do not repeat or lightly reword questions in excluded_questions. Questions must strictly match the selected class, subject and topic. Include model answers and key marking points.'
         });
         const questions = Array.isArray(res.questions) ? res.questions.slice(0, wanted) : [];
         if(questions.length === wanted){
