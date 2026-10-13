@@ -1355,6 +1355,18 @@ select:disabled{background-color:#f3f6f9 !important;color:#7a8794 !important;opa
 
 
 .university .answer-body h4,#university .answer-body h4{font-weight:800;color:#312e81;margin:18px 0 8px;border-bottom:1px solid #ddd6fe;padding-bottom:5px}.answer-body p{overflow-wrap:anywhere}.answer-body{line-height:1.7}.inline-followup-answer{overflow-wrap:anywhere}
+
+/* Keep the navigation logo and Salone Class Room name on one line on mobile. */
+.nav-in > a.brand{white-space:nowrap;flex-wrap:nowrap;flex-shrink:1;min-width:0;gap:8px;}
+.nav-in > a.brand .mark{flex-shrink:0;}
+@media(max-width:520px){
+  .nav-in{gap:6px;}
+  .nav-in > a.brand{font-size:clamp(.76rem,3.3vw,1.05rem);gap:5px;}
+  .nav-in > a.brand .mark{width:34px;min-width:34px;height:32px;border-radius:8px;font-size:.75rem;}
+  .nav-in > div{gap:4px!important;flex-shrink:0;}
+  .nav-in > div .btn{padding:7px 8px!important;font-size:.78rem;}
+  .nav-in > div .mobile{font-size:.78rem;}
+}
 </style>
 <link href="/manifest.webmanifest" rel="manifest"/>
 <meta content="#0b4f9c" name="theme-color"/>
@@ -3044,6 +3056,7 @@ function updateDissertationTopics(){
     }
 
     function renderPracticeError(cfg, retryCallback){
+      if(cfg.box){delete cfg.box.dataset.inlineRefresh;cfg.box.style.minHeight='';}
       cfg.box.innerHTML =
         '<div style="margin:16px 0;padding:20px;border:1.5px solid #cbd6e4;border-radius:12px;background:#f8fafc;text-align:center">' +
           '<p style="margin:0 0 14px;font-weight:700;color:#1e293b;font-size:1.05rem">We couldn’t generate the questions. Please try again.</p>' +
@@ -3110,6 +3123,16 @@ function updateDissertationTopics(){
         if(lastPracticeSubject[level]) subject = lastPracticeSubject[level];
       }
       return { level, exam, classLevel, subject, topic, box, type };
+    }
+
+    // Follow-up actions regenerate inside the existing practice panel without navigating.
+    function retryPracticeHere(level, repeatSameTopic=true){
+      const cfg = getPracticeConfig(level, true);
+      if(cfg.box){
+        cfg.box.style.minHeight = Math.max(cfg.box.getBoundingClientRect().height, 260) + 'px';
+        cfg.box.dataset.inlineRefresh = '1';
+      }
+      return startPractice(level, repeatSameTopic);
     }
 
     async function startPractice(level, repeatSameTopic=false){
@@ -3244,7 +3267,8 @@ function updateDissertationTopics(){
         '</div>' +
         '<div id="' + cfg.level + 'QuizSummary"></div>';
       box.classList.add('show');
-      box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if(box.dataset.inlineRefresh === '1'){ delete box.dataset.inlineRefresh; box.style.minHeight = ''; }
+      else box.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     function answerObjectiveQuestion(level, qIndex, optIndex){
@@ -3408,8 +3432,8 @@ function updateDissertationTopics(){
           nextStepPrompt +
           '<div class="learning-action-row">' +
             (weak.length ? '<button type="button" class="btn btn-light" onclick="reviewPracticeTopic(\'' + level + '\')">Review Weak Area</button>' : '') +
-            '<button type="button" class="btn btn-blue" onclick="startPractice(\'' + level + '\', true)">Practice 5 More Questions</button>' +
-            '<button type="button" class="btn btn-light" onclick="startPractice(\'' + level + '\')">Try Similar Questions</button>' +
+            '<button type="button" class="btn btn-blue" onclick="retryPracticeHere(\'' + level + '\', true)">Practice 5 More Questions</button>' +
+            '<button type="button" class="btn btn-light" onclick="retryPracticeHere(\'' + level + '\')">Try Similar Questions</button>' +
           '</div>' +
         '</div>';
       summary.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -3420,9 +3444,13 @@ function updateDissertationTopics(){
       if(!state) return;
       const parent = level.startsWith('primary') ? 'primary' : (level.startsWith('jss') ? 'jss' : 'sss');
       const section = document.getElementById(parent);
-      if(section) section.scrollIntoView({behavior:'smooth',block:'start'});
-      const tutorTopic = document.getElementById(parent === 'primary' ? 'primaryWord' : parent === 'jss' ? 'jssWord' : 'sssWord');
-      if(tutorTopic && state.topic) tutorTopic.value = state.topic;
+      const summary = document.getElementById(level + 'QuizSummary') || document.getElementById(level + '_theory_summary');
+      if(!summary) return;
+      let guide = summary.querySelector('.inline-weak-review');
+      if(!guide){ guide = document.createElement('div'); guide.className = 'inline-weak-review'; summary.appendChild(guide); }
+      const areas = state.weakAreas ? Object.keys(state.weakAreas) : [];
+      guide.style.cssText = 'margin-top:14px;padding:14px;border-left:4px solid #2563eb;background:#eff6ff;border-radius:8px';
+      guide.innerHTML = '<strong>Review this topic:</strong> ' + safe(areas[0] || state.topic || state.subject || 'Your practice questions') + '<p>Read the explanations and correct answers above, then select Try Similar Questions to practise here again.</p>';
     }
 
     async function explainWrongAnswer(level, index){
@@ -3532,7 +3560,8 @@ function updateDissertationTopics(){
         '</div>' +
         '<div id="' + cfg.level + '_theory_summary" style="margin-top:20px"></div>';
       box.classList.add('show');
-      box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if(box.dataset.inlineRefresh === '1'){ delete box.dataset.inlineRefresh; box.style.minHeight = ''; }
+      else box.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     function clearTheoryHighlight(level, qIndex){
@@ -3674,8 +3703,8 @@ function updateDissertationTopics(){
               '<p style="color:#475569;line-height:1.5">' + safe(markRes.overall_summary || 'Your theory answers have been assessed against Sierra Leone curriculum standards. Review the constructive feedback and model answers above.') + '</p>' +
               nextStepPrompt +
               '<div style="margin-top:18px;display:flex;flex-wrap:wrap;gap:10px">' +
-                '<button type="button" class="btn btn-blue" onclick="startPractice(\'' + level + '\')">Try New Questions</button>' +
-                '<button type="button" class="btn btn-light" onclick="startPractice(\'' + level + '\', true)">Practice This Topic Again</button>' +
+                '<button type="button" class="btn btn-blue" onclick="retryPracticeHere(\'' + level + '\')">Try New Questions</button>' +
+                '<button type="button" class="btn btn-light" onclick="retryPracticeHere(\'' + level + '\', true)">Practice This Topic Again</button>' +
               '</div>' +
             '</div>';
           summaryBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -3977,7 +4006,8 @@ async function primaryAssignmentGuide(){const subject=primaryAssignmentSubject.v
           '</div>';
         box.classList.add('show');
         box.style.display = 'block';
-        box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if(box.dataset.inlineRefresh === '1'){ delete box.dataset.inlineRefresh; box.style.minHeight = ''; }
+      else box.scrollIntoView({ behavior: 'smooth', block: 'start' });
       } else {
         throw new Error("No teaching guide content was returned.");
       }
@@ -4105,7 +4135,8 @@ async function primaryAssignmentGuide(){const subject=primaryAssignmentSubject.v
         follow.className='learning-action-row';
         follow.innerHTML='<button type="button" class="btn btn-light" onclick="teacherLessonFollowUp(\'simplify\')">Simplify this lesson</button><button type="button" class="btn btn-light" onclick="teacherLessonFollowUp(\'examples\')">Add examples</button><button type="button" class="btn btn-teachers-action" onclick="openTeacherSection(\'prepareExamQuestions\')">Generate questions from this lesson</button><button type="button" class="btn btn-light" onclick="document.getElementById(\'prepareTeacherLessonBtn\').click()">Generate another version</button>';
         box.appendChild(follow);
-        box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if(box.dataset.inlineRefresh === '1'){ delete box.dataset.inlineRefresh; box.style.minHeight = ''; }
+      else box.scrollIntoView({ behavior: 'smooth', block: 'start' });
       } else {
         throw new Error("No lesson notes content was returned.");
       }
@@ -4248,7 +4279,8 @@ async function primaryAssignmentGuide(){const subject=primaryAssignmentSubject.v
             '</div>';
           box.classList.add('show');
           box.style.display = 'block';
-          box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          if(box.dataset.inlineRefresh === '1'){ delete box.dataset.inlineRefresh; box.style.minHeight = ''; }
+      else box.scrollIntoView({ behavior: 'smooth', block: 'start' });
         } else {
           throw new Error("No examination questions returned.");
         }
@@ -4284,7 +4316,8 @@ async function primaryAssignmentGuide(){const subject=primaryAssignmentSubject.v
             '</div>';
           box.classList.add('show');
           box.style.display = 'block';
-          box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          if(box.dataset.inlineRefresh === '1'){ delete box.dataset.inlineRefresh; box.style.minHeight = ''; }
+      else box.scrollIntoView({ behavior: 'smooth', block: 'start' });
         } else {
           throw new Error("No theory questions returned.");
         }
@@ -4561,7 +4594,7 @@ function deviceId(){let x=localStorage.getItem('salone_device_id');if(!x){x='slc
 function sessionToken(){return localStorage.getItem('salone_session_token')||sessionStorage.getItem('salone_session_token')||''}function saveSession(x){if(x?.token){localStorage.setItem('salone_session_token',x.token);sessionStorage.removeItem('salone_session_token');if(x.expires_at)localStorage.setItem('salone_session_expires_at',x.expires_at)}}function clearSession(){sessionStorage.removeItem('salone_session_token');localStorage.removeItem('salone_session_token');localStorage.removeItem('salone_session_expires_at');currentProfile=null;currentAccess=null}
 function cat(c){return({primary:'Primary School Pupil',jss:'JSS Student',sss:'SSS Student',teacher:'Teacher',university:'University Student'})[c]||c}function money(v){return'Le '+Number(v||0).toLocaleString()}
 function authHeaders(){const t=sessionToken();return t?{'Authorization':'Bearer '+t}:{}}
-function showOutput(box,text){box.textContent=text;box.classList.add('show');box.scrollIntoView({behavior:'smooth',block:'nearest'})}
+function showOutput(box,text){box.textContent=text;box.classList.add('show');if(box.dataset.inlineRefresh !== '1')box.scrollIntoView({behavior:'smooth',block:'nearest'})}
 function formatAIText(text){
   // Render generated content safely: escape HTML before applying supported formatting.
   const math=String(text??'').replace(/\\\[|\\\]|\\\(|\\\)/g,'')
