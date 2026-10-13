@@ -85,6 +85,13 @@ exports.handler=async(event)=>{
    const contact=normalizeContact(b.contact),password=String(b.password||'');if(password.length>128)return json(401,{error:'Phone number/email or password is incorrect.'});const ps=await arr('/rest/v1/user_profiles?contact_normalized=eq.'+encodeURIComponent(contact)+'&select=*&limit=1').catch(()=>[]),p=ps[0];if(!p||!verifyPassword(password,p.password_salt,p.password_hash))return json(401,{error:'Phone number/email or password is incorrect.'});if((p.account_status||'active')!=='active')return json(403,{error:'This account is blocked. Please contact Salone Class Room support.'});const t=new Date().toISOString();await sf('/rest/v1/user_profiles?id=eq.'+encodeURIComponent(p.id),{method:'PATCH',body:JSON.stringify({last_login_at:t,last_seen_at:t,device_id:clean(b.device_id,120)||p.device_id})});const ses=await createSession(p.id,b.device_id),s=await settings();delete p.password_hash;delete p.password_salt;return json(200,{profile:p,session:ses,access:accessFor(p,s)});
   }
   if(b.action==='logout'){const auth=event.headers.authorization||'',t=auth.startsWith('Bearer ')?auth.slice(7):'';if(t)await sf('/rest/v1/user_sessions?token_hash=eq.'+encodeURIComponent(tokenHash(t)),{method:'DELETE'}).catch(()=>{});return json(200,{ok:true})}
+  if(b.action==='pwa_installed'){
+   const p=await sessionProfile();if(!p)return json(401,{error:'Sign in required.'});
+   const device=clean(b.device_id,120);if(!device)return json(400,{error:'Device identifier required.'});
+   const row={profile_id:p.id,device_id:device,installed_at:new Date().toISOString(),last_seen_at:new Date().toISOString()};
+   const r=await sf('/rest/v1/pwa_installations?on_conflict=profile_id,device_id',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify(row)});
+   return r.ok?json(200,{ok:true}):json(503,{error:'PWA tracking database setup required.'});
+  }
   if(b.action==='heartbeat'){const p=await sessionProfile();if(!p)return json(401,{error:'Sign in required.'});const tool=clean(b.current_tool,120)||null;await sf('/rest/v1/user_profiles?id=eq.'+encodeURIComponent(p.id),{method:'PATCH',body:JSON.stringify({last_seen_at:new Date().toISOString(),current_tool:tool})});const s=await settings();return json(200,{ok:true,access:accessFor(p,s)})}
 
   if(b.action==='practice_record'){

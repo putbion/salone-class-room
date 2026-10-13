@@ -110,8 +110,9 @@ exports.handler=async(event)=>{
   // Always record every successful AI answer in app_events (known existing table).
   // This gives the admin dashboard a reliable per-user usage ledger.
   await sf('/rest/v1/app_events',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({event_type:'ai_usage',section:String(p?.id||deviceId||'anonymous').slice(0,80),detail:JSON.stringify({tool_key:toolKey,source:result.provider,model:result.model}).slice(0,300)})}).catch(()=>{});
-  // Also populate the dedicated usage table where its deployed schema accepts these fields.
-  try{await sf('/rest/v1/ai_usage_log',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({profile_id:p?.id||null,device_id:deviceId,tool_key:toolKey,model:result.model,source:result.provider,input_chars:prompt.length,output_chars:text.length})})}catch{}
+  // Use the ACTUAL 15-column Supabase schema. Never silently swallow a rejected insert.
+  const aiRow={profile_id:p?.id||null,device_id:deviceId||null,tool_key:toolKey,education_level:level||null,subject:subject||null,request_text:String(prompt).slice(0,2000),response_source:result.provider||null,ai_provider:result.provider||null,model_name:result.model||null,input_tokens:inputTokens,output_tokens:outputTokens,estimated_cost:0,estimated_ai_cost_saved:0};
+  try{const saved=await sf('/rest/v1/ai_usage_log',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify(aiRow)});if(!saved.ok)console.error('[learning-api][ai_usage_log]',saved.status,(await saved.text()).slice(0,350))}catch(err){console.error('[learning-api][ai_usage_log]',err.message)}
   if(task==='teacher_exam_objective'){
    let parsed;try{parsed=JSON.parse(text.replace(/^```json\s*|\s*```$/g,''))}catch{return json(502,{error:"We couldn't generate the questions. Please try again."})}
    let questions=Array.isArray(parsed)?parsed:Array.isArray(parsed?.questions)?parsed.questions:[];
