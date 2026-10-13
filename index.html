@@ -3129,7 +3129,7 @@ function updateDissertationTopics(){
     function retryPracticeHere(level, repeatSameTopic=true){
       const cfg = getPracticeConfig(level, true);
       if(cfg.box){
-        cfg.box.style.minHeight = '260px';
+        cfg.box.style.minHeight = Math.max(260, Math.ceil(cfg.box.getBoundingClientRect().height)) + 'px';
         cfg.box.dataset.inlineRefresh = '1';
       }
       return startPractice(level, repeatSameTopic);
@@ -3267,8 +3267,18 @@ function updateDissertationTopics(){
         '</div>' +
         '<div id="' + cfg.level + 'QuizSummary"></div>';
       box.classList.add('show');
-      if(box.dataset.inlineRefresh === '1'){ delete box.dataset.inlineRefresh; box.style.minHeight = ''; }
-      else box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if(box.dataset.inlineRefresh === '1'){
+        delete box.dataset.inlineRefresh;
+        box.style.minHeight = '';
+        // Keep the learner inside this exact practice panel after the DOM is replaced.
+        // Without this, removing the previous long question set can shift the viewport
+        // to another section because the browser clamps the old scroll position.
+        requestAnimationFrame(() => {
+          const headerOffset = 78;
+          const targetY = Math.max(0, window.scrollY + box.getBoundingClientRect().top - headerOffset);
+          window.scrollTo({top: targetY, behavior: 'instant'});
+        });
+      } else box.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     function answerObjectiveQuestion(level, qIndex, optIndex){
@@ -3560,8 +3570,18 @@ function updateDissertationTopics(){
         '</div>' +
         '<div id="' + cfg.level + '_theory_summary" style="margin-top:20px"></div>';
       box.classList.add('show');
-      if(box.dataset.inlineRefresh === '1'){ delete box.dataset.inlineRefresh; box.style.minHeight = ''; }
-      else box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if(box.dataset.inlineRefresh === '1'){
+        delete box.dataset.inlineRefresh;
+        box.style.minHeight = '';
+        // Keep the learner inside this exact practice panel after the DOM is replaced.
+        // Without this, removing the previous long question set can shift the viewport
+        // to another section because the browser clamps the old scroll position.
+        requestAnimationFrame(() => {
+          const headerOffset = 78;
+          const targetY = Math.max(0, window.scrollY + box.getBoundingClientRect().top - headerOffset);
+          window.scrollTo({top: targetY, behavior: 'instant'});
+        });
+      } else box.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     function clearTheoryHighlight(level, qIndex){
