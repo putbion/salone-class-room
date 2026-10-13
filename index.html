@@ -3056,7 +3056,7 @@ function updateDissertationTopics(){
     }
 
     function renderPracticeError(cfg, retryCallback){
-      if(cfg.box){delete cfg.box.dataset.inlineRefresh;cfg.box.style.minHeight='';}
+      if(cfg.box && cfg.box.dataset.inlineRefresh !== '1'){cfg.box.style.minHeight='';}
       cfg.box.innerHTML =
         '<div style="margin:16px 0;padding:20px;border:1.5px solid #cbd6e4;border-radius:12px;background:#f8fafc;text-align:center">' +
           '<p style="margin:0 0 14px;font-weight:700;color:#1e293b;font-size:1.05rem">We couldn’t generate the questions. Please try again.</p>' +
@@ -3126,13 +3126,48 @@ function updateDissertationTopics(){
     }
 
     // Follow-up actions regenerate inside the existing practice panel without navigating.
+    // Keep follow-up controls in place while the request is running.
+    const practicePending = new Set();
     function retryPracticeHere(level, repeatSameTopic=true){
+      if(practicePending.has(level)) return false;
       const cfg = getPracticeConfig(level, true);
-      if(cfg.box){
-        cfg.box.style.minHeight = Math.max(260, Math.ceil(cfg.box.getBoundingClientRect().height)) + 'px';
-        cfg.box.dataset.inlineRefresh = '1';
+      if(!cfg.box) return false;
+      const active = document.activeElement;
+      const btn = active && active.closest ? active.closest('button') : null;
+      const originalY = window.scrollY;
+      const originalHeight = cfg.box.getBoundingClientRect().height;
+      if(btn){
+        btn.dataset.originalLabel = btn.textContent;
+        btn.textContent = 'Preparing your questions…';
+        btn.setAttribute('aria-busy','true');
+        btn.disabled = true;
+        btn.blur();
       }
-      return startPractice(level, repeatSameTopic);
+      practicePending.add(level);
+      cfg.box.dataset.inlineRefresh = '1';
+      // Preserve the old panel's height until new results have been painted.
+      cfg.box.style.minHeight = Math.ceil(originalHeight) + 'px';
+      const finish = () => {
+        practicePending.delete(level);
+        if(btn && btn.isConnected){
+          btn.disabled = false;
+          btn.removeAttribute('aria-busy');
+          btn.textContent = btn.dataset.originalLabel || 'Try Again';
+        }
+        delete cfg.box.dataset.inlineRefresh;
+        cfg.box.querySelector('[data-practice-loading]')?.remove();
+        // Prevent browser scroll anchoring or focused controls from moving the viewport.
+        window.scrollTo({top: originalY, behavior:'instant'});
+        requestAnimationFrame(() => {
+          window.scrollTo({top: originalY, behavior:'instant'});
+          cfg.box.style.minHeight = '';
+        });
+      };
+      try {
+        return Promise.resolve(startPractice(level, repeatSameTopic))
+          .catch(err => { console.error('Practice refresh failed', err); })
+          .finally(finish);
+      } catch(err){finish(); console.error(err);return false;}
     }
 
     async function startPractice(level, repeatSameTopic=false){
@@ -3267,18 +3302,7 @@ function updateDissertationTopics(){
         '</div>' +
         '<div id="' + cfg.level + 'QuizSummary"></div>';
       box.classList.add('show');
-      if(box.dataset.inlineRefresh === '1'){
-        delete box.dataset.inlineRefresh;
-        box.style.minHeight = '';
-        // Keep the learner inside this exact practice panel after the DOM is replaced.
-        // Without this, removing the previous long question set can shift the viewport
-        // to another section because the browser clamps the old scroll position.
-        requestAnimationFrame(() => {
-          const headerOffset = 78;
-          const targetY = Math.max(0, window.scrollY + box.getBoundingClientRect().top - headerOffset);
-          window.scrollTo({top: targetY, behavior: 'instant'});
-        });
-      } else box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if(box.dataset.inlineRefresh !== '1') box.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     function answerObjectiveQuestion(level, qIndex, optIndex){
@@ -3570,18 +3594,7 @@ function updateDissertationTopics(){
         '</div>' +
         '<div id="' + cfg.level + '_theory_summary" style="margin-top:20px"></div>';
       box.classList.add('show');
-      if(box.dataset.inlineRefresh === '1'){
-        delete box.dataset.inlineRefresh;
-        box.style.minHeight = '';
-        // Keep the learner inside this exact practice panel after the DOM is replaced.
-        // Without this, removing the previous long question set can shift the viewport
-        // to another section because the browser clamps the old scroll position.
-        requestAnimationFrame(() => {
-          const headerOffset = 78;
-          const targetY = Math.max(0, window.scrollY + box.getBoundingClientRect().top - headerOffset);
-          window.scrollTo({top: targetY, behavior: 'instant'});
-        });
-      } else box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if(box.dataset.inlineRefresh !== '1') box.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     function clearTheoryHighlight(level, qIndex){
@@ -4026,8 +4039,7 @@ async function primaryAssignmentGuide(){const subject=primaryAssignmentSubject.v
           '</div>';
         box.classList.add('show');
         box.style.display = 'block';
-        if(box.dataset.inlineRefresh === '1'){ delete box.dataset.inlineRefresh; box.style.minHeight = ''; }
-      else box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if(box.dataset.inlineRefresh !== '1') box.scrollIntoView({ behavior: 'smooth', block: 'start' });
       } else {
         throw new Error("No teaching guide content was returned.");
       }
@@ -4155,8 +4167,7 @@ async function primaryAssignmentGuide(){const subject=primaryAssignmentSubject.v
         follow.className='learning-action-row';
         follow.innerHTML='<button type="button" class="btn btn-light" onclick="teacherLessonFollowUp(\'simplify\')">Simplify this lesson</button><button type="button" class="btn btn-light" onclick="teacherLessonFollowUp(\'examples\')">Add examples</button><button type="button" class="btn btn-teachers-action" onclick="openTeacherSection(\'prepareExamQuestions\')">Generate questions from this lesson</button><button type="button" class="btn btn-light" onclick="document.getElementById(\'prepareTeacherLessonBtn\').click()">Generate another version</button>';
         box.appendChild(follow);
-        if(box.dataset.inlineRefresh === '1'){ delete box.dataset.inlineRefresh; box.style.minHeight = ''; }
-      else box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if(box.dataset.inlineRefresh !== '1') box.scrollIntoView({ behavior: 'smooth', block: 'start' });
       } else {
         throw new Error("No lesson notes content was returned.");
       }
@@ -4299,8 +4310,7 @@ async function primaryAssignmentGuide(){const subject=primaryAssignmentSubject.v
             '</div>';
           box.classList.add('show');
           box.style.display = 'block';
-          if(box.dataset.inlineRefresh === '1'){ delete box.dataset.inlineRefresh; box.style.minHeight = ''; }
-      else box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          if(box.dataset.inlineRefresh !== '1') box.scrollIntoView({ behavior: 'smooth', block: 'start' });
         } else {
           throw new Error("No examination questions returned.");
         }
@@ -4336,8 +4346,7 @@ async function primaryAssignmentGuide(){const subject=primaryAssignmentSubject.v
             '</div>';
           box.classList.add('show');
           box.style.display = 'block';
-          if(box.dataset.inlineRefresh === '1'){ delete box.dataset.inlineRefresh; box.style.minHeight = ''; }
-      else box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          if(box.dataset.inlineRefresh !== '1') box.scrollIntoView({ behavior: 'smooth', block: 'start' });
         } else {
           throw new Error("No theory questions returned.");
         }
