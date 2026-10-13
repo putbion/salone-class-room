@@ -3134,7 +3134,8 @@ function updateDissertationTopics(){
       if(!cfg.box) return false;
       const active = document.activeElement;
       const btn = active && active.closest ? active.closest('button') : null;
-      const originalY = window.scrollY;
+      // Keep the current practice area at its existing document position.
+      // Do not scroll to an absolute Y value: that can move learners into other sections.
       const originalHeight = cfg.box.getBoundingClientRect().height;
       if(btn){
         btn.dataset.originalLabel = btn.textContent;
@@ -3145,7 +3146,9 @@ function updateDissertationTopics(){
       }
       practicePending.add(level);
       cfg.box.dataset.inlineRefresh = '1';
-      // Preserve the old panel's height until new results have been painted.
+      cfg.box.style.overflowAnchor = 'none';
+      // The old results are preserved until the replacement is ready.
+      // Reserve their space so replacing a long answer cannot pull the page upward.
       cfg.box.style.minHeight = Math.ceil(originalHeight) + 'px';
       const finish = () => {
         practicePending.delete(level);
@@ -3156,12 +3159,8 @@ function updateDissertationTopics(){
         }
         delete cfg.box.dataset.inlineRefresh;
         cfg.box.querySelector('[data-practice-loading]')?.remove();
-        // Prevent browser scroll anchoring or focused controls from moving the viewport.
-        window.scrollTo({top: originalY, behavior:'instant'});
-        requestAnimationFrame(() => {
-          window.scrollTo({top: originalY, behavior:'instant'});
-          cfg.box.style.minHeight = '';
-        });
+        // Retain the reserved height for this set of questions; clear it on
+        // the next ordinary (non-inline) generation. No forced scroll occurs.
       };
       try {
         return Promise.resolve(startPractice(level, repeatSameTopic))
@@ -3466,11 +3465,11 @@ function updateDissertationTopics(){
           nextStepPrompt +
           '<div class="learning-action-row">' +
             (weak.length ? '<button type="button" class="btn btn-light" onclick="reviewPracticeTopic(\'' + level + '\')">Review Weak Area</button>' : '') +
-            '<button type="button" class="btn btn-blue" onclick="retryPracticeHere(\'' + level + '\', true)">Practice 5 More Questions</button>' +
-            '<button type="button" class="btn btn-light" onclick="retryPracticeHere(\'' + level + '\')">Try Similar Questions</button>' +
+            '<button type="button" class="btn btn-blue" onclick="return retryPracticeHere(\'' + level + '\', true)">Practice 5 More Questions</button>' +
+            '<button type="button" class="btn btn-light" onclick="return retryPracticeHere(\'' + level + '\')">Try Similar Questions</button>' +
           '</div>' +
         '</div>';
-      summary.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      if(!summary.closest('[data-inline-refresh]')) { /* Results remain in their current section. */ }
     }
 
     function reviewPracticeTopic(level){
@@ -3736,8 +3735,8 @@ function updateDissertationTopics(){
               '<p style="color:#475569;line-height:1.5">' + safe(markRes.overall_summary || 'Your theory answers have been assessed against Sierra Leone curriculum standards. Review the constructive feedback and model answers above.') + '</p>' +
               nextStepPrompt +
               '<div style="margin-top:18px;display:flex;flex-wrap:wrap;gap:10px">' +
-                '<button type="button" class="btn btn-blue" onclick="retryPracticeHere(\'' + level + '\')">Try New Questions</button>' +
-                '<button type="button" class="btn btn-light" onclick="retryPracticeHere(\'' + level + '\', true)">Practice This Topic Again</button>' +
+                '<button type="button" class="btn btn-blue" onclick="return retryPracticeHere(\'' + level + '\')">Try New Questions</button>' +
+                '<button type="button" class="btn btn-light" onclick="return retryPracticeHere(\'' + level + '\', true)">Practice This Topic Again</button>' +
               '</div>' +
             '</div>';
           summaryBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
