@@ -3129,7 +3129,7 @@ function updateDissertationTopics(){
     function retryPracticeHere(level, repeatSameTopic=true){
       const cfg = getPracticeConfig(level, true);
       if(cfg.box){
-        cfg.box.style.minHeight = Math.max(cfg.box.getBoundingClientRect().height, 260) + 'px';
+        cfg.box.style.minHeight = '260px';
         cfg.box.dataset.inlineRefresh = '1';
       }
       return startPractice(level, repeatSameTopic);
@@ -4594,7 +4594,25 @@ function deviceId(){let x=localStorage.getItem('salone_device_id');if(!x){x='slc
 function sessionToken(){return localStorage.getItem('salone_session_token')||sessionStorage.getItem('salone_session_token')||''}function saveSession(x){if(x?.token){localStorage.setItem('salone_session_token',x.token);sessionStorage.removeItem('salone_session_token');if(x.expires_at)localStorage.setItem('salone_session_expires_at',x.expires_at)}}function clearSession(){sessionStorage.removeItem('salone_session_token');localStorage.removeItem('salone_session_token');localStorage.removeItem('salone_session_expires_at');currentProfile=null;currentAccess=null}
 function cat(c){return({primary:'Primary School Pupil',jss:'JSS Student',sss:'SSS Student',teacher:'Teacher',university:'University Student'})[c]||c}function money(v){return'Le '+Number(v||0).toLocaleString()}
 function authHeaders(){const t=sessionToken();return t?{'Authorization':'Bearer '+t}:{}}
-function showOutput(box,text){box.textContent=text;box.classList.add('show');if(box.dataset.inlineRefresh !== '1')box.scrollIntoView({behavior:'smooth',block:'nearest'})}
+function showOutput(box,text){
+  if(box.dataset.inlineRefresh === '1'){
+    let status=box.querySelector('[data-practice-loading]');
+    if(!status){
+      status=document.createElement('div');
+      status.setAttribute('data-practice-loading','');
+      status.setAttribute('role','status');
+      status.setAttribute('aria-live','polite');
+      status.style.cssText='position:sticky;top:65px;z-index:3;padding:12px;margin:8px 0;background:#eff6ff;border:1px solid #93c5fd;border-radius:10px;color:#123c72;font-weight:600';
+      box.prepend(status);
+    }
+    status.textContent=text;
+    box.classList.add('show');
+    return;
+  }
+  box.textContent=text;
+  box.classList.add('show');
+  box.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
 function formatAIText(text){
   // Render generated content safely: escape HTML before applying supported formatting.
   const math=String(text??'').replace(/\\\[|\\\]|\\\(|\\\)/g,'')
@@ -4939,10 +4957,9 @@ if('serviceWorker' in navigator){
   window.addEventListener('load', () => {
     let refreshing = false;
 
+    // Do not reload a learner's active lesson when an updated worker takes control.
     navigator.serviceWorker.addEventListener('controllerchange', () => {
-      if (refreshing) return;
       refreshing = true;
-      window.location.reload();
     });
 
     navigator.serviceWorker.register('/sw.js', { updateViaCache: 'none' }).then(reg => {
@@ -4963,7 +4980,7 @@ if('serviceWorker' in navigator){
 
       reg.update().catch(()=>{});
       window.addEventListener('online', () => {
-        reg.update().catch(()=>{}).finally(() => window.location.reload());
+        reg.update().catch(()=>{});
       });
     }).catch(() => {});
   });
