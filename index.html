@@ -3147,9 +3147,11 @@ function updateDissertationTopics(){
       practicePending.add(level);
       cfg.box.dataset.inlineRefresh = '1';
       cfg.box.style.overflowAnchor = 'none';
+      cfg.box.setAttribute('aria-busy','true');
       // The old results are preserved until the replacement is ready.
       // Reserve their space so replacing a long answer cannot pull the page upward.
-      cfg.box.style.minHeight = Math.ceil(originalHeight) + 'px';
+      // Do not reserve a permanent blank area after the old questions are replaced.
+      cfg.box.style.minHeight = '';
       const finish = () => {
         practicePending.delete(level);
         if(btn && btn.isConnected){
@@ -3158,9 +3160,16 @@ function updateDissertationTopics(){
           btn.textContent = btn.dataset.originalLabel || 'Try Again';
         }
         delete cfg.box.dataset.inlineRefresh;
+        cfg.box.removeAttribute('aria-busy');
         cfg.box.querySelector('[data-practice-loading]')?.remove();
-        // Retain the reserved height for this set of questions; clear it on
-        // the next ordinary (non-inline) generation. No forced scroll occurs.
+        cfg.box.style.minHeight = '';
+        cfg.box.style.overflowAnchor = '';
+        // After the replacement, bring the learner to the new questions in THIS panel.
+        // Otherwise the old long result can leave the viewport below the new short result.
+        if(cfg.box.isConnected && cfg.box.querySelector('.quiz-head')){
+          const top = cfg.box.getBoundingClientRect().top + window.scrollY - 85;
+          window.scrollTo({top:Math.max(0,top),behavior:'instant'});
+        }
       };
       try {
         return Promise.resolve(startPractice(level, repeatSameTopic))
@@ -4700,12 +4709,12 @@ function renderLearningAnswer(box,text,payload){
     follow.innerHTML='<button type="button" class="btn btn-light">Explain it more simply</button><button type="button" class="btn btn-light">Give another example</button>'+(allowQuiz?'<button type="button" class="btn btn-blue">Test me with 2 questions</button>':'<button type="button" class="btn btn-blue">Give me a short activity</button>');
     const actions=[['Explain this topic more simply for the selected class.','more'],['Give another clear example suitable for the selected class.','example'],[allowQuiz?'Give exactly TWO fresh, clearly numbered (1 and 2) practice questions suitable for this exact class and topic. Return the two questions as plain text, without answers, word counts, or extra questions.':'Give a very short age-appropriate activity for this Class 1 or Class 2 learner. Use filling gaps, matching, spelling, counting or simple number work as appropriate. Do not use objective multiple-choice or essay/theory questions.','quiz']];
     const inline=document.createElement('div'); inline.className='inline-followup-answer'; inline.style.cssText='margin-top:12px;padding:12px 14px;background:#f8fafc;border-left:4px solid #0a5acb;border-radius:8px'; inline.hidden=true;
-    [...follow.querySelectorAll('button')].forEach((b,i)=>b.onclick=async()=>{inline.hidden=false; inline.textContent='Preparing…'; const pl={...payload,context:[payload.context||'',actions[i][0]].filter(Boolean).join('\n'),detail_mode:actions[i][1],suppress_followups:true}; try{const d=await learningRequest(pl); inline.innerHTML='<div class="answer-body">'+formatAIText(personalisedText(pl,d.answer||'No response was returned. Please try again.'))+'</div>';}catch(e){handleLearningError(e,inline)}});
+    [...follow.querySelectorAll('button')].forEach((b,i)=>b.onclick=async()=>{if(b.disabled)return;const oldLabel=b.textContent;const oldHTML=inline.innerHTML;inline.hidden=false;inline.innerHTML='<strong role="status">⏳ Preparing your '+(i===2?'questions':'explanation')+'…</strong>'+(oldHTML?'<div style="margin-top:10px">'+oldHTML+'</div>':'');b.disabled=true;b.textContent='Preparing…';const pl={...payload,context:[payload.context||'',actions[i][0]].filter(Boolean).join('\n'),detail_mode:actions[i][1],suppress_followups:true};try{const d=await learningRequest(pl);inline.innerHTML='<div class="answer-body">'+formatAIText(personalisedText(pl,d.answer||'No response was returned. Please try again.'))+'</div>';}catch(e){inline.innerHTML=oldHTML+'<p role="alert">Unable to prepare the response. Please try again.</p>';}finally{b.disabled=false;b.textContent=oldLabel;}});
     box.appendChild(follow); box.appendChild(inline);
   }
 
   box.classList.add('show');
-  box.scrollIntoView({behavior:'smooth',block:'nearest'});
+  if(box.dataset.inlineRefresh !== '1') box.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 
 async function requestMoreDetail(boxId, btnContainer){
