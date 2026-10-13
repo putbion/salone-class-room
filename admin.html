@@ -285,6 +285,8 @@ function date(v){if(!v)return '—';try{return new Date(v).toLocaleString()}catc
 function esc(v){const d=document.createElement('div');d.textContent=v??'';return d.innerHTML}
 function render(data){
   const s=data.summary||{}, cats=data.categories||{};
+  let growth=document.getElementById('registrationGrowth');if(!growth){growth=document.createElement('div');growth.id='registrationGrowth';growth.className='box';growth.style.margin='14px 0';document.querySelector('.kpis')?.insertAdjacentElement('afterend',growth)}
+  growth.innerHTML='<h3>Registrations and AI Usage</h3><div class="metric-list">'+[['New registrations (24 hours)',s.new_users_24h],['New registrations (7 days)',s.new_users_7d],['New registrations (30 days)',s.new_users_30d],['AI calls (24 hours)',s.ai_calls_24h],['AI calls (7 days)',s.ai_calls_7d],['AI calls (30 days)',s.ai_calls_30d_exact]].map(([label,value])=>'<div class="metric-row"><span>'+label+'</span><strong>'+(value===null||value===undefined?'Unavailable':n(value))+'</strong></div>').join('')+'</div><p class="note">Rolling time windows. Unavailable means the database count could not be verified.</p>';
   document.getElementById('kUsers').textContent=n(s.registered_users);
   document.getElementById('kNewUsers').textContent=n(s.new_users_30d);
   document.getElementById('kOnline').textContent=n(s.online_now);
