@@ -21,7 +21,7 @@ export default async req=>{
   if(!key||!base)return json(503,{error:'Diagram generation is not configured.'})
   const prompt=`Create one clear, accurate educational visual for a ${level||'student'} learner studying ${subject||'this topic'}: ${topic}. Use a clean textbook style, readable labels, a plain light background, and age-appropriate detail. If this asks for a map, show the requested geographic area accurately and label only relevant features. Do not add decorative or unrelated elements.`
   try{
-    const response=await fetch(`${base}/v1beta/models/gemini-3.1-flash-image:generateContent`,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':key},body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{responseModalities:['TEXT','IMAGE']}})})
+    const response=await fetch(`${base}/v1beta/models/gemini-3.1-flash-image:generateContent`,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':key},body:JSON.stringify({contents:[{role:'user',parts:[{text:prompt}]}],generationConfig:{responseModalities:['TEXT','IMAGE']}})})
     const data=await response.json()
     if(!response.ok)throw new Error('Image service '+response.status)
     const part=data.candidates?.[0]?.content?.parts?.find(item=>item.inlineData?.data)
