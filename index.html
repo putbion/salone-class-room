@@ -1242,7 +1242,7 @@ input:focus,select:focus,textarea:focus{
   font-size:.9rem;
 }
 
-.platform-announcement{background:#fff6d8;border-bottom:1px solid #ecd898;color:#5c4a16}.announcement-inner{max-width:1180px;margin:auto;padding:10px 16px;display:flex;gap:10px}.announcement-inner strong{color:#0b3d63}
+.platform-announcement[hidden]{display:none!important}.platform-announcement{background:#fff6d8;border-bottom:1px solid #ecd898;color:#5c4a16}.announcement-inner{max-width:1180px;margin:auto;padding:10px 16px;display:flex;gap:10px}.announcement-inner strong{color:#0b3d63}
 .platform-modal{display:none;position:fixed;inset:0;background:rgba(10,26,42,.58);z-index:9999;padding:18px;overflow:auto}.platform-modal.open{display:flex;justify-content:center;align-items:flex-start}
 .platform-modal-card{position:relative;width:min(620px,100%);margin:30px auto;background:#fff;border-radius:18px;padding:24px}.modal-close{position:absolute;right:14px;top:12px;border:0;background:#eef4f8;width:34px;height:34px;border-radius:50%;font-size:1.4rem}
 .platform-modal-card label{display:block;font-weight:700;margin:13px 0 6px}.platform-modal-card input,.platform-modal-card select{width:100%;padding:12px;border:1px solid #cbd8e2;border-radius:10px}.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -1400,6 +1400,9 @@ select{
 
 </head>
 <body>
+<section id="platformAnnouncement" class="platform-announcement" role="status" aria-live="polite" hidden>
+  <div class="announcement-inner"><strong>Announcement:</strong><span id="platformAnnouncementText" style="white-space:pre-wrap;overflow-wrap:anywhere"></span></div>
+</section>
 <div class="topbar">Built for Sierra Leonean learners and teachers • Text-first • Mobile-friendly</div>
 <nav class="nav"><div class="wrap nav-in"><a class="brand" href="#home"><span class="mark">SCR</span>Salone Class Room</a><div style="display:flex;gap:8px;align-items:center"><button class="btn btn-light" id="accountBtn" onclick="openAccountModal()" style="padding:8px 12px;border:1px solid #cbd6e4" type="button">Login</button><button aria-label="Open menu" class="mobile" onclick="toggleMenu()">Menu</button></div><ul class="links" id="navLinks">
 <li><a href="#students">Students</a></li>
@@ -4832,7 +4835,7 @@ async function logoutPlatform(){try{await fetch(PLATFORM_API,{method:'POST',head
 setInterval(()=>{if(!document.hidden&&sessionToken())refreshPlatform()},45000);document.addEventListener('visibilitychange',()=>{if(!document.hidden&&sessionToken())refreshPlatform()});
 function price(c){return Number(platformConfig?.prices?.[c]||0)}function openPaymentModal(p){if(!p){openAccountModal();showAccountTab('login');return}paymentCategory.textContent=cat(p.category);paymentAmount.textContent=money(price(p.category));paymentNumber.textContent=platformConfig?.orange_money_number||'Contact administrator';paymentModal.classList.add('open');document.body.style.overflow='hidden'}function closePaymentModal(){paymentModal.classList.remove('open');document.body.style.overflow=''}
 async function submitPaymentRequest(){const s=paymentSender.value.trim(),ref=paymentReference.value.trim();errPaymentSender.textContent='';errPaymentReference.textContent='';if(s.replace(/\D/g,'').length<7){errPaymentSender.textContent='Please type the number used for payment.';return}if(ref.length<3){errPaymentReference.textContent='Please type the transaction reference.';return}paymentStatus.textContent='Submitting…';try{const r=await fetch(PLATFORM_API,{method:'POST',headers:{'Content-Type':'application/json',...authHeaders()},body:JSON.stringify({action:'payment_request',sender_number:s,transaction_reference:ref})}),j=await r.json();if(!r.ok)throw Error(j.error||'Unable to submit');paymentStatus.textContent='Payment submitted. The administrator will activate your access after verification.'}catch(e){paymentStatus.textContent=e.message}}
-async function refreshPlatform(){try{const r=await fetch(PLATFORM_API,{headers:authHeaders()}),d=await r.json();if(r.ok){platformConfig=d;currentProfile=d.profile||null;currentAccess=d.access||null;if(sessionToken()&&!d.profile)clearSession();renderAccount();if(d.announcement?.message){platformAnnouncementText.textContent=d.announcement.message;platformAnnouncement.hidden=false}else{platformAnnouncement.hidden=true}if(d.profile&&d.access?.reason==='payment_required'&&!paymentModal.classList.contains('open')&&!document.hidden){openPaymentModal(d.profile)}}}catch(e){console.warn('Platform refresh failed',e)}}
+async function refreshPlatform(){try{const r=await fetch(PLATFORM_API,{headers:authHeaders()}),d=await r.json();if(r.ok){platformConfig=d;currentProfile=d.profile||null;currentAccess=d.access||null;if(sessionToken()&&!d.profile)clearSession();renderAccount();{const announcementBox=document.getElementById('platformAnnouncement'),announcementText=document.getElementById('platformAnnouncementText');if(announcementBox&&announcementText){const message=String(d.announcement?.message||'').trim();announcementText.textContent=message;announcementBox.hidden=!message}}if(d.profile&&d.access?.reason==='payment_required'&&!paymentModal.classList.contains('open')&&!document.hidden){openPaymentModal(d.profile)}}}catch(e){console.warn('Platform refresh failed',e)}}
 (function(){
  const form=document.getElementById('supportForm'),status=document.getElementById('supportSubmitStatus'),btn=document.getElementById('supportSendBtn');
  if(!form)return;
