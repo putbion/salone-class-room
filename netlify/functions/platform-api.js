@@ -36,7 +36,7 @@ exports.handler=async(event)=>{
  const accessFor=(p,s)=>{
   if(!p)return{allowed:false,reason:'registration_required',status:'SIGNED OUT'};
   if((p.account_status||'active')!=='active')return{allowed:false,reason:'blocked',status:'BLOCKED'};
-  if(s.free_access_enabled&&nowIn(s.free_access_start,s.free_access_until))return{allowed:true,reason:'global_free',status:'FREE'};
+  if(s.free_access_enabled===true)return{allowed:true,reason:'global_free',status:'FREE'};
   if(s[p.category+'_free'])return{allowed:true,reason:'category_free',status:'FREE'};
   if(nowIn(p.free_access_start,p.free_access_end)&&(p.free_access_start||p.free_access_end))return{allowed:true,reason:'individual_free',status:'FREE'};
   if(p.paid_active&&nowIn(p.paid_access_start,p.paid_access_end))return{allowed:true,reason:'paid',status:'PAID ACTIVE'};
