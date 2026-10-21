@@ -1242,7 +1242,7 @@ input:focus,select:focus,textarea:focus{
   font-size:.9rem;
 }
 
-.platform-announcement[hidden]{display:none!important}.platform-announcement{background:#fff6d8;border-bottom:1px solid #ecd898;color:#5c4a16}.announcement-inner{max-width:1180px;margin:auto;padding:10px 16px;display:flex;gap:10px}.announcement-inner strong{color:#0b3d63}
+.platform-announcement[hidden]{display:none!important}.platform-announcement{background:#fff6d8;border:1px solid #ecd898;border-radius:12px;color:#5c4a16;max-width:900px;margin:16px auto 10px;box-sizing:border-box;width:calc(100% - 32px)}.announcement-inner{max-width:900px;margin:0 auto;padding:10px 16px;display:flex;flex-direction:column;align-items:stretch;gap:5px}.announcement-inner strong{display:block;text-align:center;font-weight:800;font-size:15px;letter-spacing:.06em;color:#0b3d63}.announcement-inner #platformAnnouncementText{display:block;width:100%;box-sizing:border-box;text-align:left;font-size:13px;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere;max-height:145px;overflow-y:auto;overscroll-behavior:contain}
 .platform-modal{display:none;position:fixed;inset:0;background:rgba(10,26,42,.58);z-index:9999;padding:18px;overflow:auto}.platform-modal.open{display:flex;justify-content:center;align-items:flex-start}
 .platform-modal-card{position:relative;width:min(620px,100%);margin:30px auto;background:#fff;border-radius:18px;padding:24px}.modal-close{position:absolute;right:14px;top:12px;border:0;background:#eef4f8;width:34px;height:34px;border-radius:50%;font-size:1.4rem}
 .platform-modal-card label{display:block;font-weight:700;margin:13px 0 6px}.platform-modal-card input,.platform-modal-card select{width:100%;padding:12px;border:1px solid #cbd8e2;border-radius:10px}.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -1400,9 +1400,7 @@ select{
 
 </head>
 <body>
-<section id="platformAnnouncement" class="platform-announcement" role="status" aria-live="polite" hidden>
-  <div class="announcement-inner"><strong>Announcement:</strong><span id="platformAnnouncementText" style="white-space:pre-wrap;overflow-wrap:anywhere"></span></div>
-</section>
+
 <div class="topbar">Built for Sierra Leonean learners and teachers • Text-first • Mobile-friendly</div>
 <nav class="nav"><div class="wrap nav-in"><a class="brand" href="#home"><span class="mark">SCR</span>Salone Class Room</a><div style="display:flex;gap:8px;align-items:center"><button class="btn btn-light" id="accountBtn" onclick="openAccountModal()" style="padding:8px 12px;border:1px solid #cbd6e4" type="button">Login</button><button aria-label="Open menu" class="mobile" onclick="toggleMenu()">Menu</button></div><ul class="links" id="navLinks">
 <li><a href="#students">Students</a></li>
@@ -1445,6 +1443,9 @@ select{
 </div>
 </div>
 </header>
+<section id="platformAnnouncement" class="platform-announcement" role="status" aria-live="polite" hidden>
+  <div class="announcement-inner"><strong>ANNOUNCEMENT</strong><div id="platformAnnouncementText"></div></div>
+</section>
 <div class="wrap" id="welcomeBackContainer" style="display:none;margin-top:20px;margin-bottom:8px">
   <div class="welcome-back-card" id="welcomeBackCard">
     <div class="welcome-back-inner">
