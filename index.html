@@ -2767,12 +2767,15 @@ function updateDissertationTopics(){
       const level=select.dataset.topicLevel,subject=document.getElementById(select.dataset.subjectId)?.value||'',classLevel=select.dataset.classFixed||document.getElementById(select.dataset.classId)?.value||'';
       const manualId=select.id.replace('Select','');
       const manual=document.getElementById(manualId);
-      if(!subject){fillSelect(select,[],'Choose a subject first');if(manual)manual.hidden=false;return}
+      if(!subject){select.dataset.topicRequestKey='';fillSelect(select,[],'Choose a subject first');if(manual)manual.hidden=false;return}
+      const requestKey=[level,classLevel,subject].join('::');
+      select.dataset.topicRequestKey=requestKey;
       const fallback=localTopicsFor(level,classLevel,subject);
       fillSelect(select,fallback,fallback.length?'Choose curriculum topic':'Loading curriculum topics…');
       if(!select.querySelector('option[value="__other__"]'))select.add(new Option('Other / Type my own topic','__other__'));
       try{
         const d=await platformPost({action:'curriculum_topics',level,class_level:classLevel,subject},8000);
+        if(select.dataset.topicRequestKey!==requestKey)return; // Ignore outdated responses when class/subject changes.
         const remote=(d.topics||[]).filter(Boolean);
         const guaranteedFallback = fallback.length ? fallback : localTopicsFor(level,classLevel,subject);
         const items=[...new Set([...remote,...guaranteedFallback])].filter(isCleanCurriculumTopic);
@@ -2792,6 +2795,10 @@ function updateDissertationTopics(){
         });
         const manual=document.getElementById(sel.id.replace('Select',''));
         if(manual)manual.hidden=false;
+      });
+      document.querySelectorAll('[data-topic-level]').forEach(sel=>{
+        const subject=document.getElementById(sel.dataset.subjectId);
+        if(subject?.value)loadTopicPicker(sel);
       });
     }
     async function curriculumExplain(level,classId,subjectId,topicSelectId,outputId,manualId){
@@ -4063,7 +4070,7 @@ async function primaryAssignmentGuide(){const subject=primaryAssignmentSubject.v
       if(e.code === 'registration_required'){
         pendingToolAction = null;
         // Keep authentication optional until the visitor chooses Login.
-        showAccountTab(sessionToken()?'login':'register');
+        showAccountTab(sessionToken()||localStorage.getItem('salone_account_seen')?'login':'register');
         if(box){
           box.innerHTML =
             '<div style="padding:16px 18px;background:#fff8eb;border:1.5px solid #fed7aa;border-radius:8px;color:#9a3412">' +
@@ -4191,7 +4198,7 @@ async function primaryAssignmentGuide(){const subject=primaryAssignmentSubject.v
       if(e.code === 'registration_required'){
         pendingToolAction = null;
         // Keep authentication optional until the visitor chooses Login.
-        showAccountTab(sessionToken()?'login':'register');
+        showAccountTab(sessionToken()||localStorage.getItem('salone_account_seen')?'login':'register');
         if(box){
           box.innerHTML =
             '<div style="padding:16px 18px;background:#fff8eb;border:1.5px solid #fed7aa;border-radius:8px;color:#9a3412">' +
@@ -4371,7 +4378,7 @@ async function primaryAssignmentGuide(){const subject=primaryAssignmentSubject.v
       if(e.code === 'registration_required'){
         pendingToolAction = null;
         // Keep authentication optional until the visitor chooses Login.
-        showAccountTab(sessionToken()?'login':'register');
+        showAccountTab(sessionToken()||localStorage.getItem('salone_account_seen')?'login':'register');
         if(box){
           box.innerHTML =
             '<div style="padding:16px 18px;background:#fff8eb;border:1.5px solid #fed7aa;border-radius:8px;color:#9a3412">' +
@@ -4827,7 +4834,7 @@ async function addEducationalVisual(box,payload,token){if(!needsEducationalVisua
 async function callLearning(payload,box){const n=firstName(),msg=requestLoadingText(payload),previous=box.id?lastLearningAnswers[box.id]:'';showOutput(box,n?msg.replace('…',`, ${n}…`):msg);try{const requestPayload={...payload,...(previous?{previous_response:previous}:{})};const d=await learningRequest(requestPayload),answer=personalisedText(payload,d.answer||'No response was returned. Please try again.');renderLearningAnswer(box,answer,payload);await addEducationalVisual(box,payload,d.diagram_token)}catch(e){handleLearningError(e,box)}}
 function openAccountModal(){if(!currentProfile)showAccountTab(sessionToken()||localStorage.getItem('salone_account_seen')?'login':'register');accountModal.classList.add('open');document.body.style.overflow='hidden';renderAccount()}function closeAccountModal(){accountModal.classList.remove('open');document.body.style.overflow=''}
 function showAccountTab(which){registerPane.hidden=which!=='register';loginPane.hidden=which!=='login';registerTabBtn.classList.toggle('active',which==='register');loginTabBtn.classList.toggle('active',which==='login')}
-function renderAccount(){updatePersonalisedWelcomes();const signed=!!currentProfile;accountSignedOut.hidden=signed;accountSignedIn.hidden=!signed;if(signed){acctName.textContent=currentProfile.full_name;acctCategory.textContent=cat(currentProfile.category);acctAccess.textContent=currentAccess?.status||'Checking';acctExpiry.textContent=currentProfile.paid_access_end?'Paid access until '+new Date(currentProfile.paid_access_end).toLocaleDateString():currentProfile.free_access_end?'Free access until '+new Date(currentProfile.free_access_end).toLocaleDateString():''}accountBtn.textContent=signed?'My Account':'Login';loadLearningProgress().catch(()=>{});if(typeof checkWelcomeBack==='function')checkWelcomeBack();setTimeout(()=>{if(typeof updateInstallAppUI==='function')updateInstallAppUI();if(typeof reportPwaInstall==='function')reportPwaInstall().catch(()=>{})},0)}
+function renderAccount(){updatePersonalisedWelcomes();const signed=!!currentProfile;accountSignedOut.hidden=signed;accountSignedIn.hidden=!signed;if(signed){acctName.textContent=currentProfile.full_name;acctCategory.textContent=cat(currentProfile.category);acctAccess.textContent=currentAccess?.status||'Checking';acctExpiry.textContent=currentProfile.paid_access_end?'Paid access until '+new Date(currentProfile.paid_access_end).toLocaleDateString():currentAccess?.free_until?'Free access until '+new Date(currentAccess.free_until).toLocaleDateString():currentProfile.free_access_end?'Free access until '+new Date(currentProfile.free_access_end).toLocaleDateString():''}accountBtn.textContent=signed?'My Account':'Login';loadLearningProgress().catch(()=>{});if(typeof checkWelcomeBack==='function')checkWelcomeBack();setTimeout(()=>{if(typeof updateInstallAppUI==='function')updateInstallAppUI();if(typeof reportPwaInstall==='function')reportPwaInstall().catch(()=>{})},0)}
 function validContact(v){return v.includes('@')?/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v):/^\+?[0-9\s()-]{7,20}$/.test(v)}
 async function submitPlatformRegistration(){['errFullName','errContact','errPassword','errCategory','errTown'].forEach(i=>document.getElementById(i).textContent='');const d={full_name:regFullName.value.trim(),contact:regContact.value.trim(),password:regPassword.value,category:regCategory.value,town:regTown.value.trim()};let ok=true;if(d.full_name.length<3){errFullName.textContent='Please type your full name.';flagRequired(regFullName,'Please type your full name.');ok=false}else if(!validContact(d.contact)){errContact.textContent='Type a valid phone number or email.';flagRequired(regContact,'Please type a valid phone number or email.');ok=false}else if(d.password.length<6){errPassword.textContent='Use at least 6 characters.';flagRequired(regPassword,'Please use at least 6 characters.');ok=false}else if(!d.category){errCategory.textContent='Please select your category.';flagRequired(regCategory,'Please select your category.');ok=false}else if(d.town.length<2){errTown.textContent='Please type your town or city.';flagRequired(regTown,'Please type your town or city.');ok=false}if(!ok)return;registrationStatus.textContent='Creating your account…';registrationStatus.classList.add('show');try{const j=await platformPost({action:'register',device_id:deviceId(),...d},45000);saveSession(j.session);currentProfile=j.profile;currentAccess=j.access;registrationStatus.textContent='Account created successfully.';renderAccount();setTimeout(()=>{closeAccountModal();updateInstallAppUI()},500)}catch(e){registrationStatus.textContent=e.message}}
 let failedLoginAttempts=0;
