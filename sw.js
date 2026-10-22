@@ -1,4 +1,4 @@
-const CACHE='salone-class-room-audit-20261022-2';
+const CACHE='salone-class-room-device-topic-20261022-3';
 const APP_SHELL=['/','/index.html','/offline.html'];
 
 self.addEventListener('install', event => {

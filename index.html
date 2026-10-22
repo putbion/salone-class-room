@@ -4847,7 +4847,7 @@ function requestLoadingText(payload){const t=(payload?.task||'').toLowerCase();i
 function needsEducationalVisual(payload){const task=(payload.task||'tutor').toLowerCase(),level=(payload.level||'').toLowerCase(),request=[payload.topic,payload.context].filter(Boolean).join(' ');return ['tutor','lecturer'].includes(task)&&['primary','jss','sss','university'].includes(level)&&/\b(map|diagram|draw|drawing|illustrat(?:e|ion)|labelled|labeled|graph|chart|visual|anatomy|life cycle|water cycle|food chain|circuit)\b/i.test(request)}
 async function addEducationalVisual(box,payload,token){if(!needsEducationalVisual(payload)||!token)return;const status=document.createElement('p');status.className='visual-status';status.textContent='Generating the educational visual…';box.appendChild(status);try{const r=await fetch('/.netlify/functions/diagram',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({level:payload.level,subject:payload.subject,topic:payload.topic,token})}),d=await r.json();if(!r.ok)throw Error(d.error||'Unable to generate visual.');const img=document.createElement('img');img.className='answer-visual';img.src=d.image;img.alt=d.alt||'Educational visual';img.loading='lazy';status.replaceWith(img)}catch(e){status.textContent='The explanation is ready, but the requested visual could not be generated right now.'}}
 async function callLearning(payload,box){const n=firstName(),msg=requestLoadingText(payload),previous=box.id?lastLearningAnswers[box.id]:'';showOutput(box,n?msg.replace('…',`, ${n}…`):msg);try{const requestPayload={...payload,...(previous?{previous_response:previous}:{})};const d=await learningRequest(requestPayload),answer=personalisedText(payload,d.answer||'No response was returned. Please try again.');renderLearningAnswer(box,answer,payload);await addEducationalVisual(box,payload,d.diagram_token)}catch(e){handleLearningError(e,box)}}
-function syncPageScroll(){const accountOpen=!!document.getElementById('accountModal')?.classList.contains('open');const paymentOpen=!!document.getElementById('paymentModal')?.classList.contains('open');document.body.style.overflow=(accountOpen||paymentOpen)?'hidden':'';document.documentElement.style.overflow='';}
+function syncPageScroll(){/* Modals scroll inside their own overlay. Never lock the classroom document: mobile browsers can retain a stale overflow lock after a dialog closes. */document.body.style.overflow='';document.documentElement.style.overflow='';}
 function openAccountModal(){if(!currentProfile)showAccountTab(sessionToken()||localStorage.getItem('salone_account_seen')?'login':'register');accountModal.classList.add('open');syncPageScroll();renderAccount()}function closeAccountModal(){accountModal.classList.remove('open');syncPageScroll()}
 function showAccountTab(which){registerPane.hidden=which!=='register';loginPane.hidden=which!=='login';registerTabBtn.classList.toggle('active',which==='register');loginTabBtn.classList.toggle('active',which==='login')}
 function renderAccount(){updatePersonalisedWelcomes();const signed=!!currentProfile;accountSignedOut.hidden=signed;accountSignedIn.hidden=!signed;if(signed){acctName.textContent=currentProfile.full_name;acctCategory.textContent=cat(currentProfile.category);acctAccess.textContent=currentAccess?.status||'Checking';acctExpiry.textContent=currentProfile.paid_access_end?'Paid access until '+new Date(currentProfile.paid_access_end).toLocaleDateString():currentAccess?.free_until?'Free access until '+new Date(currentAccess.free_until).toLocaleDateString():currentProfile.free_access_end?'Free access until '+new Date(currentProfile.free_access_end).toLocaleDateString():''}accountBtn.textContent=signed?'My Account':'Login';loadLearningProgress().catch(()=>{});if(typeof checkWelcomeBack==='function')checkWelcomeBack();setTimeout(()=>{if(typeof updateInstallAppUI==='function')updateInstallAppUI();if(typeof reportPwaInstall==='function')reportPwaInstall().catch(()=>{})},0)}
@@ -5082,5 +5082,56 @@ if('serviceWorker' in navigator){
 <button class="btn btn-light" onclick="dismissInstallBanner()" type="button">Not now</button>
 </div>
 </div>
+<!-- Compatibility safeguard: does not alter the existing classroom layout. -->
+<style>
+  html,body{max-width:100%;overflow-x:clip;overflow-y:auto!important;-webkit-overflow-scrolling:touch}
+  .section,.ribbon-section{max-width:100%}
+  select,input,textarea{max-width:100%;min-width:0}
+  @media(max-width:600px){.row>*{min-width:0}}
+</style>
+<script>
+(function(){
+  'use strict';
+  // An independent fallback for older Android browsers and restored form selections.
+  // It runs even if an earlier page initialization fails partway through.
+  const pickers=()=>Array.from(document.querySelectorAll('select[data-topic-level][data-subject-id]'));
+  function refresh(sel){
+    const subject=document.getElementById(sel.dataset.subjectId)?.value||'';
+    const schoolClass=sel.dataset.classFixed||document.getElementById(sel.dataset.classId)?.value||'';
+    const key=[sel.dataset.topicLevel,schoolClass,subject].join('::');
+    if(sel.dataset.compatKey===key && sel.options.length>1)return;
+    sel.dataset.compatKey=key;
+    if(!subject)return;
+    // Display known local curriculum topics immediately, even without a network connection.
+    try{
+      const topics=typeof localTopicsFor==='function'?localTopicsFor(sel.dataset.topicLevel,schoolClass,subject):[];
+      if(topics.length && (sel.options.length<=1 || /choose class and subject first|choose a subject first|loading curriculum/i.test(sel.options[0]?.textContent||''))){
+        const previous=sel.value;
+        sel.replaceChildren(new Option('Choose curriculum topic',''));
+        topics.forEach(t=>sel.add(new Option(t,t)));
+        sel.add(new Option('Other / Type my own topic','__other__'));
+        if(previous && [...sel.options].some(o=>o.value===previous))sel.value=previous;
+      }
+    }catch(e){console.warn('Local topic fallback:',e)}
+    if(typeof loadTopicPicker==='function'){
+      try{loadTopicPicker(sel)}catch(e){console.warn('Topic refresh:',e)}
+    }
+  }
+  function refreshAll(){pickers().forEach(refresh)}
+  document.addEventListener('change',event=>{
+    if(event.target?.matches('select')){
+      pickers().filter(sel=>[sel.dataset.subjectId,sel.dataset.classId].includes(event.target.id)).forEach(sel=>{
+        sel.dataset.compatKey='';refresh(sel);
+      });
+      if(event.target.matches('[data-sss-stream]'))setTimeout(refreshAll,100);
+    }
+  });
+  document.addEventListener('DOMContentLoaded',()=>{setTimeout(refreshAll,150);setTimeout(refreshAll,1200)});
+  window.addEventListener('pageshow',()=>{document.body.style.overflow='';document.documentElement.style.overflow='';setTimeout(refreshAll,100)});
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden){document.body.style.overflow='';document.documentElement.style.overflow='';refreshAll()}});
+  // Form values may be restored by Chrome without firing a change event.
+  setInterval(()=>{if(!document.hidden)refreshAll()},3000);
+})();
+</script>
 </body>
 </html>
