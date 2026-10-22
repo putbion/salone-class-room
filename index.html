@@ -4818,8 +4818,22 @@ async function loadLearningProgress(){
   if(status)status.textContent=local.attempted?'Progress refreshed from this device. Online synchronisation is temporarily unavailable.':(e.message||'No saved practice results found yet.');
  }finally{if(btn){btn.disabled=false;btn.textContent='Refresh my progress'}}
 }
-async function learningRequest(payload){const controller=new AbortController(),tm=setTimeout(()=>controller.abort(),85000);try{const adminToken=sessionStorage.getItem('salone_admin_token')||'',generation_id=Date.now()+'-'+crypto.getRandomValues(new Uint32Array(2)).join('-');const r=await fetch(LEARNING_API,{method:'POST',headers:{'Content-Type':'application/json',...authHeaders(),...(adminToken?{'X-Admin-Token':adminToken}:{})},body:JSON.stringify({...payload,generation_id,device_id:deviceId()}),signal:controller.signal});const d=await r.json().catch(()=>({}));if(!r.ok){const e=new Error(d.error||'Unable to complete this request.');e.code=d.code;e.status=r.status;throw e}return d}finally{clearTimeout(tm)}}
-function handleLearningError(e,box){if(e.name==='AbortError')return showOutput(box,'This request is taking longer than expected. Please try again.');if(e.code==='registration_required'){pendingToolAction=null;showOutput(box,sessionToken()?'Your saved account could not be verified right now. Please try again.':'To continue, use Login above. If you are new, create an account.');return}if(e.code==='payment_required'||e.status===402){openPaymentModal(currentProfile||{category:'university'});return}showOutput(box,"We couldn't complete this request. Please try again.")}
+async function learningRequest(payload){
+ const controller=new AbortController(),tm=setTimeout(()=>controller.abort(),85000);
+ try{
+  const adminToken=sessionStorage.getItem('salone_admin_token')||'',generation_id=Date.now()+'-'+crypto.getRandomValues(new Uint32Array(2)).join('-');
+  const request=()=>fetch(LEARNING_API,{method:'POST',headers:{'Content-Type':'application/json',...authHeaders(),...(adminToken?{'X-Admin-Token':adminToken}:{})},body:JSON.stringify({...payload,generation_id,device_id:deviceId()}),signal:controller.signal,cache:'no-store'});
+  let r=await request(),d=await r.json().catch(()=>({}));
+  // A temporary profile/session lookup failure must not be presented as a new registration requirement.
+  if(r.status===401&&d.code==='registration_required'&&sessionToken()){
+   await new Promise(resolve=>setTimeout(resolve,650));
+   r=await request();d=await r.json().catch(()=>({}));
+   if(r.status===401&&d.code==='registration_required'){const e=new Error('Your saved login could not be verified. Please check your connection or contact support.');e.code='session_unverified';e.status=401;throw e;}
+  }
+  if(!r.ok){const e=new Error(d.error||'Unable to complete this request.');e.code=d.code;e.status=r.status;throw e}return d;
+ }finally{clearTimeout(tm)}
+}
+function handleLearningError(e,box){if(e.name==='AbortError')return showOutput(box,'This request is taking longer than expected. Please try again.');if(e.code==='session_unverified'||e.code==='session_check_unavailable'){showOutput(box,'We could not verify your saved session right now. Please check your internet connection and try again. Your account has not been removed.');return}if(e.code==='registration_required'){pendingToolAction=null;showOutput(box,localStorage.getItem('salone_account_seen')?'Your account is already registered. Please use Login to restore access on this device.':'Please create an account to continue learning.');return}if(e.code==='payment_required'||e.status===402){openPaymentModal(currentProfile||{category:'university'});return}showOutput(box,"We couldn't complete this request. Please try again.")}
 function firstName(){const n=(currentProfile?.full_name||'').trim();return n?n.split(/\s+/)[0]:''}
 function updatePersonalisedWelcomes(){const n=firstName();const suffix=n?', '+n:'';const main=document.getElementById('mainWelcomeName');if(main)main.textContent=suffix;document.querySelectorAll('.section-user-name').forEach(el=>el.textContent=suffix);document.querySelectorAll('.assignment-user-name').forEach(el=>el.textContent=n||'Student')}
 function clearFieldError(el){if(!el)return;el.classList.remove('field-invalid');el.removeAttribute('aria-invalid');const e=el.parentElement?.querySelector('.inline-field-error[data-for="'+el.id+'"]');if(e)e.remove()}
