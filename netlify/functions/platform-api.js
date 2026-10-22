@@ -37,6 +37,10 @@ exports.handler=async(event)=>{
   if(!p)return{allowed:false,reason:'registration_required',status:'SIGNED OUT'};
   if((p.account_status||'active')!=='active')return{allowed:false,reason:'blocked',status:'BLOCKED'};
   if(s.free_access_enabled===true)return{allowed:true,reason:'global_free',status:'FREE'};
+  // Every newly registered account receives at least seven full days before payment is required.
+  // Use the immutable account creation time, not last login, so returning does not reset the trial.
+  const registeredAt=p.created_at?new Date(p.created_at).getTime():NaN;
+  if(Number.isFinite(registeredAt)&&registeredAt<=Date.now()&&Date.now()<registeredAt+7*86400000)return{allowed:true,reason:'new_user_grace',status:'FREE',free_until:new Date(registeredAt+7*86400000).toISOString()};
   if(s[p.category+'_free'])return{allowed:true,reason:'category_free',status:'FREE'};
   if(nowIn(p.free_access_start,p.free_access_end)&&(p.free_access_start||p.free_access_end))return{allowed:true,reason:'individual_free',status:'FREE'};
   if(p.paid_active&&nowIn(p.paid_access_start,p.paid_access_end))return{allowed:true,reason:'paid',status:'PAID ACTIVE'};
