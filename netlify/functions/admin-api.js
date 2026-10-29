@@ -21,6 +21,39 @@ exports.handler=async(event)=>{
  const auth=event.headers.authorization||'',t=auth.startsWith('Bearer ')?auth.slice(7):'';
  const vr=await fetch(U+'/auth/v1/user',{headers:{apikey:K,Authorization:'Bearer '+t}});if(!vr.ok)return json(401,{error:'Sign in required.'});
  const au=await vr.json(),access=await adminAllowed((au.email||'').toLowerCase());if(!access.allowed)return json(403,{error:'Not authorized.'});
+ // Detail queries use the same database and rolling boundaries as summary counts.
+ // Never return an empty list when a query failed.
+ if(event.httpMethod==='GET' && event.queryStringParameters?.detail){
+  const q=event.queryStringParameters,kind=String(q.detail||''),days=Number(q.days),active=q.active!=='false';
+  if(!['registration','activity','ai','pwa'].includes(kind)||![1,7,30].includes(days))return json(400,{error:'Invalid report request.'});
+  const start=new Date(Date.now()-days*86400000).toISOString();
+  const fields='id,full_name,contact,email,phone,category,town,created_at,last_seen_at';
+  const getAll=async(path)=>{
+   const out=[];
+   for(let offset=0;offset<100000;offset+=500){
+    const url=path+(path.includes('?')?'&':'?')+'limit=500&offset='+offset;
+    const r=await sf(url);
+    if(!r.ok){const detail=await r.text().catch(()=> '');throw Error('Database query failed ('+r.status+'): '+detail.slice(0,140));}
+    const rows=await r.json();if(!Array.isArray(rows))throw Error('Invalid database response.');
+    out.push(...rows);if(rows.length<500)return out;
+   }
+   throw Error('Report exceeds safety limit.');
+  };
+  try{
+   let rows=[];
+   if(kind==='registration')rows=await getAll('/rest/v1/user_profiles?select='+fields+'&created_at=gte.'+encodeURIComponent(start)+'&order=created_at.desc');
+   if(kind==='activity')rows=await getAll('/rest/v1/user_profiles?select='+fields+'&'+(active?'last_seen_at=gte.':'or=(last_seen_at.is.null,last_seen_at.lt.'+start+')')+(active?encodeURIComponent(start):'')+'&order=created_at.desc');
+   if(kind==='ai'){
+    const logs=await getAll('/rest/v1/ai_usage_log?select=profile_id,device_id,created_at,tool_key&created_at=gte.'+encodeURIComponent(start)+'&order=created_at.desc');
+    return json(200,{kind,days,count:logs.length,rows:logs,description:'Individual AI usage log records (not a deduplicated user count).'});
+   }
+   if(kind==='pwa'){
+    rows=await getAll('/rest/v1/pwa_installations?select=profile_id,device_id,created_at&order=created_at.desc');
+    return json(200,{kind,days,count:rows.length,rows,description:'Recorded installation confirmations; historical unreported installs cannot be recovered.'});
+   }
+   return json(200,{kind,days,active,count:rows.length,rows});
+  }catch(e){console.error('Admin detail report:',e.message);return json(503,{error:'Unable to load verified records. '+e.message});}
+ }
  if(event.httpMethod==='POST'){
   if(b.action==='admin_add'){
    if(access.role!=='owner')return json(403,{error:'Only the main administrator can add or remove administrators.'});
