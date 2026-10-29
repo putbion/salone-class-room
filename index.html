@@ -1398,6 +1398,14 @@ select{
 }
 </style>
 
+<style id="scr-usability-20261029">
+.scr-password-field{position:relative;display:flex;align-items:center;gap:8px}
+.scr-password-field input{flex:1;min-width:0}
+.scr-password-toggle{flex:none;min-width:64px;min-height:44px;border:1px solid #b8c9dc;border-radius:10px;background:#f2f7fd;color:#193b53;font-weight:700;cursor:pointer}
+button,.btn,select,input[type="checkbox"],a[role="button"]{touch-action:manipulation}
+@media(pointer:coarse){button,.btn,select,.teacher-nav-pill{min-height:44px}}
+</style>
+<script>function scrTogglePassword(id,btn){const field=document.getElementById(id);if(!field)return;const visible=field.type==='password';field.type=visible?'text':'password';btn.textContent=visible?'Hide':'Show';btn.setAttribute('aria-label',visible?'Hide password':'Show password');btn.setAttribute('aria-pressed',String(visible));}</script>
 </head>
 <body>
 
@@ -1579,7 +1587,7 @@ select{
 <span class="tool-badge badge-primary">PRIMARY • Class 6 / NPSE</span>
 <h3>NPSE Practice</h3>
 <p>
-        Let’s practise some NPSE questions. Choose question type (Objective or Theory), select a paper and, if you wish, a topic. Questions will only be generated after you click the button below.
+        Let’s practise some NPSE questions. Choose question type (Objective or Theory), select a paper and choose or type a topic. Questions will only be generated after you click the button below.
         Answer carefully and use your feedback to identify areas to revise.
       </p>
 <label for="npseQuizType">Choose Question Type</label>
@@ -1724,7 +1732,7 @@ select{
 <div aria-live="polite" class="quiz-area" id="jssClassQuiz"></div>
 </article>
 <article class="card" id="becePracticeCard"><span class="step">4</span><span class="tool-badge badge-jss">JSS • Class 3 / BECE</span><h3>BECE Practice</h3>
-<p class="guide"><strong>Let’s practise questions.</strong> Choose question type (Objective or Theory), select your subject and, if you wish, a topic. Questions will only be generated after you click the button below. Choosing or typing a topic is optional if you want to focus on a particular area.</p>
+<p class="guide"><strong>Let’s practise questions.</strong> Choose question type (Objective or Theory), select your subject and choose or type a topic. Questions will only be generated after you click the button below. Choose a listed topic or type your own topic before generating questions.</p>
 <label for="jssQuizType">Choose Question Type</label>
 <select id="jssQuizType" onchange="updatePracticeBtnText('jss')">
 <option value="">Choose Question Type</option>
@@ -2019,7 +2027,7 @@ select{
       <div><label for="prepTeachTopic">Type or choose your topic</label><select id="prepTeachTopic"><option value="">Choose a subject first</option></select></div>
     </div>
     <p class="topic-help">Choose a listed curriculum topic above or enter your topic below.</p>
-    <div style="margin-top:8px"><label for="prepTeachTopicOther" style="font-weight:700">Topic</label><input id="prepTeachTopicOther" placeholder="Enter topic here..." style="width:100%;box-sizing:border-box;margin-top:4px"/></div>
+    <div style="margin-top:8px"><label for="prepTeachTopicOther" style="font-weight:700">Topic</label><input id="prepTeachTopicOther" placeholder="Type your topic if it is not in the list" style="width:100%;box-sizing:border-box;margin-top:4px"/></div>
     <div style="margin-top:16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
       <button class="btn btn-teachers-action" id="prepareTeacherToTeachBtn" type="button" style="padding:11px 22px;font-size:1rem">Prepare Me to Teach</button>
       <div id="prepTeachStatus" style="display:none;font-weight:700;color:#EA580C">Preparing your teaching guide...</div>
@@ -2047,7 +2055,7 @@ select{
       <div><label for="teacherTopicOnly">Type or choose your topic</label><select id="teacherTopicOnly"><option value="">Choose class and subject first</option></select></div>
     </div>
     <p class="topic-help">Choose a listed curriculum topic above or enter your lesson topic below.</p>
-    <div style="margin-top:8px"><label for="teacherTopicOther" style="font-weight:700">Topic</label><input id="teacherTopicOther" placeholder="Enter lesson topic here..." style="width:100%;box-sizing:border-box;margin-top:4px"/></div>
+    <div style="margin-top:8px"><label for="teacherTopicOther" style="font-weight:700">Topic</label><input id="teacherTopicOther" placeholder="Type your lesson topic if it is not in the list" style="width:100%;box-sizing:border-box;margin-top:4px"/></div>
     <div class="teacher-form-grid" style="margin-top:12px">
       <div><label for="teacherPrepDate">Date</label><input id="teacherPrepDate" type="date"/></div>
       <div><label for="teacherPrepDuration">Duration</label><select id="teacherPrepDuration"><option value="">Select duration</option><option>30 minutes</option><option>40 minutes</option><option>45 minutes</option><option>60 minutes</option><option>80 minutes</option></select></div>
@@ -2821,8 +2829,8 @@ function updateDissertationTopics(){
       }
       if(!topic){
         const target=(sel?.value==='__other__'||!sel?.value)?(manual||sel):sel;
-        flagRequired(target,'Please choose a topic before continuing.');
-        showOutput(box,'Please choose a topic before continuing.');
+        flagRequired(target,'Please choose a topic from the list or type your own topic before continuing.');
+        showOutput(box,'Please choose a topic from the list or type your own topic before continuing.');
         return;
       }
       await callLearning({level,class_level:schoolClass,subject,topic,task:'tutor',tool_key:(level+'-'+subject+'-tutor').toLowerCase().replace(/[^a-z0-9]+/g,'-')},box);
@@ -3215,8 +3223,8 @@ function updateDissertationTopics(){
       if(!cfg.topic){
         const topicId = level === 'primary' ? 'npseTopicSelect' : level === 'primary_class' ? 'primaryPracticeTopicSelect' : level === 'jss' ? 'jssQuizTopicSelect' : level === 'jss_class' ? 'jssPracticeTopicSelect' : level === 'sss' ? 'sssQuizTopicSelect' : 'sssPracticeTopicSelect';
         const topicEl = document.getElementById(topicId);
-        if(topicEl) flagRequired(topicEl, 'Please choose a topic before continuing.');
-        showOutput(cfg.box, 'Please choose a topic before continuing.');
+        if(topicEl) flagRequired(topicEl, 'Please choose a topic from the list or type your own topic before continuing.');
+        showOutput(cfg.box, 'Please choose a topic from the list or type your own topic before continuing.');
         return;
       }
       if(!cfg.type){
@@ -4620,7 +4628,7 @@ resetInactivityTimer();
 <h2>Create your Salone Class Room account</h2><p>Register once. Your account can be used again on this device or another device.</p>
 <label for="regFullName">Full name</label><input autocomplete="name" id="regFullName" maxlength="100" placeholder="Type your full name"/><div class="field-error" id="errFullName"></div>
 <label for="regContact">Phone number or email</label><input autocomplete="username" id="regContact" maxlength="254" placeholder="Example: +23276123456 or name@email.com"/><div class="field-error" id="errContact"></div>
-<label for="regPassword">Password</label><input autocomplete="new-password" id="regPassword" maxlength="128" minlength="6" placeholder="At least 6 characters" type="password"/><div class="field-error" id="errPassword"></div>
+<label for="regPassword">Password</label><div class="scr-password-field"><input autocomplete="new-password" id="regPassword" maxlength="128" minlength="6" placeholder="At least 6 characters" type="password"/><button type="button" class="scr-password-toggle" aria-label="Show password" aria-pressed="false" onclick="scrTogglePassword('regPassword',this)">Show</button></div><div class="field-error" id="errPassword"></div>
 <label for="regCategory">Category</label><select id="regCategory"><option value="">Select your category</option><option value="primary">Primary School Pupil</option><option value="jss">JSS Student</option><option value="sss">SSS Student</option><option value="teacher">Teacher</option><option value="university">University Student</option></select><div class="field-error" id="errCategory"></div>
 <label for="regTown">Town / City</label><input autocomplete="address-level2" id="regTown" maxlength="100" placeholder="Type your town or city"/><div class="field-error" id="errTown"></div>
 <button class="btn btn-blue platform-submit" onclick="submitPlatformRegistration()" type="button">Create account and continue</button>
@@ -4628,7 +4636,7 @@ resetInactivityTimer();
 <div hidden="" id="loginPane">
 <h2>Login</h2><p>Use the same phone number or email and password you used when registering.</p>
 <label for="loginContact">Phone number or email</label><input autocomplete="username" id="loginContact" maxlength="254" placeholder="Phone number or email"/>
-<label for="loginPassword">Password</label><input autocomplete="current-password" id="loginPassword" maxlength="128" placeholder="Password" type="password"/>
+<label for="loginPassword">Password</label><div class="scr-password-field"><input autocomplete="current-password" id="loginPassword" maxlength="128" placeholder="Password" type="password"/><button type="button" class="scr-password-toggle" aria-label="Show password" aria-pressed="false" onclick="scrTogglePassword('loginPassword',this)">Show</button></div>
 <button class="btn btn-blue platform-submit" onclick="submitLogin()" type="button">Login</button><button class="btn btn-light" onclick="requestPasswordReset()" style="width:100%;margin-top:8px" type="button">Forgot password? Request a reset</button>
 <p class="field-help">The administrator can reset it to a temporary password. Existing passwords are never displayed or stored in readable form.</p>
 <div class="modal-status" id="loginStatus"></div></div>
@@ -4912,7 +4920,7 @@ async function reportPwaInstall(){
   if(pwaReportInFlight||!currentProfile||!(isSaloneInstalled()||hasConfirmedSaloneInstall()))return;
   const key='scr_pwa_report_'+String(currentProfile.id||'')+'_'+deviceId();
   try{if(sessionStorage.getItem(key)==='1')return;pwaReportInFlight=true;
-    await platformPost({action:'pwa_installed',device_id:deviceId()});sessionStorage.setItem(key,'1');
+    const result=await platformPost({action:'pwa_installed',device_id:deviceId()});if(!result||result.ok!==true)throw new Error('Installation tracking not confirmed');sessionStorage.setItem(key,'1');
   }catch(e){console.warn('PWA installation status not recorded',e.message)}finally{pwaReportInFlight=false}
 }
 function hasConfirmedSaloneInstall(){
