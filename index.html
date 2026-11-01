@@ -4080,7 +4080,7 @@ async function primaryAssignmentGuide(){const subject=primaryAssignmentSubject.v
       if(e.code === 'registration_required'){
         pendingToolAction = null;
         // Keep authentication optional until the visitor chooses Login.
-        showAccountTab(sessionToken()||localStorage.getItem('salone_account_seen')?'login':'register');
+        showAccountTab('login');
         if(box){
           box.innerHTML =
             '<div style="padding:16px 18px;background:#fff8eb;border:1.5px solid #fed7aa;border-radius:8px;color:#9a3412">' +
@@ -4208,7 +4208,7 @@ async function primaryAssignmentGuide(){const subject=primaryAssignmentSubject.v
       if(e.code === 'registration_required'){
         pendingToolAction = null;
         // Keep authentication optional until the visitor chooses Login.
-        showAccountTab(sessionToken()||localStorage.getItem('salone_account_seen')?'login':'register');
+        showAccountTab('login');
         if(box){
           box.innerHTML =
             '<div style="padding:16px 18px;background:#fff8eb;border:1.5px solid #fed7aa;border-radius:8px;color:#9a3412">' +
@@ -4388,7 +4388,7 @@ async function primaryAssignmentGuide(){const subject=primaryAssignmentSubject.v
       if(e.code === 'registration_required'){
         pendingToolAction = null;
         // Keep authentication optional until the visitor chooses Login.
-        showAccountTab(sessionToken()||localStorage.getItem('salone_account_seen')?'login':'register');
+        showAccountTab('login');
         if(box){
           box.innerHTML =
             '<div style="padding:16px 18px;background:#fff8eb;border:1.5px solid #fed7aa;border-radius:8px;color:#9a3412">' +
@@ -4843,7 +4843,7 @@ async function learningRequest(payload){
   if(!r.ok){const e=new Error(d.error||'Unable to complete this request.');e.code=d.code;e.status=r.status;throw e}return d;
  }finally{clearTimeout(tm)}
 }
-function handleLearningError(e,box){if(e.name==='AbortError')return showOutput(box,'This request is taking longer than expected. Please try again.');if(e.code==='session_unverified'||e.code==='session_check_unavailable'){showOutput(box,'We could not verify your saved session right now. Please check your internet connection and try again. Your account has not been removed.');return}if(e.code==='registration_required'){pendingToolAction=null;showOutput(box,localStorage.getItem('salone_account_seen')?'Your account is already registered. Please use Login to restore access on this device.':'Please create an account to continue learning.');return}if(e.code==='payment_required'||e.status===402){openPaymentModal(currentProfile||{category:'university'});return}showOutput(box,"We couldn't complete this request. Please try again.")}
+function handleLearningError(e,box){if(e.name==='AbortError')return showOutput(box,'This request is taking longer than expected. Please try again.');if(e.code==='session_unverified'||e.code==='session_check_unavailable'){showOutput(box,'We could not verify your saved session right now. Please check your internet connection and try again. Your account has not been removed.');return}if(e.code==='registration_required'){pendingToolAction=null;showOutput(box,localStorage.getItem('salone_account_seen')?'Your account already exists. Tap Login to restore access; do not create another account.':'Please log in to continue learning. If you are new, select Create Account.');return}if(e.code==='payment_required'||e.status===402){openPaymentModal(currentProfile||{category:'university'});return}showOutput(box,"We couldn't complete this request. Please try again.")}
 function firstName(){const n=(currentProfile?.full_name||'').trim();return n?n.split(/\s+/)[0]:''}
 function updatePersonalisedWelcomes(){const n=firstName();const suffix=n?', '+n:'';const main=document.getElementById('mainWelcomeName');if(main)main.textContent=suffix;document.querySelectorAll('.section-user-name').forEach(el=>el.textContent=suffix);document.querySelectorAll('.assignment-user-name').forEach(el=>el.textContent=n||'Student')}
 function clearFieldError(el){if(!el)return;el.classList.remove('field-invalid');el.removeAttribute('aria-invalid');const e=el.parentElement?.querySelector('.inline-field-error[data-for="'+el.id+'"]');if(e)e.remove()}
@@ -4856,13 +4856,49 @@ function requestLoadingText(payload){const t=(payload?.task||'').toLowerCase();i
 function needsEducationalVisual(payload){const task=(payload.task||'tutor').toLowerCase(),level=(payload.level||'').toLowerCase(),request=[payload.topic,payload.context].filter(Boolean).join(' ');return ['tutor','lecturer'].includes(task)&&['primary','jss','sss','university'].includes(level)&&/\b(map|diagram|draw|drawing|illustrat(?:e|ion)|labelled|labeled|graph|chart|visual|anatomy|life cycle|water cycle|food chain|circuit)\b/i.test(request)}
 async function addEducationalVisual(box,payload,token){if(!needsEducationalVisual(payload)||!token)return;const status=document.createElement('p');status.className='visual-status';status.textContent='Generating the educational visual…';box.appendChild(status);try{const r=await fetch('/.netlify/functions/diagram',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({level:payload.level,subject:payload.subject,topic:payload.topic,token})}),d=await r.json();if(!r.ok)throw Error(d.error||'Unable to generate visual.');const img=document.createElement('img');img.className='answer-visual';img.src=d.image;img.alt=d.alt||'Educational visual';img.loading='lazy';status.replaceWith(img)}catch(e){status.textContent='The explanation is ready, but the requested visual could not be generated right now.'}}
 async function callLearning(payload,box){const n=firstName(),msg=requestLoadingText(payload),previous=box.id?lastLearningAnswers[box.id]:'';showOutput(box,n?msg.replace('…',`, ${n}…`):msg);try{const requestPayload={...payload,...(previous?{previous_response:previous}:{})};const d=await learningRequest(requestPayload),answer=personalisedText(payload,d.answer||'No response was returned. Please try again.');renderLearningAnswer(box,answer,payload);await addEducationalVisual(box,payload,d.diagram_token)}catch(e){handleLearningError(e,box)}}
-function openAccountModal(){if(!currentProfile)showAccountTab(sessionToken()||localStorage.getItem('salone_account_seen')?'login':'register');accountModal.classList.add('open');document.body.style.overflow='hidden';renderAccount()}function closeAccountModal(){accountModal.classList.remove('open');document.body.style.overflow=''}
+function openAccountModal(){if(!currentProfile)showAccountTab('login');accountModal.classList.add('open');document.body.style.overflow='hidden';renderAccount()}function closeAccountModal(){accountModal.classList.remove('open');document.body.style.overflow=''}
 function showAccountTab(which){registerPane.hidden=which!=='register';loginPane.hidden=which!=='login';registerTabBtn.classList.toggle('active',which==='register');loginTabBtn.classList.toggle('active',which==='login')}
 function renderAccount(){updatePersonalisedWelcomes();const signed=!!currentProfile;accountSignedOut.hidden=signed;accountSignedIn.hidden=!signed;if(signed){acctName.textContent=currentProfile.full_name;acctCategory.textContent=cat(currentProfile.category);acctAccess.textContent=currentAccess?.status||'Checking';acctExpiry.textContent=currentProfile.paid_access_end?'Paid access until '+new Date(currentProfile.paid_access_end).toLocaleDateString():currentAccess?.free_until?'Free access until '+new Date(currentAccess.free_until).toLocaleDateString():currentProfile.free_access_end?'Free access until '+new Date(currentProfile.free_access_end).toLocaleDateString():''}accountBtn.textContent=signed?'My Account':'Login';loadLearningProgress().catch(()=>{});if(typeof checkWelcomeBack==='function')checkWelcomeBack();setTimeout(()=>{if(typeof updateInstallAppUI==='function')updateInstallAppUI();if(typeof reportPwaInstall==='function')reportPwaInstall().catch(()=>{})},0)}
 function validContact(v){return v.includes('@')?/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v):/^\+?[0-9\s()-]{7,20}$/.test(v)}
 async function submitPlatformRegistration(){['errFullName','errContact','errPassword','errCategory','errTown'].forEach(i=>document.getElementById(i).textContent='');const d={full_name:regFullName.value.trim(),contact:regContact.value.trim(),password:regPassword.value,category:regCategory.value,town:regTown.value.trim()};let ok=true;if(d.full_name.length<3){errFullName.textContent='Please type your full name.';flagRequired(regFullName,'Please type your full name.');ok=false}else if(!validContact(d.contact)){errContact.textContent='Type a valid phone number or email.';flagRequired(regContact,'Please type a valid phone number or email.');ok=false}else if(d.password.length<6){errPassword.textContent='Use at least 6 characters.';flagRequired(regPassword,'Please use at least 6 characters.');ok=false}else if(!d.category){errCategory.textContent='Please select your category.';flagRequired(regCategory,'Please select your category.');ok=false}else if(d.town.length<2){errTown.textContent='Please type your town or city.';flagRequired(regTown,'Please type your town or city.');ok=false}if(!ok)return;registrationStatus.textContent='Creating your account…';registrationStatus.classList.add('show');try{const j=await platformPost({action:'register',device_id:deviceId(),...d},45000);saveSession(j.session);currentProfile=j.profile;currentAccess=j.access;registrationStatus.textContent='Account created successfully.';renderAccount();setTimeout(()=>{closeAccountModal();updateInstallAppUI()},500)}catch(e){registrationStatus.textContent=e.message}}
+// Support is offered after two incorrect-login responses; network errors are not counted.
 let failedLoginAttempts=0;
-async function submitLogin(){loginStatus.textContent='Logging in…';loginStatus.classList.add('show');try{const j=await platformPost({action:'login',device_id:deviceId(),contact:loginContact.value.trim(),password:loginPassword.value},45000);saveSession(j.session);failedLoginAttempts=0;currentProfile=j.profile;currentAccess=j.access;loginStatus.textContent=firstName()?`Login successful. Welcome, ${firstName()}.`:'Login successful.';renderAccount();setTimeout(()=>{closeAccountModal();updateInstallAppUI()},400)}catch(e){loginStatus.textContent=e.name==='AbortError'?'Login is taking longer than expected. Please try again.':((e.status===401||/incorrect/i.test(e.message||''))?'Account not found or login details incorrect. If you have not registered, choose Create account. Otherwise check your details.':(e.message||'We could not log you in. Please try again.'));{if(e.status===401||e.status===403||/incorrect|invalid credentials|account not found/i.test(e.message||'')){failedLoginAttempts++;}if(failedLoginAttempts>=2){let link=document.getElementById('loginWhatsAppHelp');if(!link){link=document.createElement('a');link.id='loginWhatsAppHelp';link.target='_blank';link.rel='noopener noreferrer';link.style.cssText='display:block;margin-top:12px;font-weight:bold;color:#075e54';loginStatus.insertAdjacentElement('afterend',link)}link.href='https://wa.me/23276385572?text='+encodeURIComponent('Hello Salone Class Room support. I need help accessing my account.');link.textContent='Having trouble logging in? Contact Salone Class Room via WhatsApp.'}}}}
+const SALONE_SUPPORT_WHATSAPP='https://wa.me/23276385572?text='+encodeURIComponent('Hello Salone Class Room support. I already have an account but cannot log in. Please help me recover access.');
+function hideLoginHelp(){const old=document.getElementById('saloneLoginHelpPopup');if(old)old.remove();}
+function showLoginHelp(){
+  hideLoginHelp();
+  const panel=document.createElement('div');
+  panel.id='saloneLoginHelpPopup';
+  panel.setAttribute('role','alertdialog');
+  panel.setAttribute('aria-modal','true');
+  panel.setAttribute('aria-label','Login assistance');
+  panel.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(12,32,54,.65);display:flex;align-items:center;justify-content:center;padding:18px';
+  const card=document.createElement('div');
+  card.style.cssText='width:min(100%,420px);background:#fff;color:#17334d;border-radius:16px;padding:24px;box-shadow:0 12px 40px #0004;text-align:center';
+  const heading=document.createElement('h2');heading.textContent='Need help logging in?';heading.style.margin='0 0 12px';
+  const message=document.createElement('p');message.textContent='Your login details did not work twice. If you already have an account, please do not create another one. Contact Salone Class Room on WhatsApp for assistance.';
+  const link=document.createElement('a');link.href=SALONE_SUPPORT_WHATSAPP;link.target='_blank';link.rel='noopener noreferrer';link.textContent='Contact support on WhatsApp';link.style.cssText='display:block;background:#087b4b;color:#fff;text-decoration:none;padding:14px;border-radius:10px;font-weight:700;min-height:48px';
+  const close=document.createElement('button');close.type='button';close.textContent='Try logging in again';close.style.cssText='display:block;margin:14px auto 0;min-height:44px;padding:8px 16px;border:1px solid #b8c9dc;border-radius:10px;background:#fff;color:#17334d;font-weight:600';close.onclick=hideLoginHelp;
+  card.append(heading,message,link,close);panel.append(card);document.body.append(panel);close.focus();
+}
+async function submitLogin(){
+  loginStatus.textContent='Logging in…';loginStatus.classList.add('show');
+  try{
+    const j=await platformPost({action:'login',device_id:deviceId(),contact:loginContact.value.trim(),password:loginPassword.value},45000);
+    saveSession(j.session);failedLoginAttempts=0;hideLoginHelp();currentProfile=j.profile;currentAccess=j.access;
+    loginStatus.textContent=firstName()?`Login successful. Welcome, ${firstName()}.`:'Login successful.';
+    renderAccount();setTimeout(()=>{closeAccountModal();updateInstallAppUI()},400);
+  }catch(e){
+    const invalid=e.status===401||/incorrect (password|credentials)|invalid credentials/i.test(e.message||'');
+    if(invalid){
+      failedLoginAttempts++;
+      loginStatus.textContent='The login details were not recognised. Please check your phone number or email and password. If you already have an account, do not register again.';
+      if(failedLoginAttempts>=2)showLoginHelp();
+    }else{
+      loginStatus.textContent=e.name==='AbortError'?'The connection timed out. Please check your internet and try again.':(e.message||'Unable to log in. Please try again.');
+    }
+  }
+}
 async function logoutPlatform(){try{await fetch(PLATFORM_API,{method:'POST',headers:{'Content-Type':'application/json',...authHeaders()},body:JSON.stringify({action:'logout'})})}catch{}clearSession();renderAccount();showAccountTab('login')}
 setInterval(()=>{if(!document.hidden)refreshPlatform()},12000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshPlatform()});window.addEventListener('focus',()=>{if(!document.hidden)refreshPlatform()});
 function price(c){return Number(platformConfig?.prices?.[c]||0)}function openPaymentModal(p){if(platformConfig?.free_access_enabled===true || currentAccess?.allowed===true)return;if(!p){openAccountModal();showAccountTab('login');return}paymentCategory.textContent=cat(p.category);paymentAmount.textContent=money(price(p.category));paymentNumber.textContent=platformConfig?.orange_money_number||'Contact administrator';paymentModal.classList.add('open');document.body.style.overflow='hidden'}function closePaymentModal(){paymentModal.classList.remove('open');document.body.style.overflow=''}
