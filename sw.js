@@ -1,4 +1,4 @@
-const CACHE='salone-class-room-unified-20261029-1';
+const CACHE='salone-class-room-paid-access-20261102-2';
 const APP_SHELL=['/','/index.html','/offline.html'];
 
 self.addEventListener('install', event => {
@@ -41,7 +41,7 @@ self.addEventListener('fetch', event => {
     const cache = await caches.open(CACHE);
     try {
       const response = await fetch(request, { cache: 'no-store' });
-      if (response && response.ok) {
+      if (response && response.ok && !url.pathname.endsWith('.html') && request.mode !== 'navigate') {
         cache.put(request, response.clone()).catch(() => {});
       }
       return response;
