@@ -32,18 +32,15 @@ exports.handler=async(event)=>{
  if(!U||!K){console.error('[platform-api] Missing Supabase environment variables');return json(500,{error:'Platform backend is not configured.'})}
  const sf=(p,o={})=>fetch(U+(p.startsWith('/')?p:'/'+p),{...o,headers:{apikey:K,Authorization:'Bearer '+K,'Content-Type':'application/json',...(o.headers||{})}});
  const arr=async p=>{const r=await sf(p);if(!r.ok)throw new Error(await r.text());return r.json()};
- const settings=async()=>{try{return(await arr('/rest/v1/platform_settings?id=eq.1&select=*'))[0]||{}}catch{return{}}};
+ const settings=async()=>{const rows=await arr('/rest/v1/platform_settings?id=eq.1&select=*');if(!rows[0])throw new Error('Platform payment settings are missing.');return rows[0]};
  const accessFor=(p,s)=>{
   if(!p)return{allowed:false,reason:'registration_required',status:'SIGNED OUT'};
   if((p.account_status||'active')!=='active')return{allowed:false,reason:'blocked',status:'BLOCKED'};
   if(s.free_access_enabled===true)return{allowed:true,reason:'global_free',status:'FREE'};
-  // Every newly registered account receives at least seven full days before payment is required.
-  // Use the immutable account creation time, not last login, so returning does not reset the trial.
-  const registeredAt=p.created_at?new Date(p.created_at).getTime():NaN;
-  if(Number.isFinite(registeredAt)&&registeredAt<=Date.now()&&Date.now()<registeredAt+7*86400000)return{allowed:true,reason:'new_user_grace',status:'FREE',free_until:new Date(registeredAt+7*86400000).toISOString()};
+  // Do not create a new free trial independently of the owner's access settings.
   if(s[p.category+'_free'])return{allowed:true,reason:'category_free',status:'FREE'};
   if(nowIn(p.free_access_start,p.free_access_end)&&(p.free_access_start||p.free_access_end))return{allowed:true,reason:'individual_free',status:'FREE'};
-  if(p.paid_active&&nowIn(p.paid_access_start,p.paid_access_end))return{allowed:true,reason:'paid',status:'PAID ACTIVE'};
+  if(p.paid_active&&(!p.paid_access_start||!Number.isNaN(Date.parse(p.paid_access_start)))&&(!p.paid_access_end||!Number.isNaN(Date.parse(p.paid_access_end)))&&nowIn(p.paid_access_start,p.paid_access_end))return{allowed:true,reason:'paid',status:'PAID ACTIVE'};
   if(p.paid_active&&!p.paid_access_end)return{allowed:true,reason:'paid_legacy',status:'PAID ACTIVE'};
   return{allowed:false,reason:'payment_required',status:p.paid_access_end&&new Date(p.paid_access_end)<new Date()?'EXPIRED':'PAYMENT REQUIRED'};
  };
@@ -54,7 +51,7 @@ exports.handler=async(event)=>{
  const createSession=async(profileId,deviceId)=>{const token=crypto.randomBytes(32).toString('hex'),expires=new Date(Date.now()+730*86400000).toISOString();const row={profile_id:profileId,token_hash:tokenHash(token),device_id:clean(deviceId,120)||null,expires_at:expires,user_agent:clean(event.headers['user-agent'],300)||null};const r=await sf('/rest/v1/user_sessions',{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify(row)});if(!r.ok)throw new Error(await r.text());return{token,expires_at:expires}};
  try{
   if(event.httpMethod==='GET'){
-   const s=await settings();let a=null;try{const aa=await arr('/rest/v1/announcements?active=eq.true&select=message,active,created_at,starts_at,ends_at,target_category&order=created_at.desc&limit=5');const n=Date.now();a=aa.find(x=>(!x.starts_at||new Date(x.starts_at).getTime()<=n)&&(!x.ends_at||new Date(x.ends_at).getTime()>=n))||null}catch{}
+   const s=await settings();let a=null;try{const aa=await arr('/rest/v1/announcements?active=eq.true&select=message,active,created_at,starts_at,ends_at,target_category&order=created_at.desc&limit=100');const n=Date.now();const current=await sessionProfile();a=aa.find(x=>(!x.starts_at||new Date(x.starts_at).getTime()<=n)&&(!x.ends_at||new Date(x.ends_at).getTime()>=n)&&(!x.target_category||x.target_category==='all'||x.target_category==='everyone'||x.target_category===current?.category))||null}catch(e){console.error('[platform-api][announcements]',e.message)}
    const p=await sessionProfile();return json(200,{free_access_enabled:!!s.free_access_enabled,free_access_start:s.free_access_start||null,free_access_until:s.free_access_until||null,orange_money_number:s.orange_money_number||'',prices:{primary:+s.price_primary||0,jss:+s.price_jss||0,sss:+s.price_sss||0,teacher:+s.price_teacher||0,university:+s.price_university||0},announcement:a,profile:p?{...p,password_hash:undefined,password_salt:undefined}:null,access:p?accessFor(p,s):null});
   }
   if(event.httpMethod!=='POST')return json(405,{error:'Method not allowed.'});

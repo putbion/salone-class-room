@@ -46,7 +46,7 @@ exports.handler=async(event)=>{
   }
   if(b.action==='end_free_period'){
    if(access.role!=='owner')return json(403,{error:'Only the main administrator can end free access.'});
-   const r=await sf('/rest/v1/platform_settings?id=eq.1',{method:'PATCH',body:JSON.stringify({free_access_enabled:false,free_access_until:new Date(Date.now()-1000).toISOString(),updated_at:new Date().toISOString()})});
+   const r=await sf('/rest/v1/platform_settings?id=eq.1',{method:'PATCH',body:JSON.stringify({free_access_enabled:false,primary_free:false,jss_free:false,sss_free:false,teacher_free:false,university_free:false,free_access_until:new Date(Date.now()-1000).toISOString(),updated_at:new Date().toISOString()})});
    return r.ok?json(200,{ok:true}):json(500,{error:'Unable to end the free period.'});
   }
   if(b.action==='save_settings'){
