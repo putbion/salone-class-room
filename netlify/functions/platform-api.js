@@ -51,7 +51,18 @@ exports.handler=async(event)=>{
  const createSession=async(profileId,deviceId)=>{const token=crypto.randomBytes(32).toString('hex'),expires=new Date(Date.now()+730*86400000).toISOString();const row={profile_id:profileId,token_hash:tokenHash(token),device_id:clean(deviceId,120)||null,expires_at:expires,user_agent:clean(event.headers['user-agent'],300)||null};const r=await sf('/rest/v1/user_sessions',{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify(row)});if(!r.ok)throw new Error(await r.text());return{token,expires_at:expires}};
  try{
   if(event.httpMethod==='GET'){
-   const s=await settings();let a=null;try{const aa=await arr('/rest/v1/announcements?active=eq.true&select=message,active,created_at,starts_at,ends_at,target_category&order=created_at.desc&limit=100');const n=Date.now();const current=await sessionProfile();a=aa.find(x=>(!x.starts_at||new Date(x.starts_at).getTime()<=n)&&(!x.ends_at||new Date(x.ends_at).getTime()>=n)&&(!x.target_category||x.target_category==='all'||x.target_category==='everyone'||x.target_category===current?.category))||null}catch(e){console.error('[platform-api][announcements]',e.message)}
+   const s=await settings();let a=null;
+   try{
+    // Some existing installations have the original announcements schema without scheduling/target columns.
+    // Fetch existing columns first; a missing optional column must never hide every announcement.
+    const aa=await arr('/rest/v1/announcements?active=eq.true&select=*&order=created_at.desc&limit=100');
+    const n=Date.now();const current=await sessionProfile();
+    a=aa.find(x=>{
+     const start=x.starts_at?Date.parse(x.starts_at):null,end=x.ends_at?Date.parse(x.ends_at):null;
+     const target=clean(x.target_category||'all',30).toLowerCase();
+     return (!x.starts_at||(Number.isFinite(start)&&start<=n))&&(!x.ends_at||(Number.isFinite(end)&&end>=n))&&(['all','everyone','public',''].includes(target)||target===clean(current?.category,30).toLowerCase());
+    })||null;
+   }catch(e){console.error('[platform-api][announcements] Failed to load announcements:',e.message)}
    const p=await sessionProfile();return json(200,{free_access_enabled:!!s.free_access_enabled,free_access_start:s.free_access_start||null,free_access_until:s.free_access_until||null,orange_money_number:s.orange_money_number||'',prices:{primary:+s.price_primary||0,jss:+s.price_jss||0,sss:+s.price_sss||0,teacher:+s.price_teacher||0,university:+s.price_university||0},announcement:a,profile:p?{...p,password_hash:undefined,password_salt:undefined}:null,access:p?accessFor(p,s):null});
   }
   if(event.httpMethod!=='POST')return json(405,{error:'Method not allowed.'});
