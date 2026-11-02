@@ -52,18 +52,21 @@ exports.handler=async(event)=>{
  try{
   if(event.httpMethod==='GET'){
    const s=await settings();let a=null;
+   let announcementDiagnostic='none';
    try{
-    // Some existing installations have the original announcements schema without scheduling/target columns.
-    // Fetch existing columns first; a missing optional column must never hide every announcement.
-    const aa=await arr('/rest/v1/announcements?active=eq.true&select=*&order=created_at.desc&limit=100');
+    // Fetch all recent records so legacy NULL active values and audience labels can be inspected.
+    const aa=await arr('/rest/v1/announcements?select=*&order=created_at.desc&limit=100');
     const n=Date.now();const current=await sessionProfile();
-    a=aa.find(x=>{
+    const eligible=aa.filter(x=>{
+     const active=x.active===true||x.active===1||String(x.active).toLowerCase()==='true';
      const start=x.starts_at?Date.parse(x.starts_at):null,end=x.ends_at?Date.parse(x.ends_at):null;
-     const target=clean(x.target_category||'all',30).toLowerCase();
-     return (!x.starts_at||(Number.isFinite(start)&&start<=n))&&(!x.ends_at||(Number.isFinite(end)&&end>=n))&&(['all','everyone','public',''].includes(target)||target===clean(current?.category,30).toLowerCase());
-    })||null;
-   }catch(e){console.error('[platform-api][announcements] Failed to load announcements:',e.message)}
-   const p=await sessionProfile();return json(200,{free_access_enabled:!!s.free_access_enabled,free_access_start:s.free_access_start||null,free_access_until:s.free_access_until||null,orange_money_number:s.orange_money_number||'',prices:{primary:+s.price_primary||0,jss:+s.price_jss||0,sss:+s.price_sss||0,teacher:+s.price_teacher||0,university:+s.price_university||0},announcement:a,profile:p?{...p,password_hash:undefined,password_salt:undefined}:null,access:p?accessFor(p,s):null});
+     const target=clean(x.target_category||'all',30).trim().toLowerCase();
+     return active&&(!x.starts_at||(Number.isFinite(start)&&start<=n))&&(!x.ends_at||(Number.isFinite(end)&&end>=n))&&(['all','everyone','public','all users','all categories',''].includes(target)||target===clean(current?.category,30).toLowerCase());
+    });
+    a=eligible.find(x=>String(x.message||'').trim())||null;
+    announcementDiagnostic=a?'visible':aa.length?'no_active_matching_announcement':'no_announcements_saved';
+   }catch(e){announcementDiagnostic='retrieval_error';console.error('[platform-api][announcements] Failed to load announcements:',e.message)}
+   const p=await sessionProfile();return json(200,{free_access_enabled:!!s.free_access_enabled,free_access_start:s.free_access_start||null,free_access_until:s.free_access_until||null,orange_money_number:s.orange_money_number||'',prices:{primary:+s.price_primary||0,jss:+s.price_jss||0,sss:+s.price_sss||0,teacher:+s.price_teacher||0,university:+s.price_university||0},announcement:a,announcement_status:announcementDiagnostic,profile:p?{...p,password_hash:undefined,password_salt:undefined}:null,access:p?accessFor(p,s):null});
   }
   if(event.httpMethod!=='POST')return json(405,{error:'Method not allowed.'});
   let b={};try{b=JSON.parse(event.body||'{}')}catch{return json(400,{error:'Invalid request.'})}
