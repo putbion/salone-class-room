@@ -51,22 +51,8 @@ exports.handler=async(event)=>{
  const createSession=async(profileId,deviceId)=>{const token=crypto.randomBytes(32).toString('hex'),expires=new Date(Date.now()+730*86400000).toISOString();const row={profile_id:profileId,token_hash:tokenHash(token),device_id:clean(deviceId,120)||null,expires_at:expires,user_agent:clean(event.headers['user-agent'],300)||null};const r=await sf('/rest/v1/user_sessions',{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify(row)});if(!r.ok)throw new Error(await r.text());return{token,expires_at:expires}};
  try{
   if(event.httpMethod==='GET'){
-   const s=await settings();let a=null;
-   let announcementDiagnostic='none';
-   try{
-    // Fetch all recent records so legacy NULL active values and audience labels can be inspected.
-    const aa=await arr('/rest/v1/announcements?select=*&order=created_at.desc&limit=100');
-    const n=Date.now();const current=await sessionProfile();
-    const eligible=aa.filter(x=>{
-     const active=x.active===true||x.active===1||String(x.active).toLowerCase()==='true';
-     const start=x.starts_at?Date.parse(x.starts_at):null,end=x.ends_at?Date.parse(x.ends_at):null;
-     const target=clean(x.target_category||'all',30).trim().toLowerCase();
-     return active&&(!x.starts_at||(Number.isFinite(start)&&start<=n))&&(!x.ends_at||(Number.isFinite(end)&&end>=n))&&(['all','everyone','public','all users','all categories',''].includes(target)||target===clean(current?.category,30).toLowerCase());
-    });
-    a=eligible.find(x=>String(x.message||'').trim())||null;
-    announcementDiagnostic=a?'visible':aa.length?'no_active_matching_announcement':'no_announcements_saved';
-   }catch(e){announcementDiagnostic='retrieval_error';console.error('[platform-api][announcements] Failed to load announcements:',e.message)}
-   const p=await sessionProfile();return json(200,{free_access_enabled:!!s.free_access_enabled,free_access_start:s.free_access_start||null,free_access_until:s.free_access_until||null,orange_money_number:s.orange_money_number||'',prices:{primary:+s.price_primary||0,jss:+s.price_jss||0,sss:+s.price_sss||0,teacher:+s.price_teacher||0,university:+s.price_university||0},announcement:a,announcement_status:announcementDiagnostic,profile:p?{...p,password_hash:undefined,password_salt:undefined}:null,access:p?accessFor(p,s):null});
+   const s=await settings();let a=null;try{const aa=await arr('/rest/v1/announcements?active=eq.true&select=message,active,created_at,starts_at,ends_at,target_category&order=created_at.desc&limit=100');const n=Date.now();const current=await sessionProfile();a=aa.find(x=>(!x.starts_at||new Date(x.starts_at).getTime()<=n)&&(!x.ends_at||new Date(x.ends_at).getTime()>=n)&&(!x.target_category||x.target_category==='all'||x.target_category==='everyone'||x.target_category===current?.category))||null}catch(e){console.error('[platform-api][announcements]',e.message)}
+   const p=await sessionProfile();return json(200,{free_access_enabled:!!s.free_access_enabled,free_access_start:s.free_access_start||null,free_access_until:s.free_access_until||null,orange_money_number:s.orange_money_number||'',prices:{primary:+s.price_primary||0,jss:+s.price_jss||0,sss:+s.price_sss||0,teacher:+s.price_teacher||0,university:+s.price_university||0},announcement:a,profile:p?{...p,password_hash:undefined,password_salt:undefined}:null,access:p?accessFor(p,s):null});
   }
   if(event.httpMethod!=='POST')return json(405,{error:'Method not allowed.'});
   let b={};try{b=JSON.parse(event.body||'{}')}catch{return json(400,{error:'Invalid request.'})}
@@ -88,7 +74,7 @@ exports.handler=async(event)=>{
 
   if(b.action==='register'){
    const rl=enforceRate(event,{name:'register',limit:5,windowMs:60*60*1000});if(rl)return rl;
-   const contact=normalizeContact(b.contact),password=String(b.password||'');const row={device_id:clean(b.device_id,120)||('acct_'+crypto.randomBytes(10).toString('hex')),full_name:clean(b.full_name,120),contact,contact_normalized:contact,category:clean(b.category,30),town:clean(b.town,120),paid_active:false,account_status:'active',last_login_at:new Date().toISOString(),last_seen_at:new Date().toISOString()};
+   const contact=normalizeContact(b.contact),password=String(b.password||'');const row={device_id:clean(b.device_id,120)||('acct_'+crypto.randomBytes(10).toString('hex')),full_name:clean(b.full_name,120),contact,contact_normalized:contact,category:clean(b.category,30),town:clean(b.town,120),paid_active:false,free_access_start:new Date().toISOString(),free_access_end:new Date(Date.now()+7*86400000).toISOString(),account_status:'active',last_login_at:new Date().toISOString(),last_seen_at:new Date().toISOString()};
    if(!row.full_name||!validContact(contact)||password.length<6||password.length>128||!['primary','jss','sss','teacher','university'].includes(row.category)||!row.town)return json(400,{error:'Complete your name, phone number or email, password, category and town/city.'});
    const exists=await arr('/rest/v1/user_profiles?contact_normalized=eq.'+encodeURIComponent(contact)+'&select=id&limit=1').catch(()=>[]);if(exists[0])return json(409,{error:'An account already exists for this phone number or email. Please use Login.'});
    const salt=crypto.randomBytes(16).toString('hex');row.password_salt=salt;row.password_hash=hashPassword(password,salt);if(contact.includes('@'))row.email=contact;else row.phone=contact;
