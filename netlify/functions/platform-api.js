@@ -36,13 +36,14 @@ exports.handler=async(event)=>{
  const accessFor=(p,s)=>{
   if(!p)return{allowed:false,reason:'registration_required',status:'SIGNED OUT'};
   if((p.account_status||'active')!=='active')return{allowed:false,reason:'blocked',status:'BLOCKED'};
-  if(s.free_access_enabled===true)return{allowed:true,reason:'global_free',status:'FREE'};
-  // Do not create a new free trial independently of the owner's access settings.
-  if(s[p.category+'_free'])return{allowed:true,reason:'category_free',status:'FREE'};
-  if(nowIn(p.free_access_start,p.free_access_end)&&(p.free_access_start||p.free_access_end))return{allowed:true,reason:'individual_free',status:'FREE'};
-  if(p.paid_active&&(!p.paid_access_start||!Number.isNaN(Date.parse(p.paid_access_start)))&&(!p.paid_access_end||!Number.isNaN(Date.parse(p.paid_access_end)))&&nowIn(p.paid_access_start,p.paid_access_end))return{allowed:true,reason:'paid',status:'PAID ACTIVE'};
-  if(p.paid_active&&!p.paid_access_end)return{allowed:true,reason:'paid_legacy',status:'PAID ACTIVE'};
-  return{allowed:false,reason:'payment_required',status:p.paid_access_end&&new Date(p.paid_access_end)<new Date()?'EXPIRED':'PAYMENT REQUIRED'};
+  const n=Date.now();
+  // A confirmed paid subscription takes priority; retain existing legacy paid accounts.
+  if(p.paid_active&&(!p.paid_access_end||nowIn(p.paid_access_start,p.paid_access_end)))return{allowed:true,reason:'paid',status:'PAID ACTIVE'};
+  // Registration timestamp is the immutable trial anchor; never restart on login or reinstall.
+  const registered=Date.parse(p.created_at||'');
+  const trialEnd=Number.isFinite(registered)?registered+7*86400000:NaN;
+  if(Number.isFinite(trialEnd)&&n<trialEnd)return{allowed:true,reason:'registration_trial',status:'FREE TRIAL',free_until:new Date(trialEnd).toISOString()};
+  return{allowed:false,reason:'payment_required',status:'PAYMENT REQUIRED'};
  };
  const sessionProfile=async()=>{
   const auth=event.headers.authorization||event.headers.Authorization||'',t=auth.startsWith('Bearer ')?auth.slice(7):'';if(!t)return null;
@@ -51,7 +52,7 @@ exports.handler=async(event)=>{
  const createSession=async(profileId,deviceId)=>{const token=crypto.randomBytes(32).toString('hex'),expires=new Date(Date.now()+730*86400000).toISOString();const row={profile_id:profileId,token_hash:tokenHash(token),device_id:clean(deviceId,120)||null,expires_at:expires,user_agent:clean(event.headers['user-agent'],300)||null};const r=await sf('/rest/v1/user_sessions',{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify(row)});if(!r.ok)throw new Error(await r.text());return{token,expires_at:expires}};
  try{
   if(event.httpMethod==='GET'){
-   const s=await settings();let a=null;try{const aa=await arr('/rest/v1/announcements?active=eq.true&select=message,active,created_at,starts_at,ends_at,target_category&order=created_at.desc&limit=100');const n=Date.now();const current=await sessionProfile();a=aa.find(x=>(!x.starts_at||new Date(x.starts_at).getTime()<=n)&&(!x.ends_at||new Date(x.ends_at).getTime()>=n)&&(!x.target_category||x.target_category==='all'||x.target_category==='everyone'||x.target_category===current?.category))||null}catch(e){console.error('[platform-api][announcements]',e.message)}
+   const s=await settings();let a=null;try{const aa=await arr('/rest/v1/announcements?active=eq.true&select=message,active,created_at,starts_at,ends_at,target_category&order=created_at.desc&limit=100');const n=Date.now();const current=await sessionProfile();a=aa.find(x=>(!x.starts_at||new Date(x.starts_at).getTime()<=n)&&(!x.ends_at||new Date(x.ends_at).getTime()>=n)&&(!x.target_category||x.target_category==='all'||x.target_category===current?.category))||null}catch(e){console.error('[platform-api][announcements]',e.message)}
    const p=await sessionProfile();return json(200,{free_access_enabled:!!s.free_access_enabled,free_access_start:s.free_access_start||null,free_access_until:s.free_access_until||null,orange_money_number:s.orange_money_number||'',prices:{primary:+s.price_primary||0,jss:+s.price_jss||0,sss:+s.price_sss||0,teacher:+s.price_teacher||0,university:+s.price_university||0},announcement:a,profile:p?{...p,password_hash:undefined,password_salt:undefined}:null,access:p?accessFor(p,s):null});
   }
   if(event.httpMethod!=='POST')return json(405,{error:'Method not allowed.'});
@@ -74,10 +75,10 @@ exports.handler=async(event)=>{
 
   if(b.action==='register'){
    const rl=enforceRate(event,{name:'register',limit:5,windowMs:60*60*1000});if(rl)return rl;
-   const contact=normalizeContact(b.contact),password=String(b.password||'');const row={device_id:clean(b.device_id,120)||('acct_'+crypto.randomBytes(10).toString('hex')),full_name:clean(b.full_name,120),contact,contact_normalized:contact,category:clean(b.category,30),town:clean(b.town,120),paid_active:false,free_access_start:new Date().toISOString(),free_access_end:new Date(Date.now()+7*86400000).toISOString(),account_status:'active',last_login_at:new Date().toISOString(),last_seen_at:new Date().toISOString()};
+   const contact=normalizeContact(b.contact),password=String(b.password||'');const row={device_id:clean(b.device_id,120)||('acct_'+crypto.randomBytes(10).toString('hex')),full_name:clean(b.full_name,120),contact,contact_normalized:contact,category:clean(b.category,30),town:clean(b.town,120),paid_active:false,account_status:'active',last_login_at:new Date().toISOString(),last_seen_at:new Date().toISOString()};
    if(!row.full_name||!validContact(contact)||password.length<6||password.length>128||!['primary','jss','sss','teacher','university'].includes(row.category)||!row.town)return json(400,{error:'Complete your name, phone number or email, password, category and town/city.'});
    const exists=await arr('/rest/v1/user_profiles?contact_normalized=eq.'+encodeURIComponent(contact)+'&select=id&limit=1').catch(()=>[]);if(exists[0])return json(409,{error:'An account already exists for this phone number or email. Please use Login.'});
-   const salt=crypto.randomBytes(16).toString('hex');row.password_salt=salt;row.password_hash=hashPassword(password,salt);if(contact.includes('@'))row.email=contact;else row.phone=contact;
+   const registeredAt=new Date();row.free_access_start=registeredAt.toISOString();row.free_access_end=new Date(registeredAt.getTime()+7*86400000).toISOString();const salt=crypto.randomBytes(16).toString('hex');row.password_salt=salt;row.password_hash=hashPassword(password,salt);if(contact.includes('@'))row.email=contact;else row.phone=contact;
    const r=await sf('/rest/v1/user_profiles',{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify(row)});if(!r.ok){const detail=await r.text();console.error('[platform-api][register]',r.status,detail);return json(500,{error:'We could not create your account. Please try again.'})}
    const p=(await r.json())[0],ses=await createSession(p.id,row.device_id),s=await settings();delete p.password_hash;delete p.password_salt;return json(200,{profile:p,session:ses,access:accessFor(p,s)});
   }

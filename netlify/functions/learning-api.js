@@ -29,7 +29,12 @@ exports.handler=async(event)=>{
  };
  const isAdmin=await validateAdmin();
  const aiKey=isAdmin?('admin:'+tokenHash(rawAdminToken)):(p?('profile:'+p.id):anonDeviceId);const aiRate=enforceRate(event,{name:'ai-generation',limit:isAdmin?120:(p?60:8),windowMs:60*60*1000,key:aiKey});if(aiRate)return aiRate;
- const allowedProfile=()=>{if(!p)return false;if((p.account_status||'active')!=='active')return false;if(s.free_access_enabled===true)return true;if(s[p.category+'_free'])return true;if((p.free_access_start||p.free_access_end)&&nowIn(p.free_access_start,p.free_access_end))return true;if(p.paid_active&&(!p.paid_access_start||!Number.isNaN(Date.parse(p.paid_access_start)))&&(!p.paid_access_end||!Number.isNaN(Date.parse(p.paid_access_end)))&&nowIn(p.paid_access_start,p.paid_access_end))return true;return false};
+ const allowedProfile=()=>{
+  if(!p||(p.account_status||'active')!=='active')return false;
+  if(p.paid_active&&(!p.paid_access_end||nowIn(p.paid_access_start,p.paid_access_end)))return true;
+  const registered=Date.parse(p.created_at||'');
+  return Number.isFinite(registered)&&Date.now()<registered+7*86400000;
+ };
  // Verified administrators bypass learner payment and category-access locks.
  if(!isAdmin&&p&&!allowedProfile())return json(402,{error:'Your access period has ended. Please complete payment or contact the administrator.',code:'payment_required'});
  if(!p&&!isAdmin)return json(401,{error:'Please sign in with your existing account to continue. If you are new, create an account once.',code:'registration_required'});
