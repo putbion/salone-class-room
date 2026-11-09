@@ -1,8 +1,8 @@
 const crypto=require('crypto');
+const {profileAccess}=require('./_profile-access');
 const {json,enforceRate,bodyTooLarge,fingerprint}=require('./_security');
 const clean=(v,n=4000)=>String(v??'').trim().slice(0,n);
 const tokenHash=t=>crypto.createHash('sha256').update(t).digest('hex');
-const nowIn=(start,end)=>{const n=Date.now(),s=start?new Date(start).getTime():null,e=end?new Date(end).getTime():null;return(!s||n>=s)&&(!e||n<=e)};
 const terms=q=>clean(q,180).toLowerCase().replace(/[^a-z0-9\s-]/g,' ').split(/\s+/).filter(x=>x.length>2&&!['explain','what','does','mean','teach','about','please','give','define','tell'].includes(x)).slice(0,5);
 exports.handler=async(event)=>{
  if(bodyTooLarge(event,65536))return json(413,{error:'Request is too large.'});
@@ -12,7 +12,8 @@ exports.handler=async(event)=>{
  let b={};try{b=JSON.parse(event.body||'{}')}catch{return json(400,{error:'Invalid request.'})}
  const sf=(p,o={})=>fetch(U+(p.startsWith('/')?p:'/'+p),{...o,headers:{apikey:K,Authorization:'Bearer '+K,'Content-Type':'application/json',...(o.headers||{})}});const arr=async p=>{const r=await sf(p);if(!r.ok)throw new Error(await r.text());return r.json()};
  let s;try{s=(await arr('/rest/v1/platform_settings?id=eq.1&select=*'))[0];if(!s)throw new Error('Missing platform settings')}catch(e){console.error('[learning-api][settings]',e.message);return json(503,{error:'Subscription settings are temporarily unavailable. Please try again.',code:'settings_unavailable'})}
- const getProfile=async()=>{const auth=event.headers.authorization||'',t=auth.startsWith('Bearer ')?auth.slice(7):'';if(!t)return null;const ss=await arr('/rest/v1/user_sessions?token_hash=eq.'+encodeURIComponent(tokenHash(t))+'&expires_at=gt.'+encodeURIComponent(new Date().toISOString())+'&select=profile_id&limit=1');if(!ss[0])return null;return(await arr('/rest/v1/user_profiles?id=eq.'+encodeURIComponent(ss[0].profile_id)+'&select=*&limit=1'))[0]||null};
+ const auth=event.headers.authorization||event.headers.Authorization||'';
+ const getProfile=async()=>{const t=auth.startsWith('Bearer ')?auth.slice(7):'';if(!t)return null;const ss=await arr('/rest/v1/user_sessions?token_hash=eq.'+encodeURIComponent(tokenHash(t))+'&expires_at=gt.'+encodeURIComponent(new Date().toISOString())+'&select=profile_id&limit=1');if(!ss[0])return null;return(await arr('/rest/v1/user_profiles?id=eq.'+encodeURIComponent(ss[0].profile_id)+'&select=*&limit=1'))[0]||null};
  let p;try{p=await getProfile()}catch(e){console.error('[learning-api] Session lookup unavailable:',e.message);return json(503,{error:'We could not verify your saved login right now. Please try again. Your account has not been removed.',code:'session_check_unavailable'})}
  const toolKey=clean(b.tool_key,100)||clean(b.task,100)||'learning-tool',clientDeviceId=clean(b.device_id,120),anonDeviceId='anon_'+fingerprint(event),deviceId=p?clientDeviceId:anonDeviceId;
  // Administrator sessions are separate from ordinary learner/teacher sessions.
@@ -20,25 +21,27 @@ exports.handler=async(event)=>{
  const rawAdminToken=clean(event.headers?.['x-admin-token']||event.headers?.['X-Admin-Token'],1000);
  const validateAdmin=async()=>{
   if(!rawAdminToken)return false;
-  const base=String(process.env.URL||((event.headers?.host)?('https://'+event.headers.host):'')).replace(/\/+$/,'');
+  const base=String(process.env.URL||'').replace(/\/+$/,'');
   if(!base)return false;
   try{
-   const r=await fetch(base+'/.netlify/functions/admin-api',{method:'GET',headers:{Authorization:'Bearer '+rawAdminToken,'Cache-Control':'no-store'}});
+   const r=await fetch(base+'/.netlify/functions/admin-api',{method:'POST',headers:{Authorization:'Bearer '+rawAdminToken,'Content-Type':'application/json'},body:JSON.stringify({action:'verify_session'})});
    return r.ok;
   }catch(e){console.warn('[learning-api][admin-validation]',e.message);return false}
  };
- const isAdmin=await validateAdmin();
+ const isAdmin=!auth&&await validateAdmin();
  const aiKey=isAdmin?('admin:'+tokenHash(rawAdminToken)):(p?('profile:'+p.id):anonDeviceId);const aiRate=enforceRate(event,{name:'ai-generation',limit:isAdmin?120:(p?60:8),windowMs:60*60*1000,key:aiKey});if(aiRate)return aiRate;
- const allowedProfile=()=>{
-  if(!p||(p.account_status||'active')!=='active')return false;
-  if(p.paid_active&&nowIn(p.paid_access_start,p.paid_access_end))return true;
-  if(p.free_access_end&&nowIn(p.free_access_start,p.free_access_end))return true;
-  const registered=Date.parse(p.created_at||'');
-  return !p.free_access_end&&Number.isFinite(registered)&&Date.now()<registered+7*86400000;
+ const accessError=profile=>{
+  const access=profileAccess(profile);
+  if(access.allowed)return null;
+  if(access.reason==='registration_required')return json(401,{error:'Please sign in with your existing account to continue. If you are new, create an account once.',code:'registration_required'});
+  if(access.reason==='blocked')return json(403,{error:'This account is blocked.',code:'account_blocked'});
+  if(access.reason==='access_scheduled')return json(403,{error:'Your access is scheduled to start later.',code:'access_scheduled',starts_at:access.starts_at});
+  return json(402,{error:'Your access period has ended. Please complete payment to continue.',code:'payment_required'});
  };
- // Verified administrators bypass learner payment and category-access locks.
- if(!isAdmin&&p&&!allowedProfile())return json(402,{error:'Your access period has ended. Please complete payment or contact the administrator.',code:'payment_required'});
- if(!p&&!isAdmin)return json(401,{error:'Please sign in with your existing account to continue. If you are new, create an account once.',code:'registration_required'});
+ if(!isAdmin){
+  const denied=accessError(p);
+  if(denied)return denied;
+ }
  if(p)await sf('/rest/v1/user_profiles?id=eq.'+encodeURIComponent(p.id),{method:'PATCH',body:JSON.stringify({last_seen_at:new Date().toISOString(),current_tool:toolKey})}).catch(()=>{});
  const level=clean(b.level,30).toLowerCase(),classLevel=clean(b.class_level,80),subject=clean(b.subject,180),topic=clean(b.topic||b.prompt,1200),task=clean(b.task,80)||'tutor',context=clean(b.context,5000),more=b.detail_mode==='more';
  const generationId=clean(b.generation_id,120)||crypto.randomUUID(),previousResponse=clean(b.previous_response,6000);
@@ -128,6 +131,15 @@ exports.handler=async(event)=>{
   // Use the ACTUAL 15-column Supabase schema. Never silently swallow a rejected insert.
   const aiRow={profile_id:p?.id||null,device_id:deviceId||null,tool_key:toolKey,education_level:level||null,subject:subject||null,request_text:String(prompt).slice(0,2000),response_source:result.provider||null,ai_provider:result.provider||null,model_name:result.model||null,input_tokens:inputTokens,output_tokens:outputTokens,estimated_cost:0,estimated_ai_cost_saved:0};
   try{const saved=await sf('/rest/v1/ai_usage_log',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify(aiRow)});if(!saved.ok)console.error('[learning-api][ai_usage_log]',saved.status,(await saved.text()).slice(0,350))}catch(err){console.error('[learning-api][ai_usage_log]',err.message)}
+  if(p){
+   let latest;
+   try{latest=await getProfile()}catch(e){
+    console.error('[learning-api] Access recheck unavailable:',e.message);
+    return json(503,{error:'We could not verify your access right now. Please try again.',code:'session_check_unavailable'});
+   }
+   const denied=accessError(latest);
+   if(denied)return denied;
+  }
   if(task==='teacher_exam_objective'){
    let parsed;try{parsed=JSON.parse(text.replace(/^```json\s*|\s*```$/g,''))}catch{return json(502,{error:"We couldn't generate the questions. Please try again."})}
    let questions=Array.isArray(parsed)?parsed:Array.isArray(parsed?.questions)?parsed.questions:[];

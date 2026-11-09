@@ -1,4 +1,5 @@
 const crypto=require('crypto');
+const {profileAccess}=require('./_profile-access');
 const {json,enforceRate,bodyTooLarge}=require('./_security');
 const clean=(v,n=500)=>String(v??'').trim().slice(0,n);
 const tokenHash=t=>crypto.createHash('sha256').update(t).digest('hex');
@@ -7,7 +8,6 @@ const normalizeContact=v=>{const x=clean(v,180);if(x.includes('@'))return x.toLo
 const validContact=v=>v.includes('@')?/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v):/^\+?\d{7,15}$/.test(v);
 const hashPassword=(password,salt)=>crypto.scryptSync(password,salt,64).toString('hex');
 const verifyPassword=(password,salt,stored)=>{try{const a=Buffer.from(hashPassword(password,salt),'hex'),b=Buffer.from(stored||'','hex');return a.length===b.length&&crypto.timingSafeEqual(a,b)}catch{return false}};
-const nowIn=(start,end)=>{const n=Date.now(),s=start?new Date(start).getTime():null,e=end?new Date(end).getTime():null;return(!s||n>=s)&&(!e||n<=e)};
 const norm=v=>clean(v,240).toLowerCase().replace(/&/g,' and ').replace(/\([^)]*\)/g,' ').replace(/[^a-z0-9]+/g,' ').trim().replace(/\s+/g,' ');
 const subjectKey=v=>{
  const n=norm(v);
@@ -33,19 +33,6 @@ exports.handler=async(event)=>{
  const sf=(p,o={})=>fetch(U+(p.startsWith('/')?p:'/'+p),{...o,headers:{apikey:K,Authorization:'Bearer '+K,'Content-Type':'application/json',...(o.headers||{})}});
  const arr=async p=>{const r=await sf(p);if(!r.ok)throw new Error(await r.text());return r.json()};
  const settings=async()=>{const rows=await arr('/rest/v1/platform_settings?id=eq.1&select=*');if(!rows[0])throw new Error('Platform payment settings are missing.');return rows[0]};
- const accessFor=(p,s)=>{
-  if(!p)return{allowed:false,reason:'registration_required',status:'SIGNED OUT'};
-  if((p.account_status||'active')!=='active')return{allowed:false,reason:'blocked',status:'BLOCKED'};
-  // Explicit administrator access dates take priority over the automatic registration trial.
-  if(p.paid_active && nowIn(p.paid_access_start,p.paid_access_end))return{allowed:true,reason:'paid',status:'PAID ACTIVE',paid_until:p.paid_access_end||null};
-  if(p.free_access_end && nowIn(p.free_access_start,p.free_access_end))return{allowed:true,reason:'admin_free_access',status:'FREE ACCESS',free_until:p.free_access_end};
-  // A newly created account receives one seven-day trial, anchored to registration.
-  // An explicit expired free-access date must never be extended by logging in again.
-  const registered=Date.parse(p.created_at||'');
-  const trialEnd=Number.isFinite(registered)?registered+7*86400000:NaN;
-  if(!p.free_access_end && Number.isFinite(trialEnd)&&Date.now()<trialEnd)return{allowed:true,reason:'registration_trial',status:'FREE TRIAL',free_until:new Date(trialEnd).toISOString()};
-  return{allowed:false,reason:'payment_required',status:'PAYMENT REQUIRED'};
- };
  const sessionProfile=async()=>{
   const auth=event.headers.authorization||event.headers.Authorization||'',t=auth.startsWith('Bearer ')?auth.slice(7):'';if(!t)return null;
   try{const ss=await arr('/rest/v1/user_sessions?token_hash=eq.'+encodeURIComponent(tokenHash(t))+'&expires_at=gt.'+encodeURIComponent(new Date().toISOString())+'&select=id,profile_id&limit=1');if(!ss[0])return null;const ps=await arr('/rest/v1/user_profiles?id=eq.'+encodeURIComponent(ss[0].profile_id)+'&select=*&limit=1');if(!ps[0])return null;await sf('/rest/v1/user_sessions?id=eq.'+encodeURIComponent(ss[0].id),{method:'PATCH',body:JSON.stringify({last_seen_at:new Date().toISOString()})}).catch(()=>{});return ps[0]}catch(e){console.error('[platform-api][session]',e.message);return null}
@@ -53,8 +40,8 @@ exports.handler=async(event)=>{
  const createSession=async(profileId,deviceId)=>{const token=crypto.randomBytes(32).toString('hex'),expires=new Date(Date.now()+730*86400000).toISOString();const row={profile_id:profileId,token_hash:tokenHash(token),device_id:clean(deviceId,120)||null,expires_at:expires,user_agent:clean(event.headers['user-agent'],300)||null};const r=await sf('/rest/v1/user_sessions',{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify(row)});if(!r.ok)throw new Error(await r.text());return{token,expires_at:expires}};
  try{
   if(event.httpMethod==='GET'){
-   const s=await settings();let a=null;try{const aa=await arr('/rest/v1/announcements?active=eq.true&select=message,active,created_at,starts_at,ends_at,target_category&order=created_at.desc&limit=100');const n=Date.now();const current=await sessionProfile();a=aa.find(x=>(!x.starts_at||new Date(x.starts_at).getTime()<=n)&&(!x.ends_at||new Date(x.ends_at).getTime()>=n)&&(!x.target_category||x.target_category==='all'||x.target_category===current?.category))||null}catch(e){console.error('[platform-api][announcements]',e.message)}
-   const p=await sessionProfile();return json(200,{free_access_enabled:!!s.free_access_enabled,free_access_start:s.free_access_start||null,free_access_until:s.free_access_until||null,orange_money_number:s.orange_money_number||'',prices:{primary:+s.price_primary||0,jss:+s.price_jss||0,sss:+s.price_sss||0,teacher:+s.price_teacher||0,university:+s.price_university||0},announcement:a,profile:p?{...p,password_hash:undefined,password_salt:undefined}:null,access:p?accessFor(p,s):null});
+   const [s,p]=await Promise.all([settings(),sessionProfile()]);let a=null;try{const aa=await arr('/rest/v1/announcements?active=eq.true&select=message,active,created_at,starts_at,ends_at,target_category&order=created_at.desc&limit=100');const n=Date.now();a=aa.find(x=>(!x.starts_at||new Date(x.starts_at).getTime()<=n)&&(!x.ends_at||new Date(x.ends_at).getTime()>=n)&&(!x.target_category||x.target_category==='all'||x.target_category===p?.category))||null}catch(e){console.error('[platform-api][announcements]',e.message)}
+   return json(200,{free_access_enabled:!!s.free_access_enabled,free_access_start:s.free_access_start||null,free_access_until:s.free_access_until||null,orange_money_number:s.orange_money_number||'',prices:{primary:+s.price_primary||0,jss:+s.price_jss||0,sss:+s.price_sss||0,teacher:+s.price_teacher||0,university:+s.price_university||0},announcement:a,profile:p?{...p,password_hash:undefined,password_salt:undefined}:null,access:p?profileAccess(p):null});
   }
   if(event.httpMethod!=='POST')return json(405,{error:'Method not allowed.'});
   let b={};try{b=JSON.parse(event.body||'{}')}catch{return json(400,{error:'Invalid request.'})}
@@ -81,11 +68,11 @@ exports.handler=async(event)=>{
    const exists=await arr('/rest/v1/user_profiles?contact_normalized=eq.'+encodeURIComponent(contact)+'&select=id&limit=1').catch(()=>[]);if(exists[0])return json(409,{error:'An account already exists for this phone number or email. Please use Login.'});
    const registeredAt=new Date();row.free_access_start=registeredAt.toISOString();row.free_access_end=new Date(registeredAt.getTime()+7*86400000).toISOString();const salt=crypto.randomBytes(16).toString('hex');row.password_salt=salt;row.password_hash=hashPassword(password,salt);if(contact.includes('@'))row.email=contact;else row.phone=contact;
    const r=await sf('/rest/v1/user_profiles',{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify(row)});if(!r.ok){const detail=await r.text();console.error('[platform-api][register]',r.status,detail);return json(500,{error:'We could not create your account. Please try again.'})}
-   const p=(await r.json())[0],ses=await createSession(p.id,row.device_id),s=await settings();delete p.password_hash;delete p.password_salt;return json(200,{profile:p,session:ses,access:accessFor(p,s)});
+   const p=(await r.json())[0],ses=await createSession(p.id,row.device_id);delete p.password_hash;delete p.password_salt;return json(200,{profile:p,session:ses,access:profileAccess(p)});
   }
   if(b.action==='login'){
    const rl=enforceRate(event,{name:'login',limit:10,windowMs:15*60*1000});if(rl)return rl;
-   const contact=normalizeContact(b.contact),password=String(b.password||'');if(password.length>128)return json(401,{error:'Phone number/email or password is incorrect.'});const ps=await arr('/rest/v1/user_profiles?contact_normalized=eq.'+encodeURIComponent(contact)+'&select=*&limit=1').catch(()=>[]),p=ps[0];if(!p||!verifyPassword(password,p.password_salt,p.password_hash))return json(401,{error:'Phone number/email or password is incorrect.'});if((p.account_status||'active')!=='active')return json(403,{error:'This account is blocked. Please contact Salone Class Room support.'});const t=new Date().toISOString();await sf('/rest/v1/user_profiles?id=eq.'+encodeURIComponent(p.id),{method:'PATCH',body:JSON.stringify({last_login_at:t,last_seen_at:t,device_id:clean(b.device_id,120)||p.device_id})});const ses=await createSession(p.id,b.device_id),s=await settings();delete p.password_hash;delete p.password_salt;return json(200,{profile:p,session:ses,access:accessFor(p,s)});
+   const contact=normalizeContact(b.contact),password=String(b.password||'');if(password.length>128)return json(401,{error:'Phone number/email or password is incorrect.'});const ps=await arr('/rest/v1/user_profiles?contact_normalized=eq.'+encodeURIComponent(contact)+'&select=*&limit=1').catch(()=>[]),p=ps[0];if(!p||!verifyPassword(password,p.password_salt,p.password_hash))return json(401,{error:'Phone number/email or password is incorrect.'});if((p.account_status||'active')!=='active')return json(403,{error:'This account is blocked. Please contact Salone Class Room support.'});const t=new Date().toISOString();await sf('/rest/v1/user_profiles?id=eq.'+encodeURIComponent(p.id),{method:'PATCH',body:JSON.stringify({last_login_at:t,last_seen_at:t,device_id:clean(b.device_id,120)||p.device_id})});const ses=await createSession(p.id,b.device_id);delete p.password_hash;delete p.password_salt;return json(200,{profile:p,session:ses,access:profileAccess(p)});
   }
   if(b.action==='logout'){const auth=event.headers.authorization||'',t=auth.startsWith('Bearer ')?auth.slice(7):'';if(t)await sf('/rest/v1/user_sessions?token_hash=eq.'+encodeURIComponent(tokenHash(t)),{method:'DELETE'}).catch(()=>{});return json(200,{ok:true})}
   if(b.action==='pwa_installed'){
@@ -95,7 +82,7 @@ exports.handler=async(event)=>{
    const r=await sf('/rest/v1/pwa_installations?on_conflict=profile_id,device_id',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify(row)});
    return r.ok?json(200,{ok:true}):json(503,{error:'PWA tracking database setup required.'});
   }
-  if(b.action==='heartbeat'){const p=await sessionProfile();if(!p)return json(401,{error:'Sign in required.'});const tool=clean(b.current_tool,120)||null;await sf('/rest/v1/user_profiles?id=eq.'+encodeURIComponent(p.id),{method:'PATCH',body:JSON.stringify({last_seen_at:new Date().toISOString(),current_tool:tool})});const s=await settings();return json(200,{ok:true,access:accessFor(p,s)})}
+  if(b.action==='heartbeat'){const p=await sessionProfile();if(!p)return json(401,{error:'Sign in required.'});const tool=clean(b.current_tool,120)||null;await sf('/rest/v1/user_profiles?id=eq.'+encodeURIComponent(p.id),{method:'PATCH',body:JSON.stringify({last_seen_at:new Date().toISOString(),current_tool:tool})});return json(200,{ok:true,access:profileAccess(p)})}
 
   if(b.action==='practice_record'){
    const p=await sessionProfile();if(!p)return json(401,{error:'Please log in to save your learning journey.'});const q=clean(b.question,2000);if(!q)return json(400,{error:'Question is required.'});const row={profile_id:p.id,level:clean(b.level,30)||null,subject:clean(b.subject,180)||'General',topic:clean(b.topic,220)||null,question_text:q,question_hash:questionHash(q),selected_index:Number.isInteger(+b.selected_index)?+b.selected_index:null,correct_index:Number.isInteger(+b.correct_index)?+b.correct_index:null,is_correct:!!b.is_correct,weak_area:clean(b.weak_area,220)||null};const r=await sf('/rest/v1/practice_attempts',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify(row)});return r.ok?json(200,{ok:true}):json(500,{error:'Your practice result could not be saved.'});
