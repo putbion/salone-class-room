@@ -1,10 +1,10 @@
-const CACHE='salone-class-room-access-dates-20261109-2';
+const CACHE='salone-class-room-payment-pwa-20261109-3';
 const APP_SHELL=['/','/index.html','/offline.html'];
 
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE)
-      .then(cache => cache.addAll(APP_SHELL))
+      .then(cache => cache.addAll(APP_SHELL.map(path => new Request(path, { cache: 'reload' }))))
       .catch(() => null)
   );
   self.skipWaiting();
@@ -13,7 +13,7 @@ self.addEventListener('install', event => {
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys()
-      .then(keys => Promise.all(keys.filter(key => key !== CACHE).map(key => caches.delete(key))))
+      .then(keys => Promise.all(keys.filter(key => key.startsWith('salone-class-room-') && key !== CACHE).map(key => caches.delete(key))))
       .then(() => self.clients.claim())
   );
 });

@@ -4654,7 +4654,17 @@ resetInactivityTimer();
 </div>
 <button class="btn btn-light" onclick="logoutPlatform()" type="button">Logout</button></div>
 </div></div>
-<div aria-hidden="true" class="platform-modal" id="paymentModal"><div class="platform-modal-card"><button class="modal-close" onclick="closePaymentModal()" type="button">×</button><h2>Platform Usage Payment</h2><p id="paymentIntro">Thank you for joining Salone Class Room and promoting digital education in Sierra Leone.</p><p>Kindly note that free usage of the platform has ended. To continue using the platform, pay Le 30 for one month through Orange Money (<strong>076385572</strong>).</p><div class="payment-summary"><div><span>Category</span><strong id="paymentCategory" style="font-size:1.35rem"></strong></div><div><span style="font-size:1.5rem;font-weight:700;color:inherit">Amount</span><strong id="paymentAmount" style="font-size:1.5rem"></strong></div><div><span style="font-size:1.5rem;font-weight:700;color:inherit">Period</span><strong>1 month</strong></div></div><p style="font-size:1.08rem;line-height:1.6;margin-top:18px">Screenshot your payment and send it by WhatsApp to <strong>+23276385572</strong> and wait for the payment to be verified.</p><p style="text-align:center;margin:12px 0 8px"><a href="https://wa.me/23276385572" target="_blank" rel="noopener noreferrer" style="color:#11783e;font-weight:700">Or click here to open WhatsApp <span aria-hidden="true">↓</span></a></p><a class="btn platform-submit" href="https://wa.me/23276385572" target="_blank" rel="noopener noreferrer" style="display:block;text-align:center;text-decoration:none;background:#11783e;color:#fff">Open WhatsApp</a></div></div>
+<div aria-hidden="true" class="platform-modal" id="paymentModal">
+  <div class="platform-modal-card">
+    <button class="modal-close" onclick="closePaymentModal()" type="button">×</button>
+    <h2>Platform Usage Payment</h2>
+    <p id="paymentIntro">Thank you for supporting digital education in Sierra Leone through Salone Class Room.</p>
+    <p>Free access has ended. To continue learning, pay <strong id="paymentIntroAmount">Le 30</strong> via Orange Money (<strong>076385572</strong>).</p>
+    <p style="font-size:1.5rem;line-height:1.45"><strong>Amount: <span id="paymentAmount">Le 30</span><br>Period: 1 month</strong></p>
+    <p>After payment, send your screenshot via WhatsApp to <strong>+23276385572</strong> for verification, <a href="https://wa.me/23276385572" target="_blank" rel="noopener noreferrer" style="color:#11783e;font-weight:700">or click here</a>.</p>
+    <a class="btn platform-submit" href="https://wa.me/23276385572" target="_blank" rel="noopener noreferrer" style="display:block;text-align:center;text-decoration:none;background:#11783e;color:#fff">Open WhatsApp</a>
+  </div>
+</div>
 <script>
 const PLATFORM_API='/.netlify/functions/platform-api',LEARNING_API='/.netlify/functions/learning-api';let platformConfig=null,pendingToolAction=null,currentProfile=null,currentAccess=null;
 function deviceId(){let x=localStorage.getItem('salone_device_id');if(!x){x='slc_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2);localStorage.setItem('salone_device_id',x)}return x}
@@ -4908,7 +4918,7 @@ async function submitLogin(){
 }
 async function logoutPlatform(){try{await fetch(PLATFORM_API,{method:'POST',headers:{'Content-Type':'application/json',...authHeaders()},body:JSON.stringify({action:'logout'})})}catch{}clearSession();renderAccount();showAccountTab('login')}
 setInterval(()=>{if(!document.hidden)refreshPlatform()},12000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshPlatform()});window.addEventListener('focus',()=>{if(!document.hidden)refreshPlatform()});window.addEventListener('online',refreshPlatform);
-function price(c){return Number(platformConfig?.prices?.[c]||0)}function openPaymentModal(p){if(!p){openAccountModal();showAccountTab('login');return}paymentCategory.textContent=cat(p.category);paymentAmount.textContent=money(price(p.category));paymentModal.classList.add('open');document.body.style.overflow='hidden'}function closePaymentModal(){paymentModal.classList.remove('open');document.body.style.overflow=''}
+function renderPaymentAmount(category){const amount=money(Number(platformConfig?.prices?.[category])||30);paymentIntroAmount.textContent=amount;paymentAmount.textContent=amount}function openPaymentModal(p){if(!p){openAccountModal();showAccountTab('login');return}renderPaymentAmount(p.category);paymentModal.classList.add('open');document.body.style.overflow='hidden'}function closePaymentModal(){paymentModal.classList.remove('open');document.body.style.overflow=''}
 let platformRefreshInFlight=false;
 async function refreshPlatform(){
  if(platformRefreshInFlight)return;
@@ -4930,8 +4940,7 @@ async function refreshPlatform(){
   if(d.access?.allowed===true){
    if(paymentModal.classList.contains('open'))closePaymentModal();
   }else if(d.profile&&paymentModal.classList.contains('open')){
-   paymentCategory.textContent=cat(d.profile.category);
-   paymentAmount.textContent=money(price(d.profile.category));
+   renderPaymentAmount(d.profile.category);
   } // Payment information is displayed only when a user explicitly requests restricted access.
  }catch(e){console.warn('Platform refresh failed',e)}
  finally{platformRefreshInFlight=false;}
@@ -5098,35 +5107,32 @@ async function shareSaloneClassRoom(){
 }
 
 if('serviceWorker' in navigator){
+  const workers = navigator.serviceWorker;
+  let hadController = Boolean(workers.controller);
+  let updatePending = false;
+  function reloadUpdatedPage(){
+    if(updatePending && navigator.onLine && !document.hidden){
+      updatePending = false;
+      location.reload();
+    }
+  }
+  workers.addEventListener('controllerchange', () => {
+    if(hadController)updatePending = true;
+    hadController = Boolean(workers.controller);
+    reloadUpdatedPage();
+  });
   window.addEventListener('load', () => {
-    let refreshing = false;
-
-    // Do not reload a learner's active lesson when an updated worker takes control.
-    navigator.serviceWorker.addEventListener('controllerchange', () => {
-      refreshing = true;
-    });
-
-    navigator.serviceWorker.register('/sw.js', { updateViaCache: 'none' }).then(reg => {
-      const activateWaitingWorker = () => {
-        if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+    workers.register('/sw.js', {updateViaCache:'none'}).then(reg => {
+      const checkForUpdate = () => {
+        if(navigator.onLine)reg.update().catch(()=>{});
+        reloadUpdatedPage();
       };
-
-      activateWaitingWorker();
-      reg.addEventListener('updatefound', () => {
-        const worker = reg.installing;
-        if (!worker) return;
-        worker.addEventListener('statechange', () => {
-          if (worker.state === 'installed' && navigator.serviceWorker.controller) {
-            worker.postMessage({ type: 'SKIP_WAITING' });
-          }
-        });
+      window.addEventListener('online', checkForUpdate);
+      document.addEventListener('visibilitychange', () => {
+        if(!document.hidden)checkForUpdate();
       });
-
-      reg.update().catch(()=>{});
-      window.addEventListener('online', () => {
-        reg.update().catch(()=>{});
-      });
-    }).catch(() => {});
+      checkForUpdate();
+    }).catch(()=>{});
   });
 }
 </script>
