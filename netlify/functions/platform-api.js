@@ -36,13 +36,14 @@ exports.handler=async(event)=>{
  const accessFor=(p,s)=>{
   if(!p)return{allowed:false,reason:'registration_required',status:'SIGNED OUT'};
   if((p.account_status||'active')!=='active')return{allowed:false,reason:'blocked',status:'BLOCKED'};
-  const n=Date.now();
-  // A confirmed paid subscription takes priority; retain existing legacy paid accounts.
-  if(p.paid_active&&(!p.paid_access_end||nowIn(p.paid_access_start,p.paid_access_end)))return{allowed:true,reason:'paid',status:'PAID ACTIVE'};
-  // Registration timestamp is the immutable trial anchor; never restart on login or reinstall.
+  // Explicit administrator access dates take priority over the automatic registration trial.
+  if(p.paid_active && nowIn(p.paid_access_start,p.paid_access_end))return{allowed:true,reason:'paid',status:'PAID ACTIVE',paid_until:p.paid_access_end||null};
+  if(p.free_access_end && nowIn(p.free_access_start,p.free_access_end))return{allowed:true,reason:'admin_free_access',status:'FREE ACCESS',free_until:p.free_access_end};
+  // A newly created account receives one seven-day trial, anchored to registration.
+  // An explicit expired free-access date must never be extended by logging in again.
   const registered=Date.parse(p.created_at||'');
   const trialEnd=Number.isFinite(registered)?registered+7*86400000:NaN;
-  if(Number.isFinite(trialEnd)&&n<trialEnd)return{allowed:true,reason:'registration_trial',status:'FREE TRIAL',free_until:new Date(trialEnd).toISOString()};
+  if(!p.free_access_end && Number.isFinite(trialEnd)&&Date.now()<trialEnd)return{allowed:true,reason:'registration_trial',status:'FREE TRIAL',free_until:new Date(trialEnd).toISOString()};
   return{allowed:false,reason:'payment_required',status:'PAYMENT REQUIRED'};
  };
  const sessionProfile=async()=>{

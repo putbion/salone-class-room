@@ -31,9 +31,10 @@ exports.handler=async(event)=>{
  const aiKey=isAdmin?('admin:'+tokenHash(rawAdminToken)):(p?('profile:'+p.id):anonDeviceId);const aiRate=enforceRate(event,{name:'ai-generation',limit:isAdmin?120:(p?60:8),windowMs:60*60*1000,key:aiKey});if(aiRate)return aiRate;
  const allowedProfile=()=>{
   if(!p||(p.account_status||'active')!=='active')return false;
-  if(p.paid_active&&(!p.paid_access_end||nowIn(p.paid_access_start,p.paid_access_end)))return true;
+  if(p.paid_active&&nowIn(p.paid_access_start,p.paid_access_end))return true;
+  if(p.free_access_end&&nowIn(p.free_access_start,p.free_access_end))return true;
   const registered=Date.parse(p.created_at||'');
-  return Number.isFinite(registered)&&Date.now()<registered+7*86400000;
+  return !p.free_access_end&&Number.isFinite(registered)&&Date.now()<registered+7*86400000;
  };
  // Verified administrators bypass learner payment and category-access locks.
  if(!isAdmin&&p&&!allowedProfile())return json(402,{error:'Your access period has ended. Please complete payment or contact the administrator.',code:'payment_required'});
