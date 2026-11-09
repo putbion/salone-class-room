@@ -3279,7 +3279,7 @@ function updateDissertationTopics(){
           renderPracticeError(cfg, () => startPractice(cfg.level));
         }
       }catch(e){
-        if(e.code === 'registration_required' || e.code === 'payment_required' || e.status === 402){
+        if(['registration_required','payment_required','access_scheduled','account_blocked'].includes(e.code)||e.status===402){
           handleLearningError(e, cfg.box);
         } else {
           renderPracticeError(cfg, () => startPractice(cfg.level));
@@ -3587,7 +3587,7 @@ function updateDissertationTopics(){
           renderPracticeError(cfg, () => startPractice(cfg.level));
         }
       }catch(e){
-        if(e.code === 'registration_required' || e.code === 'payment_required' || e.status === 402){
+        if(['registration_required','payment_required','access_scheduled','account_blocked'].includes(e.code)||e.status===402){
           handleLearningError(e, cfg.box);
         } else {
           renderPracticeError(cfg, () => startPractice(cfg.level));
@@ -4091,6 +4091,8 @@ async function primaryAssignmentGuide(){const subject=primaryAssignmentSubject.v
           box.classList.add('show');
           box.style.display = 'block';
         }
+      } else if(['access_scheduled','account_blocked'].includes(e.code)){
+        handleLearningError(e,box);
       } else if(e.code === 'payment_required' || e.status === 402){
         openPaymentModal(currentProfile || {category:'teacher'});
       } else {
@@ -4219,6 +4221,8 @@ async function primaryAssignmentGuide(){const subject=primaryAssignmentSubject.v
           box.classList.add('show');
           box.style.display = 'block';
         }
+      } else if(['access_scheduled','account_blocked'].includes(e.code)){
+        handleLearningError(e,box);
       } else if(e.code === 'payment_required' || e.status === 402){
         openPaymentModal(currentProfile || {category:'teacher'});
       } else {
@@ -4399,6 +4403,8 @@ async function primaryAssignmentGuide(){const subject=primaryAssignmentSubject.v
           box.classList.add('show');
           box.style.display = 'block';
         }
+      } else if(['access_scheduled','account_blocked'].includes(e.code)){
+        handleLearningError(e,box);
       } else if(e.code === 'payment_required' || e.status === 402){
         openPaymentModal(currentProfile || {category:'teacher'});
       } else {
@@ -4831,7 +4837,7 @@ async function loadLearningProgress(){
 async function learningRequest(payload){
  const controller=new AbortController(),tm=setTimeout(()=>controller.abort(),85000);
  try{
-  const adminToken=sessionStorage.getItem('salone_admin_token')||'',generation_id=Date.now()+'-'+crypto.getRandomValues(new Uint32Array(2)).join('-');
+  const adminToken=sessionToken()?'':sessionStorage.getItem('salone_admin_token')||'',generation_id=Date.now()+'-'+crypto.getRandomValues(new Uint32Array(2)).join('-');
   const request=()=>fetch(LEARNING_API,{method:'POST',headers:{'Content-Type':'application/json',...authHeaders(),...(adminToken?{'X-Admin-Token':adminToken}:{})},body:JSON.stringify({...payload,generation_id,device_id:deviceId()}),signal:controller.signal,cache:'no-store'});
   let r=await request(),d=await r.json().catch(()=>({}));
   // A temporary profile/session lookup failure must not be presented as a new registration requirement.
@@ -4840,10 +4846,11 @@ async function learningRequest(payload){
    r=await request();d=await r.json().catch(()=>({}));
    if(r.status===401&&d.code==='registration_required'){const e=new Error('Your saved login could not be verified. Please check your connection or contact support.');e.code='session_unverified';e.status=401;throw e;}
   }
-  if(!r.ok){const e=new Error(d.error||'Unable to complete this request.');e.code=d.code;e.status=r.status;throw e}return d;
+  if(!r.ok){if(r.status===402||['account_blocked','access_scheduled'].includes(d.code))refreshPlatform();const e=new Error(d.error||'Unable to complete this request.');e.code=d.code;e.status=r.status;e.startsAt=d.starts_at;throw e}return d;
  }finally{clearTimeout(tm)}
 }
-function handleLearningError(e,box){if(e.name==='AbortError')return showOutput(box,'This request is taking longer than expected. Please try again.');if(e.code==='session_unverified'||e.code==='session_check_unavailable'){showOutput(box,'We could not verify your saved session right now. Please check your internet connection and try again. Your account has not been removed.');return}if(e.code==='registration_required'){pendingToolAction=null;showOutput(box,localStorage.getItem('salone_account_seen')?'Your existing account is not currently signed in. Select Login to restore your account; do not register again.':'Please log in to continue learning. Create an account only if you are new.');return}if(e.code==='payment_required'||e.status===402){openPaymentModal(currentProfile||{category:'university'});return}showOutput(box,"We couldn't complete this request. Please try again.")}
+function formatAccessTime(value){return new Date(value).toLocaleString('en-GB',{timeZone:'Africa/Freetown'})+' GMT'}
+function handleLearningError(e,box){if(e.code==='access_scheduled')return showOutput(box,e.startsAt?'Your access starts on '+formatAccessTime(e.startsAt)+'.':e.message);if(e.code==='account_blocked')return showOutput(box,e.message);if(e.name==='AbortError')return showOutput(box,'This request is taking longer than expected. Please try again.');if(e.code==='session_unverified'||e.code==='session_check_unavailable'){showOutput(box,'We could not verify your saved session right now. Please check your internet connection and try again. Your account has not been removed.');return}if(e.code==='registration_required'){pendingToolAction=null;showOutput(box,localStorage.getItem('salone_account_seen')?'Your existing account is not currently signed in. Select Login to restore your account; do not register again.':'Please log in to continue learning. Create an account only if you are new.');return}if(e.code==='payment_required'||e.status===402){openPaymentModal(currentProfile||{category:'university'});return}showOutput(box,"We couldn't complete this request. Please try again.")}
 function firstName(){const n=(currentProfile?.full_name||'').trim();return n?n.split(/\s+/)[0]:''}
 function updatePersonalisedWelcomes(){const n=firstName();const suffix=n?', '+n:'';const main=document.getElementById('mainWelcomeName');if(main)main.textContent=suffix;document.querySelectorAll('.section-user-name').forEach(el=>el.textContent=suffix);document.querySelectorAll('.assignment-user-name').forEach(el=>el.textContent=n||'Student')}
 function clearFieldError(el){if(!el)return;el.classList.remove('field-invalid');el.removeAttribute('aria-invalid');const e=el.parentElement?.querySelector('.inline-field-error[data-for="'+el.id+'"]');if(e)e.remove()}
@@ -4858,7 +4865,7 @@ async function addEducationalVisual(box,payload,token){if(!needsEducationalVisua
 async function callLearning(payload,box){const n=firstName(),msg=requestLoadingText(payload),previous=box.id?lastLearningAnswers[box.id]:'';showOutput(box,n?msg.replace('…',`, ${n}…`):msg);try{const requestPayload={...payload,...(previous?{previous_response:previous}:{})};const d=await learningRequest(requestPayload),answer=personalisedText(payload,d.answer||'No response was returned. Please try again.');renderLearningAnswer(box,answer,payload);await addEducationalVisual(box,payload,d.diagram_token)}catch(e){handleLearningError(e,box)}}
 function openAccountModal(){if(!currentProfile)showAccountTab('login');accountModal.classList.add('open');document.body.style.overflow='hidden';renderAccount()}function closeAccountModal(){accountModal.classList.remove('open');document.body.style.overflow=''}
 function showAccountTab(which){registerPane.hidden=which!=='register';loginPane.hidden=which!=='login';registerTabBtn.classList.toggle('active',which==='register');loginTabBtn.classList.toggle('active',which==='login')}
-function renderAccount(){updatePersonalisedWelcomes();const signed=!!currentProfile;accountSignedOut.hidden=signed;accountSignedIn.hidden=!signed;if(signed){acctName.textContent=currentProfile.full_name;acctCategory.textContent=cat(currentProfile.category);acctAccess.textContent=currentAccess?.status||'Checking';acctExpiry.textContent=currentProfile.paid_access_end?'Paid access until '+new Date(currentProfile.paid_access_end).toLocaleDateString():currentAccess?.free_until?'Free access until '+new Date(currentAccess.free_until).toLocaleDateString():currentProfile.free_access_end?'Free access until '+new Date(currentProfile.free_access_end).toLocaleDateString():''}accountBtn.textContent=signed?'My Account':'Login';loadLearningProgress().catch(()=>{});if(typeof checkWelcomeBack==='function')checkWelcomeBack();setTimeout(()=>{if(typeof updateInstallAppUI==='function')updateInstallAppUI();if(typeof reportPwaInstall==='function')reportPwaInstall().catch(()=>{})},0)}
+function renderAccount(){updatePersonalisedWelcomes();const signed=!!currentProfile;accountSignedOut.hidden=signed;accountSignedIn.hidden=!signed;if(signed){acctName.textContent=currentProfile.full_name;acctCategory.textContent=cat(currentProfile.category);acctAccess.textContent=currentAccess?.status||'Checking';acctExpiry.textContent=currentAccess?.paid_until?'Paid access until '+formatAccessTime(currentAccess.paid_until):currentAccess?.free_until?'Free access until '+formatAccessTime(currentAccess.free_until):currentAccess?.starts_at?'Access starts on '+formatAccessTime(currentAccess.starts_at):''}accountBtn.textContent=signed?'My Account':'Login';loadLearningProgress().catch(()=>{});if(typeof checkWelcomeBack==='function')checkWelcomeBack();setTimeout(()=>{if(typeof updateInstallAppUI==='function')updateInstallAppUI();if(typeof reportPwaInstall==='function')reportPwaInstall().catch(()=>{})},0)}
 function validContact(v){return v.includes('@')?/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v):/^\+?[0-9\s()-]{7,20}$/.test(v)}
 async function submitPlatformRegistration(){['errFullName','errContact','errPassword','errCategory','errTown'].forEach(i=>document.getElementById(i).textContent='');const d={full_name:regFullName.value.trim(),contact:regContact.value.trim(),password:regPassword.value,category:regCategory.value,town:regTown.value.trim()};let ok=true;if(d.full_name.length<3){errFullName.textContent='Please type your full name.';flagRequired(regFullName,'Please type your full name.');ok=false}else if(!validContact(d.contact)){errContact.textContent='Type a valid phone number or email.';flagRequired(regContact,'Please type a valid phone number or email.');ok=false}else if(d.password.length<6){errPassword.textContent='Use at least 6 characters.';flagRequired(regPassword,'Please use at least 6 characters.');ok=false}else if(!d.category){errCategory.textContent='Please select your category.';flagRequired(regCategory,'Please select your category.');ok=false}else if(d.town.length<2){errTown.textContent='Please type your town or city.';flagRequired(regTown,'Please type your town or city.');ok=false}if(!ok)return;registrationStatus.textContent='Creating your account…';registrationStatus.classList.add('show');try{const j=await platformPost({action:'register',device_id:deviceId(),...d},45000);saveSession(j.session);currentProfile=j.profile;currentAccess=j.access;registrationStatus.textContent='Account created successfully.';renderAccount();setTimeout(()=>{closeAccountModal();updateInstallAppUI()},500)}catch(e){registrationStatus.textContent=e.message}}
 // Support is offered after two incorrect-login responses; network errors are not counted.
@@ -4900,25 +4907,31 @@ async function submitLogin(){
   }
 }
 async function logoutPlatform(){try{await fetch(PLATFORM_API,{method:'POST',headers:{'Content-Type':'application/json',...authHeaders()},body:JSON.stringify({action:'logout'})})}catch{}clearSession();renderAccount();showAccountTab('login')}
-setInterval(()=>{if(!document.hidden)refreshPlatform()},12000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshPlatform()});window.addEventListener('focus',()=>{if(!document.hidden)refreshPlatform()});
+setInterval(()=>{if(!document.hidden)refreshPlatform()},12000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshPlatform()});window.addEventListener('focus',()=>{if(!document.hidden)refreshPlatform()});window.addEventListener('online',refreshPlatform);
 function price(c){return Number(platformConfig?.prices?.[c]||0)}function openPaymentModal(p){if(!p){openAccountModal();showAccountTab('login');return}paymentCategory.textContent=cat(p.category);paymentAmount.textContent=money(price(p.category));paymentModal.classList.add('open');document.body.style.overflow='hidden'}function closePaymentModal(){paymentModal.classList.remove('open');document.body.style.overflow=''}
 let platformRefreshInFlight=false;
 async function refreshPlatform(){
  if(platformRefreshInFlight)return;
  platformRefreshInFlight=true;
  try{
+  const token=sessionToken();
   const r=await fetch(PLATFORM_API,{headers:{...authHeaders(),'Cache-Control':'no-cache'},cache:'no-store'});
   if(!r.ok)throw Error('Platform status unavailable: '+r.status);
   const d=await r.json();
+  if(token!==sessionToken())return;
   platformConfig=d;
   // Do not discard a saved login just because a network/database read temporarily returned no profile.
   if(d.profile){currentProfile=d.profile;currentAccess=d.access||null;}
-  else if(!sessionToken()){currentProfile=null;currentAccess=null;}
-  if(!window.__saloneLastAccountRender || window.__saloneLastAccountRender!==JSON.stringify([currentProfile?.id,currentAccess?.status])){window.__saloneLastAccountRender=JSON.stringify([currentProfile?.id,currentAccess?.status]);renderAccount();}
+  else {currentAccess=null;if(!token)currentProfile=null;}
+  const accountState=JSON.stringify([currentProfile?.id,currentProfile?.full_name,currentProfile?.category,currentAccess]);
+  if(window.__saloneLastAccountRender!==accountState){window.__saloneLastAccountRender=accountState;renderAccount();}
   const announcementBox=document.getElementById('platformAnnouncement'),announcementText=document.getElementById('platformAnnouncementText');
   if(announcementBox&&announcementText){const message=String(d.announcement?.message||'').trim();announcementText.textContent=message;announcementBox.hidden=!message;}
   if(d.access?.allowed===true){
    if(paymentModal.classList.contains('open'))closePaymentModal();
+  }else if(d.profile&&paymentModal.classList.contains('open')){
+   paymentCategory.textContent=cat(d.profile.category);
+   paymentAmount.textContent=money(price(d.profile.category));
   } // Payment information is displayed only when a user explicitly requests restricted access.
  }catch(e){console.warn('Platform refresh failed',e)}
  finally{platformRefreshInFlight=false;}
@@ -4934,7 +4947,7 @@ async function refreshPlatform(){
   try{const r=await fetch('/.netlify/functions/support-message',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}),d=await r.json().catch(()=>({}));if(!r.ok)throw Error(d.error||'Unable to send your message.');status.textContent='Your message has been sent to Salone Class Room support.';form.reset()}catch(err){status.textContent=err.message||'Unable to send your message right now.'}finally{btn.disabled=false}
  });
 })();
-async function sendPresenceHeartbeat(){if(!sessionToken()||document.visibilityState!=='visible')return;try{const r=await fetch(PLATFORM_API,{method:'POST',headers:{'Content-Type':'application/json',...authHeaders()},body:JSON.stringify({action:'heartbeat',current_tool:'Salone Class Room'})});const d=await r.json();if(d.access)currentAccess=d.access}catch{}}
+async function sendPresenceHeartbeat(){if(!sessionToken()||document.visibilityState!=='visible')return;try{await fetch(PLATFORM_API,{method:'POST',headers:{'Content-Type':'application/json',...authHeaders()},body:JSON.stringify({action:'heartbeat',current_tool:'Salone Class Room'})})}catch{}}
 setInterval(sendPresenceHeartbeat,120000);
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')sendPresenceHeartbeat()});
 window.addEventListener('focus',sendPresenceHeartbeat);
