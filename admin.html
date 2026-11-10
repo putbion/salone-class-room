@@ -94,13 +94,18 @@ th{background:#f6f9fc;color:#3b5267}
 <section class="panel active" id="panel-overview">
 <div class="kpis">
 <div class="kpi"><span>REGISTERED USERS</span><strong id="kUsers">—</strong></div>
-<div class="kpi"><span>NEW USERS • 30 DAYS</span><strong id="kNewUsers">—</strong></div><div class="kpi"><span>ONLINE / ACTIVE • 5 MIN</span><strong id="kOnline">—</strong></div><div class="kpi"><span>ACTIVE TODAY • VIEW USERS</span><button type="button" class="btn btn-light" style="font-size:1.25rem;font-weight:800;margin-top:8px" id="kActiveToday" disabled onclick="openMetricUsers('today',1,true)">—</button></div>
+<div class="kpi"><span>NEW USERS • 30 DAYS</span><strong id="kNewUsers">—</strong></div><div class="kpi"><span>SIGNED-IN VISITS • 5 MIN</span><strong id="kOnline">—</strong></div><div class="kpi"><span>SIGNED-IN VISITS TODAY • VIEW USERS</span><button type="button" class="btn btn-light" style="font-size:1.25rem;font-weight:800;margin-top:8px" id="kActiveToday" disabled onclick="openMetricUsers('today',1,true)">—</button></div>
 <div class="kpi"><span>LEARNING REQUESTS • 30 DAYS</span><strong id="kEvents">—</strong></div>
 <div class="kpi"><span>NEW MESSAGES</span><strong id="kMessages">—</strong></div>
 <div class="kpi"><span>PRIMARY ACTIVITY</span><strong id="kPrimary">—</strong></div>
 <div class="kpi"><span>JSS / BECE ACTIVITY</span><strong id="kJss">—</strong></div>
 <div class="kpi"><span>SSS / WASSCE ACTIVITY</span><strong id="kSss">—</strong></div>
 <div class="kpi"><span>UNIVERSITY ACTIVITY</span><strong id="kUniversity">—</strong></div>
+</div>
+<div class="box" style="margin:14px 0">
+<h3>Verified Learning Users</h3>
+<p class="note">Counts unique signed-in users whose learning request passed access checks and produced a successful response. Visits, failed requests and payment prompts are excluded. Verified records start with this update.</p>
+<div class="metric-list" id="verifiedLearningMetrics"></div>
 </div>
 <div class="grid2">
 <div class="box"><h3>Learning Usage</h3><div class="metric-list" id="usageList"></div></div>
@@ -302,7 +307,7 @@ async function refreshDashboard(){
   const data=await response.json();
   if(request!==dashboardRequest||token!==adminToken())return;
   if(!response.ok)throw Error(data.error||'Unable to refresh.');
-  if(data.dashboard_revision!==2)throw Error('Dashboard files are from different versions. Check that admin.html and admin-api.js were published together.');
+  if(data.dashboard_revision!==3)throw Error('Dashboard files are from different versions. Check that admin.html and admin-api.js were published together.');
   currentData=data;
   document.getElementById('metricDetailPanel').style.display='none';
   render(data);
@@ -332,10 +337,30 @@ function openMetricUsers(kind,days,active=true){
  document.getElementById('metricDetailRows').innerHTML='<table><thead><tr><th>Name</th><th>Contact</th><th>Category</th><th>Town</th><th>Joined</th><th>Last seen</th></tr></thead><tbody>'+rows.map(p=>'<tr><td>'+esc(p.full_name||'Unnamed')+'</td><td>'+esc(p.contact||p.email||p.phone||'—')+'</td><td>'+esc(p.category||'—')+'</td><td>'+esc(p.town||'—')+'</td><td>'+date(p.created_at)+'</td><td>'+date(p.last_seen_at)+'</td></tr>').join('')+'</tbody></table>';
  box.style.display='block';box.scrollIntoView({block:'start',behavior:'smooth'});
 }
+const learningWindows={recent:'Last 5 minutes',today:'Today (Sierra Leone time)',day:'Last 24 hours',after_free:'Since the recorded end of free access'};
+const learningReasons={paid:'Paid',registration_trial:'Seven-day trial',admin_free_access:'Admin grant',general_free_access:'General or category free access'};
+function openLearningUsers(windowKey){
+ const rows=currentData?.learning_users?.[windowKey];
+ if(!Array.isArray(rows))return;
+ const profiles=new Map(currentData.profiles.map(profile=>[String(profile.id),profile]));
+ const box=document.getElementById('metricDetailPanel');
+ document.getElementById('metricDetailTitle').textContent='Verified learning users • '+learningWindows[windowKey]+' ('+rows.length+')';
+ document.getElementById('metricDetailRows').innerHTML=rows.length?'<table><thead><tr><th>Name</th><th>Last successful response</th><th>Access used</th><th>Access now</th><th>Responses</th></tr></thead><tbody>'+rows.map(row=>{
+  const profile=profiles.get(row.id);
+  return '<tr><td>'+esc(profile?.full_name||'Unnamed')+'</td><td>'+esc(date(row.last_response))+'</td><td>'+esc(learningReasons[row.access_reason]||'Unavailable')+'</td><td>'+esc(profile?.access?.status||'Unavailable')+'</td><td>'+n(row.responses)+'</td></tr>';
+ }).join('')+'</tbody></table>':'<p>No verified learning responses recorded for this period.</p>';
+ box.style.display='block';box.scrollIntoView({block:'start',behavior:'smooth'});
+}
 async function endFreePeriodNow(){if(!confirm('End the general free-access period now? Paid users, confirmed individual exemptions and new-user trials remain active.'))return;try{await adminPost({action:'end_free_period'});await refreshDashboard();alert('General free access has ended. The next learning request will use the new access setting.')}catch(e){alert(e.message)}}
 
 function render(data){
   const s=data.summary||{}, cats=data.categories||{};
+  const learningMetrics=document.getElementById('verifiedLearningMetrics');
+  learningMetrics.innerHTML=Object.entries(learningWindows).filter(([key])=>key!=='after_free'||data.free_period_end).map(([key,label])=>{
+   const rows=data.learning_users?.[key];
+   const caption=key==='after_free'?label+' ('+date(data.free_period_end)+')':label;
+   return '<div class="metric-row"><span>'+esc(caption)+'</span><button type="button" class="btn btn-light" onclick="openLearningUsers(\''+key+'\')" '+(Array.isArray(rows)?'':'disabled')+'>'+ (Array.isArray(rows)?n(rows.length)+' • View users':'Unavailable')+'</button></div>';
+  }).join('');
   let growth=document.getElementById('registrationGrowth');if(!growth){growth=document.createElement('div');growth.id='registrationGrowth';growth.className='box';growth.style.margin='14px 0';document.querySelector('.kpis')?.insertAdjacentElement('afterend',growth)}
   growth.innerHTML='<h3>Registrations and AI Usage</h3><div class="metric-list">'+[['New registrations (24 hours)',s.new_users_24h,'registration',1],['New registrations (7 days)',s.new_users_7d,'registration',7],['New registrations (30 days)',s.new_users_30d,'registration',30],['AI calls (24 hours)',s.ai_calls_24h,'ai',1],['AI calls (7 days)',s.ai_calls_7d,'ai',7],['AI calls (30 days)',s.ai_calls_30d_exact,'ai',30]].map(([label,value,kind,days])=>'<div class="metric-row"><span>'+label+'</span><button type="button" class="btn btn-light" onclick="openMetricUsers(\''+kind+'\','+days+')">'+(value===null||value===undefined?'Unavailable':n(value))+' • View</button></div>').join('')+'</div><p class="note">Rolling time windows. Unavailable means the database count could not be verified.</p>';
   let activity=document.getElementById('scrActivityMetrics');if(!activity){activity=document.createElement('div');activity.id='scrActivityMetrics';activity.className='box';growth.insertAdjacentElement('afterend',activity)}
@@ -378,7 +403,7 @@ function render(data){
     `<div class="metric-row"><span>Support messages table</span><strong>${data.system?.messages_table?'Ready':'Run SQL setup'}</strong></div>`+
     `<div class="metric-row"><span>Activity table</span><strong>${data.system?.events_table?'Ready':'Run SQL setup'}</strong></div>`;
 
-  renderAIUsage(data); renderPlatformAdmin(data); document.getElementById('status').textContent='Dashboard I • Data as of '+date(data.snapshot_at)+' (Sierra Leone time)';
+  renderAIUsage(data); renderPlatformAdmin(data); document.getElementById('status').textContent='Dashboard K • Data as of '+date(data.snapshot_at)+' (Sierra Leone time)';
 }
 
 (async()=>{if(adminToken()){document.getElementById('loginGate').style.display='none';document.getElementById('dashboard').style.display='block';try{await refreshDashboard()}catch(e){console.warn('Dashboard refresh failed',e);document.getElementById('status').textContent='Dashboard opened. Tap Refresh to reload data.'}}})();
