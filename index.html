@@ -4659,7 +4659,7 @@ resetInactivityTimer();
     <button class="modal-close" onclick="closePaymentModal()" type="button">×</button>
     <h2>Platform Usage Payment</h2>
     <p id="paymentIntro" style="font-weight:500">Thank you for supporting digital education in Sierra Leone through Salone Class Room.</p>
-    <p style="font-weight:500">Free access has ended. To continue learning, pay <strong id="paymentIntroAmount">Le 30</strong> via Orange Money (<strong>076385572</strong>).</p>
+    <p style="font-weight:500">Free access has ended. To continue learning, pay <strong id="paymentIntroAmount">Le 30</strong> via Orange Money (<strong id="paymentMoneyNumber">076385572</strong>).</p>
     <p style="font-size:1.5rem;line-height:1.45"><span style="font-weight:600">Amount: </span><strong id="paymentAmount">Le 30</strong><br><span style="font-weight:600">Period: </span><strong>1 month</strong></p>
     <p style="font-weight:500">After payment, send your screenshot via WhatsApp to <strong>+23276385572</strong> for verification, <a href="https://wa.me/23276385572" target="_blank" rel="noopener noreferrer" style="color:#11783e;font-weight:700">or click here</a>.</p>
     <a class="btn platform-submit" href="https://wa.me/23276385572" target="_blank" rel="noopener noreferrer" style="display:block;text-align:center;text-decoration:none;background:#11783e;color:#fff">Open WhatsApp</a>
@@ -4918,14 +4918,16 @@ async function submitLogin(){
 }
 async function logoutPlatform(){try{await fetch(PLATFORM_API,{method:'POST',headers:{'Content-Type':'application/json',...authHeaders()},body:JSON.stringify({action:'logout'})})}catch{}clearSession();renderAccount();showAccountTab('login')}
 setInterval(()=>{if(!document.hidden)refreshPlatform()},12000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshPlatform()});window.addEventListener('focus',()=>{if(!document.hidden)refreshPlatform()});window.addEventListener('online',refreshPlatform);
-function renderPaymentAmount(category){const amount=money(Number(platformConfig?.prices?.[category])||30);paymentIntroAmount.textContent=amount;paymentAmount.textContent=amount}function openPaymentModal(p){if(!p){openAccountModal();showAccountTab('login');return}renderPaymentAmount(p.category);paymentModal.classList.add('open');document.body.style.overflow='hidden'}function closePaymentModal(){paymentModal.classList.remove('open');document.body.style.overflow=''}
+function renderPaymentAmount(category){const amount=money(Number(platformConfig?.prices?.[category])||30);paymentMoneyNumber.textContent=String(platformConfig?.orange_money_number||'').trim()||'076385572';paymentIntroAmount.textContent=amount;paymentAmount.textContent=amount}function openPaymentModal(p){if(!p){openAccountModal();showAccountTab('login');return}renderPaymentAmount(p.category);paymentModal.classList.add('open');document.body.style.overflow='hidden'}function closePaymentModal(){paymentModal.classList.remove('open');document.body.style.overflow=''}
 let platformRefreshInFlight=false;
 async function refreshPlatform(){
  if(platformRefreshInFlight)return;
  platformRefreshInFlight=true;
+ const controller=new AbortController();
+ const timeout=setTimeout(()=>controller.abort(),10000);
  try{
   const token=sessionToken();
-  const r=await fetch(PLATFORM_API,{headers:{...authHeaders(),'Cache-Control':'no-cache'},cache:'no-store'});
+  const r=await fetch(PLATFORM_API,{headers:{...authHeaders(),'Cache-Control':'no-cache'},cache:'no-store',signal:controller.signal});
   if(!r.ok)throw Error('Platform status unavailable: '+r.status);
   const d=await r.json();
   if(token!==sessionToken())return;
@@ -4936,14 +4938,14 @@ async function refreshPlatform(){
   const accountState=JSON.stringify([currentProfile?.id,currentProfile?.full_name,currentProfile?.category,currentAccess]);
   if(window.__saloneLastAccountRender!==accountState){window.__saloneLastAccountRender=accountState;renderAccount();}
   const announcementBox=document.getElementById('platformAnnouncement'),announcementText=document.getElementById('platformAnnouncementText');
-  if(announcementBox&&announcementText){const message=String(d.announcement?.message||'').trim();announcementText.textContent=message;announcementBox.hidden=!message;}
-  if(d.access?.allowed===true){
+  if(announcementBox&&announcementText&&d.announcement_available!==false){const message=String(d.announcement?.message||'').trim();announcementText.textContent=message;announcementBox.hidden=!message;}
+  if(d.access&&d.access.reason!=='payment_required'){
    if(paymentModal.classList.contains('open'))closePaymentModal();
   }else if(d.profile&&paymentModal.classList.contains('open')){
    renderPaymentAmount(d.profile.category);
   } // Payment information is displayed only when a user explicitly requests restricted access.
  }catch(e){console.warn('Platform refresh failed',e)}
- finally{platformRefreshInFlight=false;}
+ finally{clearTimeout(timeout);platformRefreshInFlight=false;}
 }
 (function(){
  const form=document.getElementById('supportForm'),status=document.getElementById('supportSubmitStatus'),btn=document.getElementById('supportSendBtn');
@@ -4960,6 +4962,8 @@ async function sendPresenceHeartbeat(){if(!sessionToken()||document.visibilitySt
 setInterval(sendPresenceHeartbeat,120000);
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')sendPresenceHeartbeat()});
 window.addEventListener('focus',sendPresenceHeartbeat);
+window.addEventListener('online',sendPresenceHeartbeat);
+window.addEventListener('pageshow',refreshPlatform);
 setTimeout(sendPresenceHeartbeat,1200);
 refreshPlatform();
 </script>
@@ -5108,26 +5112,13 @@ async function shareSaloneClassRoom(){
 
 if('serviceWorker' in navigator){
   const workers = navigator.serviceWorker;
-  let hadController = Boolean(workers.controller);
-  let updatePending = false;
-  function reloadUpdatedPage(){
-    if(updatePending && navigator.onLine && !document.hidden){
-      updatePending = false;
-      location.reload();
-    }
-  }
-  workers.addEventListener('controllerchange', () => {
-    if(hadController)updatePending = true;
-    hadController = Boolean(workers.controller);
-    reloadUpdatedPage();
-  });
   window.addEventListener('load', () => {
     workers.register('/sw.js', {updateViaCache:'none'}).then(reg => {
       const checkForUpdate = () => {
         if(navigator.onLine)reg.update().catch(()=>{});
-        reloadUpdatedPage();
       };
       window.addEventListener('online', checkForUpdate);
+      window.addEventListener('pageshow', checkForUpdate);
       window.setInterval(() => {
         if(!document.hidden)checkForUpdate();
       }, 15000);

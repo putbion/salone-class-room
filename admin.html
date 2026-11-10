@@ -94,8 +94,8 @@ th{background:#f6f9fc;color:#3b5267}
 <section class="panel active" id="panel-overview">
 <div class="kpis">
 <div class="kpi"><span>REGISTERED USERS</span><strong id="kUsers">—</strong></div>
-<div class="kpi"><span>NEW USERS • 30 DAYS</span><strong id="kNewUsers">—</strong></div><div class="kpi"><span>ONLINE / ACTIVE • 5 MIN</span><strong id="kOnline">—</strong></div><div class="kpi"><span>ACTIVE TODAY • VIEW USERS</span><button type="button" class="btn btn-light" style="font-size:1.25rem;font-weight:800;margin-top:8px" id="kActiveToday" onclick="openMetricUsers('activity',1,true)">—</button></div>
-<div class="kpi"><span>LEARNING EVENTS • 30 DAYS</span><strong id="kEvents">—</strong></div>
+<div class="kpi"><span>NEW USERS • 30 DAYS</span><strong id="kNewUsers">—</strong></div><div class="kpi"><span>ONLINE / ACTIVE • 5 MIN</span><strong id="kOnline">—</strong></div><div class="kpi"><span>ACTIVE TODAY • VIEW USERS</span><button type="button" class="btn btn-light" style="font-size:1.25rem;font-weight:800;margin-top:8px" id="kActiveToday" onclick="openMetricUsers('today',1,true)">—</button></div>
+<div class="kpi"><span>LEARNING REQUESTS • 30 DAYS</span><strong id="kEvents">—</strong></div>
 <div class="kpi"><span>NEW MESSAGES</span><strong id="kMessages">—</strong></div>
 <div class="kpi"><span>PRIMARY ACTIVITY</span><strong id="kPrimary">—</strong></div>
 <div class="kpi"><span>JSS / BECE ACTIVITY</span><strong id="kJss">—</strong></div>
@@ -286,18 +286,18 @@ async function signIn(){
 }
 function signOut(){sessionStorage.removeItem('salone_admin_token');localStorage.removeItem('salone_admin_token');location.reload()}
 function showTab(name,btn){document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));document.getElementById('panel-'+name).classList.add('active');document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));btn.classList.add('active')}
-async function refreshDashboard(){const t=adminToken();if(!t)return;document.getElementById('status').textContent='Refreshing…';const r=await fetch('/.netlify/functions/admin-api',{headers:{Authorization:'Bearer '+t}});const body=await r.json();if(!r.ok){if(r.status===401){sessionStorage.removeItem('salone_admin_token');localStorage.removeItem('salone_admin_token');location.reload();return}document.getElementById('status').textContent=body.error||'Unable to refresh';return}currentData=body;render(body)}
-function n(v){return Number(v||0).toLocaleString()}
-function date(v){if(!v)return '—';try{return new Date(v).toLocaleString()}catch{return v}}
+async function refreshDashboard(){const t=adminToken();if(!t)return;document.getElementById('status').textContent='Refreshing…';const r=await fetch('/.netlify/functions/admin-api',{cache:'no-store',headers:{Authorization:'Bearer '+t}});const body=await r.json();if(!r.ok){if(r.status===401){sessionStorage.removeItem('salone_admin_token');localStorage.removeItem('salone_admin_token');location.reload();return}document.getElementById('status').textContent=body.error||'Unable to refresh';return}currentData=body;render(body)}
+function n(v){return v==null?'Unavailable':Number(v).toLocaleString()}
+function date(v){if(!v)return '—';try{return new Date(v).toLocaleString('en-GB',{timeZone:'Africa/Freetown'})}catch{return v}}
 function esc(v){const d=document.createElement('div');d.textContent=v??'';return d.innerHTML}
 
 function openMetricUsers(kind,days,active=true){
- const profiles=currentData?.profiles||[],logs=currentData?.ai_usage||[],now=Date.now(),ms=days*86400000;
+ const profiles=currentData?.profiles||[],logs=currentData?.ai_usage||[],now=Date.parse(currentData?.snapshot_at)||Date.now(),ms=days*86400000, today=Date.parse(new Date(now).toISOString().slice(0,10)+'T00:00:00Z');
  let rows=[];
- if(kind==='registration')rows=profiles.filter(p=>p.created_at&&now-new Date(p.created_at).getTime()<=ms);
- else if(kind==='activity')rows=profiles.filter(p=>{const isActive=!!p.last_seen_at&&now-new Date(p.last_seen_at).getTime()<=ms;return isActive===active});
+ if(kind==='registration')rows=profiles.filter(p=>Date.parse(p.created_at)>=now-ms&&Date.parse(p.created_at)<=now);
+ else if(kind==='activity'||kind==='today')rows=profiles.filter(p=>{const seen=Date.parse(p.last_seen_at);return (seen>=(kind==='today'?today:now-ms)&&seen<=now)===active});
  else {const ids=new Set(logs.filter(x=>x.profile_id&&x.created_at&&now-new Date(x.created_at).getTime()<=ms).map(x=>String(x.profile_id)));rows=profiles.filter(p=>ids.has(String(p.id)))}
- const box=document.getElementById('metricDetailPanel');document.getElementById('metricDetailTitle').textContent=(kind==='registration'?'Registrations':kind==='activity'?(active?'Active users':'Inactive users'):'Users with recorded AI activity')+' — last '+days+' day(s) ('+rows.length+' loaded)';
+ const box=document.getElementById('metricDetailPanel');document.getElementById('metricDetailTitle').textContent=(kind==='today'?'Active today (Sierra Leone time)':kind==='registration'?'Registrations':kind==='activity'?(active?'Active users':'Inactive users'):'Users with recorded AI activity')+(kind==='today'?'':' — last '+days+' day(s)')+' ('+rows.length+')';
  document.getElementById('metricDetailRows').innerHTML='<table><thead><tr><th>Name</th><th>Contact</th><th>Category</th><th>Town</th><th>Joined</th><th>Last seen</th></tr></thead><tbody>'+rows.map(p=>'<tr><td>'+esc(p.full_name||'Unnamed')+'</td><td>'+esc(p.contact||p.email||p.phone||'—')+'</td><td>'+esc(p.category||'—')+'</td><td>'+esc(p.town||'—')+'</td><td>'+date(p.created_at)+'</td><td>'+date(p.last_seen_at)+'</td></tr>').join('')+'</tbody></table>';
  box.style.display='block';box.scrollIntoView({block:'start',behavior:'smooth'});
 }
