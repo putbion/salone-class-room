@@ -11,7 +11,8 @@ exports.handler=async(event)=>{
  if(!U||!K)return json(500,{error:'Learning backend is not configured.'});if(event.httpMethod!=='POST')return json(405,{error:'Method not allowed.'});
  let b={};try{b=JSON.parse(event.body||'{}')}catch{return json(400,{error:'Invalid request.'})}
  const sf=(p,o={})=>fetch(U+(p.startsWith('/')?p:'/'+p),{...o,headers:{apikey:K,Authorization:'Bearer '+K,'Content-Type':'application/json',...(o.headers||{})}});const arr=async p=>{const r=await sf(p);if(!r.ok)throw new Error(await r.text());return r.json()};
- let s;try{s=(await arr('/rest/v1/platform_settings?id=eq.1&select=*'))[0];if(!s)throw new Error('Missing platform settings')}catch(e){console.error('[learning-api][settings]',e.message);return json(503,{error:'Subscription settings are temporarily unavailable. Please try again.',code:'settings_unavailable'})}
+ const loadSettings=async()=>{const [settings]=await arr('/rest/v1/platform_settings?id=eq.1&select=*');if(!settings)throw new Error('Missing platform settings');return settings};
+ let s;try{s=await loadSettings()}catch(e){console.error('[learning-api][settings]',e.message);return json(503,{error:'Subscription settings are temporarily unavailable. Please try again.',code:'settings_unavailable'})}
  const auth=event.headers.authorization||event.headers.Authorization||'';
  const getProfile=async()=>{const t=auth.startsWith('Bearer ')?auth.slice(7):'';if(!t)return null;const ss=await arr('/rest/v1/user_sessions?token_hash=eq.'+encodeURIComponent(tokenHash(t))+'&expires_at=gt.'+encodeURIComponent(new Date().toISOString())+'&select=profile_id&limit=1');if(!ss[0])return null;return(await arr('/rest/v1/user_profiles?id=eq.'+encodeURIComponent(ss[0].profile_id)+'&select=*&limit=1'))[0]||null};
  let p;try{p=await getProfile()}catch(e){console.error('[learning-api] Session lookup unavailable:',e.message);return json(503,{error:'We could not verify your saved login right now. Please try again. Your account has not been removed.',code:'session_check_unavailable'})}
@@ -31,7 +32,7 @@ exports.handler=async(event)=>{
  const isAdmin=!auth&&await validateAdmin();
  const aiKey=isAdmin?('admin:'+tokenHash(rawAdminToken)):(p?('profile:'+p.id):anonDeviceId);const aiRate=enforceRate(event,{name:'ai-generation',limit:isAdmin?120:(p?60:8),windowMs:60*60*1000,key:aiKey});if(aiRate)return aiRate;
  const accessError=profile=>{
-  const access=profileAccess(profile);
+  const access=profileAccess(profile,s);
   if(access.allowed)return null;
   if(access.reason==='registration_required')return json(401,{error:'Please sign in with your existing account to continue. If you are new, create an account once.',code:'registration_required'});
   if(access.reason==='blocked')return json(403,{error:'This account is blocked.',code:'account_blocked'});
@@ -133,10 +134,11 @@ exports.handler=async(event)=>{
   try{const saved=await sf('/rest/v1/ai_usage_log',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify(aiRow)});if(!saved.ok)console.error('[learning-api][ai_usage_log]',saved.status,(await saved.text()).slice(0,350))}catch(err){console.error('[learning-api][ai_usage_log]',err.message)}
   if(p){
    let latest;
-   try{latest=await getProfile()}catch(e){
+   try{[latest,s]=await Promise.all([getProfile(),loadSettings()])}catch(e){
     console.error('[learning-api] Access recheck unavailable:',e.message);
     return json(503,{error:'We could not verify your access right now. Please try again.',code:'session_check_unavailable'});
    }
+   if(s.ai_enabled===false)return json(503,{error:'AI assistance is temporarily disabled by the administrator. Please try again later.'});
    const denied=accessError(latest);
    if(denied)return denied;
   }

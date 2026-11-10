@@ -47,8 +47,8 @@ exports.handler=async(event)=>{
   }
   if(b.action==='end_free_period'){
    if(access.role!=='owner')return json(403,{error:'Only the main administrator can end free access.'});
-   const r=await sf('/rest/v1/platform_settings?id=eq.1',{method:'PATCH',body:JSON.stringify({free_access_enabled:false,primary_free:false,jss_free:false,sss_free:false,teacher_free:false,university_free:false,free_access_until:new Date(Date.now()-1000).toISOString(),updated_at:new Date().toISOString()})});
-   return r.ok?json(200,{ok:true}):json(500,{error:'Unable to end the free period.'});
+   const r=await sf('/rest/v1/platform_settings?id=eq.1',{method:'PATCH',headers:{Prefer:'return=representation'},body:JSON.stringify({free_access_enabled:false,primary_free:false,jss_free:false,sss_free:false,teacher_free:false,university_free:false,free_access_until:new Date(Date.now()-1000).toISOString(),updated_at:new Date().toISOString()})});
+   return r.ok&&(await r.json()).length?json(200,{ok:true}):json(500,{error:'Unable to end the free period.'});
   }
   if(b.action==='save_settings'){
    const p=b.prices||{},row={id:1,free_access_enabled:!!b.free_access_enabled,free_access_start:b.free_access_start||null,free_access_until:b.free_access_until||null,orange_money_number:clean(b.orange_money_number,60),price_primary:+p.primary||0,price_jss:+p.jss||0,price_sss:+p.sss||0,price_teacher:+p.teacher||0,price_university:+p.university||0,ai_enabled:b.ai_enabled!==false,ai_model:clean(b.ai_model,80)||'openai/gpt-oss-20b',primary_free:!!b.primary_free,jss_free:!!b.jss_free,sss_free:!!b.sss_free,teacher_free:!!b.teacher_free,university_free:!!b.university_free,updated_at:new Date().toISOString()};
@@ -61,11 +61,11 @@ exports.handler=async(event)=>{
    const now=new Date();
    const row={updated_at:now.toISOString()};
    if(b.mode==='end'){
-    Object.assign(row,{free_access_end:row.updated_at,paid_access_end:row.updated_at,paid_active:false});
+    Object.assign(row,{free_access_source:'ended',free_access_end:row.updated_at,paid_access_end:row.updated_at,paid_active:false});
    }else if(b.mode==='grant'){
     const days=Number(b.days);
     if(!Number.isInteger(days)||days<1||days>365)return json(400,{error:'Choose a valid number of days.'});
-    Object.assign(row,{account_status:'active',free_access_start:row.updated_at,free_access_end:new Date(now.getTime()+days*86400000).toISOString()});
+    Object.assign(row,{account_status:'active',free_access_source:'individual',free_access_start:row.updated_at,free_access_end:new Date(now.getTime()+days*86400000).toISOString()});
    }else{
     if(!['active','blocked'].includes(b.account_status))return json(400,{error:'Select a valid account status.'});
     row.account_status=b.account_status;
@@ -74,6 +74,12 @@ exports.handler=async(event)=>{
       const value=b[key];
       if(value&&!Number.isFinite(Date.parse(value)))return json(400,{error:'Enter valid access dates.'});
       row[key]=value?new Date(value).toISOString():null;
+     }
+     if(b.update_free_access===true){
+      row.free_access_source='individual';
+     }else{
+      delete row.free_access_start;
+      delete row.free_access_end;
      }
      row.paid_active=b.paid_active===true;
      if(row.paid_active&&!row.paid_access_end)return json(400,{error:'Enter an end date for paid access.'});
@@ -88,7 +94,8 @@ exports.handler=async(event)=>{
    const [saved]=await r.json();
    if(!saved)return checkVersion?json(409,{error:'This user’s access changed. Reopen Full Settings and check the current dates before saving.'}):json(404,{error:'User not found.'});
    if(row.account_status==='blocked')await sf('/rest/v1/user_sessions?profile_id=eq.'+encodeURIComponent(id),{method:'DELETE'}).catch(()=>{});
-   return json(200,{ok:true,access:profileAccess(saved)});
+   const [settings]=await arr('/rest/v1/platform_settings?id=eq.1&select=*');
+   return json(200,{ok:true,access:profileAccess(saved,settings)});
   }
   if(b.action==='profile_remove'){
    await sf('/rest/v1/user_sessions?profile_id=eq.'+encodeURIComponent(b.id),{method:'DELETE'}).catch(()=>{});const r=await sf('/rest/v1/user_profiles?id=eq.'+encodeURIComponent(b.id),{method:'DELETE'});return r.ok?json(200,{ok:true}):json(500,{error:'Unable to remove user.'});
@@ -147,8 +154,8 @@ exports.handler=async(event)=>{
   if(b.action==='test_orange_api'){const sr=await arr('/rest/v1/platform_settings?id=eq.1&select=orange_payment_mode,orange_api_base_url,orange_merchant_id,orange_webhook_url,orange_api_enabled'),s=sr[0]||{};if(s.orange_payment_mode!=='api'||!s.orange_api_enabled)return json(400,{error:'Orange Money API mode is not enabled.'});if(!s.orange_api_base_url||!s.orange_merchant_id||!s.orange_webhook_url)return json(400,{error:'Complete the Orange Money API URL, merchant ID and webhook URL first.'});const ready=!!(process.env.ORANGE_MONEY_CLIENT_ID&&process.env.ORANGE_MONEY_CLIENT_SECRET);return ready?json(200,{ok:true,message:'Orange Money API configuration is present.'}):json(400,{error:'Orange Money API secrets are not yet configured in Netlify Environment Variables.'});}
  }
  let users=[];try{let r=await sf('/auth/v1/admin/users?per_page=1000');if(r.ok)users=(await r.json()).users||[]}catch{}
- const [events,messages,profiles,payments,settings,anns,aiUsage,admins,resetRequests,features]=await Promise.all([arr('/rest/v1/app_events?select=*&order=created_at.desc&limit=500'),arr('/rest/v1/support_messages?select=*&order=created_at.desc&limit=300'),arr('/rest/v1/user_profiles?select=id,device_id,full_name,contact,email,phone,category,town,paid_active,account_status,last_login_at,last_seen_at,current_tool,free_access_start,free_access_end,paid_access_start,paid_access_end,admin_note,created_at,updated_at&order=created_at.desc&limit=1000'),arr('/rest/v1/payment_requests?select=*,user_profiles(full_name,category)&order=created_at.desc&limit=500'),arr('/rest/v1/platform_settings?id=eq.1&select=*'),arr('/rest/v1/announcements?select=*&order=active.desc,created_at.desc&limit=1'),arr('/rest/v1/ai_usage_log?select=*&order=created_at.desc&limit=1000'),arr('/rest/v1/admin_users?select=*&order=created_at.asc'),arr('/rest/v1/password_reset_requests?select=*,user_profiles(full_name,contact,email,phone)&order=created_at.desc&limit=200'),arr('/rest/v1/platform_features?select=*&order=display_order.asc,feature_name.asc')]);
- for(const profile of profiles)profile.access=profileAccess(profile);
+ const [events,messages,profiles,payments,settings,anns,aiUsage,admins,resetRequests,features]=await Promise.all([arr('/rest/v1/app_events?select=*&order=created_at.desc&limit=500'),arr('/rest/v1/support_messages?select=*&order=created_at.desc&limit=300'),arr('/rest/v1/user_profiles?select=id,device_id,full_name,contact,email,phone,category,town,paid_active,account_status,last_login_at,last_seen_at,current_tool,free_access_source,free_access_start,free_access_end,paid_access_start,paid_access_end,admin_note,created_at,updated_at&order=created_at.desc&limit=1000'),arr('/rest/v1/payment_requests?select=*,user_profiles(full_name,category)&order=created_at.desc&limit=500'),arr('/rest/v1/platform_settings?id=eq.1&select=*'),arr('/rest/v1/announcements?select=*&order=active.desc,created_at.desc&limit=1'),arr('/rest/v1/ai_usage_log?select=*&order=created_at.desc&limit=1000'),arr('/rest/v1/admin_users?select=*&order=created_at.asc'),arr('/rest/v1/password_reset_requests?select=*,user_profiles(full_name,contact,email,phone)&order=created_at.desc&limit=200'),arr('/rest/v1/platform_features?select=*&order=display_order.asc,feature_name.asc')]);
+ for(const profile of profiles)profile.access=profileAccess(profile,settings[0]);
  const countAll=async(table,filter='')=>{try{const r=await sf('/rest/v1/'+table+'?select=id'+filter,{headers:{Prefer:'count=exact',Range:'0-0'}});if(!r.ok)return null;const range=r.headers.get('content-range')||'';const m=range.match(/\/(\d+)$/);return m?Number(m[1]):null}catch{return null}};
  const since=(days)=>'&created_at=gte.'+encodeURIComponent(new Date(Date.now()-days*86400000).toISOString());
  const fetchPaged=async(path,maxPages=25)=>{const out=[];for(let i=0;i<maxPages;i++){const url=path+(path.includes('?')?'&':'?')+'limit=1000&offset='+(i*1000);const response=await sf(url);if(!response.ok)throw new Error('Database pagination failed: '+response.status);const rows=await response.json();if(!Array.isArray(rows))throw new Error('Unexpected database response');out.push(...rows);if(rows.length<1000)return out;}throw new Error('Pagination safety limit reached; totals unavailable');};
