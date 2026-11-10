@@ -162,7 +162,12 @@ exports.handler=async(event)=>{
  const now=Date.now(), snapshotAt=new Date(now).toISOString(), today=Date.parse(snapshotAt.slice(0,10)+'T00:00:00Z');
  const since=(days)=>'&created_at=gte.'+encodeURIComponent(new Date(now-days*86400000).toISOString());
 
- const [pwaDevices,pwaUsers]=await Promise.all([countAll('pwa_installations'),(async()=>{try{const rows=await fetchPaged('/rest/v1/pwa_installations?select=profile_id&order=profile_id.asc,device_id.asc');return new Set(rows.filter(x=>x.profile_id).map(x=>x.profile_id)).size}catch{return null}})()]);
+ const [installations,newMessages]=await Promise.all([
+  fetchPaged('/rest/v1/pwa_installations?select=profile_id&order=profile_id.asc,device_id.asc').catch(()=>null),
+  countAll('support_messages','&or=(status.eq.new,status.is.null)')
+ ]);
+ const pwaDevices=installations?.length??null;
+ const pwaUsers=installations?new Set(installations.filter(row=>row.profile_id).map(row=>row.profile_id)).size:null;
  const [dayAI,weekAI,monthAI,eventAI24,eventAI7,eventAI30]=await Promise.all([countAll('ai_usage_log',since(1)),countAll('ai_usage_log',since(7)),countAll('ai_usage_log',since(30)),countAll('app_events','&event_type=eq.ai_usage'+since(1)),countAll('app_events','&event_type=eq.ai_usage'+since(7)),countAll('app_events','&event_type=eq.ai_usage'+since(30))]);
 
  let aiComplete=[];try{aiComplete=await fetchPaged('/rest/v1/ai_usage_log?select=*&created_at=gte.'+encodeURIComponent(new Date(now-30*86400000).toISOString())+'&order=created_at.desc,id.asc')}catch(err){console.error('AI detail history unavailable:',err.message)}
@@ -177,26 +182,34 @@ exports.handler=async(event)=>{
  const c={primary:e30.filter(e=>contains(e,['primary','npse'])).length,jss:e30.filter(e=>contains(e,['jss','bece'])).length,sss:e30.filter(e=>contains(e,['sss','wassce'])).length,teachers:e30.filter(e=>contains(e,['teacher','lesson note','scheme of work'])).length,university:e30.filter(e=>contains(e,['university','topic finder','proposal','dissertation','defense','lecturer'])).length};
  const m={npseCount:e30.filter(e=>contains(e,['npse'])).length,beceCount:e30.filter(e=>contains(e,['bece'])).length,wassceCount:e30.filter(e=>contains(e,['wassce'])).length,reviewCount:e30.filter(e=>contains(e,['review'])).length,teacherEvents:c.teachers,schemeEvents:e30.filter(e=>contains(e,['scheme of work'])).length,lessonEvents:e30.filter(e=>contains(e,['lesson note','lesson plan'])).length,otherTeacherEvents:c.teachers,universityEvents:c.university,topicEvents:e30.filter(e=>contains(e,['topic finder'])).length,proposalEvents:e30.filter(e=>contains(e,['proposal','research'])).length,dissertationEvents:e30.filter(e=>contains(e,['dissertation','defense','thesis'])).length};
  if(completeEvents===null){for(const k of Object.keys(c))c[k]=null;for(const k of Object.keys(m))m[k]=null;}
- const countProfiles=(field,start)=>profiles.filter(profile=>{
+ const matchingProfiles=(field,start)=>profiles.filter(profile=>{
   const time=Date.parse(profile[field]);
   return time>=start&&time<=now;
- }).length;
+ }).sort((a,b)=>Date.parse(b[field])-Date.parse(a[field]));
+ const activeToday=matchingProfiles('last_seen_at',today);
  const totalProfiles=profiles.length;
- const dayProfiles=countProfiles('created_at',now-86400000);
- const weekProfiles=countProfiles('created_at',now-7*86400000);
- const monthProfiles=countProfiles('created_at',now-30*86400000);
- const active5=countProfiles('last_seen_at',now-300000);
+ const metricUsers={today:activeToday.map(profile=>profile.id)};
  const activeWindows={};
  for(const [key,days] of Object.entries({day:1,week:7,month:30})){
-  const active=countProfiles('last_seen_at',now-days*86400000);
-  activeWindows[key]={active,inactive:totalProfiles-active};
+  const start=now-days*86400000;
+  const active=matchingProfiles('last_seen_at',start).map(profile=>profile.id);
+  const activeIds=new Set(active);
+  const inactive=profiles.filter(profile=>!activeIds.has(profile.id)).map(profile=>profile.id);
+  metricUsers['active_'+days]=active;
+  metricUsers['inactive_'+days]=inactive;
+  metricUsers['registration_'+days]=matchingProfiles('created_at',start).map(profile=>profile.id);
+  activeWindows[key]={active:active.length,inactive:inactive.length};
  }
+ const dayProfiles=metricUsers.registration_1.length;
+ const weekProfiles=metricUsers.registration_7.length;
+ const monthProfiles=metricUsers.registration_30.length;
+ const active5=matchingProfiles('last_seen_at',now-300000).length;
  const aiCount=(dedicated,legacy)=>dedicated>0?dedicated:legacy??dedicated;
  const pays=payments.map(p=>({...p,full_name:p.user_profiles?.full_name,category:p.user_profiles?.category}));
  const fallbackAI=events.filter(e=>e.event_type==='ai_usage').map(e=>{let d={};try{d=JSON.parse(e.detail||'{}')}catch{};const section=String(e.section||'');const matched=profiles.find(p=>String(p.id)===section||!!section&&String(p.device_id||'')===section);return {id:'event_'+e.id,profile_id:matched?matched.id:null,device_id:matched?matched.device_id:section,tool_key:d.tool_key||'learning-tool',model:d.model||'',source:d.source||'ai',created_at:e.created_at};});
  const dedicatedKeys=new Set(aiUsage.map(x=>[String(x.profile_id||''),String(x.tool_key||''),String(x.created_at||'').slice(0,16)].join('|')));
  const matchedAI=aiComplete.map(x=>{if(x.profile_id)return x;const match=profiles.find(p=>x.device_id&&String(p.device_id||'')===String(x.device_id));return match?{...x,profile_id:match.id}:x});
  const mergedAI=[...matchedAI,...fallbackAI.filter(x=>!dedicatedKeys.has([String(x.profile_id||''),String(x.tool_key||''),String(x.created_at||'').slice(0,16)].join('|')))];
- return json(200,{snapshot_at:snapshotAt,features,admin_identity:{email:(au.email||'').toLowerCase(),role:access.role},admins,reset_requests:resetRequests,summary:{registered_users:totalProfiles,new_users_24h:dayProfiles,new_users_today:countProfiles('created_at',today),new_users_7d:weekProfiles,new_users_30d:monthProfiles,ai_calls_24h:aiCount(dayAI,eventAI24),ai_calls_7d:aiCount(weekAI,eventAI7),ai_calls_30d_exact:aiCount(monthAI,eventAI30),events_30d:eventCount30,new_messages:messages.filter(x=>(x.status||'new')==='new').length,online_now:active5,active_today:countProfiles('last_seen_at',today),active_last_24h:activeWindows.day.active,activity_windows:activeWindows,pwa_installed_devices:pwaDevices,pwa_installed_users:pwaUsers,pwa_tracking_note:"Only confirmed installation events recorded after deployment are counted.",ai_logging_status:monthAI===0&&fallbackAI.length>0?"Dedicated AI usage table has no recent records; event fallback detected.":"See AI usage logs for individual records.",ai_calls_30d:aiCount(monthAI,eventAI30)},categories:c,metrics:m,users,events,messages,profiles,payments:pays,ai_usage:mergedAI,platform_settings:settings[0]||{},announcement:anns[0]||null,system:{supabase:true,events_table:true,messages_table:true}});
+ return json(200,{dashboard_revision:2,snapshot_at:snapshotAt,metric_users:metricUsers,features,admin_identity:{email:(au.email||'').toLowerCase(),role:access.role},admins,reset_requests:resetRequests,summary:{registered_users:totalProfiles,new_users_24h:dayProfiles,new_users_today:matchingProfiles('created_at',today).length,new_users_7d:weekProfiles,new_users_30d:monthProfiles,ai_calls_24h:aiCount(dayAI,eventAI24),ai_calls_7d:aiCount(weekAI,eventAI7),ai_calls_30d_exact:aiCount(monthAI,eventAI30),events_30d:eventCount30,new_messages:newMessages,online_now:active5,active_today:activeToday.length,active_last_24h:activeWindows.day.active,activity_windows:activeWindows,pwa_installed_devices:pwaDevices,pwa_installed_users:pwaUsers,pwa_tracking_note:"Only confirmed installation events recorded after deployment are counted.",ai_logging_status:monthAI===0&&fallbackAI.length>0?"Dedicated AI usage table has no recent records; event fallback detected.":"See AI usage logs for individual records.",ai_calls_30d:aiCount(monthAI,eventAI30)},categories:c,metrics:m,users,events,messages,profiles,payments:pays,ai_usage:mergedAI,platform_settings:settings[0]||{},announcement:anns[0]||null,system:{supabase:true,events_table:completeEvents!==null,messages_table:newMessages!==null}});
 }
 ;
