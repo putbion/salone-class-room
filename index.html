@@ -5128,6 +5128,9 @@ if('serviceWorker' in navigator){
         reloadUpdatedPage();
       };
       window.addEventListener('online', checkForUpdate);
+      window.setInterval(() => {
+        if(!document.hidden)checkForUpdate();
+      }, 15000);
       document.addEventListener('visibilitychange', () => {
         if(!document.hidden)checkForUpdate();
       });

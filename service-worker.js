@@ -1,4 +1,4 @@
-const CACHE='salone-class-room-payment-pwa-20261109-3';
+const CACHE='salone-class-room-access-release-20261110-1';
 const APP_SHELL=['/','/index.html','/offline.html'];
 
 self.addEventListener('install', event => {

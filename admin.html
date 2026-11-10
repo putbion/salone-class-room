@@ -208,7 +208,7 @@ th{background:#f6f9fc;color:#3b5267}
 <h3>Free Access Control</h3>
 <label for="freeAccessEnabled">Free access switch</label><select id="freeAccessEnabled"><option value="true">Free access ON</option><option value="false">Free access OFF</option></select>
 <label for="freeAccessStart">Free access starts</label><input id="freeAccessStart" type="date"/><label for="freeAccessUntil">Free access ends</label><input id="freeAccessUntil" type="date"/>
-<div class="box" style="margin:12px 0"><h3>End General Free Period</h3><p class="note">End general free access now. Existing individual free-access exemptions and approved paid access remain valid.</p><button type="button" class="btn btn-primary" onclick="endFreePeriodNow()">End Free Period Now</button></div><label for="orangeMoneyNumber">Orange Money payment number</label><input id="orangeMoneyNumber" placeholder="Enter Orange Money number"/>
+<div class="box" style="margin:12px 0"><h3>End General Free Period</h3><p class="note">End general free access now. Seven-day registration trials, individual exemptions granted in this dashboard and approved paid access remain valid.</p><button type="button" class="btn btn-primary" onclick="endFreePeriodNow()">End Free Period Now</button></div><label for="orangeMoneyNumber">Orange Money payment number</label><input id="orangeMoneyNumber" placeholder="Enter Orange Money number"/>
 <p class="note">Registered users are not asked to pay while free access is active.</p>
 </div>
 <div class="box">
@@ -301,7 +301,7 @@ function openMetricUsers(kind,days,active=true){
  document.getElementById('metricDetailRows').innerHTML='<table><thead><tr><th>Name</th><th>Contact</th><th>Category</th><th>Town</th><th>Joined</th><th>Last seen</th></tr></thead><tbody>'+rows.map(p=>'<tr><td>'+esc(p.full_name||'Unnamed')+'</td><td>'+esc(p.contact||p.email||p.phone||'—')+'</td><td>'+esc(p.category||'—')+'</td><td>'+esc(p.town||'—')+'</td><td>'+date(p.created_at)+'</td><td>'+date(p.last_seen_at)+'</td></tr>').join('')+'</tbody></table>';
  box.style.display='block';box.scrollIntoView({block:'start',behavior:'smooth'});
 }
-async function endFreePeriodNow(){if(!confirm('End the general free-access period now? Paid users and individual exemptions remain active.'))return;try{await adminPost({action:'end_free_period'});await refreshDashboard();alert('General free access has ended. Connected users will be checked on their next platform refresh.')}catch(e){alert(e.message)}}
+async function endFreePeriodNow(){if(!confirm('End the general free-access period now? Paid users, confirmed individual exemptions and new-user trials remain active.'))return;try{await adminPost({action:'end_free_period'});await refreshDashboard();alert('General free access has ended. The next learning request will use the new access setting.')}catch(e){alert(e.message)}}
 
 function render(data){
   const s=data.summary||{}, cats=data.categories||{};
@@ -478,7 +478,7 @@ async function saveUserAccess(){
  }
  let saved;
  try{
-  saved=await adminPost({action:'profile_access',id:p.id,expected_updated_at:p.updated_at||null,account_status:manageStatus.value,...dates,paid_active:managePaidActive.checked,admin_note:manageNote.value});
+  saved=await adminPost({action:'profile_access',id:p.id,expected_updated_at:p.updated_at||null,account_status:manageStatus.value,...dates,update_free_access:['free_access_start','free_access_end'].some(key=>dates[key]!== (p[key]||null)),paid_active:managePaidActive.checked,admin_note:manageNote.value});
  }catch(e){st.textContent=e.message;if(e.status===409)refreshDashboard().catch(()=>{});return}
  st.textContent='User access saved. Status: '+saved.access.status;
  closeUserManager();
