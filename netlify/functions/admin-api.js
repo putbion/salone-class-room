@@ -176,6 +176,30 @@ exports.handler=async(event)=>{
  for(const msg of messages)msg.admin_reply=replyMap.get(String(msg.id))||null;
  let completeEvents=null;try{completeEvents=await fetchPaged('/rest/v1/app_events?select=*&created_at=gte.'+encodeURIComponent(new Date(now-30*86400000).toISOString())+'&order=created_at.desc,id.asc')}catch(err){console.error('Activity breakdown unavailable:',err.message)}
  const learningTypes=new Set(['learning','tutor','assignment','review','topics','proposal','dissertation','defense','teacher','teacher_prep','teacher_exam','teacher_exam_objective','teacher_exam_theory','teacher_marking_scheme','quiz','lecturer','theory_quiz','mark_theory','teacher_marking_guide','explain_wrong_answer']);
+ const profileIds=new Set(profiles.map(profile=>String(profile.id)));
+ const learningUsers={};
+ const verifiedEvents=(completeEvents||[]).filter(event=>event.event_type==='learning_delivered'&&profileIds.has(String(event.section))&&Date.parse(event.created_at)<=now);
+ const closedFreePeriod=!['free_access_enabled','primary_free','jss_free','sss_free','teacher_free','university_free'].some(key=>settings[0]?.[key]===true);
+ const freeEnd=Date.parse(settings[0]?.free_access_until);
+ const windows={recent:now-300000,today,day:now-86400000};
+ if(closedFreePeriod&&freeEnd<=now&&freeEnd>=now-30*86400000)windows.after_free=freeEnd;
+ for(const [key,start] of Object.entries(windows)){
+  if(completeEvents===null){learningUsers[key]=null;continue;}
+  const people=new Map();
+  for(const event of verifiedEvents){
+   const time=Date.parse(event.created_at);
+   if(!(time>=start))continue;
+   const id=String(event.section);
+   let person=people.get(id);
+   if(!person){person={id,responses:0,last_response:null,access_reason:null};people.set(id,person);}
+   person.responses++;
+   if(!person.last_response||time>Date.parse(person.last_response)){
+    person.last_response=event.created_at;
+    try{person.access_reason=JSON.parse(event.detail).access;}catch{}
+   }
+  }
+  learningUsers[key]=[...people.values()].sort((a,b)=>Date.parse(b.last_response)-Date.parse(a.last_response));
+ }
  const e30=(completeEvents||[]).filter(event=>learningTypes.has(event.event_type));
  const eventCount30=completeEvents===null?null:e30.length;
  const contains=(e,w)=>w.some(x=>((e.event_type||'')+' '+(e.section||'')+' '+String(e.detail||'').split(' | ')[0]).toLowerCase().includes(x));
@@ -210,6 +234,6 @@ exports.handler=async(event)=>{
  const dedicatedKeys=new Set(aiUsage.map(x=>[String(x.profile_id||''),String(x.tool_key||''),String(x.created_at||'').slice(0,16)].join('|')));
  const matchedAI=aiComplete.map(x=>{if(x.profile_id)return x;const match=profiles.find(p=>x.device_id&&String(p.device_id||'')===String(x.device_id));return match?{...x,profile_id:match.id}:x});
  const mergedAI=[...matchedAI,...fallbackAI.filter(x=>!dedicatedKeys.has([String(x.profile_id||''),String(x.tool_key||''),String(x.created_at||'').slice(0,16)].join('|')))];
- return json(200,{dashboard_revision:2,snapshot_at:snapshotAt,metric_users:metricUsers,features,admin_identity:{email:(au.email||'').toLowerCase(),role:access.role},admins,reset_requests:resetRequests,summary:{registered_users:totalProfiles,new_users_24h:dayProfiles,new_users_today:matchingProfiles('created_at',today).length,new_users_7d:weekProfiles,new_users_30d:monthProfiles,ai_calls_24h:aiCount(dayAI,eventAI24),ai_calls_7d:aiCount(weekAI,eventAI7),ai_calls_30d_exact:aiCount(monthAI,eventAI30),events_30d:eventCount30,new_messages:newMessages,online_now:active5,active_today:activeToday.length,active_last_24h:activeWindows.day.active,activity_windows:activeWindows,pwa_installed_devices:pwaDevices,pwa_installed_users:pwaUsers,pwa_tracking_note:"Only confirmed installation events recorded after deployment are counted.",ai_logging_status:monthAI===0&&fallbackAI.length>0?"Dedicated AI usage table has no recent records; event fallback detected.":"See AI usage logs for individual records.",ai_calls_30d:aiCount(monthAI,eventAI30)},categories:c,metrics:m,users,events,messages,profiles,payments:pays,ai_usage:mergedAI,platform_settings:settings[0]||{},announcement:anns[0]||null,system:{supabase:true,events_table:completeEvents!==null,messages_table:newMessages!==null}});
+ return json(200,{dashboard_revision:3,snapshot_at:snapshotAt,metric_users:metricUsers,learning_users:learningUsers,free_period_end:windows.after_free===undefined?null:new Date(windows.after_free).toISOString(),features,admin_identity:{email:(au.email||'').toLowerCase(),role:access.role},admins,reset_requests:resetRequests,summary:{registered_users:totalProfiles,new_users_24h:dayProfiles,new_users_today:matchingProfiles('created_at',today).length,new_users_7d:weekProfiles,new_users_30d:monthProfiles,ai_calls_24h:aiCount(dayAI,eventAI24),ai_calls_7d:aiCount(weekAI,eventAI7),ai_calls_30d_exact:aiCount(monthAI,eventAI30),events_30d:eventCount30,new_messages:newMessages,online_now:active5,active_today:activeToday.length,active_last_24h:activeWindows.day.active,activity_windows:activeWindows,pwa_installed_devices:pwaDevices,pwa_installed_users:pwaUsers,pwa_tracking_note:"Only confirmed installation events recorded after deployment are counted.",ai_logging_status:monthAI===0&&fallbackAI.length>0?"Dedicated AI usage table has no recent records; event fallback detected.":"See AI usage logs for individual records.",ai_calls_30d:aiCount(monthAI,eventAI30)},categories:c,metrics:m,users,events,messages,profiles,payments:pays,ai_usage:mergedAI,platform_settings:settings[0]||{},announcement:anns[0]||null,system:{supabase:true,events_table:completeEvents!==null,messages_table:newMessages!==null}});
 }
 ;

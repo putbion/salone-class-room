@@ -31,8 +31,8 @@ exports.handler=async(event)=>{
  };
  const isAdmin=!auth&&await validateAdmin();
  const aiKey=isAdmin?('admin:'+tokenHash(rawAdminToken)):(p?('profile:'+p.id):anonDeviceId);const aiRate=enforceRate(event,{name:'ai-generation',limit:isAdmin?120:(p?60:8),windowMs:60*60*1000,key:aiKey});if(aiRate)return aiRate;
- const accessError=profile=>{
-  const access=profileAccess(profile,s);
+ const accessError=(profile,now)=>{
+  const access=profileAccess(profile,s,now);
   if(access.allowed)return null;
   if(access.reason==='registration_required')return json(401,{error:'Please sign in with your existing account to continue. If you are new, create an account once.',code:'registration_required'});
   if(access.reason==='blocked')return json(403,{error:'This account is blocked.',code:'account_blocked'});
@@ -132,16 +132,29 @@ exports.handler=async(event)=>{
   // Use the ACTUAL 15-column Supabase schema. Never silently swallow a rejected insert.
   const aiRow={profile_id:p?.id||null,device_id:deviceId||null,tool_key:toolKey,education_level:level||null,subject:subject||null,request_text:String(prompt).slice(0,2000),response_source:result.provider||null,ai_provider:result.provider||null,model_name:result.model||null,input_tokens:inputTokens,output_tokens:outputTokens,estimated_cost:0,estimated_ai_cost_saved:0};
   try{const saved=await sf('/rest/v1/ai_usage_log',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify(aiRow)});if(!saved.ok)console.error('[learning-api][ai_usage_log]',saved.status,(await saved.text()).slice(0,350))}catch(err){console.error('[learning-api][ai_usage_log]',err.message)}
-  if(p){
-   let latest;
-   try{[latest,s]=await Promise.all([getProfile(),loadSettings()])}catch(e){
-    console.error('[learning-api] Access recheck unavailable:',e.message);
-    return json(503,{error:'We could not verify your access right now. Please try again.',code:'session_check_unavailable'});
+  const deliver=async body=>{
+   if(p){
+    let latest;
+    try{[latest,s]=await Promise.all([getProfile(),loadSettings()])}catch(e){
+     console.error('[learning-api] Access recheck unavailable:',e.message);
+     return json(503,{error:'We could not verify your access right now. Please try again.',code:'session_check_unavailable'});
+    }
+    if(s.ai_enabled===false)return json(503,{error:'AI assistance is temporarily disabled by the administrator. Please try again later.'});
+    const checkedAt=new Date().toISOString();
+    const denied=accessError(latest,Date.parse(checkedAt));
+    if(denied)return denied;
+    const access=profileAccess(latest,s,Date.parse(checkedAt));
+    // Separate verified responses from presence and provider/cost telemetry.
+    try{
+     const recorded=await sf('/rest/v1/app_events',{
+      method:'POST',headers:{Prefer:'return=minimal'},signal:AbortSignal.timeout(2500),
+      body:JSON.stringify({event_type:'learning_delivered',section:String(latest.id),detail:JSON.stringify({access:access.reason,tool:toolKey})})
+     });
+     if(!recorded.ok)console.error('[learning-api][learning-delivered]',recorded.status);
+    }catch(err){console.error('[learning-api][learning-delivered]',err.message)}
    }
-   if(s.ai_enabled===false)return json(503,{error:'AI assistance is temporarily disabled by the administrator. Please try again later.'});
-   const denied=accessError(latest);
-   if(denied)return denied;
-  }
+   return json(200,body);
+  };
   if(task==='teacher_exam_objective'){
    let parsed;try{parsed=JSON.parse(text.replace(/^```json\s*|\s*```$/g,''))}catch{return json(502,{error:"We couldn't generate the questions. Please try again."})}
    let questions=Array.isArray(parsed)?parsed:Array.isArray(parsed?.questions)?parsed.questions:[];
@@ -156,33 +169,33 @@ exports.handler=async(event)=>{
     else if(Number.isInteger(Number(a))&&a>=0&&a<=3) letter=letters[Number(a)];
     return `${i+1}. ${letter}`;
    }).join('\n');
-   return json(200,{source:'ai',provider:result.provider,model:result.model,admin_access:isAdmin,usage:{input_tokens:inputTokens,output_tokens:outputTokens},answer,answer_key,questions});
+   return await deliver({source:'ai',provider:result.provider,model:result.model,admin_access:isAdmin,usage:{input_tokens:inputTokens,output_tokens:outputTokens},answer,answer_key,questions});
   }
   if(task==='theory_quiz'){
    let parsed;try{parsed=JSON.parse(text.replace(/^```json\s*|\s*```$/g,''))}catch{return json(502,{error:"We couldn't generate the questions. Please try again."})}
    let questions=Array.isArray(parsed)?parsed:Array.isArray(parsed?.questions)?parsed.questions:[];
    questions=questions.filter(q=>q&&typeof q.question==='string').slice(0,2);
    if(questions.length!==2)return json(502,{error:"We couldn't generate the questions. Please try again."});
-   return json(200,{source:'ai',provider:result.provider,model:result.model,admin_access:isAdmin,usage:{input_tokens:inputTokens,output_tokens:outputTokens},questions});
+   return await deliver({source:'ai',provider:result.provider,model:result.model,admin_access:isAdmin,usage:{input_tokens:inputTokens,output_tokens:outputTokens},questions});
   }
   if(task==='mark_theory'){
    let parsed=null;try{parsed=JSON.parse(text.replace(/^```json\s*|\s*```$/g,''))}catch{}
    if(parsed&&Array.isArray(parsed.feedback)&&parsed.feedback.length){
     const totalScore = Number.isInteger(+parsed.total_score) ? +parsed.total_score : parsed.feedback.filter(f=>+f.marks_awarded>0).length;
-    return json(200,{source:'ai',provider:result.provider,model:result.model,admin_access:isAdmin,usage:{input_tokens:inputTokens,output_tokens:outputTokens},feedback:parsed.feedback,total_score:totalScore,max_score:parsed.max_score||parsed.feedback.length||3,overall_summary:clean(parsed.overall_summary,1000)});
+    return await deliver({source:'ai',provider:result.provider,model:result.model,admin_access:isAdmin,usage:{input_tokens:inputTokens,output_tokens:outputTokens},feedback:parsed.feedback,total_score:totalScore,max_score:parsed.max_score||parsed.feedback.length||3,overall_summary:clean(parsed.overall_summary,1000)});
    }
-   return json(200,{source:'ai',provider:result.provider,model:result.model,admin_access:isAdmin,usage:{input_tokens:inputTokens,output_tokens:outputTokens},answer:text});
+   return await deliver({source:'ai',provider:result.provider,model:result.model,admin_access:isAdmin,usage:{input_tokens:inputTokens,output_tokens:outputTokens},answer:text});
   }
   if(task==='quiz'){
    let parsed;try{parsed=JSON.parse(text.replace(/^```json\s*|\s*```$/g,''))}catch{return json(502,{error:"We couldn't generate the questions. Please try again."})}
    let questions=Array.isArray(parsed)?parsed:Array.isArray(parsed?.questions)?parsed.questions:[];
    questions=questions.filter(q=>q&&typeof q.question==='string'&&Array.isArray(q.options)&&q.options.length===4&&Number.isInteger(Number(q.answer))).slice(0,questionCount);
    if(questions.length!==questionCount)return json(502,{error:"We couldn't generate the questions. Please try again."});
-   return json(200,{source:'ai',provider:result.provider,model:result.model,admin_access:isAdmin,usage:{input_tokens:inputTokens,output_tokens:outputTokens},questions});
+   return await deliver({source:'ai',provider:result.provider,model:result.model,admin_access:isAdmin,usage:{input_tokens:inputTokens,output_tokens:outputTokens},questions});
   }
   const diagramEligible=['tutor','lecturer'].includes(task)&&['primary','jss','sss','university'].includes(level)&&/\b(map|diagram|draw|drawing|illustrat(?:e|ion)|labelled|labeled|graph|chart|visual|anatomy|life cycle|water cycle|food chain|circuit)\b/i.test(topic+' '+context);
   let diagram_token=null;
   if(diagramEligible){const ticket=Buffer.from(JSON.stringify({exp:Date.now()+5*60*1000,topic_hash:crypto.createHash('sha256').update(topic).digest('hex')})).toString('base64url');diagram_token=ticket+'.'+crypto.createHmac('sha256',K).update(ticket).digest('base64url')}
-  return json(200,{source:'ai',provider:result.provider,model:result.model,admin_access:isAdmin,usage:{input_tokens:inputTokens,output_tokens:outputTokens},answer:text,diagram_token});
+  return await deliver({source:'ai',provider:result.provider,model:result.model,admin_access:isAdmin,usage:{input_tokens:inputTokens,output_tokens:outputTokens},answer:text,diagram_token});
  }catch(e){console.error('[learning-api]',e);return json(500,{error:'The learning service could not complete the request. Please try again.'})}
 };
